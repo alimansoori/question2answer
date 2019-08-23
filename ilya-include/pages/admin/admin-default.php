@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Controller for most admin pages which just contain options
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -1017,7 +1017,7 @@ foreach ($showoptions as $optionname) {
 						'<small>' .
 						ilya_html(urldecode(ilya_path('123/why-do-birds-sing', null, '/', $rawoption))) .
 						(($rawoption == ILYA__URL_FORMAT_NEAT) ? strtr(ilya_lang_html('admin/neat_urls_note'), array(
-							'^1' => '<a href="http://www.question2answer.org/htaccess.php" target="_blank">',
+							'^1' => '<a href="https://projekt.ir/htaccess.php" target="_blank">',
 							'^2' => '</a>',
 						)) : '') .
 						'</small>';

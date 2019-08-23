@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Server-side response to Ajax version check requests
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 require_once ILYA__INCLUDE_DIR . 'app/admin.php';
@@ -37,7 +37,7 @@ if ($isCore) {
 	if (strlen($contents) > 0) {
 		if (ilya_ilya_version_below($contents)) {
 			$response =
-				'<a href="https://github.com/q2a/question2answer/releases" style="color:#d00;">' .
+				'<a href="https://github.com/ilya/question2answer/releases" style="color:#d00;">' .
 				ilya_lang_html_sub('admin/version_get_x', ilya_html('v' . $contents)) .
 				'</a>';
 		} else {
@@ -52,10 +52,10 @@ if ($isCore) {
 
 	if (strlen(@$metadata['version']) > 0) {
 		if (version_compare($currentVersion, $metadata['version']) < 0) {
-			if (ilya_ilya_version_below(@$metadata['min_q2a'])) {
-				$response = strtr(ilya_lang_html('admin/version_requires_q2a'), array(
+			if (ilya_ilya_version_below(@$metadata['min_ilya'])) {
+				$response = strtr(ilya_lang_html('admin/version_requires_ilya'), array(
 					'^1' => ilya_html('v' . $metadata['version']),
-					'^2' => ilya_html($metadata['min_q2a']),
+					'^2' => ilya_html($metadata['min_ilya']),
 				));
 			} elseif (ilya_php_version_below(@$metadata['min_php'])) {
 				$response = strtr(ilya_lang_html('admin/version_requires_php'), array(

@@ -1,6 +1,6 @@
 /*
 	ILYA Market (c) Jatin Soni
-	http://www.q2amarket.com/
+	http://www.ilyamarket.com/
 
 	File:           js/snow-core.js
 	Version:        Snow 1.4

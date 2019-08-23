@@ -1,8 +1,8 @@
 <?php
 
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	File: ilya-include/ILYA/Plugin/PluginManager.php
 	Description: Keeps track of the installed plugins
@@ -18,7 +18,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 class ILYA_Plugin_PluginManager
@@ -49,7 +49,7 @@ class ILYA_Plugin_PluginManager
 			}
 
 			// skip plugin which requires a later version of ILYA
-			if (isset($metadata['min_q2a']) && ilya_ilya_version_below($metadata['min_q2a'])) {
+			if (isset($metadata['min_ilya']) && ilya_ilya_version_below($metadata['min_ilya'])) {
 				continue;
 			}
 			// skip plugin which requires a later version of PHP

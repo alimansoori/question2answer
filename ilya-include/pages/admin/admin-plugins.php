@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Controller for admin page listing plugins and showing their options
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -198,9 +198,9 @@ if (!empty($fileSystemPlugins)) {
 		$pluginhtml .= $deschtml . (strlen($deschtml) > 0 ? '<br>' : '');
 		$pluginhtml .= '<small style="color:#666">' . ilya_html($pluginDirectoryPath) . '/</small>';
 
-		if (ilya_ilya_version_below(@$metadata['min_q2a']))
+		if (ilya_ilya_version_below(@$metadata['min_ilya']))
 			$pluginhtml = '<s style="color:#999">'.$pluginhtml.'</s><br><span style="color:#f00">'.
-				ilya_lang_html_sub('admin/requires_q2a_version', ilya_html($metadata['min_q2a'])).'</span>';
+				ilya_lang_html_sub('admin/requires_ilya_version', ilya_html($metadata['min_ilya'])).'</span>';
 
 		elseif (ilya_php_version_below(@$metadata['min_php']))
 			$pluginhtml = '<s style="color:#999">'.$pluginhtml.'</s><br><span style="color:#f00">'.

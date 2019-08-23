@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Language phrases for admin center
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 return array(
@@ -192,11 +192,11 @@ return array(
 	'position' => 'Position:',
 	'posting_title' => 'Posting',
 	'profile_fields' => 'Extra fields on user pages or registration form:',
-	'q2a_build_date' => 'Build date:',
-	'q2a_db_size' => 'Database size:',
-	'q2a_db_version' => 'ILYA database version:',
-	'q2a_latest_version' => 'Latest version:',
-	'q2a_version' => 'Question2Answer version:',
+	'ilya_build_date' => 'Build date:',
+	'ilya_db_size' => 'Database size:',
+	'ilya_db_version' => 'ILYA database version:',
+	'ilya_latest_version' => 'Latest version:',
+	'ilya_version' => 'IlyaIdea version:',
 	'question_lists' => 'Question lists',
 	'question_pages' => 'Question pages',
 	'recalc_categories' => 'Recalculate categories',
@@ -234,7 +234,7 @@ return array(
 	'reindex_posts_reindexed' => 'Reindexed ^1 of ^2 posts...',
 	'reindex_posts_wordcounted' => 'Recounted ^1 of ^2 words...',
 	'requires_php_version' => 'Disabled - requires PHP ^ or later',
-	'requires_q2a_version' => 'Disabled - requires Question2Answer ^ or later',
+	'requires_ilya_version' => 'Disabled - requires IlyaIdea ^ or later',
 	'reset_options_button' => 'Reset to Defaults',
 	'reset_options_confirm' => 'Are you sure you want to reset all options on this page to their defaults?',
 	'resume_mailing_button' => 'Resume Mailing',
@@ -262,7 +262,7 @@ return array(
 	'total_qs' => 'Total questions:',
 	'total_qs_unans' => 'Total questions unanswered:',
 	'unnamed_plugin' => 'Unnamed Plugin',
-	'upgrade_db' => 'Your Question2Answer database needs to be ^1upgraded^2 for this version.',
+	'upgrade_db' => 'Your IlyaIdea database needs to be ^1upgraded^2 for this version.',
 	'url_format_note' => 'Options with the ^ label are working for your site\'s configuration. For best search engine optimization (SEO), use the first ^ option available.',
 	'user_pages' => 'User pages',
 	'user_title' => 'User title - HTML allowed:',
@@ -277,7 +277,7 @@ return array(
 	'version_latest' => 'latest',
 	'version_latest_unknown' => 'latest unknown',
 	'version_requires_php' => '^1 requires PHP ^2',
-	'version_requires_q2a' => '^1 requires ILYA ^2',
+	'version_requires_ilya' => '^1 requires ILYA ^2',
 	'viewing_title' => 'Viewing',
 	'widget_all_pages' => 'Show widget in this position on all available pages',
 	'widget_global_options' => ' - ^1options^2',

@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: External user functions for basic Joomla integration
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -245,7 +245,7 @@ class ilya_joomla_helper
 
 	private function trigger_joomla_event($event, $args = array(), $expectResponse = true)
 	{
-		JPluginHelper::importPlugin('q2a');
+		JPluginHelper::importPlugin('ilya');
 		$dispatcher = JEventDispatcher::getInstance();
 		$results = $dispatcher->trigger($event, $args);
 

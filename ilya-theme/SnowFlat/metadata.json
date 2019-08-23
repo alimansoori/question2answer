@@ -4,7 +4,7 @@
 	"version": "1.4",
 	"date": "2014-03-11",
 	"author": "ILYA Market",
-	"author_uri": "http://www.q2amarket.com",
+	"author_uri": "http://www.ilyamarket.com",
 	"license": "GPLv2",
-	"min_q2a": "1.7"
+	"min_ilya": "1.7"
 }

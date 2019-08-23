@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: User interface for installing, upgrading and fixing the database
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -97,7 +97,7 @@ if (!isset($pass_failure_type) && ilya_clicked('super')) {
 
 			ilya_set_option('feedback_email', $inemail);
 
-			$success .= "Congratulations - Your Question2Answer site is ready to go!\n\nYou are logged in as the super administrator and can start changing settings.\n\nThank you for installing Question2Answer.";
+			$success .= "Congratulations - Your IlyaIdea site is ready to go!\n\nYou are logged in as the super administrator and can start changing settings.\n\nThank you for installing IlyaIdea.";
 		}
 	}
 }
@@ -132,16 +132,16 @@ if (isset($pass_failure_type)) {
 			break;
 
 		case 'select':
-			$errorhtml .= 'Could not switch to the Question2Answer database. Please check the database name in the config file, and if necessary create the database in MySQL and grant appropriate user privileges.';
+			$errorhtml .= 'Could not switch to the IlyaIdea database. Please check the database name in the config file, and if necessary create the database in MySQL and grant appropriate user privileges.';
 			break;
 
 		case 'query':
 			global $pass_failure_from_install;
 
 			if (@$pass_failure_from_install)
-				$errorhtml .= "Question2Answer was unable to perform the installation query below. Please check the user in the config file has CREATE and ALTER permissions:\n\n".ilya_html($pass_failure_query."\n\nError ".$pass_failure_errno.": ".$pass_failure_error."\n\n");
+				$errorhtml .= "IlyaIdea was unable to perform the installation query below. Please check the user in the config file has CREATE and ALTER permissions:\n\n".ilya_html($pass_failure_query."\n\nError ".$pass_failure_errno.": ".$pass_failure_error."\n\n");
 			else
-				$errorhtml .= "A Question2Answer database query failed when generating this page.\n\nA full description of the failure is available in the web server's error log file.";
+				$errorhtml .= "A IlyaIdea database query failed when generating this page.\n\nA full description of the failure is available in the web server's error log file.";
 			break;
 	}
 }
@@ -159,7 +159,7 @@ else {
 				// create link back to WordPress home page
 				ilya_db_page_move(ilya_db_page_create(get_option('blogname'), ILYA__PAGE_FLAGS_EXTERNAL, get_option('home'), null, null, null), 'O', 1);
 
-				$success .= 'Your Question2Answer database has been created and integrated with your WordPress site.';
+				$success .= 'Your IlyaIdea database has been created and integrated with your WordPress site.';
 
 			}
 			elseif (defined('ILYA__FINAL_JOOMLA_INTEGRATE_PATH')) {
@@ -169,30 +169,30 @@ else {
 
 				// create link back to Joomla! home page (Joomla doesn't have a 'home' config setting we can use like WP does, so we'll just assume that the Joomla home is the parent of the ILYA site. If it isn't, the user can fix the link for themselves later)
 				ilya_db_page_move(ilya_db_page_create($jconfig->sitename, ILYA__PAGE_FLAGS_EXTERNAL, '../', null, null, null), 'O', 1);
-				$success .= 'Your Question2Answer database has been created and integrated with your Joomla! site.';
+				$success .= 'Your IlyaIdea database has been created and integrated with your Joomla! site.';
 			}
 			else {
-				$success .= 'Your Question2Answer database has been created for external user identity management. Please read the online documentation to complete integration.';
+				$success .= 'Your IlyaIdea database has been created for external user identity management. Please read the online documentation to complete integration.';
 			}
 		}
 		else {
-			$success .= 'Your Question2Answer database has been created.';
+			$success .= 'Your IlyaIdea database has been created.';
 		}
 	}
 
 	if (ilya_clicked('nonuser')) {
 		ilya_db_install_tables();
-		$success .= 'The additional Question2Answer database tables have been created.';
+		$success .= 'The additional IlyaIdea database tables have been created.';
 	}
 
 	if (ilya_clicked('upgrade')) {
 		ilya_db_upgrade_tables();
-		$success .= 'Your Question2Answer database has been updated.';
+		$success .= 'Your IlyaIdea database has been updated.';
 	}
 
 	if (ilya_clicked('repair')) {
 		ilya_db_install_tables();
-		$success .= 'The Question2Answer database tables have been repaired.';
+		$success .= 'The IlyaIdea database tables have been repaired.';
 	}
 
 	ilya_initialize_postdb_plugins();
@@ -225,24 +225,24 @@ if (ilya_db_connection(false) !== null && !@$pass_failure_from_install) {
 			if (@$pass_failure_errno == 1146) // don't show error if we're in installation process
 				$errorhtml = '';
 
-			$errorhtml .= 'Welcome to Question2Answer. It\'s time to set up your database!';
+			$errorhtml .= 'Welcome to IlyaIdea. It\'s time to set up your database!';
 
 			if (ILYA__FINAL_EXTERNAL_USERS) {
 				if (defined('ILYA__FINAL_WORDPRESS_INTEGRATE_PATH')) {
-					$errorhtml .= "\n\nWhen you click below, your Question2Answer site will be set up to integrate with the users of your WordPress site <a href=\"".ilya_html(get_option('home'))."\" target=\"_blank\">".ilya_html(get_option('blogname'))."</a>. Please consult the online documentation for more information.";
+					$errorhtml .= "\n\nWhen you click below, your IlyaIdea site will be set up to integrate with the users of your WordPress site <a href=\"".ilya_html(get_option('home'))."\" target=\"_blank\">".ilya_html(get_option('blogname'))."</a>. Please consult the online documentation for more information.";
 				}
 				elseif (defined('ILYA__FINAL_JOOMLA_INTEGRATE_PATH')) {
 					$jconfig = new JConfig();
-					$errorhtml .= "\n\nWhen you click below, your Question2Answer site will be set up to integrate with the users of your Joomla! site <a href=\"../\" target=\"_blank\">".$jconfig->sitename."</a>. It's also recommended to install the Joomla QAIntegration plugin for additional user-access control. Please consult the online documentation for more information.";
+					$errorhtml .= "\n\nWhen you click below, your IlyaIdea site will be set up to integrate with the users of your Joomla! site <a href=\"../\" target=\"_blank\">".$jconfig->sitename."</a>. It's also recommended to install the Joomla QAIntegration plugin for additional user-access control. Please consult the online documentation for more information.";
 				}
 				else {
-					$errorhtml .= "\n\nWhen you click below, your Question2Answer site will be set up to integrate with your existing user database and management. Users will be referenced with database column type ".ilya_html(ilya_get_mysql_user_column_type()).". Please consult the online documentation for more information.";
+					$errorhtml .= "\n\nWhen you click below, your IlyaIdea site will be set up to integrate with your existing user database and management. Users will be referenced with database column type ".ilya_html(ilya_get_mysql_user_column_type()).". Please consult the online documentation for more information.";
 				}
 
 				$buttons = array('create' => 'Set up the Database');
 			}
 			else {
-				$errorhtml .= "\n\nWhen you click below, your Question2Answer database will be set up to manage user identities and logins internally.\n\nIf you want to offer a single sign-on for an existing user base or website, please consult the online documentation before proceeding.";
+				$errorhtml .= "\n\nWhen you click below, your IlyaIdea database will be set up to manage user identities and logins internally.\n\nIf you want to offer a single sign-on for an existing user base or website, please consult the online documentation before proceeding.";
 				$buttons = array('create' => 'Set up the Database including User Management');
 			}
 			break;
@@ -253,22 +253,22 @@ if (ilya_db_connection(false) !== null && !@$pass_failure_from_install) {
 				$errorhtml = '';
 
 			// don't show error before this
-			$errorhtml .= 'Your Question2Answer database needs to be upgraded for this version of the software.';
+			$errorhtml .= 'Your IlyaIdea database needs to be upgraded for this version of the software.';
 			$buttons = array('upgrade' => 'Upgrade the Database');
 			break;
 
 		case 'non-users-missing':
-			$errorhtml = 'This Question2Answer site is sharing its users with another ILYA site, but it needs some additional database tables for its own content. Please click below to create them.';
+			$errorhtml = 'This IlyaIdea site is sharing its users with another ILYA site, but it needs some additional database tables for its own content. Please click below to create them.';
 			$buttons = array('nonuser' => 'Set up the Tables');
 			break;
 
 		case 'table-missing':
-			$errorhtml .= 'One or more tables are missing from your Question2Answer database.';
+			$errorhtml .= 'One or more tables are missing from your IlyaIdea database.';
 			$buttons = array('repair' => 'Repair the Database');
 			break;
 
 		case 'column-missing':
-			$errorhtml .= 'One or more Question2Answer database tables are missing a column.';
+			$errorhtml .= 'One or more IlyaIdea database tables are missing a column.';
 			$buttons = array('repair' => 'Repair the Database');
 			break;
 
@@ -276,7 +276,7 @@ if (ilya_db_connection(false) !== null && !@$pass_failure_from_install) {
 			require_once ILYA__INCLUDE_DIR.'db/admin.php';
 
 			if (!ILYA__FINAL_EXTERNAL_USERS && ilya_db_count_users() == 0) {
-				$errorhtml .= "There are currently no users in the Question2Answer database.\n\nPlease enter your details below to create the super administrator:";
+				$errorhtml .= "There are currently no users in the IlyaIdea database.\n\nPlease enter your details below to create the super administrator:";
 				$fields = array(
 					'handle' => array('label' => 'Username:', 'type' => 'text'),
 					'password' => array('label' => 'Password:', 'type' => 'password'),
@@ -318,7 +318,7 @@ if (ilya_db_connection(false) !== null && !@$pass_failure_from_install) {
 
 if (empty($errorhtml)) {
 	if (empty($success))
-		$success = 'Your Question2Answer database has been checked with no problems.';
+		$success = 'Your IlyaIdea database has been checked with no problems.';
 
 	$suggest = '<a href="'.ilya_path_html('admin', null, null, ILYA__URL_FORMAT_SAFEST).'">Go to admin center</a>';
 }

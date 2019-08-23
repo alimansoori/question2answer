@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Development tool to see which language phrases are missing or unused
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 define('ILYA__BASE_DIR', dirname(dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME'])) . '/');
@@ -33,7 +33,7 @@ header('Content-type: text/html; charset=utf-8');
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-		<title>Question2Answer Language Check</title>
+		<title>IlyaIdea Language Check</title>
 		<style>
 			body {
 				font-family: arial;

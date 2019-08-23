@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Wrapper functions for sending email notifications to users
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -177,7 +177,7 @@ function ilya_send_email($params)
 
 	$send_status = $mailer->send();
 	if (!$send_status) {
-		@error_log('PHP Question2Answer email send error: ' . $mailer->ErrorInfo);
+		@error_log('PHP IlyaIdea email send error: ' . $mailer->ErrorInfo);
 	}
 	return $send_status;
 }

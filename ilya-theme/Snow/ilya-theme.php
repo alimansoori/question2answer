@@ -154,7 +154,7 @@ class ilya_html_theme extends ilya_html_theme_base
 	{
 		$this->output(
 			'<div class="ilya-attribution">',
-			'&nbsp;| Snow Theme by <a href="http://www.q2amarket.com">ILYA Market</a>',
+			'&nbsp;| Snow Theme by <a href="http://www.ilyamarket.com">ILYA Market</a>',
 			'</div>'
 		);
 

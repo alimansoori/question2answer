@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Controller for admin page showing usage statistics and clean-up buttons
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -61,20 +61,20 @@ $ilya_content['form'] = array(
 	'style' => 'wide',
 
 	'fields' => array(
-		'q2a_version' => array(
-			'label' => ilya_lang_html('admin/q2a_version'),
+		'ilya_version' => array(
+			'label' => ilya_lang_html('admin/ilya_version'),
 			'value' => ilya_html(ILYA__VERSION),
 		),
 
-		'q2a_date' => array(
-			'label' => ilya_lang_html('admin/q2a_build_date'),
+		'ilya_date' => array(
+			'label' => ilya_lang_html('admin/ilya_build_date'),
 			'value' => ilya_html(ILYA__BUILD_DATE),
 		),
 
-		'q2a_latest' => array(
-			'label' => ilya_lang_html('admin/q2a_latest_version'),
+		'ilya_latest' => array(
+			'label' => ilya_lang_html('admin/ilya_latest_version'),
 			'type' => 'custom',
-			'html' => '<span id="q2a-version">...</span>',
+			'html' => '<span id="ilya-version">...</span>',
 		),
 
 		'break0' => array(
@@ -82,12 +82,12 @@ $ilya_content['form'] = array(
 		),
 
 		'db_version' => array(
-			'label' => ilya_lang_html('admin/q2a_db_version'),
+			'label' => ilya_lang_html('admin/ilya_db_version'),
 			'value' => ilya_html(ilya_opt('db_version')),
 		),
 
 		'db_size' => array(
-			'label' => ilya_lang_html('admin/q2a_db_size'),
+			'label' => ilya_lang_html('admin/ilya_db_size'),
 			'value' => ilya_html(ilya_format_number(ilya_db_table_size() / 1048576, 1) . ' MB'),
 		),
 
@@ -279,7 +279,7 @@ $ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
 $ilya_content['script_var']['ilya_warning_recalc'] = ilya_lang('admin/stop_recalc_warning');
 
 $ilya_content['script_onloads'][] = array(
-	"ilya_version_check('https://raw.githubusercontent.com/q2a/question2answer/master/VERSION.txt', " . ilya_js(ilya_html(ILYA__VERSION), true) . ", 'q2a-version', true);"
+	"ilya_version_check('https://raw.githubusercontent.com/ilya/question2answer/master/VERSION.txt', " . ilya_js(ilya_html(ILYA__VERSION), true) . ", 'ilya-version', true);"
 );
 
 $ilya_content['navigation']['sub'] = ilya_admin_sub_navigation();

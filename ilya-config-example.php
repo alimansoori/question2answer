@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	File: ilya-config-example.php
 	Description: After renaming, use this to set up database details and other stuff
@@ -17,7 +17,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 /*
@@ -46,10 +46,10 @@
 	2. Create a MySQL user with full permissions for that database.
 	3. Rename this file to ilya-config.php.
 	4. Set the above four definitions and save.
-	5. Place all the Question2Answer files on your server.
+	5. Place all the IlyaIdea files on your server.
 	6. Open the appropriate URL, and follow the instructions.
 
-	More detailed installation instructions here: http://www.question2answer.org/
+	More detailed installation instructions here: https://projekt.ir/
 */
 
 /*
@@ -58,7 +58,7 @@
 	======================================================================
 
 	ILYA__MYSQL_TABLE_PREFIX will be added to table names, to allow multiple datasets in a single
-	MySQL database, or to include the Question2Answer tables in an existing MySQL database.
+	MySQL database, or to include the IlyaIdea tables in an existing MySQL database.
 */
 
 	define('ILYA__MYSQL_TABLE_PREFIX', 'ilya_');
@@ -123,7 +123,7 @@
 /*
 	Set ILYA__EXTERNAL_USERS to true to use your user identification code in ilya-external/ilya-external-users.php
 	This allows you to integrate with your existing user database and management system. For more details,
-	consult the online documentation on installing Question2Answer with single sign-on.
+	consult the online documentation on installing IlyaIdea with single sign-on.
 
 	The constants ILYA__EXTERNAL_LANG and ILYA__EXTERNAL_EMAILER are deprecated from ILYA 1.5 since the same
 	effect can now be achieved in plugins by using function overrides.
@@ -152,7 +152,7 @@
 */
 
 /*
-	Some settings to help optimize your Question2Answer site's performance.
+	Some settings to help optimize your IlyaIdea site's performance.
 
 	If ILYA__HTML_COMPRESSION is true, HTML web pages will be output using Gzip compression, which
 	will increase the performance of your site (if the user's browser indicates this is supported).
@@ -185,7 +185,7 @@
 	not. For more information: http://www.php.net/manual/en/features.persistent-connections.php
 
 	Set ILYA__DEBUG_PERFORMANCE to true to show detailed performance profiling information at the
-	bottom of every Question2Answer page.
+	bottom of every IlyaIdea page.
 */
 
 	define('ILYA__HTML_COMPRESSION', false);

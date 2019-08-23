@@ -1,6 +1,6 @@
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	File: ilya-content/ilya-ask.js
 	Description: THIS FILE HAS BEEN DEPRECATED IN FAVOUR OF ilya-global.js
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 function ilya_title_change(value)

@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Sets up ILYA environment, plus many globally useful functions
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 
@@ -446,7 +446,7 @@ function ilya_page_db_fail_handler($type, $errno = null, $error = null, $query =
 function ilya_addon_metadata($contents, $type, $versiononly = false)
 {
 	$fields = array(
-		'min_q2a' => 'Minimum Question2Answer Version',
+		'min_ilya' => 'Minimum IlyaIdea Version',
 		'min_php' => 'Minimum PHP Version',
 	);
 	if (!$versiononly) {
@@ -731,7 +731,7 @@ function ilya_eval_from_file($eval, $filename)
 				break;
 		}
 
-		@error_log('PHP Question2Answer more info: ' . $php_errormsg . " in eval()'d code from " . ilya_html($filename));
+		@error_log('PHP IlyaIdea more info: ' . $php_errormsg . " in eval()'d code from " . ilya_html($filename));
 	}
 
 	@ini_set('track_errors', $oldtrackerrors);
@@ -840,8 +840,8 @@ function ilya_fatal_error($message)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	echo 'Question2Answer fatal error:<p style="color: red">' . ilya_html($message, true) . '</p>';
-	@error_log('PHP Question2Answer fatal error: ' . $message);
+	echo 'IlyaIdea fatal error:<p style="color: red">' . ilya_html($message, true) . '</p>';
+	@error_log('PHP IlyaIdea fatal error: ' . $message);
 	echo '<p>Stack trace:<p>';
 
 	$backtrace = array_reverse(array_slice(debug_backtrace(), 1));

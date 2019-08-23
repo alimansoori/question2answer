@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Default theme class, broken into lots of little functions for easy overriding
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -258,7 +258,7 @@ class ilya_html_theme_base
 
 	public function html()
 	{
-		$attribution = '<!-- Powered by Question2Answer - http://www.question2answer.org/ -->';
+		$attribution = '<!-- Powered by IlyaIdea - https://projekt.ir/ -->';
 		$extratags = isset($this->content['html_tags']) ? $this->content['html_tags'] : '';
 
 		$this->output(
@@ -912,7 +912,7 @@ class ilya_html_theme_base
 
 		$this->output(
 			'<div class="ilya-attribution">',
-			'Powered by <a href="http://www.question2answer.org/">Question2Answer</a>',
+			'Powered by <a href="https://projekt.ir/">IlyaIdea</a>',
 			'</div>'
 		);
 	}

@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	File: ilya-plugin/opensearch-support/ilya-plugin.php
 	Description: Initiates OpenSearch plugin
@@ -17,7 +17,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 /*
@@ -26,10 +26,10 @@
 	Plugin Description: Allows OpenSearch clients to search ILYA site directly
 	Plugin Version: 1.0
 	Plugin Date: 2012-08-21
-	Plugin Author: Question2Answer
-	Plugin Author URI: http://www.question2answer.org/
+	Plugin Author: IlyaIdea
+	Plugin Author URI: https://projekt.ir/
 	Plugin License: GPLv2
-	Plugin Minimum Question2Answer Version: 1.5
+	Plugin Minimum IlyaIdea Version: 1.5
 	Plugin Update Check URI:
 */
 

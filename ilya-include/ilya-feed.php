@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Handles all requests to RSS feeds, first checking if they should be available
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -300,7 +300,7 @@ $lines[] = '<channel>';
 
 $lines[] = '<title>' . ilya_xml($sitetitle . ' - ' . $title) . '</title>';
 $lines[] = '<link>' . ilya_xml(ilya_path($linkrequest, $linkparams, $siteurl)) . '</link>';
-$lines[] = '<description>Powered by Question2Answer</description>';
+$lines[] = '<description>Powered by IlyaIdea</description>';
 
 foreach ($questions as $question) {
 	// Determine whether this is a question, answer or comment, and act accordingly

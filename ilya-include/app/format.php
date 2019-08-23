@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Common functions for creating theme-ready structures from data
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -1107,7 +1107,7 @@ function ilya_any_get_userids_handles($questions)
 /**
  * Return $html with any URLs converted into links (with nofollow and in a new window if $newwindow).
  * Closing parentheses/brackets are removed from the link if they don't have a matching opening one. This avoids creating
- * incorrect URLs from (http://www.question2answer.org) but allow URLs such as http://www.wikipedia.org/Computers_(Software)
+ * incorrect URLs from (https://projekt.ir) but allow URLs such as http://www.wikipedia.org/Computers_(Software)
  * @param $html
  * @param bool $newwindow
  * @return mixed

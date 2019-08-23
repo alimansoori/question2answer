@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: Common functions for connecting to and accessing database
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -114,7 +114,7 @@ function ilya_db_fail_error($type, $errno = null, $error = null, $query = null)
 
 	global $ilya_db_fail_handler;
 
-	@error_log('PHP Question2Answer MySQL ' . $type . ' error ' . $errno . ': ' . $error . (isset($query) ? (' - Query: ' . $query) : ''));
+	@error_log('PHP IlyaIdea MySQL ' . $type . ' error ' . $errno . ': ' . $error . (isset($query) ? (' - Query: ' . $query) : ''));
 
 	if (function_exists($ilya_db_fail_handler))
 		$ilya_db_fail_handler($type, $errno, $error, $query);
@@ -201,7 +201,7 @@ function ilya_db_query_raw($query)
 	} else
 		$result = ilya_db_query_execute($query);
 
-	// @error_log('Question2Answer MySQL query: '.$query);
+	// @error_log('IlyaIdea MySQL query: '.$query);
 
 	if ($result === false) {
 		$db = ilya_db_connection();

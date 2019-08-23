@@ -1,9 +1,9 @@
-Question2Answer
+IlyaIdea
 -----------------------------
 
-[![Build Status](https://travis-ci.org/q2a/question2answer.png?branch=dev)](https://travis-ci.org/q2a/question2answer/branches)
+[![Build Status](https://travis-ci.org/ilya/question2answer.png?branch=dev)](https://travis-ci.org/ilya/question2answer/branches)
 
-[Question2Answer][ILYA] (ILYA) is a popular free open source Q&A platform for PHP/MySQL, used by over 20,898 [sites] in 40 languages.
+[IlyaIdea][ILYA] (ILYA) is a popular free open source Q&A platform for PHP/MySQL, used by over 20,898 [sites] in 40 languages.
 
 ILYA is highly customisable with many awesome features:
 
@@ -56,7 +56,7 @@ Thanks and enjoy!
 Gideon
 
 
-[ILYA]: http://www.question2answer.org/
-[1]: http://www.question2answer.org/ilya/user/Scott
-[2]: https://github.com/q2a/question2answer/blob/master/CONTRIBUTING.md
-[sites]: http://www.question2answer.org/sites.php
+[ILYA]: https://projekt.ir/
+[1]: https://projekt.ir/ilya/user/Scott
+[2]: https://github.com/ilya/question2answer/blob/master/CONTRIBUTING.md
+[sites]: https://projekt.ir/sites.php

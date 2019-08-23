@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	Description: User management (application level) for basic user operations
 
@@ -16,7 +16,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
@@ -1390,7 +1390,7 @@ function ilya_check_form_security_code($action, $value)
 
 	if (!empty($reportproblems) && ILYA__DEBUG_PERFORMANCE) {
 		@error_log(
-			'PHP Question2Answer form security violation for ' . $action .
+			'PHP IlyaIdea form security violation for ' . $action .
 			' by ' . (ilya_is_logged_in() ? ('userid ' . ilya_get_logged_in_userid()) : 'anonymous') .
 			' (' . implode(', ', array_merge($reportproblems, $silentproblems)) . ')' .
 			' on ' . @$_SERVER['REQUEST_URI'] .

@@ -1,7 +1,7 @@
 <?php
 /*
-	Question2Answer by Gideon Greenspan and contributors
-	http://www.question2answer.org/
+	IlyaIdea by Gideon Greenspan and contributors
+	https://projekt.ir/
 
 	File: ilya-plugin/basic-adsense/ilya-plugin.php
 	Description: Initiates Adsense widget plugin
@@ -17,7 +17,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	More about this license: http://www.question2answer.org/license.php
+	More about this license: https://projekt.ir/license.php
 */
 
 /*
@@ -26,10 +26,10 @@
 	Plugin Description: Provides a basic widget for displaying Google AdSense ads
 	Plugin Version: 1.0
 	Plugin Date: 2011-03-27
-	Plugin Author: Question2Answer
-	Plugin Author URI: http://www.question2answer.org/
+	Plugin Author: IlyaIdea
+	Plugin Author URI: https://projekt.ir/
 	Plugin License: GPLv2
-	Plugin Minimum Question2Answer Version: 1.4
+	Plugin Minimum IlyaIdea Version: 1.4
 	Plugin Update Check URI:
 */
 

@@ -1,7 +1,7 @@
 <?php
 /*
-	Snow Theme for Question2Answer Package
-	Copyright (C) 2014 ILYA Market <http://www.q2amarket.com>
+	Snow Theme for IlyaIdea Package
+	Copyright (C) 2014 ILYA Market <http://www.ilyamarket.com>
 
 	File:           ilya-theme.php
 	Version:        Snow 1.4
@@ -28,7 +28,7 @@
  * @category Theme
  * @since Snow 1.0
  * @version 1.4
- * @author ILYA Market <http://www.q2amarket.com>
+ * @author ILYA Market <http://www.ilyamarket.com>
  * @copyright (c) 2014, ILYA Market
  * @license http://www.gnu.org/copyleft/gpl.html
  */
@@ -623,7 +623,7 @@ class ilya_html_theme extends ilya_html_theme_base
 		// floated right
 		$this->output(
 			'<div class="ilya-attribution">',
-			'Snow Theme by <a href="http://www.q2amarket.com">ILYA Market</a>',
+			'Snow Theme by <a href="http://www.ilyamarket.com">ILYA Market</a>',
 			'</div>'
 		);
 		parent::attribution();
