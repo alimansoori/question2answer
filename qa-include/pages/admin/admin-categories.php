@@ -19,15 +19,15 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/admin.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'db/admin.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/admin.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'db/admin.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 
 // Get relevant list of categories
@@ -127,7 +127,7 @@ if (ilya_clicked('docancel')) {
 		}
 
 	} else {
-		require_once QA_INCLUDE_DIR . 'util/string.php';
+		require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 		$inname = ilya_post_text('name');
 		$incontent = ilya_post_text('content');
@@ -143,8 +143,8 @@ if (ilya_clicked('docancel')) {
 
 		if (empty($inname))
 			$errors['name'] = ilya_lang('main/field_required');
-		elseif (ilya_strlen($inname) > QA_DB_MAX_CAT_PAGE_TITLE_LENGTH)
-			$errors['name'] = ilya_lang_sub('main/max_length_x', QA_DB_MAX_CAT_PAGE_TITLE_LENGTH);
+		elseif (ilya_strlen($inname) > ILYA__DB_MAX_CAT_PAGE_TITLE_LENGTH)
+			$errors['name'] = ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_CAT_PAGE_TITLE_LENGTH);
 		else {
 			foreach ($incategories as $category) {
 				if (!strcmp($category['parentid'], $inparentid) &&
@@ -184,8 +184,8 @@ if (ilya_clicked('docancel')) {
 
 			if (empty($inslug))
 				$errors['slug'] = ilya_lang('main/field_required');
-			elseif (ilya_strlen($inslug) > QA_DB_MAX_CAT_PAGE_TAGS_LENGTH)
-				$errors['slug'] = ilya_lang_sub('main/max_length_x', QA_DB_MAX_CAT_PAGE_TAGS_LENGTH);
+			elseif (ilya_strlen($inslug) > ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH)
+				$errors['slug'] = ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH);
 			elseif (preg_match('/[\\+\\/]/', $inslug))
 				$errors['slug'] = ilya_lang_sub('admin/slug_bad_chars', '+ /');
 			elseif (!isset($inparentid) && ilya_admin_is_slug_reserved($inslug)) // only top level is a problem
@@ -358,11 +358,11 @@ if ($setmissing) {
 
 		ilya_set_up_category_field($ilya_content, $ilya_content['form']['fields']['parent'], 'parent',
 			isset($incategories) ? $incategories : $categories, isset($inparentid) ? $inparentid : @$editcategory['parentid'],
-			true, true, QA_CATEGORY_DEPTH - 1 - $childdepth, @$editcategory['categoryid']);
+			true, true, ILYA__CATEGORY_DEPTH - 1 - $childdepth, @$editcategory['categoryid']);
 
 		$ilya_content['form']['fields']['parent']['options'][''] = ilya_lang_html('admin/category_top_level');
 
-		@$ilya_content['form']['fields']['parent']['note'] .= ilya_lang_html_sub('admin/category_max_depth_x', QA_CATEGORY_DEPTH);
+		@$ilya_content['form']['fields']['parent']['note'] .= ilya_lang_html_sub('admin/category_max_depth_x', ILYA__CATEGORY_DEPTH);
 
 	} elseif (isset($editcategory['categoryid'])) { // existing category
 		if ($hassubcategory) {
@@ -495,7 +495,7 @@ if ($setmissing) {
 		if (isset($editcategory['categoryid'])) {
 			$catdepth = count(ilya_category_path($categories, $editcategory['categoryid']));
 
-			if ($catdepth < QA_CATEGORY_DEPTH) {
+			if ($catdepth < ILYA__CATEGORY_DEPTH) {
 				$childrenhtml = '';
 
 				foreach ($categories as $category) {
@@ -519,7 +519,7 @@ if ($setmissing) {
 					'value' => $childrenhtml,
 				);
 			} else {
-				$ilya_content['form']['fields']['name']['note'] = ilya_lang_html_sub('admin/category_no_add_subs_x', QA_CATEGORY_DEPTH);
+				$ilya_content['form']['fields']['name']['note'] = ilya_lang_html_sub('admin/category_no_add_subs_x', ILYA__CATEGORY_DEPTH);
 			}
 
 		}
@@ -616,7 +616,7 @@ if (ilya_get('recalc')) {
 	$ilya_content['form']['ok'] = '<span id="recalc_ok">' . ilya_lang_html('admin/recalc_categories') . '</span>';
 	$ilya_content['form']['hidden']['code_recalc'] = ilya_get_form_security_code('admin/recalc');
 
-	$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
+	$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
 	$ilya_content['script_var']['ilya_warning_recalc'] = ilya_lang('admin/stop_recalc_warning');
 
 	$ilya_content['script_onloads'][] = array(

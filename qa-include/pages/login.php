@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -30,7 +30,7 @@ if (ilya_is_logged_in()) {
 }
 
 // Check we're not using Q2A's single-sign on integration and that we're not logged in
-if (QA_FINAL_EXTERNAL_USERS) {
+if (ILYA__FINAL_EXTERNAL_USERS) {
 	$request = ilya_request();
 	$topath = ilya_get('to'); // lets user switch between login and register without losing destination page
 	$userlinks = ilya_get_login_links(ilya_path_to_root(), isset($topath) ? $topath : ilya_path($request, $_GET, ''));
@@ -52,17 +52,17 @@ $inpassword = ilya_post_text('password');
 $inremember = ilya_post_text('remember');
 
 if (ilya_clicked('dologin') && (strlen($inemailhandle) || strlen($inpassword))) {
-	require_once QA_INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
 
-	if (ilya_user_limits_remaining(QA_LIMIT_LOGINS)) {
-		require_once QA_INCLUDE_DIR . 'db/users.php';
-		require_once QA_INCLUDE_DIR . 'db/selects.php';
+	if (ilya_user_limits_remaining(ILYA__LIMIT_LOGINS)) {
+		require_once ILYA__INCLUDE_DIR . 'db/users.php';
+		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 		if (!ilya_check_form_security_code('login', ilya_post_text('code'))) {
 			$pageerror = ilya_lang_html('misc/form_security_again');
 		}
 		else {
-			ilya_limits_increment(null, QA_LIMIT_LOGINS);
+			ilya_limits_increment(null, ILYA__LIMIT_LOGINS);
 
 			$errors = array();
 
@@ -78,7 +78,7 @@ if (ilya_clicked('dologin') && (strlen($inemailhandle) || strlen($inpassword))) 
 
 				$legacyPassOk = hash_equals(strtolower($userinfo['passcheck']), strtolower(ilya_db_calc_passcheck($inpassword, $userinfo['passsalt'])));
 
-				if (QA_PASSWORD_HASH) {
+				if (ILYA__PASSWORD_HASH) {
 					$haspassword = isset($userinfo['passhash']);
 					$haspasswordold = isset($userinfo['passsalt']) && isset($userinfo['passcheck']);
 					$passOk = password_verify($inpassword, $userinfo['passhash']);
@@ -99,7 +99,7 @@ if (ilya_clicked('dologin') && (strlen($inemailhandle) || strlen($inpassword))) 
 
 				if (!isset($errors['password'])) {
 					// login and redirect
-					require_once QA_INCLUDE_DIR . 'app/users.php';
+					require_once ILYA__INCLUDE_DIR . 'app/users.php';
 					ilya_set_logged_in_user($inuserid, $userinfo['handle'], !empty($inremember));
 
 					$topath = ilya_get('to');

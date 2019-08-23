@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -152,7 +152,7 @@ function ilya_db_uservoteflag_user_get($userid)
  */
 function ilya_db_uservoteflag_posts_get($postids)
 {
-	if (QA_FINAL_EXTERNAL_USERS) {
+	if (ILYA__FINAL_EXTERNAL_USERS) {
 		return ilya_db_read_all_assoc(ilya_db_query_sub(
 			'SELECT postid, userid, vote, flag, votecreated, voteupdated FROM ^uservotes WHERE postid IN (#) AND (vote!=0 OR flag!=0)',
 			$postids

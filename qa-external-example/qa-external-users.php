@@ -26,10 +26,10 @@
 	THIS FILE ALLOWS YOU TO INTEGRATE WITH AN EXISTING USER MANAGEMENT SYSTEM
 	=========================================================================
 
-	It is used if QA_EXTERNAL_USERS is set to true in ilya-config.php.
+	It is used if ILYA__EXTERNAL_USERS is set to true in ilya-config.php.
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../');
 	exit;
 }
@@ -169,9 +169,9 @@ function ilya_get_login_links($relative_url_prefix, $redirect_back_to_url)
  * - publicusername: a user description you are willing to show publicly, e.g. the username
  * - email: the logged in user's email address
  * - passsalt: (optional) password salt specific to this user, used for form security codes
- * - level: one of the QA_USER_LEVEL_* values below to denote the user's privileges:
+ * - level: one of the ILYA__USER_LEVEL_* values below to denote the user's privileges:
  *
- * QA_USER_LEVEL_BASIC, QA_USER_LEVEL_EDITOR, QA_USER_LEVEL_ADMIN, QA_USER_LEVEL_SUPER
+ * ILYA__USER_LEVEL_BASIC, ILYA__USER_LEVEL_EDITOR, ILYA__USER_LEVEL_ADMIN, ILYA__USER_LEVEL_SUPER
  *
  * To indicate that the user is blocked you can also add an element 'blocked' with the value true.
  * Blocked users are not allowed to perform any write actions such as voting or posting.
@@ -183,7 +183,7 @@ function ilya_get_login_links($relative_url_prefix, $redirect_back_to_url)
  * Q2A, you can also use the various ilya_db_* functions to run queries.
  *
  * In order to access the admin interface of your Q2A site, ensure that the array element 'level'
- * contains QA_USER_LEVEL_ADMIN or QA_USER_LEVEL_SUPER when you are logged in.
+ * contains ILYA__USER_LEVEL_ADMIN or ILYA__USER_LEVEL_SUPER when you are logged in.
  */
 function ilya_get_logged_in_user()
 {
@@ -215,7 +215,7 @@ function ilya_get_logged_in_user()
 					'userid' => $userid,
 					'publicusername' => $userid,
 					'email' => $result['email'],
-					'level' => ($userid == 'admin') ? QA_USER_LEVEL_ADMIN : QA_USER_LEVEL_BASIC
+					'level' => ($userid == 'admin') ? ILYA__USER_LEVEL_ADMIN : ILYA__USER_LEVEL_BASIC
 				);
 			}
 		}
@@ -243,7 +243,7 @@ function ilya_get_logged_in_user()
 					'userid' => $result['userid'],
 					'publicusername' => $result['username'],
 					'email' => $result['email'],
-					'level' => $result['admin_flag'] ? QA_USER_LEVEL_ADMIN : QA_USER_LEVEL_BASIC
+					'level' => $result['admin_flag'] ? ILYA__USER_LEVEL_ADMIN : ILYA__USER_LEVEL_BASIC
 				);
 			}
 		}

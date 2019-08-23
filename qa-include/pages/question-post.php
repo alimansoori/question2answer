@@ -19,13 +19,13 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/limits.php';
-require_once QA_INCLUDE_DIR . 'pages/question-submit.php';
+require_once ILYA__INCLUDE_DIR . 'app/limits.php';
+require_once ILYA__INCLUDE_DIR . 'pages/question-submit.php';
 
 
 $code = ilya_post_text('code');
@@ -47,7 +47,7 @@ if ($question['answerbutton']) {
 	// The other option ('level') prevents the answer button being shown, in ilya_page_q_post_rules(...)
 
 	if (ilya_clicked('a_doadd') || $pagestate == 'answer') {
-		switch (ilya_user_post_permit_error('permit_post_a', $question, QA_LIMIT_ANSWERS)) {
+		switch (ilya_user_post_permit_error('permit_post_a', $question, ILYA__LIMIT_ANSWERS)) {
 			case 'login':
 				$pageerror = ilya_insert_login_links(ilya_lang_html('question/answer_must_login'), ilya_request());
 				break;
@@ -135,7 +135,7 @@ if ($question['editbutton'] || $question['retagcatbutton']) {
 
 	if ($formtype == 'q_edit') { // get tags for auto-completion
 		if (ilya_opt('do_complete_tags'))
-			$completetags = array_keys(ilya_db_select_with_pending(ilya_db_popular_tags_selectspec(0, QA_DB_RETRIEVE_COMPLETE_TAGS)));
+			$completetags = array_keys(ilya_db_select_with_pending(ilya_db_popular_tags_selectspec(0, ILYA__DB_RETRIEVE_COMPLETE_TAGS)));
 		else
 			$completetags = array();
 	}
@@ -625,7 +625,7 @@ function ilya_page_q_close_q_submit($question, $closepost, &$in, &$errors)
 */
 function ilya_page_q_edit_a_form(&$ilya_content, $id, $answer, $question, $answers, $commentsfollows, $in, $errors)
 {
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	$answerid = $answer['postid'];
 	$prefix = 'a' . $answerid . '_';
@@ -809,7 +809,7 @@ function ilya_page_q_edit_a_submit($answer, $question, $answers, $commentsfollow
 					(($in['commenton'] != $answerid) && @$answers[$in['commenton']]['commentable'])
 				)
 			) { // convert to a comment
-				if (ilya_user_limits_remaining(QA_LIMIT_COMMENTS)) { // already checked 'permit_post_c'
+				if (ilya_user_limits_remaining(ILYA__LIMIT_COMMENTS)) { // already checked 'permit_post_c'
 					ilya_answer_to_comment($answer, $in['commenton'], $in['content'], $in['format'], $in['text'], $setnotify,
 						$userid, $handle, $cookieid, $question, $answers, $commentsfollows, @$in['name'], $in['queued'], $in['silent']);
 
@@ -841,7 +841,7 @@ function ilya_page_q_do_comment($question, $parent, $commentsfollows, $pagestart
 
 	$parentid = $parent['postid'];
 
-	switch (ilya_user_post_permit_error('permit_post_c', $parent, QA_LIMIT_COMMENTS)) {
+	switch (ilya_user_post_permit_error('permit_post_c', $parent, ILYA__LIMIT_COMMENTS)) {
 		case 'login':
 			$error = ilya_insert_login_links(ilya_lang_html('question/comment_must_login'), ilya_request());
 			break;

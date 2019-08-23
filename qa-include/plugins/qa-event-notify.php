@@ -23,9 +23,9 @@ class ilya_event_notify
 {
 	public function process_event($event, $userid, $handle, $cookieid, $params)
 	{
-		require_once QA_INCLUDE_DIR . 'app/emails.php';
-		require_once QA_INCLUDE_DIR . 'app/format.php';
-		require_once QA_INCLUDE_DIR . 'util/string.php';
+		require_once ILYA__INCLUDE_DIR . 'app/emails.php';
+		require_once ILYA__INCLUDE_DIR . 'app/format.php';
+		require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 
 		switch ($event) {
@@ -247,7 +247,7 @@ class ilya_event_notify
 
 
 			case 'u_level':
-				if ($params['level'] >= QA_USER_LEVEL_APPROVED && $params['oldlevel'] < QA_USER_LEVEL_APPROVED) {
+				if ($params['level'] >= ILYA__USER_LEVEL_APPROVED && $params['oldlevel'] < ILYA__USER_LEVEL_APPROVED) {
 					ilya_send_notification($params['userid'], null, $params['handle'], ilya_lang('emails/u_approved_subject'), ilya_lang('emails/u_approved_body'), array(
 						'^url' => ilya_path_absolute('user/' . $params['handle']),
 					));

@@ -19,24 +19,24 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/users.php';
+require_once ILYA__INCLUDE_DIR . 'db/users.php';
 
 
 // Check we're not using single-sign on integration
 
-if (QA_FINAL_EXTERNAL_USERS)
+if (ILYA__FINAL_EXTERNAL_USERS)
 	ilya_fatal_error('User login is handled by external code');
 
 
 // Check the code and unsubscribe the user if appropriate
 
 // check if already unsubscribed
-$unsubscribed = (bool) (ilya_get_logged_in_flags() & QA_USER_FLAGS_NO_MAILINGS);
+$unsubscribed = (bool) (ilya_get_logged_in_flags() & ILYA__USER_FLAGS_NO_MAILINGS);
 $loggedInUserId = ilya_get_logged_in_userid();
 $isLoggedIn = $loggedInUserId !== null;
 
@@ -47,7 +47,7 @@ if (ilya_clicked('dounsubscribe')) {
 	} else {
 		if ($isLoggedIn) {
 			// logged in users can unsubscribe right away
-			ilya_db_user_set_flag($loggedInUserId, QA_USER_FLAGS_NO_MAILINGS, true);
+			ilya_db_user_set_flag($loggedInUserId, ILYA__USER_FLAGS_NO_MAILINGS, true);
 			$unsubscribed = true;
 
 		} else {
@@ -59,7 +59,7 @@ if (ilya_clicked('dounsubscribe')) {
 				$userinfo = ilya_db_select_with_pending(ilya_db_user_account_selectspec($inhandle, false));
 
 				if (strtolower(trim(@$userinfo['emailcode'])) == strtolower($incode)) {
-					ilya_db_user_set_flag($userinfo['userid'], QA_USER_FLAGS_NO_MAILINGS, true);
+					ilya_db_user_set_flag($userinfo['userid'], ILYA__USER_FLAGS_NO_MAILINGS, true);
 					$unsubscribed = true;
 				}
 			}

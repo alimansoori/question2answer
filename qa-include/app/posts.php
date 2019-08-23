@@ -19,18 +19,18 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'ilya-db.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'app/post-create.php';
-require_once QA_INCLUDE_DIR . 'app/post-update.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'util/string.php';
+require_once ILYA__INCLUDE_DIR . 'ilya-db.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/post-create.php';
+require_once ILYA__INCLUDE_DIR . 'app/post-update.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 
 /**
@@ -257,12 +257,12 @@ function ilya_post_is_closed(array $question)
  */
 function ilya_post_set_hidden($postid, $hidden = true, $byuserid = null)
 {
-	ilya_post_set_status($postid, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $byuserid);
+	ilya_post_set_status($postid, $hidden ? ILYA__POST_STATUS_HIDDEN : ILYA__POST_STATUS_NORMAL, $byuserid);
 }
 
 
 /**
- * Change the status of $postid to $status, which should be one of the QA_POST_STATUS_* constants defined in
+ * Change the status of $postid to $status, which should be one of the ILYA__POST_STATUS_* constants defined in
  * /ilya-include/app/post-update.php. Pass the identify of the user making this change in $byuserid (or null for a silent change).
  * @param $postid
  * @param $status
@@ -328,7 +328,7 @@ function ilya_post_delete($postid)
 	$oldpost = ilya_post_get_full($postid, 'QAC');
 
 	if (!$oldpost['hidden']) {
-		ilya_post_set_status($postid, QA_POST_STATUS_HIDDEN, null);
+		ilya_post_set_status($postid, ILYA__POST_STATUS_HIDDEN, null);
 		$oldpost = ilya_post_get_full($postid, 'QAC');
 	}
 

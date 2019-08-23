@@ -35,14 +35,14 @@
 */
 
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 
 // login modules don't work with external user integration
-if (!QA_FINAL_EXTERNAL_USERS) {
+if (!ILYA__FINAL_EXTERNAL_USERS) {
 	ilya_register_plugin_module('login', 'ilya-facebook-login.php', 'ilya_facebook_login', 'Facebook Login');
 	ilya_register_plugin_module('page', 'ilya-facebook-login-page.php', 'ilya_facebook_login_page', 'Facebook Login Page');
 	ilya_register_plugin_layer('ilya-facebook-layer.php', 'Facebook Login Layer');

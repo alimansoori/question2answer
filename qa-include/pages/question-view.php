@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -261,7 +261,7 @@ function ilya_page_q_post_rules($post, $parentpost = null, $siblingposts = null,
  */
 function ilya_page_q_question_view($question, $parentquestion, $closepost, $usershtml, $formrequested)
 {
-	require_once QA_INCLUDE_DIR . 'app/posts.php';
+	require_once ILYA__INCLUDE_DIR . 'app/posts.php';
 
 	$questionid = $question['postid'];
 	$userid = ilya_get_logged_in_userid();
@@ -887,7 +887,7 @@ function ilya_page_q_add_a_form(&$ilya_content, $formid, $captchareason, $questi
 	// The 'approve', 'login', 'confirm', 'limit', 'userblock', 'ipblock' permission errors are reported to the user here
 	// The other option ('level') prevents the answer button being shown, in ilya_page_q_post_rules(...)
 
-	switch (ilya_user_post_permit_error('permit_post_a', $question, QA_LIMIT_ANSWERS)) {
+	switch (ilya_user_post_permit_error('permit_post_a', $question, ILYA__LIMIT_ANSWERS)) {
 		case 'login':
 			$form = array(
 				'title' => ilya_insert_login_links(ilya_lang_html('question/answer_must_login'), ilya_request()),
@@ -1036,7 +1036,7 @@ function ilya_page_q_add_c_form(&$ilya_content, $question, $parent, $formid, $ca
 	// The 'approve', 'login', 'confirm', 'userblock', 'ipblock' permission errors are reported to the user here
 	// The other option ('level') prevents the comment button being shown, in ilya_page_q_post_rules(...)
 
-	switch (ilya_user_post_permit_error('permit_post_c', $parent, QA_LIMIT_COMMENTS)) {
+	switch (ilya_user_post_permit_error('permit_post_c', $parent, ILYA__LIMIT_COMMENTS)) {
 		case 'login':
 			$form = array(
 				'title' => ilya_insert_login_links(ilya_lang_html('question/comment_must_login'), ilya_request()),

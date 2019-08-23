@@ -30,26 +30,26 @@ class ilya_event_limits
 			return;
 		}
 
-		require_once QA_INCLUDE_DIR . 'app/limits.php';
+		require_once ILYA__INCLUDE_DIR . 'app/limits.php';
 
 		switch ($event) {
 			case 'q_queue':
 			case 'q_post':
 			case 'q_claim':
-				ilya_limits_increment($userid, QA_LIMIT_QUESTIONS);
+				ilya_limits_increment($userid, ILYA__LIMIT_QUESTIONS);
 				break;
 
 			case 'a_queue':
 			case 'a_post':
 			case 'a_claim':
-				ilya_limits_increment($userid, QA_LIMIT_ANSWERS);
+				ilya_limits_increment($userid, ILYA__LIMIT_ANSWERS);
 				break;
 
 			case 'c_queue':
 			case 'c_post':
 			case 'c_claim':
 			case 'a_to_c':
-				ilya_limits_increment($userid, QA_LIMIT_COMMENTS);
+				ilya_limits_increment($userid, ILYA__LIMIT_COMMENTS);
 				break;
 
 			case 'q_vote_up':
@@ -61,21 +61,21 @@ class ilya_event_limits
 			case 'c_vote_up':
 			case 'c_vote_down':
 			case 'c_vote_nil':
-				ilya_limits_increment($userid, QA_LIMIT_VOTES);
+				ilya_limits_increment($userid, ILYA__LIMIT_VOTES);
 				break;
 
 			case 'q_flag':
 			case 'a_flag':
 			case 'c_flag':
-				ilya_limits_increment($userid, QA_LIMIT_FLAGS);
+				ilya_limits_increment($userid, ILYA__LIMIT_FLAGS);
 				break;
 
 			case 'u_message':
-				ilya_limits_increment($userid, QA_LIMIT_MESSAGES);
+				ilya_limits_increment($userid, ILYA__LIMIT_MESSAGES);
 				break;
 
 			case 'u_wall_post':
-				ilya_limits_increment($userid, QA_LIMIT_WALL_POSTS);
+				ilya_limits_increment($userid, ILYA__LIMIT_WALL_POSTS);
 				break;
 		}
 
@@ -91,11 +91,11 @@ class ilya_event_limits
 			is_numeric(array_search($event, $writeactions))
 		) {
 			if (isset($userid)) {
-				require_once QA_INCLUDE_DIR . 'app/users.php';
+				require_once ILYA__INCLUDE_DIR . 'app/users.php';
 				ilya_user_report_action($userid, $event);
 
 			} elseif (isset($cookieid)) {
-				require_once QA_INCLUDE_DIR . 'app/cookies.php';
+				require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
 				ilya_cookie_report_action($cookieid, $event);
 			}
 		}

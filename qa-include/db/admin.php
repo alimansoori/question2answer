@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -39,16 +39,16 @@ function ilya_db_mysql_version()
  */
 function ilya_db_table_size()
 {
-	if (defined('QA_MYSQL_USERS_PREFIX')) { // check if one of the prefixes is a prefix itself of the other
-		if (stripos(QA_MYSQL_USERS_PREFIX, QA_MYSQL_TABLE_PREFIX) === 0)
-			$prefixes = array(QA_MYSQL_TABLE_PREFIX);
-		elseif (stripos(QA_MYSQL_TABLE_PREFIX, QA_MYSQL_USERS_PREFIX) === 0)
-			$prefixes = array(QA_MYSQL_USERS_PREFIX);
+	if (defined('ILYA__MYSQL_USERS_PREFIX')) { // check if one of the prefixes is a prefix itself of the other
+		if (stripos(ILYA__MYSQL_USERS_PREFIX, ILYA__MYSQL_TABLE_PREFIX) === 0)
+			$prefixes = array(ILYA__MYSQL_TABLE_PREFIX);
+		elseif (stripos(ILYA__MYSQL_TABLE_PREFIX, ILYA__MYSQL_USERS_PREFIX) === 0)
+			$prefixes = array(ILYA__MYSQL_USERS_PREFIX);
 		else
-			$prefixes = array(QA_MYSQL_TABLE_PREFIX, QA_MYSQL_USERS_PREFIX);
+			$prefixes = array(ILYA__MYSQL_TABLE_PREFIX, ILYA__MYSQL_USERS_PREFIX);
 
 	} else
-		$prefixes = array(QA_MYSQL_TABLE_PREFIX);
+		$prefixes = array(ILYA__MYSQL_TABLE_PREFIX);
 
 	$size = 0;
 	foreach ($prefixes as $prefix) {
@@ -202,7 +202,7 @@ function ilya_db_get_unapproved_users($count)
 {
 	$results = ilya_db_read_all_assoc(ilya_db_query_sub(
 		"SELECT ^users.userid, UNIX_TIMESTAMP(created) AS created, createip, email, handle, flags, title, content FROM ^users LEFT JOIN ^userprofile ON ^users.userid=^userprofile.userid AND LENGTH(content)>0 WHERE level<# AND NOT (flags&#) ORDER BY created DESC LIMIT #",
-		QA_USER_LEVEL_APPROVED, QA_USER_FLAGS_USER_BLOCKED, $count
+		ILYA__USER_LEVEL_APPROVED, ILYA__USER_FLAGS_USER_BLOCKED, $count
 	));
 
 	$users = array();
@@ -269,11 +269,11 @@ function ilya_db_category_child_depth($categoryid)
 	// (Incidentally, this could be done by keeping a count for every category of how many generations of offspring it has.)
 
 	$result = ilya_db_read_one_assoc(ilya_db_query_sub(
-		'SELECT COUNT(child1.categoryid) AS count1, COUNT(child2.categoryid) AS count2, COUNT(child3.categoryid) AS count3 FROM ^categories AS child1 LEFT JOIN ^categories AS child2 ON child2.parentid=child1.categoryid LEFT JOIN ^categories AS child3 ON child3.parentid=child2.categoryid WHERE child1.parentid=#;', // requires QA_CATEGORY_DEPTH=4
+		'SELECT COUNT(child1.categoryid) AS count1, COUNT(child2.categoryid) AS count2, COUNT(child3.categoryid) AS count3 FROM ^categories AS child1 LEFT JOIN ^categories AS child2 ON child2.parentid=child1.categoryid LEFT JOIN ^categories AS child3 ON child3.parentid=child2.categoryid WHERE child1.parentid=#;', // requires ILYA__CATEGORY_DEPTH=4
 		$categoryid
 	));
 
-	for ($depth = QA_CATEGORY_DEPTH - 1; $depth >= 1; $depth--)
+	for ($depth = ILYA__CATEGORY_DEPTH - 1; $depth >= 1; $depth--)
 		if ($result['count' . $depth])
 			return $depth;
 
@@ -317,7 +317,7 @@ function ilya_db_categories_recalc_backpaths($firstcategoryid, $lastcategoryid =
 
 	ilya_db_query_sub(
 		"UPDATE ^categories AS x, (SELECT cat1.categoryid, CONCAT_WS('/', cat1.tags, cat2.tags, cat3.tags, cat4.tags) AS backpath FROM ^categories AS cat1 LEFT JOIN ^categories AS cat2 ON cat1.parentid=cat2.categoryid LEFT JOIN ^categories AS cat3 ON cat2.parentid=cat3.categoryid LEFT JOIN ^categories AS cat4 ON cat3.parentid=cat4.categoryid WHERE cat1.categoryid BETWEEN # AND #) AS a SET x.backpath=a.backpath WHERE x.categoryid=a.categoryid",
-		$firstcategoryid, $lastcategoryid // requires QA_CATEGORY_DEPTH=4
+		$firstcategoryid, $lastcategoryid // requires ILYA__CATEGORY_DEPTH=4
 	);
 }
 

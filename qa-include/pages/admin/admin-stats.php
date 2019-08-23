@@ -19,15 +19,15 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/recalc.php';
-require_once QA_INCLUDE_DIR . 'app/admin.php';
-require_once QA_INCLUDE_DIR . 'db/admin.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'db/recalc.php';
+require_once ILYA__INCLUDE_DIR . 'app/admin.php';
+require_once ILYA__INCLUDE_DIR . 'db/admin.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 
 // Check admin privileges (do late to allow one DB query)
@@ -63,12 +63,12 @@ $ilya_content['form'] = array(
 	'fields' => array(
 		'q2a_version' => array(
 			'label' => ilya_lang_html('admin/q2a_version'),
-			'value' => ilya_html(QA_VERSION),
+			'value' => ilya_html(ILYA__VERSION),
 		),
 
 		'q2a_date' => array(
 			'label' => ilya_lang_html('admin/q2a_build_date'),
-			'value' => ilya_html(QA_BUILD_DATE),
+			'value' => ilya_html(ILYA__BUILD_DATE),
 		),
 
 		'q2a_latest' => array(
@@ -173,7 +173,7 @@ $ilya_content['form'] = array(
 
 		'users' => array(
 			'label' => ilya_lang_html('admin/users_registered'),
-			'value' => QA_FINAL_EXTERNAL_USERS ? '' : ilya_html(ilya_format_number(ilya_db_count_users())),
+			'value' => ILYA__FINAL_EXTERNAL_USERS ? '' : ilya_html(ilya_format_number(ilya_db_count_users())),
 		),
 
 		'users_active' => array(
@@ -193,7 +193,7 @@ $ilya_content['form'] = array(
 	),
 );
 
-if (QA_FINAL_EXTERNAL_USERS)
+if (ILYA__FINAL_EXTERNAL_USERS)
 	unset($ilya_content['form']['fields']['users']);
 else
 	unset($ilya_content['form']['fields']['users_active']);
@@ -256,7 +256,7 @@ $ilya_content['form_2'] = array(
 if (!ilya_using_categories())
 	unset($ilya_content['form_2']['buttons']['recalc_categories']);
 
-if (defined('QA_BLOBS_DIRECTORY')) {
+if (defined('ILYA__BLOBS_DIRECTORY')) {
 	if (ilya_db_has_blobs_in_db()) {
 		$ilya_content['form_2']['buttons']['blobs_to_disk'] = array(
 			'label' => ilya_lang_html('admin/blobs_to_disk'),
@@ -275,11 +275,11 @@ if (defined('QA_BLOBS_DIRECTORY')) {
 }
 
 
-$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
+$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
 $ilya_content['script_var']['ilya_warning_recalc'] = ilya_lang('admin/stop_recalc_warning');
 
 $ilya_content['script_onloads'][] = array(
-	"ilya_version_check('https://raw.githubusercontent.com/q2a/question2answer/master/VERSION.txt', " . ilya_js(ilya_html(QA_VERSION), true) . ", 'q2a-version', true);"
+	"ilya_version_check('https://raw.githubusercontent.com/q2a/question2answer/master/VERSION.txt', " . ilya_js(ilya_html(ILYA__VERSION), true) . ", 'q2a-version', true);"
 );
 
 $ilya_content['navigation']['sub'] = ilya_admin_sub_navigation();

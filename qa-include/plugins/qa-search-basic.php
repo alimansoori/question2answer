@@ -23,7 +23,7 @@ class ilya_search_basic
 {
 	public function index_post($postid, $type, $questionid, $parentid, $title, $content, $format, $text, $tagstring, $categoryid)
 	{
-		require_once QA_INCLUDE_DIR . 'db/post-create.php';
+		require_once ILYA__INCLUDE_DIR . 'db/post-create.php';
 
 		// Get words from each textual element
 
@@ -72,7 +72,7 @@ class ilya_search_basic
 
 	public function unindex_post($postid)
 	{
-		require_once QA_INCLUDE_DIR . 'db/post-update.php';
+		require_once ILYA__INCLUDE_DIR . 'db/post-update.php';
 
 		$titlewordids = ilya_db_titlewords_get_post_wordids($postid);
 		ilya_db_titlewords_delete_post($postid);
@@ -108,8 +108,8 @@ class ilya_search_basic
 
 	public function process_search($query, $start, $count, $userid, $absoluteurls, $fullcontent)
 	{
-		require_once QA_INCLUDE_DIR . 'db/selects.php';
-		require_once QA_INCLUDE_DIR . 'util/string.php';
+		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+		require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 		$words = ilya_string_to_words($query);
 

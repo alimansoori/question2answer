@@ -19,15 +19,15 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'app/limits.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/limits.php';
 
 $loginUserId = ilya_get_logged_in_userid();
 $loginUserHandle = ilya_get_logged_in_handle();
@@ -41,9 +41,9 @@ if ($req === null)
 elseif ($req === 'sent')
 	$showOutbox = true;
 else
-	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 
-if (QA_FINAL_EXTERNAL_USERS)
+if (ILYA__FINAL_EXTERNAL_USERS)
 	ilya_fatal_error('User accounts are handled by external code');
 
 if (!isset($loginUserId)) {
@@ -53,7 +53,7 @@ if (!isset($loginUserId)) {
 }
 
 if (!ilya_opt('allow_private_messages') || !ilya_opt('show_message_history'))
-	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 
 
 // Find the messages for this user

@@ -1,5 +1,5 @@
 <?php
-require_once QA_INCLUDE_DIR.'app/limits.php';
+require_once ILYA__INCLUDE_DIR.'app/limits.php';
 
 class AppLimitsTest extends PHPUnit_Framework_TestCase
 {

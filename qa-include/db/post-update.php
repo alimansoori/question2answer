@@ -19,13 +19,13 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 
-require_once QA_INCLUDE_DIR . 'app/updates.php';
+require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 
 /**
@@ -41,7 +41,7 @@ function ilya_db_post_set_selchildid($questionid, $selchildid, $lastuserid = nul
 		"UPDATE ^posts AS x, (SELECT selchildid FROM ^posts WHERE postid=#) AS a " .
 		"SET x.updated=NULL, x.updatetype=NULL, x.lastuserid=NULL, x.lastip=NULL WHERE " . // if previous answer's last edit was to be selected, remove that
 		"x.postid=a.selchildid AND x.updatetype=$",
-		$questionid, QA_UPDATE_SELECTED
+		$questionid, ILYA__UPDATE_SELECTED
 	);
 
 	ilya_db_query_sub(
@@ -52,7 +52,7 @@ function ilya_db_post_set_selchildid($questionid, $selchildid, $lastuserid = nul
 	if (isset($selchildid) && isset($lastuserid) && isset($lastip)) {
 		ilya_db_query_sub(
 			"UPDATE ^posts SET updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#",
-			QA_UPDATE_SELECTED, $lastuserid, bin2hex(@inet_pton($lastip)), $selchildid
+			ILYA__UPDATE_SELECTED, $lastuserid, bin2hex(@inet_pton($lastip)), $selchildid
 		);
 	}
 }
@@ -71,7 +71,7 @@ function ilya_db_post_set_closed($questionid, $closedbyid, $lastuserid = null, $
 	if (isset($lastuserid) || isset($lastip)) {
 		ilya_db_query_sub(
 			"UPDATE ^posts SET closedbyid=#, updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#",
-			$closedbyid, QA_UPDATE_CLOSED, $lastuserid, bin2hex(@inet_pton($lastip)), $questionid
+			$closedbyid, ILYA__UPDATE_CLOSED, $lastuserid, bin2hex(@inet_pton($lastip)), $questionid
 		);
 	} else {
 		ilya_db_query_sub(
@@ -90,7 +90,7 @@ function ilya_db_post_set_closed($questionid, $closedbyid, $lastuserid = null, $
  * @param $lastip
  * @param string $updatetype
  */
-function ilya_db_post_set_type($postid, $type, $lastuserid = null, $lastip = null, $updatetype = QA_UPDATE_TYPE)
+function ilya_db_post_set_type($postid, $type, $lastuserid = null, $lastip = null, $updatetype = ILYA__UPDATE_TYPE)
 {
 	if (isset($lastuserid) || isset($lastip)) {
 		ilya_db_query_sub(
@@ -119,7 +119,7 @@ function ilya_db_post_set_parent($postid, $parentid, $lastuserid = null, $lastip
 	if (isset($lastuserid) || isset($lastip)) {
 		ilya_db_query_sub(
 			"UPDATE ^posts SET parentid=#, updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#",
-			$parentid, QA_UPDATE_PARENT, $lastuserid, bin2hex(@inet_pton($lastip)), $postid
+			$parentid, ILYA__UPDATE_PARENT, $lastuserid, bin2hex(@inet_pton($lastip)), $postid
 		);
 	} else {
 		ilya_db_query_sub(
@@ -145,7 +145,7 @@ function ilya_db_post_set_parent($postid, $parentid, $lastuserid = null, $lastip
  * @param string $updatetype
  * @param $name
  */
-function ilya_db_post_set_content($postid, $title, $content, $format, $tagstring, $notify, $lastuserid = null, $lastip = null, $updatetype = QA_UPDATE_CONTENT, $name = null)
+function ilya_db_post_set_content($postid, $title, $content, $format, $tagstring, $notify, $lastuserid = null, $lastip = null, $updatetype = ILYA__UPDATE_CONTENT, $name = null)
 {
 	if (isset($lastuserid) || isset($lastip)) {
 		// use COALESCE() for name since $name=null means it should not be modified (for backwards compatibility)
@@ -189,7 +189,7 @@ function ilya_db_post_set_category($postid, $categoryid, $lastuserid = null, $la
 	if (isset($lastuserid) || isset($lastip)) {
 		ilya_db_query_sub(
 			"UPDATE ^posts SET categoryid=#, updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#",
-			$categoryid, QA_UPDATE_CATEGORY, $lastuserid, bin2hex(@inet_pton($lastip)), $postid
+			$categoryid, ILYA__UPDATE_CATEGORY, $lastuserid, bin2hex(@inet_pton($lastip)), $postid
 		);
 	} else {
 		ilya_db_query_sub(
@@ -208,7 +208,7 @@ function ilya_db_post_set_category($postid, $categoryid, $lastuserid = null, $la
 function ilya_db_posts_set_category_path($postids, $path)
 {
 	if (count($postids)) {
-		// requires QA_CATEGORY_DEPTH=4
+		// requires ILYA__CATEGORY_DEPTH=4
 		ilya_db_query_sub(
 			'UPDATE ^posts SET categoryid=#, catidpath1=#, catidpath2=#, catidpath3=# WHERE postid IN (#)',
 			$path['categoryid'], $path['catidpath1'], $path['catidpath2'], $path['catidpath3'], $postids

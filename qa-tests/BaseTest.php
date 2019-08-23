@@ -11,9 +11,9 @@ class BaseTest extends PHPUnit_Framework_TestCase
 
 	public function test__ilya_ilya_version_below()
 	{
-		// as we cannot change the QA_VERSION constant, we test an appended version against the set constant
-		$buildVersion = QA_VERSION . '.1234';
-		$betaVersion = QA_VERSION . '-beta1';
+		// as we cannot change the ILYA__VERSION constant, we test an appended version against the set constant
+		$buildVersion = ILYA__VERSION . '.1234';
+		$betaVersion = ILYA__VERSION . '-beta1';
 		$this->assertSame(true, ilya_ilya_version_below($buildVersion));
 		$this->assertSame(false, ilya_ilya_version_below($betaVersion));
 	}

@@ -19,12 +19,12 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA__INCLUDE_DIR . 'app/admin.php';
 
 
 // Check admin privileges
@@ -40,7 +40,7 @@ $ilya_content['title'] = ilya_lang_html('admin/admin_title') . ' - ' . ilya_lang
 
 $ilya_content['error'] = ilya_admin_page_error();
 
-$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
+$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
 
 
 $pluginManager = new Q2A_Plugin_PluginManager();
@@ -120,7 +120,7 @@ if (!empty($fileSystemPlugins)) {
 	$sortedPluginFiles = array();
 
 	foreach ($fileSystemPlugins as $pluginDirectory) {
-		$pluginDirectoryPath = QA_PLUGIN_DIR . $pluginDirectory;
+		$pluginDirectoryPath = ILYA__PLUGIN_DIR . $pluginDirectory;
 		$metadata = $metadataUtil->fetchFromAddonPath($pluginDirectoryPath);
 		if (empty($metadata)) {
 			$pluginFile = $pluginDirectoryPath . '/ilya-plugin.php';
@@ -142,7 +142,7 @@ if (!empty($fileSystemPlugins)) {
 	foreach ($sortedPluginFiles as $pluginDirectory => $metadata) {
 		$pluginIndex++;
 
-		$pluginDirectoryPath = QA_PLUGIN_DIR . $pluginDirectory;
+		$pluginDirectoryPath = ILYA__PLUGIN_DIR . $pluginDirectory;
 		$hash = $pluginHashes[$pluginDirectory];
 		$showthisform = $showpluginforms && (ilya_get('show') == $hash);
 

@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -44,7 +44,7 @@ function ilya_cookie_get_create()
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'db/cookies.php';
+	require_once ILYA__INCLUDE_DIR . 'db/cookies.php';
 
 	$cookieid = ilya_cookie_get();
 
@@ -53,7 +53,7 @@ function ilya_cookie_get_create()
 		$cookieid = ilya_db_cookie_create(ilya_remote_ip_address());
 	}
 
-	setcookie('ilya_id', $cookieid, time() + 86400 * 365, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
+	setcookie('ilya_id', $cookieid, time() + 86400 * 365, '/', ILYA__COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
 	$_COOKIE['ilya_id'] = $cookieid;
 
 	return $cookieid;
@@ -68,7 +68,7 @@ function ilya_cookie_get_create()
  */
 function ilya_cookie_report_action($cookieid, $action)
 {
-	require_once QA_INCLUDE_DIR . 'db/cookies.php';
+	require_once ILYA__INCLUDE_DIR . 'db/cookies.php';
 
 	ilya_db_cookie_written($cookieid, ilya_remote_ip_address());
 }

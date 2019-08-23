@@ -20,8 +20,8 @@
 */
 
 
-define('QA_VERSION', '1.8.3'); // also used as suffix for .js and .css requests
-define('QA_BUILD_DATE', '2019-01-12');
+define('ILYA__VERSION', '1.8.3'); // also used as suffix for .js and .css requests
+define('ILYA__BUILD_DATE', '2019-01-12');
 
 
 /**
@@ -40,7 +40,7 @@ define('QA_BUILD_DATE', '2019-01-12');
 function ilya_autoload($class)
 {
 	if (strpos($class, 'Q2A_') === 0)
-		require QA_INCLUDE_DIR . strtr($class, '_', '/') . '.php';
+		require ILYA__INCLUDE_DIR . strtr($class, '_', '/') . '.php';
 }
 spl_autoload_register('ilya_autoload');
 
@@ -50,12 +50,12 @@ spl_autoload_register('ilya_autoload');
 ilya_initialize_php();
 ilya_initialize_constants_1();
 
-if (defined('QA_WORDPRESS_LOAD_FILE')) {
+if (defined('ILYA__WORDPRESS_LOAD_FILE')) {
 	// if relevant, load WordPress integration in global scope
-	require_once QA_WORDPRESS_LOAD_FILE;
-} elseif (defined('QA_JOOMLA_LOAD_FILE')) {
+	require_once ILYA__WORDPRESS_LOAD_FILE;
+} elseif (defined('ILYA__JOOMLA_LOAD_FILE')) {
 	// if relevant, load Joomla JConfig class into global scope
-	require_once QA_JOOMLA_LOAD_FILE;
+	require_once ILYA__JOOMLA_LOAD_FILE;
 }
 
 
@@ -64,7 +64,7 @@ ilya_initialize_modularity();
 ilya_register_core_modules();
 
 ilya_initialize_predb_plugins();
-require_once QA_INCLUDE_DIR . 'ilya-db.php';
+require_once ILYA__INCLUDE_DIR . 'ilya-db.php';
 ilya_db_allow_connect();
 
 // $ilya_autoconnect defaults to true so that optional plugins will load for external code. Q2A core
@@ -109,7 +109,7 @@ function ilya_version_to_float($version)
  */
 function ilya_ilya_version_below($version)
 {
-	return version_compare(QA_VERSION, $version) < 0;
+	return version_compare(ILYA__VERSION, $version) < 0;
 }
 
 
@@ -169,46 +169,46 @@ function ilya_initialize_constants_1()
 {
 	global $ilya_request_map;
 
-	define('QA_CATEGORY_DEPTH', 4); // you can't change this number!
+	define('ILYA__CATEGORY_DEPTH', 4); // you can't change this number!
 
-	if (!defined('QA_BASE_DIR'))
-		define('QA_BASE_DIR', dirname(dirname(__FILE__)) . '/'); // try out best if not set in index.php or ilya-index.php - won't work with symbolic links
+	if (!defined('ILYA__BASE_DIR'))
+		define('ILYA__BASE_DIR', dirname(dirname(__FILE__)) . '/'); // try out best if not set in index.php or ilya-index.php - won't work with symbolic links
 
-	define('QA_EXTERNAL_DIR', QA_BASE_DIR . 'ilya-external/');
-	define('QA_INCLUDE_DIR', QA_BASE_DIR . 'ilya-include/');
-	define('QA_LANG_DIR', QA_BASE_DIR . 'ilya-lang/');
-	define('QA_THEME_DIR', QA_BASE_DIR . 'ilya-theme/');
-	define('QA_PLUGIN_DIR', QA_BASE_DIR . 'ilya-plugin/');
+	define('ILYA__EXTERNAL_DIR', ILYA__BASE_DIR . 'ilya-external/');
+	define('ILYA__INCLUDE_DIR', ILYA__BASE_DIR . 'ilya-include/');
+	define('ILYA__LANG_DIR', ILYA__BASE_DIR . 'ilya-lang/');
+	define('ILYA__THEME_DIR', ILYA__BASE_DIR . 'ilya-theme/');
+	define('ILYA__PLUGIN_DIR', ILYA__BASE_DIR . 'ilya-plugin/');
 
-	if (!file_exists(QA_BASE_DIR . 'ilya-config.php'))
+	if (!file_exists(ILYA__BASE_DIR . 'ilya-config.php'))
 		ilya_fatal_error('The config file could not be found. Please read the instructions in ilya-config-example.php.');
 
-	require_once QA_BASE_DIR . 'ilya-config.php';
+	require_once ILYA__BASE_DIR . 'ilya-config.php';
 
-	$ilya_request_map = isset($QA_CONST_PATH_MAP) && is_array($QA_CONST_PATH_MAP) ? $QA_CONST_PATH_MAP : array();
+	$ilya_request_map = isset($ILYA__CONST_PATH_MAP) && is_array($ILYA__CONST_PATH_MAP) ? $ILYA__CONST_PATH_MAP : array();
 
-	if (defined('QA_WORDPRESS_INTEGRATE_PATH') && strlen(QA_WORDPRESS_INTEGRATE_PATH)) {
-		define('QA_FINAL_WORDPRESS_INTEGRATE_PATH', QA_WORDPRESS_INTEGRATE_PATH . ((substr(QA_WORDPRESS_INTEGRATE_PATH, -1) == '/') ? '' : '/'));
-		define('QA_WORDPRESS_LOAD_FILE', QA_FINAL_WORDPRESS_INTEGRATE_PATH . 'wp-load.php');
+	if (defined('ILYA__WORDPRESS_INTEGRATE_PATH') && strlen(ILYA__WORDPRESS_INTEGRATE_PATH)) {
+		define('ILYA__FINAL_WORDPRESS_INTEGRATE_PATH', ILYA__WORDPRESS_INTEGRATE_PATH . ((substr(ILYA__WORDPRESS_INTEGRATE_PATH, -1) == '/') ? '' : '/'));
+		define('ILYA__WORDPRESS_LOAD_FILE', ILYA__FINAL_WORDPRESS_INTEGRATE_PATH . 'wp-load.php');
 
-		if (!is_readable(QA_WORDPRESS_LOAD_FILE)) {
-			ilya_fatal_error('Could not find wp-load.php file for WordPress integration - please check QA_WORDPRESS_INTEGRATE_PATH in ilya-config.php');
+		if (!is_readable(ILYA__WORDPRESS_LOAD_FILE)) {
+			ilya_fatal_error('Could not find wp-load.php file for WordPress integration - please check ILYA__WORDPRESS_INTEGRATE_PATH in ilya-config.php');
 		}
-	} elseif (defined('QA_JOOMLA_INTEGRATE_PATH') && strlen(QA_JOOMLA_INTEGRATE_PATH)) {
-		define('QA_FINAL_JOOMLA_INTEGRATE_PATH', QA_JOOMLA_INTEGRATE_PATH . ((substr(QA_JOOMLA_INTEGRATE_PATH, -1) == '/') ? '' : '/'));
-		define('QA_JOOMLA_LOAD_FILE', QA_FINAL_JOOMLA_INTEGRATE_PATH . 'configuration.php');
+	} elseif (defined('ILYA__JOOMLA_INTEGRATE_PATH') && strlen(ILYA__JOOMLA_INTEGRATE_PATH)) {
+		define('ILYA__FINAL_JOOMLA_INTEGRATE_PATH', ILYA__JOOMLA_INTEGRATE_PATH . ((substr(ILYA__JOOMLA_INTEGRATE_PATH, -1) == '/') ? '' : '/'));
+		define('ILYA__JOOMLA_LOAD_FILE', ILYA__FINAL_JOOMLA_INTEGRATE_PATH . 'configuration.php');
 
-		if (!is_readable(QA_JOOMLA_LOAD_FILE)) {
-			ilya_fatal_error('Could not find configuration.php file for Joomla integration - please check QA_JOOMLA_INTEGRATE_PATH in ilya-config.php');
+		if (!is_readable(ILYA__JOOMLA_LOAD_FILE)) {
+			ilya_fatal_error('Could not find configuration.php file for Joomla integration - please check ILYA__JOOMLA_INTEGRATE_PATH in ilya-config.php');
 		}
 	}
 
 	// Polyfills
 
 	// password_hash compatibility for 5.3-5.4
-	define('QA_PASSWORD_HASH', !ilya_php_version_below('5.3.7'));
-	if (QA_PASSWORD_HASH) {
-		require_once QA_INCLUDE_DIR . 'vendor/password_compat.php';
+	define('ILYA__PASSWORD_HASH', !ilya_php_version_below('5.3.7'));
+	if (ILYA__PASSWORD_HASH) {
+		require_once ILYA__INCLUDE_DIR . 'vendor/password_compat.php';
 	}
 
 	// http://php.net/manual/en/function.hash-equals.php#115635
@@ -237,15 +237,15 @@ function ilya_initialize_constants_2()
 	// Default values if not set in ilya-config.php
 
 	$defaults = array(
-		'QA_COOKIE_DOMAIN' => '',
-		'QA_HTML_COMPRESSION' => true,
-		'QA_MAX_LIMIT_START' => 19999,
-		'QA_IGNORED_WORDS_FREQ' => 10000,
-		'QA_ALLOW_UNINDEXED_QUERIES' => false,
-		'QA_OPTIMIZE_LOCAL_DB' => true,
-		'QA_OPTIMIZE_DISTANT_DB' => false,
-		'QA_PERSISTENT_CONN_DB' => false,
-		'QA_DEBUG_PERFORMANCE' => false,
+		'ILYA__COOKIE_DOMAIN' => '',
+		'ILYA__HTML_COMPRESSION' => true,
+		'ILYA__MAX_LIMIT_START' => 19999,
+		'ILYA__IGNORED_WORDS_FREQ' => 10000,
+		'ILYA__ALLOW_UNINDEXED_QUERIES' => false,
+		'ILYA__OPTIMIZE_LOCAL_DB' => true,
+		'ILYA__OPTIMIZE_DISTANT_DB' => false,
+		'ILYA__PERSISTENT_CONN_DB' => false,
+		'ILYA__DEBUG_PERFORMANCE' => false,
 	);
 
 	foreach ($defaults as $key => $def) {
@@ -256,7 +256,7 @@ function ilya_initialize_constants_2()
 
 	// Start performance monitoring
 
-	if (QA_DEBUG_PERFORMANCE) {
+	if (ILYA__DEBUG_PERFORMANCE) {
 		global $ilya_usage;
 		$ilya_usage = new Q2A_Util_Usage;
 		// ensure errors are displayed
@@ -265,12 +265,12 @@ function ilya_initialize_constants_2()
 
 	// More for WordPress integration
 
-	if (defined('QA_FINAL_WORDPRESS_INTEGRATE_PATH')) {
-		define('QA_FINAL_MYSQL_HOSTNAME', DB_HOST);
-		define('QA_FINAL_MYSQL_USERNAME', DB_USER);
-		define('QA_FINAL_MYSQL_PASSWORD', DB_PASSWORD);
-		define('QA_FINAL_MYSQL_DATABASE', DB_NAME);
-		define('QA_FINAL_EXTERNAL_USERS', true);
+	if (defined('ILYA__FINAL_WORDPRESS_INTEGRATE_PATH')) {
+		define('ILYA__FINAL_MYSQL_HOSTNAME', DB_HOST);
+		define('ILYA__FINAL_MYSQL_USERNAME', DB_USER);
+		define('ILYA__FINAL_MYSQL_PASSWORD', DB_PASSWORD);
+		define('ILYA__FINAL_MYSQL_DATABASE', DB_NAME);
+		define('ILYA__FINAL_EXTERNAL_USERS', true);
 
 		// Undo WordPress's addition of magic quotes to various things (leave $_COOKIE as is since WP code might need that)
 
@@ -293,35 +293,35 @@ function ilya_initialize_constants_2()
 		$_POST = ilya_undo_wordpress_quoting($_POST, false);
 		$_SERVER['PHP_SELF'] = stripslashes($_SERVER['PHP_SELF']);
 
-	} elseif (defined('QA_FINAL_JOOMLA_INTEGRATE_PATH')) {
+	} elseif (defined('ILYA__FINAL_JOOMLA_INTEGRATE_PATH')) {
 		// More for Joomla integration
 		$jconfig = new JConfig();
-		define('QA_FINAL_MYSQL_HOSTNAME', $jconfig->host);
-		define('QA_FINAL_MYSQL_USERNAME', $jconfig->user);
-		define('QA_FINAL_MYSQL_PASSWORD', $jconfig->password);
-		define('QA_FINAL_MYSQL_DATABASE', $jconfig->db);
-		define('QA_FINAL_EXTERNAL_USERS', true);
+		define('ILYA__FINAL_MYSQL_HOSTNAME', $jconfig->host);
+		define('ILYA__FINAL_MYSQL_USERNAME', $jconfig->user);
+		define('ILYA__FINAL_MYSQL_PASSWORD', $jconfig->password);
+		define('ILYA__FINAL_MYSQL_DATABASE', $jconfig->db);
+		define('ILYA__FINAL_EXTERNAL_USERS', true);
 	} else {
-		define('QA_FINAL_MYSQL_HOSTNAME', QA_MYSQL_HOSTNAME);
-		define('QA_FINAL_MYSQL_USERNAME', QA_MYSQL_USERNAME);
-		define('QA_FINAL_MYSQL_PASSWORD', QA_MYSQL_PASSWORD);
-		define('QA_FINAL_MYSQL_DATABASE', QA_MYSQL_DATABASE);
-		define('QA_FINAL_EXTERNAL_USERS', QA_EXTERNAL_USERS);
+		define('ILYA__FINAL_MYSQL_HOSTNAME', ILYA__MYSQL_HOSTNAME);
+		define('ILYA__FINAL_MYSQL_USERNAME', ILYA__MYSQL_USERNAME);
+		define('ILYA__FINAL_MYSQL_PASSWORD', ILYA__MYSQL_PASSWORD);
+		define('ILYA__FINAL_MYSQL_DATABASE', ILYA__MYSQL_DATABASE);
+		define('ILYA__FINAL_EXTERNAL_USERS', ILYA__EXTERNAL_USERS);
 	}
 
-	if (defined('QA_MYSQL_PORT')) {
-		define('QA_FINAL_MYSQL_PORT', QA_MYSQL_PORT);
+	if (defined('ILYA__MYSQL_PORT')) {
+		define('ILYA__FINAL_MYSQL_PORT', ILYA__MYSQL_PORT);
 	}
 
 	// Possible URL schemes for Q2A and the string used for url scheme testing
 
-	define('QA_URL_FORMAT_INDEX', 0);  // http://...../index.php/123/why-is-the-sky-blue
-	define('QA_URL_FORMAT_NEAT', 1);   // http://...../123/why-is-the-sky-blue [requires .htaccess]
-	define('QA_URL_FORMAT_PARAM', 3);  // http://...../?qa=123/why-is-the-sky-blue
-	define('QA_URL_FORMAT_PARAMS', 4); // http://...../?qa=123&ilya_1=why-is-the-sky-blue
-	define('QA_URL_FORMAT_SAFEST', 5); // http://...../index.php?qa=123&ilya_1=why-is-the-sky-blue
+	define('ILYA__URL_FORMAT_INDEX', 0);  // http://...../index.php/123/why-is-the-sky-blue
+	define('ILYA__URL_FORMAT_NEAT', 1);   // http://...../123/why-is-the-sky-blue [requires .htaccess]
+	define('ILYA__URL_FORMAT_PARAM', 3);  // http://...../?qa=123/why-is-the-sky-blue
+	define('ILYA__URL_FORMAT_PARAMS', 4); // http://...../?qa=123&ilya_1=why-is-the-sky-blue
+	define('ILYA__URL_FORMAT_SAFEST', 5); // http://...../index.php?qa=123&ilya_1=why-is-the-sky-blue
 
-	define('QA_URL_TEST_STRING', '$&-_~#%\\@^*()][`\';=:|".{},!<>?# π§½Жש'); // tests escaping, spaces, quote slashing and unicode - but not + and /
+	define('ILYA__URL_TEST_STRING', '$&-_~#%\\@^*()][`\';=:|".{},!<>?# π§½Жש'); // tests escaping, spaces, quote slashing and unicode - but not + and /
 }
 
 
@@ -352,7 +352,7 @@ function ilya_initialize_buffering($request = '')
 		return false;
 	}
 
-	$useGzip = QA_HTML_COMPRESSION && substr($request, 0, 6) !== 'admin/' && extension_loaded('zlib');
+	$useGzip = ILYA__HTML_COMPRESSION && substr($request, 0, 6) !== 'admin/' && extension_loaded('zlib');
 	ob_start($useGzip ? 'ob_gzhandler' : null);
 	return true;
 }
@@ -399,7 +399,7 @@ function ilya_initialize_postdb_plugins()
 {
 	global $ilya_pluginManager;
 
-	require_once QA_INCLUDE_DIR . 'app/options.php';
+	require_once ILYA__INCLUDE_DIR . 'app/options.php';
 	ilya_preload_options();
 
 	$ilya_pluginManager->loadPluginsAfterDbInit();
@@ -426,7 +426,7 @@ function ilya_page_db_fail_handler($type, $errno = null, $error = null, $query =
 	$pass_failure_error = $error;
 	$pass_failure_query = $query;
 
-	require_once QA_INCLUDE_DIR . 'ilya-install.php';
+	require_once ILYA__INCLUDE_DIR . 'ilya-install.php';
 
 	ilya_exit('error');
 }
@@ -538,7 +538,7 @@ function ilya_load_override_files()
  * @param string $directory
  * @param string $urltoroot
  */
-function ilya_register_module($type, $include, $class, $name, $directory = QA_INCLUDE_DIR, $urltoroot = null)
+function ilya_register_module($type, $include, $class, $name, $directory = ILYA__INCLUDE_DIR, $urltoroot = null)
 {
 	global $ilya_modules;
 
@@ -566,7 +566,7 @@ function ilya_register_module($type, $include, $class, $name, $directory = QA_IN
  * @param string $directory
  * @param string $urltoroot
  */
-function ilya_register_layer($include, $name, $directory = QA_INCLUDE_DIR, $urltoroot = null)
+function ilya_register_layer($include, $name, $directory = ILYA__INCLUDE_DIR, $urltoroot = null)
 {
 	global $ilya_layers;
 
@@ -592,7 +592,7 @@ function ilya_register_layer($include, $name, $directory = QA_INCLUDE_DIR, $urlt
  * @param string $directory
  * @param string $urltoroot
  */
-function ilya_register_overrides($include, $directory = QA_INCLUDE_DIR, $urltoroot = null)
+function ilya_register_overrides($include, $directory = ILYA__INCLUDE_DIR, $urltoroot = null)
 {
 	global $ilya_override_files_temp;
 
@@ -615,7 +615,7 @@ function ilya_register_phrases($pattern, $name)
 {
 	global $ilya_lang_file_pattern;
 
-	if (file_exists(QA_INCLUDE_DIR . 'lang/ilya-lang-' . $name . '.php')) {
+	if (file_exists(ILYA__INCLUDE_DIR . 'lang/ilya-lang-' . $name . '.php')) {
 		ilya_fatal_error('The name "' . $name . '" for phrases is reserved and cannot be used by plugins.' . "\n\nPhrases: " . $pattern);
 	}
 
@@ -1344,7 +1344,7 @@ function ilya_is_human_probably()
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	$useragent = @$_SERVER['HTTP_USER_AGENT'];
 
@@ -1362,7 +1362,7 @@ function ilya_is_mobile_probably()
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	// inspired by: http://dangerousprototypes.com/docs/PhpBB3_MOD:_Replacement_mobile_browser_detection_for_mobile_themes
 
@@ -1417,7 +1417,7 @@ function ilya_lang($identifier)
 		if (isset($ilya_lang_file_pattern[$group]))
 			$include = str_replace('*', 'default', $ilya_lang_file_pattern[$group]);
 		else
-			$include = QA_INCLUDE_DIR . 'lang/ilya-lang-' . $group . '.php';
+			$include = ILYA__INCLUDE_DIR . 'lang/ilya-lang-' . $group . '.php';
 
 		$ilya_phrases_full[$group] = is_file($include) ? (array)(include_once $include) : array();
 
@@ -1427,14 +1427,14 @@ function ilya_lang($identifier)
 			if (isset($ilya_lang_file_pattern[$group]))
 				$include = str_replace('*', $languagecode, $ilya_lang_file_pattern[$group]);
 			else
-				$include = QA_LANG_DIR . $languagecode . '/ilya-lang-' . $group . '.php';
+				$include = ILYA__LANG_DIR . $languagecode . '/ilya-lang-' . $group . '.php';
 
 			$phrases = is_file($include) ? (array)(include $include) : array();
 			$ilya_phrases_full[$group] = array_merge($ilya_phrases_full[$group], $phrases);
 		}
 
 		// add any custom phrases from ilya-lang/custom/
-		$include = QA_LANG_DIR . 'custom/ilya-lang-' . $group . '.php';
+		$include = ILYA__LANG_DIR . 'custom/ilya-lang-' . $group . '.php';
 		$phrases = is_file($include) ? (array)(include $include) : array();
 		$ilya_phrases_full[$group] = array_merge($ilya_phrases_full[$group], $phrases);
 
@@ -1550,7 +1550,7 @@ function ilya_path($request, $params = null, $rooturl = null, $neaturls = null, 
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (!isset($neaturls)) {
-		require_once QA_INCLUDE_DIR . 'app/options.php';
+		require_once ILYA__INCLUDE_DIR . 'app/options.php';
 		$neaturls = ilya_opt('neat_urls');
 	}
 
@@ -1578,16 +1578,16 @@ function ilya_path($request, $params = null, $rooturl = null, $neaturls = null, 
 	$requestpath = implode('/', $requestparts);
 
 	switch ($neaturls) {
-		case QA_URL_FORMAT_INDEX:
+		case ILYA__URL_FORMAT_INDEX:
 			if (!empty($request))
 				$url .= 'index.php/' . $requestpath;
 			break;
 
-		case QA_URL_FORMAT_NEAT:
+		case ILYA__URL_FORMAT_NEAT:
 			$url .= $requestpath;
 			break;
 
-		case QA_URL_FORMAT_PARAM:
+		case ILYA__URL_FORMAT_PARAM:
 			if (!empty($request))
 				$paramsextra = '?qa=' . $requestpath;
 			break;
@@ -1595,7 +1595,7 @@ function ilya_path($request, $params = null, $rooturl = null, $neaturls = null, 
 		default:
 			$url .= 'index.php';
 
-		case QA_URL_FORMAT_PARAMS:
+		case ILYA__URL_FORMAT_PARAMS:
 			if (!empty($request)) {
 				foreach ($requestparts as $partindex => $requestpart)
 					$paramsextra .= (strlen($paramsextra) ? '&' : '?') . 'qa' . ($partindex ? ('_' . $partindex) : '') . '=' . $requestpart;
@@ -1653,8 +1653,8 @@ function ilya_q_request($questionid, $title)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'app/options.php';
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'app/options.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	$title = ilya_block_words_replace($title, ilya_get_block_words_preg());
 	$slug = ilya_slugify($title, ilya_opt('q_urls_remove_accents'), ilya_opt('q_urls_title_length'));
@@ -1849,7 +1849,7 @@ function ilya_opt($name, $value = null)
 	if (!isset($value) && isset($ilya_options_cache[$name]))
 		return $ilya_options_cache[$name]; // quick shortcut to reduce calls to ilya_get_options()
 
-	require_once QA_INCLUDE_DIR . 'app/options.php';
+	require_once ILYA__INCLUDE_DIR . 'app/options.php';
 
 	if (isset($value))
 		ilya_set_option($name, $value);

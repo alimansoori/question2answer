@@ -1,10 +1,10 @@
 <?php
 // Stand-in config file for PHPUnit
 
-define('QA_MYSQL_HOSTNAME', 'localhost');
-define('QA_MYSQL_USERNAME', '');
-define('QA_MYSQL_PASSWORD', '');
-define('QA_MYSQL_DATABASE', '');
+define('ILYA__MYSQL_HOSTNAME', 'localhost');
+define('ILYA__MYSQL_USERNAME', '');
+define('ILYA__MYSQL_PASSWORD', '');
+define('ILYA__MYSQL_DATABASE', '');
 
-define('QA_MYSQL_TABLE_PREFIX', 'ilya_');
-define('QA_EXTERNAL_USERS', false);
+define('ILYA__MYSQL_TABLE_PREFIX', 'ilya_');
+define('ILYA__EXTERNAL_USERS', false);

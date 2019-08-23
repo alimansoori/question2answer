@@ -19,15 +19,15 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'app/limits.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/limits.php';
 
 $handle = ilya_request_part(1);
 $loginuserid = ilya_get_logged_in_userid();
@@ -38,7 +38,7 @@ $ilya_content = ilya_content_prepare();
 
 // Check we have a handle, we're not using Q2A's single-sign on integration and that we're logged in
 
-if (QA_FINAL_EXTERNAL_USERS)
+if (ILYA__FINAL_EXTERNAL_USERS)
 	ilya_fatal_error('User accounts are handled by external code');
 
 if (!strlen($handle))
@@ -68,11 +68,11 @@ list($toaccount, $torecent, $fromrecent) = ilya_db_select_with_pending(
 // Check the user exists and work out what can and can't be set (if not using single sign-on)
 
 if (!ilya_opt('allow_private_messages') || !is_array($toaccount))
-	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 
 //  Check the target user has enabled private messages and inform the current user in case they haven't
 
-if ($toaccount['flags'] & QA_USER_FLAGS_NO_MESSAGES) {
+if ($toaccount['flags'] & ILYA__USER_FLAGS_NO_MESSAGES) {
 	$ilya_content['error'] = ilya_lang_html_sub(
 		'profile/user_x_disabled_pms',
 		sprintf('<a href="%s">%s</a>', ilya_path_html('user/' . $handle), ilya_html($handle))
@@ -82,7 +82,7 @@ if ($toaccount['flags'] & QA_USER_FLAGS_NO_MESSAGES) {
 
 // Check that we have permission and haven't reached the limit, but don't quit just yet
 
-switch (ilya_user_permit_error(null, QA_LIMIT_MESSAGES)) {
+switch (ilya_user_permit_error(null, ILYA__LIMIT_MESSAGES)) {
 	case 'limit':
 		$pageerror = ilya_lang_html('misc/message_limit');
 		break;
@@ -121,15 +121,15 @@ if (ilya_post_text('domessage')) {
 			$errors['message'] = ilya_lang('misc/message_empty');
 
 		if (empty($errors)) {
-			require_once QA_INCLUDE_DIR . 'db/messages.php';
-			require_once QA_INCLUDE_DIR . 'app/emails.php';
+			require_once ILYA__INCLUDE_DIR . 'db/messages.php';
+			require_once ILYA__INCLUDE_DIR . 'app/emails.php';
 
 			if (ilya_opt('show_message_history'))
 				$messageid = ilya_db_message_create($loginuserid, $toaccount['userid'], $inmessage, '', false);
 			else
 				$messageid = null;
 
-			$canreply = !(ilya_get_logged_in_flags() & QA_USER_FLAGS_NO_MESSAGES);
+			$canreply = !(ilya_get_logged_in_flags() & ILYA__USER_FLAGS_NO_MESSAGES);
 
 			$more = strtr(ilya_lang($canreply ? 'emails/private_message_reply' : 'emails/private_message_info'), array(
 				'^f_handle' => $fromhandle,
@@ -224,7 +224,7 @@ if (ilya_opt('show_message_history')) {
 
 	ilya_sort_by($recent, 'created');
 
-	$showmessages = array_slice(array_reverse($recent, true), 0, QA_DB_RETRIEVE_MESSAGES);
+	$showmessages = array_slice(array_reverse($recent, true), 0, ILYA__DB_RETRIEVE_MESSAGES);
 
 	if (count($showmessages)) {
 		$ilya_content['message_list'] = array(

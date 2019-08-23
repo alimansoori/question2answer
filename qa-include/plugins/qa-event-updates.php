@@ -26,13 +26,13 @@ class ilya_event_updates
 		if (@$params['silent']) // don't create updates about silent edits, and possibly other silent events in future
 			return;
 
-		require_once QA_INCLUDE_DIR . 'db/events.php';
-		require_once QA_INCLUDE_DIR . 'app/events.php';
+		require_once ILYA__INCLUDE_DIR . 'db/events.php';
+		require_once ILYA__INCLUDE_DIR . 'app/events.php';
 
 		switch ($event) {
 			case 'q_post':
 				if (isset($params['parent'])) // question is following an answer
-					ilya_create_event_for_q_user($params['parent']['parentid'], $params['postid'], QA_UPDATE_FOLLOWS, $userid, $params['parent']['userid']);
+					ilya_create_event_for_q_user($params['parent']['parentid'], $params['postid'], ILYA__UPDATE_FOLLOWS, $userid, $params['parent']['userid']);
 
 				ilya_create_event_for_q_user($params['postid'], $params['postid'], null, $userid);
 				ilya_create_event_for_tags($params['tags'], $params['postid'], null, $userid);
@@ -56,16 +56,16 @@ class ilya_event_updates
 
 				foreach ($keyuserids as $keyuserid => $dummy) {
 					if ($keyuserid != $userid)
-						ilya_db_event_create_not_entity($keyuserid, $params['questionid'], $params['postid'], QA_UPDATE_FOLLOWS, $userid);
+						ilya_db_event_create_not_entity($keyuserid, $params['questionid'], $params['postid'], ILYA__UPDATE_FOLLOWS, $userid);
 				}
 
 				switch ($params['parent']['basetype']) {
 					case 'Q':
-						$updatetype = QA_UPDATE_C_FOR_Q;
+						$updatetype = ILYA__UPDATE_C_FOR_Q;
 						break;
 
 					case 'A':
-						$updatetype = QA_UPDATE_C_FOR_A;
+						$updatetype = ILYA__UPDATE_C_FOR_A;
 						break;
 
 					default:
@@ -81,9 +81,9 @@ class ilya_event_updates
 
 			case 'q_edit':
 				if ($params['titlechanged'] || $params['contentchanged'])
-					$updatetype = QA_UPDATE_CONTENT;
+					$updatetype = ILYA__UPDATE_CONTENT;
 				elseif ($params['tagschanged'])
-					$updatetype = QA_UPDATE_TAGS;
+					$updatetype = ILYA__UPDATE_TAGS;
 				else
 					$updatetype = null;
 
@@ -91,78 +91,78 @@ class ilya_event_updates
 					ilya_create_event_for_q_user($params['postid'], $params['postid'], $updatetype, $userid, $params['oldquestion']['userid']);
 
 					if ($params['tagschanged'])
-						ilya_create_event_for_tags($params['tags'], $params['postid'], QA_UPDATE_TAGS, $userid);
+						ilya_create_event_for_tags($params['tags'], $params['postid'], ILYA__UPDATE_TAGS, $userid);
 				}
 				break;
 
 
 			case 'a_select':
-				ilya_create_event_for_q_user($params['parentid'], $params['postid'], QA_UPDATE_SELECTED, $userid, $params['answer']['userid']);
+				ilya_create_event_for_q_user($params['parentid'], $params['postid'], ILYA__UPDATE_SELECTED, $userid, $params['answer']['userid']);
 				break;
 
 
 			case 'q_reopen':
 			case 'q_close':
-				ilya_create_event_for_q_user($params['postid'], $params['postid'], QA_UPDATE_CLOSED, $userid, $params['oldquestion']['userid']);
+				ilya_create_event_for_q_user($params['postid'], $params['postid'], ILYA__UPDATE_CLOSED, $userid, $params['oldquestion']['userid']);
 				break;
 
 
 			case 'q_hide':
 				if (isset($params['oldquestion']['userid']))
-					ilya_db_event_create_not_entity($params['oldquestion']['userid'], $params['postid'], $params['postid'], QA_UPDATE_VISIBLE, $userid);
+					ilya_db_event_create_not_entity($params['oldquestion']['userid'], $params['postid'], $params['postid'], ILYA__UPDATE_VISIBLE, $userid);
 				break;
 
 
 			case 'q_reshow':
-				ilya_create_event_for_q_user($params['postid'], $params['postid'], QA_UPDATE_VISIBLE, $userid, $params['oldquestion']['userid']);
+				ilya_create_event_for_q_user($params['postid'], $params['postid'], ILYA__UPDATE_VISIBLE, $userid, $params['oldquestion']['userid']);
 				break;
 
 
 			case 'q_move':
-				ilya_create_event_for_q_user($params['postid'], $params['postid'], QA_UPDATE_CATEGORY, $userid, $params['oldquestion']['userid']);
-				ilya_create_event_for_category($params['categoryid'], $params['postid'], QA_UPDATE_CATEGORY, $userid);
+				ilya_create_event_for_q_user($params['postid'], $params['postid'], ILYA__UPDATE_CATEGORY, $userid, $params['oldquestion']['userid']);
+				ilya_create_event_for_category($params['categoryid'], $params['postid'], ILYA__UPDATE_CATEGORY, $userid);
 				break;
 
 
 			case 'a_edit':
 				if ($params['contentchanged'])
-					ilya_create_event_for_q_user($params['parentid'], $params['postid'], QA_UPDATE_CONTENT, $userid, $params['oldanswer']['userid']);
+					ilya_create_event_for_q_user($params['parentid'], $params['postid'], ILYA__UPDATE_CONTENT, $userid, $params['oldanswer']['userid']);
 				break;
 
 
 			case 'a_hide':
 				if (isset($params['oldanswer']['userid']))
-					ilya_db_event_create_not_entity($params['oldanswer']['userid'], $params['parentid'], $params['postid'], QA_UPDATE_VISIBLE, $userid);
+					ilya_db_event_create_not_entity($params['oldanswer']['userid'], $params['parentid'], $params['postid'], ILYA__UPDATE_VISIBLE, $userid);
 				break;
 
 
 			case 'a_reshow':
-				ilya_create_event_for_q_user($params['parentid'], $params['postid'], QA_UPDATE_VISIBLE, $userid, $params['oldanswer']['userid']);
+				ilya_create_event_for_q_user($params['parentid'], $params['postid'], ILYA__UPDATE_VISIBLE, $userid, $params['oldanswer']['userid']);
 				break;
 
 
 			case 'c_edit':
 				if ($params['contentchanged'])
-					ilya_create_event_for_q_user($params['questionid'], $params['postid'], QA_UPDATE_CONTENT, $userid, $params['oldcomment']['userid']);
+					ilya_create_event_for_q_user($params['questionid'], $params['postid'], ILYA__UPDATE_CONTENT, $userid, $params['oldcomment']['userid']);
 				break;
 
 
 			case 'a_to_c':
 				if ($params['contentchanged'])
-					ilya_create_event_for_q_user($params['questionid'], $params['postid'], QA_UPDATE_CONTENT, $userid, $params['oldanswer']['userid']);
+					ilya_create_event_for_q_user($params['questionid'], $params['postid'], ILYA__UPDATE_CONTENT, $userid, $params['oldanswer']['userid']);
 				else
-					ilya_create_event_for_q_user($params['questionid'], $params['postid'], QA_UPDATE_TYPE, $userid, $params['oldanswer']['userid']);
+					ilya_create_event_for_q_user($params['questionid'], $params['postid'], ILYA__UPDATE_TYPE, $userid, $params['oldanswer']['userid']);
 				break;
 
 
 			case 'c_hide':
 				if (isset($params['oldcomment']['userid']))
-					ilya_db_event_create_not_entity($params['oldcomment']['userid'], $params['questionid'], $params['postid'], QA_UPDATE_VISIBLE, $userid);
+					ilya_db_event_create_not_entity($params['oldcomment']['userid'], $params['questionid'], $params['postid'], ILYA__UPDATE_VISIBLE, $userid);
 				break;
 
 
 			case 'c_reshow':
-				ilya_create_event_for_q_user($params['questionid'], $params['postid'], QA_UPDATE_VISIBLE, $userid, $params['oldcomment']['userid']);
+				ilya_create_event_for_q_user($params['questionid'], $params['postid'], ILYA__UPDATE_VISIBLE, $userid, $params['oldcomment']['userid']);
 				break;
 		}
 	}

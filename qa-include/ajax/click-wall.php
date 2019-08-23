@@ -19,10 +19,10 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-require_once QA_INCLUDE_DIR . 'app/messages.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'app/cookies.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/messages.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 
 $tohandle = ilya_post_text('handle');
@@ -35,10 +35,10 @@ foreach ($usermessages as $message) {
 	if (ilya_clicked('m' . $message['messageid'] . '_dodelete') && $message['deleteable']) {
 		if (ilya_check_form_security_code('wall-' . $tohandle, ilya_post_text('code'))) {
 			ilya_wall_delete_post(ilya_get_logged_in_userid(), ilya_get_logged_in_handle(), ilya_cookie_get(), $message);
-			echo "QA_AJAX_RESPONSE\n1\n";
+			echo "ILYA__AJAX_RESPONSE\n1\n";
 			return;
 		}
 	}
 }
 
-echo "QA_AJAX_RESPONSE\n0\n";
+echo "ILYA__AJAX_RESPONSE\n0\n";

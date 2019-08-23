@@ -35,7 +35,7 @@ class ilya_wysiwyg_upload
 
 		if (is_array($_FILES) && count($_FILES)) {
 			if (ilya_opt('wysiwyg_editor_upload_images')) {
-				require_once QA_INCLUDE_DIR . 'app/upload.php';
+				require_once ILYA__INCLUDE_DIR . 'app/upload.php';
 
 				$onlyImage = ilya_get('ilya_only_image');
 				$upload = ilya_upload_file_one(

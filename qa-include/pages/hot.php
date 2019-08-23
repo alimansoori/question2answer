@@ -19,18 +19,18 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/q-list.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/q-list.php';
 
 
-// Get list of hottest questions, allow per-category if QA_ALLOW_UNINDEXED_QUERIES set in ilya-config.php
+// Get list of hottest questions, allow per-category if ILYA__ALLOW_UNINDEXED_QUERIES set in ilya-config.php
 
-$categoryslugs = QA_ALLOW_UNINDEXED_QUERIES ? ilya_request_parts(1) : null;
+$categoryslugs = ILYA__ALLOW_UNINDEXED_QUERIES ? ilya_request_parts(1) : null;
 $countslugs = @count($categoryslugs);
 
 $start = ilya_get_start();
@@ -44,7 +44,7 @@ list($questions, $categories, $categoryid) = ilya_db_select_with_pending(
 
 if ($countslugs) {
 	if (!isset($categoryid))
-		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+		return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 
 	$categorytitlehtml = ilya_html($categories[$categoryid]['title']);
 	$sometitle = ilya_lang_html_sub('main/hot_qs_in_x', $categorytitlehtml);
@@ -65,10 +65,10 @@ return ilya_q_list_page_content(
 	$countslugs ? $categories[$categoryid]['qcount'] : ilya_opt('cache_qcount'), // total count
 	$sometitle, // title if some questions
 	$nonetitle, // title if no questions
-	QA_ALLOW_UNINDEXED_QUERIES ? $categories : array(), // categories for navigation
+	ILYA__ALLOW_UNINDEXED_QUERIES ? $categories : array(), // categories for navigation
 	$categoryid, // selected category id
 	true, // show question counts in category navigation
-	QA_ALLOW_UNINDEXED_QUERIES ? 'hot/' : null, // prefix for links in category navigation (null if no navigation)
+	ILYA__ALLOW_UNINDEXED_QUERIES ? 'hot/' : null, // prefix for links in category navigation (null if no navigation)
 	ilya_opt('feed_for_hot') ? 'hot' : null, // prefix for RSS feed paths (null to hide)
 	ilya_html_suggest_ask() // suggest what to do next
 );

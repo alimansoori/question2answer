@@ -33,7 +33,7 @@ class ilya_wysiwyg_editor
 	public function option_default($option)
 	{
 		if ($option == 'wysiwyg_editor_upload_max_size') {
-			require_once QA_INCLUDE_DIR.'app/upload.php';
+			require_once ILYA__INCLUDE_DIR.'app/upload.php';
 
 			return min(ilya_get_max_upload_size(), 1048576);
 		}
@@ -41,7 +41,7 @@ class ilya_wysiwyg_editor
 
 	public function admin_form(&$ilya_content)
 	{
-		require_once QA_INCLUDE_DIR.'app/upload.php';
+		require_once ILYA__INCLUDE_DIR.'app/upload.php';
 
 		$saved = false;
 
@@ -146,7 +146,7 @@ class ilya_wysiwyg_editor
 
 	public function get_field(&$ilya_content, $content, $format, $fieldname, $rows)
 	{
-		$scriptsrc = $this->urltoroot.'ckeditor/ckeditor.js?'.QA_VERSION;
+		$scriptsrc = $this->urltoroot.'ckeditor/ckeditor.js?'.ILYA__VERSION;
 		$alreadyadded = false;
 
 		if (isset($ilya_content['script_src'])) {

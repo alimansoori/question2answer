@@ -19,14 +19,14 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/admin.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/admin.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 
 // Find most flagged questions, answers, comments
@@ -131,7 +131,7 @@ if (count($questions)) {
 
 
 $ilya_content['navigation']['sub'] = ilya_admin_sub_navigation();
-$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
+$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
 
 
 return $ilya_content;

@@ -19,16 +19,16 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/maxima.php';
-require_once QA_INCLUDE_DIR . 'db/post-create.php';
-require_once QA_INCLUDE_DIR . 'db/points.php';
-require_once QA_INCLUDE_DIR . 'db/hotness.php';
-require_once QA_INCLUDE_DIR . 'util/string.php';
+require_once ILYA__INCLUDE_DIR . 'db/maxima.php';
+require_once ILYA__INCLUDE_DIR . 'db/post-create.php';
+require_once ILYA__INCLUDE_DIR . 'db/points.php';
+require_once ILYA__INCLUDE_DIR . 'db/hotness.php';
+require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 
 /**
@@ -68,14 +68,14 @@ function ilya_combine_notify_email($userid, $notify, $email)
 function ilya_question_create($followanswer, $userid, $handle, $cookieid, $title, $content, $format, $text, $tagstring, $notify, $email,
 	$categoryid = null, $extravalue = null, $queued = false, $name = null)
 {
-	require_once QA_INCLUDE_DIR . 'db/selects.php';
+	require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 	$postid = ilya_db_post_create($queued ? 'Q_QUEUED' : 'Q', @$followanswer['postid'], $userid, isset($userid) ? null : $cookieid,
 		ilya_remote_ip_address(), $title, $content, $format, $tagstring, ilya_combine_notify_email($userid, $notify, $email),
 		$categoryid, isset($userid) ? null : $name);
 
 	if (isset($extravalue)) {
-		require_once QA_INCLUDE_DIR . 'db/metas.php';
+		require_once ILYA__INCLUDE_DIR . 'db/metas.php';
 		ilya_db_postmeta_set($postid, 'ilya_q_extra', $extravalue);
 	}
 
@@ -280,10 +280,10 @@ function ilya_update_q_counts_for_a($questionid)
  */
 function ilya_comment_create($userid, $handle, $cookieid, $content, $format, $text, $notify, $email, $question, $parent, $commentsfollows, $queued = false, $name = null)
 {
-	require_once QA_INCLUDE_DIR . 'app/emails.php';
-	require_once QA_INCLUDE_DIR . 'app/options.php';
-	require_once QA_INCLUDE_DIR . 'app/format.php';
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'app/emails.php';
+	require_once ILYA__INCLUDE_DIR . 'app/options.php';
+	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	if (!isset($parent))
 		$parent = $question; // for backwards compatibility with old answer parameter

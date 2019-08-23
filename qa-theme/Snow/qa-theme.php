@@ -10,7 +10,7 @@ class ilya_html_theme extends ilya_html_theme_base
 	public function nav_user_search()
 	{
 		if (!ilya_is_logged_in()) {
-			if (isset($this->content['navigation']['user']['login']) && !QA_FINAL_EXTERNAL_USERS) {
+			if (isset($this->content['navigation']['user']['login']) && !ILYA__FINAL_EXTERNAL_USERS) {
 				$login = $this->content['navigation']['user']['login'];
 				$this->output(
 					'<form class="qam-login-form" action="'.$login['url'].'" method="post">',
@@ -33,12 +33,12 @@ class ilya_html_theme extends ilya_html_theme_base
 
 	public function logged_in()
 	{
-		require_once QA_INCLUDE_DIR . 'app/format.php';
+		require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 		if (ilya_is_logged_in()) // output user avatar to login bar
 			$this->output(
 				'<div class="ilya-logged-in-avatar">',
-				QA_FINAL_EXTERNAL_USERS
+				ILYA__FINAL_EXTERNAL_USERS
 				? ilya_get_external_avatar_html(ilya_get_logged_in_userid(), 24, true)
 				: ilya_get_user_avatar_html(ilya_get_logged_in_flags(), ilya_get_logged_in_email(), ilya_get_logged_in_handle(),
 					ilya_get_logged_in_user_field('avatarblobid'), ilya_get_logged_in_user_field('avatarwidth'), ilya_get_logged_in_user_field('avatarheight'),

@@ -1,6 +1,6 @@
 <?php
-require_once QA_INCLUDE_DIR.'app/format.php';
-require_once QA_INCLUDE_DIR.'app/options.php';
+require_once ILYA__INCLUDE_DIR.'app/format.php';
+require_once ILYA__INCLUDE_DIR.'app/options.php';
 
 class AppFormatTest extends PHPUnit_Framework_TestCase
 {

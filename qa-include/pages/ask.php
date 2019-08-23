@@ -19,16 +19,16 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 
-require_once QA_INCLUDE_DIR.'app/format.php';
-require_once QA_INCLUDE_DIR.'app/limits.php';
-require_once QA_INCLUDE_DIR.'db/selects.php';
-require_once QA_INCLUDE_DIR.'util/sort.php';
+require_once ILYA__INCLUDE_DIR.'app/format.php';
+require_once ILYA__INCLUDE_DIR.'app/limits.php';
+require_once ILYA__INCLUDE_DIR.'db/selects.php';
+require_once ILYA__INCLUDE_DIR.'util/sort.php';
 
 
 // Check whether this is a follow-on question and get some info we need from the database
@@ -42,7 +42,7 @@ $userid = ilya_get_logged_in_userid();
 list($categories, $followanswer, $completetags) = ilya_db_select_with_pending(
 	ilya_db_category_nav_selectspec($in['categoryid'], true),
 	isset($followpostid) ? ilya_db_full_post_selectspec($userid, $followpostid) : null,
-	ilya_db_popular_tags_selectspec(0, QA_DB_RETRIEVE_COMPLETE_TAGS)
+	ilya_db_popular_tags_selectspec(0, ILYA__DB_RETRIEVE_COMPLETE_TAGS)
 );
 
 if (!isset($categories[$in['categoryid']])) {
@@ -56,7 +56,7 @@ if (@$followanswer['basetype'] != 'A') {
 
 // Check for permission error
 
-$permiterror = ilya_user_maximum_permit_error('permit_post_q', QA_LIMIT_QUESTIONS);
+$permiterror = ilya_user_maximum_permit_error('permit_post_q', ILYA__LIMIT_QUESTIONS);
 
 if ($permiterror) {
 	$ilya_content = ilya_content_prepare();
@@ -105,8 +105,8 @@ if (ilya_using_tags()) {
 }
 
 if (ilya_clicked('doask')) {
-	require_once QA_INCLUDE_DIR.'app/post-create.php';
-	require_once QA_INCLUDE_DIR.'util/string.php';
+	require_once ILYA__INCLUDE_DIR.'app/post-create.php';
+	require_once ILYA__INCLUDE_DIR.'util/string.php';
 
 	$categoryids = array_keys(ilya_category_path($categories, @$in['categoryid']));
 	$userlevel = ilya_user_level_for_categories($categoryids);
@@ -140,7 +140,7 @@ if (ilya_clicked('doask')) {
 		}
 
 		if ($captchareason) {
-			require_once QA_INCLUDE_DIR.'app/captcha.php';
+			require_once ILYA__INCLUDE_DIR.'app/captcha.php';
 			ilya_captcha_validate_post($errors);
 		}
 
@@ -301,7 +301,7 @@ ilya_set_up_notify_fields($ilya_content, $ilya_content['form']['fields'], 'Q', i
 	isset($in['notify']) ? $in['notify'] : ilya_opt('notify_users_default'), @$in['email'], @$errors['email']);
 
 if ($captchareason) {
-	require_once QA_INCLUDE_DIR.'app/captcha.php';
+	require_once ILYA__INCLUDE_DIR.'app/captcha.php';
 	ilya_set_up_captcha_field($ilya_content, $ilya_content['form']['fields'], @$errors, ilya_captcha_reason_note($captchareason));
 }
 

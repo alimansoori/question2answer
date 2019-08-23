@@ -19,16 +19,16 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/cookies.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'app/options.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/options.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 
 /**
@@ -42,7 +42,7 @@ function ilya_page_queue_pending()
 	$loginuserid = ilya_get_logged_in_userid();
 
 	if (isset($loginuserid)) {
-		if (!QA_FINAL_EXTERNAL_USERS)
+		if (!ILYA__FINAL_EXTERNAL_USERS)
 			ilya_db_queue_pending_select('loggedinuser', ilya_db_user_account_selectspec($loginuserid, true));
 
 		ilya_db_queue_pending_select('notices', ilya_db_user_notices_selectspec($loginuserid));
@@ -74,7 +74,7 @@ function ilya_load_state()
  */
 function ilya_check_login_modules()
 {
-	if (!QA_FINAL_EXTERNAL_USERS && !ilya_is_logged_in()) {
+	if (!ILYA__FINAL_EXTERNAL_USERS && !ilya_is_logged_in()) {
 		$loginmodules = ilya_load_modules_with('login', 'check_login');
 
 		foreach ($loginmodules as $loginmodule) {
@@ -106,8 +106,8 @@ function ilya_check_page_clicks()
 						$ilya_page_error_html = ilya_lang_html('misc/form_security_again');
 
 					else {
-						require_once QA_INCLUDE_DIR . 'app/votes.php';
-						require_once QA_INCLUDE_DIR . 'db/selects.php';
+						require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+						require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 						$userid = ilya_get_logged_in_userid();
 
@@ -130,7 +130,7 @@ function ilya_check_page_clicks()
 						$ilya_page_error_html = ilya_lang_html('misc/form_security_again');
 
 					else {
-						require_once QA_INCLUDE_DIR . 'app/favorites.php';
+						require_once ILYA__INCLUDE_DIR . 'app/favorites.php';
 
 						ilya_user_favorite_set(ilya_get_logged_in_userid(), ilya_get_logged_in_handle(), ilya_cookie_get(), $entitytype, $entityid, $favorite);
 						ilya_redirect(ilya_request(), $_GET);
@@ -146,14 +146,14 @@ function ilya_check_page_clicks()
 
 					else {
 						if ($noticeid == 'visitor')
-							setcookie('ilya_noticed', 1, time() + 86400 * 3650, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
+							setcookie('ilya_noticed', 1, time() + 86400 * 3650, '/', ILYA__COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
 
 						elseif ($noticeid == 'welcome') {
-							require_once QA_INCLUDE_DIR . 'db/users.php';
-							ilya_db_user_set_flag(ilya_get_logged_in_userid(), QA_USER_FLAGS_WELCOME_NOTICE, false);
+							require_once ILYA__INCLUDE_DIR . 'db/users.php';
+							ilya_db_user_set_flag(ilya_get_logged_in_userid(), ILYA__USER_FLAGS_WELCOME_NOTICE, false);
 
 						} else {
-							require_once QA_INCLUDE_DIR . 'db/notices.php';
+							require_once ILYA__INCLUDE_DIR . 'db/notices.php';
 							ilya_db_usernotice_delete(ilya_get_logged_in_userid(), $noticeid);
 						}
 
@@ -180,24 +180,24 @@ function ilya_get_request_content()
 
 	if (isset($routing[$requestlower])) {
 		ilya_set_template($firstlower);
-		$ilya_content = require QA_INCLUDE_DIR . $routing[$requestlower];
+		$ilya_content = require ILYA__INCLUDE_DIR . $routing[$requestlower];
 
 	} elseif (isset($routing[$firstlower . '/'])) {
 		ilya_set_template($firstlower);
-		$ilya_content = require QA_INCLUDE_DIR . $routing[$firstlower . '/'];
+		$ilya_content = require ILYA__INCLUDE_DIR . $routing[$firstlower . '/'];
 
 	} elseif (is_numeric($requestparts[0])) {
 		ilya_set_template('question');
-		$ilya_content = require QA_INCLUDE_DIR . 'pages/question.php';
+		$ilya_content = require ILYA__INCLUDE_DIR . 'pages/question.php';
 
 	} else {
 		ilya_set_template(strlen($firstlower) ? $firstlower : 'qa'); // will be changed later
-		$ilya_content = require QA_INCLUDE_DIR . 'pages/default.php'; // handles many other pages, including custom pages and page modules
+		$ilya_content = require ILYA__INCLUDE_DIR . 'pages/default.php'; // handles many other pages, including custom pages and page modules
 	}
 
 	if ($firstlower == 'admin') {
 		$_COOKIE['ilya_admin_last'] = $requestlower; // for navigation tab now...
-		setcookie('ilya_admin_last', $_COOKIE['ilya_admin_last'], 0, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true); // ...and in future
+		setcookie('ilya_admin_last', $_COOKIE['ilya_admin_last'], 0, '/', ILYA__COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true); // ...and in future
 	}
 
 	if (isset($ilya_content))
@@ -255,7 +255,7 @@ function ilya_output_content($ilya_content)
 	// Handle maintenance mode
 
 	if (ilya_opt('site_maintenance') && ($requestlower != 'login')) {
-		if (ilya_get_logged_in_level() >= QA_USER_LEVEL_ADMIN) {
+		if (ilya_get_logged_in_level() >= ILYA__USER_LEVEL_ADMIN) {
 			if (!isset($ilya_content['error'])) {
 				$ilya_content['error'] = strtr(ilya_lang_html('admin/maintenance_admin_only'), array(
 					'^1' => '<a href="' . ilya_path_html('admin/general') . '">',
@@ -274,7 +274,7 @@ function ilya_output_content($ilya_content)
 	if (isset($userid) && $requestlower != 'confirm' && $requestlower != 'account') {
 		$flags = ilya_get_logged_in_flags();
 
-		if (($flags & QA_USER_FLAGS_MUST_CONFIRM) && !($flags & QA_USER_FLAGS_EMAIL_CONFIRMED) && ilya_opt('confirm_user_emails')) {
+		if (($flags & ILYA__USER_FLAGS_MUST_CONFIRM) && !($flags & ILYA__USER_FLAGS_EMAIL_CONFIRMED) && ilya_opt('confirm_user_emails')) {
 			$ilya_content = ilya_content_prepare();
 			$ilya_content['title'] = ilya_lang_html('users/confirm_title');
 			$ilya_content['error'] = strtr(ilya_lang_html('users/confirm_required'), array(
@@ -372,7 +372,7 @@ function ilya_do_content_stats($ilya_content)
 		return false;
 	}
 
-	require_once QA_INCLUDE_DIR . 'db/hotness.php';
+	require_once ILYA__INCLUDE_DIR . 'db/hotness.php';
 
 	$viewsIncremented = ilya_db_increment_views($ilya_content['inc_views_postid']);
 
@@ -470,7 +470,7 @@ function ilya_content_prepare($voting = false, $categoryids = array())
 
 	global $ilya_template, $ilya_page_error_html;
 
-	if (QA_DEBUG_PERFORMANCE) {
+	if (ILYA__DEBUG_PERFORMANCE) {
 		global $ilya_usage;
 		$ilya_usage->mark('control');
 	}
@@ -627,7 +627,7 @@ function ilya_content_prepare($voting = false, $categoryids = array())
 	}
 
 
-	if (ilya_get_logged_in_level() >= QA_USER_LEVEL_ADMIN || !ilya_user_maximum_permit_error('permit_moderate') ||
+	if (ilya_get_logged_in_level() >= ILYA__USER_LEVEL_ADMIN || !ilya_user_maximum_permit_error('permit_moderate') ||
 		!ilya_user_maximum_permit_error('permit_hide_show') || !ilya_user_maximum_permit_error('permit_delete_hidden')
 	) {
 		$ilya_content['navigation']['main']['admin'] = array(
@@ -717,7 +717,7 @@ function ilya_content_prepare($voting = false, $categoryids = array())
 	$ilya_content['navigation']['user'] = array();
 
 	if (ilya_is_logged_in()) {
-		$ilya_content['loggedin'] = ilya_lang_html_sub_split('main/logged_in_x', QA_FINAL_EXTERNAL_USERS
+		$ilya_content['loggedin'] = ilya_lang_html_sub_split('main/logged_in_x', ILYA__FINAL_EXTERNAL_USERS
 			? ilya_get_logged_in_user_html(ilya_get_logged_in_user_cache(), ilya_path_to_root(), false)
 			: ilya_get_one_user_html(ilya_get_logged_in_handle(), false)
 		);
@@ -734,7 +734,7 @@ function ilya_content_prepare($voting = false, $categoryids = array())
 			);
 		}
 
-		if (!QA_FINAL_EXTERNAL_USERS) {
+		if (!ILYA__FINAL_EXTERNAL_USERS) {
 			$source = ilya_get_logged_in_source();
 
 			if (strlen($source)) {
@@ -755,9 +755,9 @@ function ilya_content_prepare($voting = false, $categoryids = array())
 			$ilya_content['notices'][] = ilya_notice_form($notice['noticeid'], ilya_viewer_html($notice['content'], $notice['format']), $notice);
 
 	} else {
-		require_once QA_INCLUDE_DIR . 'util/string.php';
+		require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
-		if (!QA_FINAL_EXTERNAL_USERS) {
+		if (!ILYA__FINAL_EXTERNAL_USERS) {
 			$loginmodules = ilya_load_modules_with('login', 'login_html');
 
 			foreach ($loginmodules as $tryname => $module) {
@@ -785,21 +785,21 @@ function ilya_content_prepare($voting = false, $categoryids = array())
 		}
 	}
 
-	if (QA_FINAL_EXTERNAL_USERS || !ilya_is_logged_in()) {
+	if (ILYA__FINAL_EXTERNAL_USERS || !ilya_is_logged_in()) {
 		if (ilya_opt('show_notice_visitor') && (!isset($topath)) && (!isset($_COOKIE['ilya_noticed'])))
 			$ilya_content['notices'][] = ilya_notice_form('visitor', ilya_opt('notice_visitor'));
 
 	} else {
-		setcookie('ilya_noticed', 1, time() + 86400 * 3650, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true); // don't show first-time notice if a user has logged in
+		setcookie('ilya_noticed', 1, time() + 86400 * 3650, '/', ILYA__COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true); // don't show first-time notice if a user has logged in
 
-		if (ilya_opt('show_notice_welcome') && (ilya_get_logged_in_flags() & QA_USER_FLAGS_WELCOME_NOTICE)) {
+		if (ilya_opt('show_notice_welcome') && (ilya_get_logged_in_flags() & ILYA__USER_FLAGS_WELCOME_NOTICE)) {
 			if ($requestlower != 'confirm' && $requestlower != 'account') // let people finish registering in peace
 				$ilya_content['notices'][] = ilya_notice_form('welcome', ilya_opt('notice_welcome'));
 		}
 	}
 
 	$ilya_content['script_rel'] = array('ilya-content/jquery-3.3.1.min.js');
-	$ilya_content['script_rel'][] = 'ilya-content/ilya-global.js?' . QA_VERSION;
+	$ilya_content['script_rel'][] = 'ilya-content/ilya-global.js?' . ILYA__VERSION;
 
 	if ($voting)
 		$ilya_content['error'] = @$ilya_page_error_html;
@@ -819,7 +819,7 @@ function ilya_content_prepare($voting = false, $categoryids = array())
  */
 function ilya_get_start()
 {
-	return min(max(0, (int)ilya_get('start')), QA_MAX_LIMIT_START);
+	return min(max(0, (int)ilya_get('start')), ILYA__MAX_LIMIT_START);
 }
 
 

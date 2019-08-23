@@ -19,16 +19,16 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/admin.php';
-require_once QA_INCLUDE_DIR . 'db/maxima.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/options.php';
-require_once QA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA__INCLUDE_DIR . 'db/admin.php';
+require_once ILYA__INCLUDE_DIR . 'db/maxima.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/options.php';
+require_once ILYA__INCLUDE_DIR . 'app/admin.php';
 
 
 // Pages handled by this controller: general, emails, users, layout, viewing, lists, posting, permissions, feeds, spam, caching, mailing
@@ -238,22 +238,22 @@ $optiontype = array(
 );
 
 $optionmaximum = array(
-	'feed_number_items' => QA_DB_RETRIEVE_QS_AS,
-	'max_len_q_title' => QA_DB_MAX_TITLE_LENGTH,
-	'page_size_activity' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_ask_check_qs' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_ask_tags' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_home' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_hot_qs' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_pms' => QA_DB_RETRIEVE_MESSAGES,
-	'page_size_qs' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_related_qs' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_search' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_tag_qs' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_tags' => QA_DB_RETRIEVE_TAGS,
-	'page_size_una_qs' => QA_DB_RETRIEVE_QS_AS,
-	'page_size_users' => QA_DB_RETRIEVE_USERS,
-	'page_size_wall' => QA_DB_RETRIEVE_MESSAGES,
+	'feed_number_items' => ILYA__DB_RETRIEVE_QS_AS,
+	'max_len_q_title' => ILYA__DB_MAX_TITLE_LENGTH,
+	'page_size_activity' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_ask_check_qs' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_ask_tags' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_home' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_hot_qs' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_pms' => ILYA__DB_RETRIEVE_MESSAGES,
+	'page_size_qs' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_related_qs' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_search' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_tag_qs' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_tags' => ILYA__DB_RETRIEVE_TAGS,
+	'page_size_una_qs' => ILYA__DB_RETRIEVE_QS_AS,
+	'page_size_users' => ILYA__DB_RETRIEVE_USERS,
+	'page_size_wall' => ILYA__DB_RETRIEVE_MESSAGES,
 );
 
 $optionminimum = array(
@@ -318,8 +318,8 @@ switch ($adminsection) {
 
 		$showoptions = array('show_notice_visitor', 'notice_visitor');
 
-		if (!QA_FINAL_EXTERNAL_USERS) {
-			require_once QA_INCLUDE_DIR . 'util/image.php';
+		if (!ILYA__FINAL_EXTERNAL_USERS) {
+			require_once ILYA__INCLUDE_DIR . 'util/image.php';
 
 			array_push($showoptions, 'show_custom_register', 'custom_register', 'show_register_terms', 'register_terms', 'show_notice_welcome', 'notice_welcome', 'show_custom_welcome', 'custom_welcome',
 				'', 'allow_login_email_only', 'allow_change_usernames', 'register_notify_admin', 'suspend_register_users', '', 'block_bad_usernames',
@@ -332,7 +332,7 @@ switch ($adminsection) {
 
 		$showoptions[] = '';
 
-		if (!QA_FINAL_EXTERNAL_USERS)
+		if (!ILYA__FINAL_EXTERNAL_USERS)
 			$showoptions[] = 'avatar_profile_size';
 
 		array_push($showoptions, 'avatar_users_size', 'avatar_q_page_q_size', 'avatar_q_page_a_size', 'avatar_q_page_c_size',
@@ -349,7 +349,7 @@ switch ($adminsection) {
 			'avatar_default_show' => 'option_avatar_allow_gravatar || option_avatar_allow_upload',
 		);
 
-		if (!QA_FINAL_EXTERNAL_USERS) {
+		if (!ILYA__FINAL_EXTERNAL_USERS) {
 			$checkboxtodisplay = array_merge($checkboxtodisplay, array(
 				'page_size_pms' => 'option_allow_private_messages && option_show_message_history',
 				'page_size_wall' => 'option_allow_user_walls',
@@ -521,12 +521,12 @@ switch ($adminsection) {
 
 			if ($permitoption == 'permit_view_q_page') {
 				$showoptions[] = 'allow_view_q_bots';
-				$checkboxtodisplay['allow_view_q_bots'] = 'option_permit_view_q_page<' . ilya_js(QA_PERMIT_ALL);
+				$checkboxtodisplay['allow_view_q_bots'] = 'option_permit_view_q_page<' . ilya_js(ILYA__PERMIT_ALL);
 
 			} else {
 				$showoptions[] = $permitoption . '_points';
-				$checkboxtodisplay[$permitoption . '_points'] = '(option_' . $permitoption . '==' . ilya_js(QA_PERMIT_POINTS) .
-					')||(option_' . $permitoption . '==' . ilya_js(QA_PERMIT_POINTS_CONFIRMED) . ')||(option_' . $permitoption . '==' . ilya_js(QA_PERMIT_APPROVED_POINTS) . ')';
+				$checkboxtodisplay[$permitoption . '_points'] = '(option_' . $permitoption . '==' . ilya_js(ILYA__PERMIT_POINTS) .
+					')||(option_' . $permitoption . '==' . ilya_js(ILYA__PERMIT_POINTS_CONFIRMED) . ')||(option_' . $permitoption . '==' . ilya_js(ILYA__PERMIT_APPROVED_POINTS) . ')';
 			}
 		}
 
@@ -562,22 +562,22 @@ switch ($adminsection) {
 
 		$getoptions = ilya_get_options(array('feedback_enabled', 'permit_post_q', 'permit_post_a', 'permit_post_c'));
 
-		if (!QA_FINAL_EXTERNAL_USERS)
+		if (!ILYA__FINAL_EXTERNAL_USERS)
 			array_push($showoptions, 'confirm_user_emails', 'confirm_user_required', 'moderate_users', '');
 
 		$captchamodules = ilya_list_modules('captcha');
 
 		if (count($captchamodules)) {
-			if (!QA_FINAL_EXTERNAL_USERS)
+			if (!ILYA__FINAL_EXTERNAL_USERS)
 				array_push($showoptions, 'captcha_on_register', 'captcha_on_reset_password');
 
-			if ($maxpermitpost > QA_PERMIT_USERS)
+			if ($maxpermitpost > ILYA__PERMIT_USERS)
 				$showoptions[] = 'captcha_on_anon_post';
 
-			if ($maxpermitpost > QA_PERMIT_APPROVED)
+			if ($maxpermitpost > ILYA__PERMIT_APPROVED)
 				$showoptions[] = 'captcha_on_unapproved';
 
-			if ($maxpermitpost > QA_PERMIT_CONFIRMED)
+			if ($maxpermitpost > ILYA__PERMIT_CONFIRMED)
 				$showoptions[] = 'captcha_on_unconfirmed';
 
 			if ($getoptions['feedback_enabled'])
@@ -588,23 +588,23 @@ switch ($adminsection) {
 
 		$showoptions[] = '';
 
-		if ($maxpermitpost > QA_PERMIT_USERS)
+		if ($maxpermitpost > ILYA__PERMIT_USERS)
 			$showoptions[] = 'moderate_anon_post';
 
-		if ($maxpermitpost > QA_PERMIT_APPROVED)
+		if ($maxpermitpost > ILYA__PERMIT_APPROVED)
 			$showoptions[] = 'moderate_unapproved';
 
-		if ($maxpermitpost > QA_PERMIT_CONFIRMED)
+		if ($maxpermitpost > ILYA__PERMIT_CONFIRMED)
 			$showoptions[] = 'moderate_unconfirmed';
 
-		if ($maxpermitpost > QA_PERMIT_EXPERTS)
+		if ($maxpermitpost > ILYA__PERMIT_EXPERTS)
 			array_push($showoptions, 'moderate_by_points', 'moderate_points_limit', 'moderate_edited_again', 'moderate_notify_admin', 'moderate_update_time', '');
 
 		array_push($showoptions, 'flagging_of_posts', 'flagging_notify_first', 'flagging_notify_every', 'flagging_hide_after', '');
 
 		array_push($showoptions, 'block_ips_write', '');
 
-		if (!QA_FINAL_EXTERNAL_USERS)
+		if (!ILYA__FINAL_EXTERNAL_USERS)
 			array_push($showoptions, 'max_rate_ip_registers', 'max_rate_ip_logins', '');
 
 		array_push($showoptions, 'max_rate_ip_qs', 'max_rate_user_qs', 'max_rate_ip_as', 'max_rate_user_as');
@@ -655,7 +655,7 @@ switch ($adminsection) {
 		break;
 
 	case 'mailing':
-		require_once QA_INCLUDE_DIR . 'app/mailing.php';
+		require_once ILYA__INCLUDE_DIR . 'app/mailing.php';
 
 		$subtitle = 'admin/mailing_title';
 
@@ -671,7 +671,7 @@ switch ($adminsection) {
 				return $pagemodule->process_request($request);
 		}
 
-		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+		return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 		break;
 }
 
@@ -742,13 +742,13 @@ else {
 						break;
 
 					case 'block_ips_write':
-						require_once QA_INCLUDE_DIR . 'app/limits.php';
+						require_once ILYA__INCLUDE_DIR . 'app/limits.php';
 						$optionvalue = implode(' , ', ilya_block_ips_explode($optionvalue));
 						break;
 
 					case 'block_bad_words':
 					case 'block_bad_usernames':
-						require_once QA_INCLUDE_DIR . 'util/string.php';
+						require_once ILYA__INCLUDE_DIR . 'util/string.php';
 						$optionvalue = implode(' , ', ilya_block_words_explode($optionvalue));
 						break;
 				}
@@ -766,7 +766,7 @@ else {
 				if ($avatarfileerror === 1) {
 					$errors['avatar_default_show'] = ilya_lang('main/file_upload_limit_exceeded');
 				} elseif ($avatarfileerror === 0 && $_FILES['avatar_default_file']['size'] > 0) {
-					require_once QA_INCLUDE_DIR . 'util/image.php';
+					require_once ILYA__INCLUDE_DIR . 'util/image.php';
 
 					$oldblobid = ilya_opt('avatar_default_blobid');
 
@@ -778,7 +778,7 @@ else {
 						$imagedata = ilya_image_constrain_data(file_get_contents($_FILES['avatar_default_file']['tmp_name']), $width, $height, ilya_opt('avatar_store_size'));
 
 						if (isset($imagedata)) {
-							require_once QA_INCLUDE_DIR . 'app/blobs.php';
+							require_once ILYA__INCLUDE_DIR . 'app/blobs.php';
 
 							$newblobid = ilya_create_blob($imagedata, 'jpeg');
 
@@ -866,7 +866,7 @@ $ilya_content = ilya_content_prepare();
 $ilya_content['title'] = ilya_lang_html('admin/admin_title') . ' - ' . ilya_lang_html($subtitle);
 $ilya_content['error'] = $securityexpired ? ilya_lang_html('admin/form_security_expired') : ilya_admin_page_error();
 
-$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
+$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
 
 $ilya_content['form'] = array(
 	'ok' => $formokhtml,
@@ -987,7 +987,7 @@ foreach ($showoptions as $optionname) {
 
 		switch ($optionname) { // special treatment for certain options
 			case 'site_language':
-				require_once QA_INCLUDE_DIR . 'util/string.php';
+				require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 				ilya_optionfield_make_select($optionfield, ilya_admin_language_options(), $value, '');
 
@@ -1004,26 +1004,26 @@ foreach ($showoptions as $optionname) {
 				$neatoptions = array();
 
 				$rawoptions = array(
-					QA_URL_FORMAT_NEAT,
-					QA_URL_FORMAT_INDEX,
-					QA_URL_FORMAT_PARAM,
-					QA_URL_FORMAT_PARAMS,
-					QA_URL_FORMAT_SAFEST,
+					ILYA__URL_FORMAT_NEAT,
+					ILYA__URL_FORMAT_INDEX,
+					ILYA__URL_FORMAT_PARAM,
+					ILYA__URL_FORMAT_PARAMS,
+					ILYA__URL_FORMAT_SAFEST,
 				);
 
 				foreach ($rawoptions as $rawoption) {
 					$neatoptions[$rawoption] =
-						'<iframe src="' . ilya_path_html('url/test/' . QA_URL_TEST_STRING, array('dummy' => '', 'param' => QA_URL_TEST_STRING), null, $rawoption) . '" width="20" height="16" style="vertical-align:middle; border:0" scrolling="no"></iframe>&nbsp;' .
+						'<iframe src="' . ilya_path_html('url/test/' . ILYA__URL_TEST_STRING, array('dummy' => '', 'param' => ILYA__URL_TEST_STRING), null, $rawoption) . '" width="20" height="16" style="vertical-align:middle; border:0" scrolling="no"></iframe>&nbsp;' .
 						'<small>' .
 						ilya_html(urldecode(ilya_path('123/why-do-birds-sing', null, '/', $rawoption))) .
-						(($rawoption == QA_URL_FORMAT_NEAT) ? strtr(ilya_lang_html('admin/neat_urls_note'), array(
+						(($rawoption == ILYA__URL_FORMAT_NEAT) ? strtr(ilya_lang_html('admin/neat_urls_note'), array(
 							'^1' => '<a href="http://www.question2answer.org/htaccess.php" target="_blank">',
 							'^2' => '</a>',
 						)) : '') .
 						'</small>';
 				}
 
-				ilya_optionfield_make_select($optionfield, $neatoptions, $value, QA_URL_FORMAT_SAFEST);
+				ilya_optionfield_make_select($optionfield, $neatoptions, $value, ILYA__URL_FORMAT_SAFEST);
 
 				$optionfield['type'] = 'select-radio';
 				$optionfield['note'] = ilya_lang_html_sub('admin/url_format_note', '<span style=" ' . ilya_admin_url_test_html() . '/span>');
@@ -1038,7 +1038,7 @@ foreach ($showoptions as $optionname) {
 				ilya_optionfield_make_select($optionfield, $themeoptions, $value, 'Classic');
 
 				$metadataUtil = new Q2A_Util_Metadata();
-				$themedirectory = QA_THEME_DIR . $value;
+				$themedirectory = ILYA__THEME_DIR . $value;
 				$metadata = $metadataUtil->fetchFromAddonPath($themedirectory);
 				if (empty($metadata)) {
 					// limit theme parsing to first 8kB
@@ -1380,40 +1380,40 @@ foreach ($showoptions as $optionname) {
 					$optionfield['label'] = ilya_lang_html('profile/' . $optionname) . ':';
 
 				if (in_array($optionname, array('permit_view_q_page', 'permit_view_new_users_page', 'permit_view_special_users_page', 'permit_post_q', 'permit_post_a', 'permit_post_c', 'permit_anon_view_ips')))
-					$widest = QA_PERMIT_ALL;
+					$widest = ILYA__PERMIT_ALL;
 				elseif ($optionname == 'permit_close_q' || $optionname == 'permit_select_a' || $optionname == 'permit_moderate' || $optionname == 'permit_hide_show')
-					$widest = QA_PERMIT_POINTS;
+					$widest = ILYA__PERMIT_POINTS;
 				elseif ($optionname == 'permit_delete_hidden')
-					$widest = QA_PERMIT_EDITORS;
+					$widest = ILYA__PERMIT_EDITORS;
 				elseif ($optionname == 'permit_view_voters_flaggers' || $optionname == 'permit_edit_silent')
-					$widest = QA_PERMIT_EXPERTS;
+					$widest = ILYA__PERMIT_EXPERTS;
 				else
-					$widest = QA_PERMIT_USERS;
+					$widest = ILYA__PERMIT_USERS;
 
 				if ($optionname == 'permit_view_q_page') {
-					$narrowest = QA_PERMIT_APPROVED;
+					$narrowest = ILYA__PERMIT_APPROVED;
 					$dopoints = false;
 				} elseif ($optionname == 'permit_view_special_users_page' || $optionname == 'permit_view_new_users_page') {
-					$narrowest = QA_PERMIT_SUPERS;
+					$narrowest = ILYA__PERMIT_SUPERS;
 					$dopoints = false;
 				} elseif ($optionname == 'permit_edit_c' || $optionname == 'permit_close_q' || $optionname == 'permit_select_a' || $optionname == 'permit_moderate' || $optionname == 'permit_hide_show' || $optionname == 'permit_anon_view_ips')
-					$narrowest = QA_PERMIT_MODERATORS;
+					$narrowest = ILYA__PERMIT_MODERATORS;
 				elseif ($optionname == 'permit_post_c' || $optionname == 'permit_edit_q' || $optionname == 'permit_retag_cat' || $optionname == 'permit_edit_a' || $optionname == 'permit_flag')
-					$narrowest = QA_PERMIT_EDITORS;
+					$narrowest = ILYA__PERMIT_EDITORS;
 				elseif ($optionname == 'permit_vote_q' || $optionname == 'permit_vote_a' || $optionname == 'permit_vote_c' || $optionname == 'permit_post_wall')
-					$narrowest = QA_PERMIT_APPROVED_POINTS;
+					$narrowest = ILYA__PERMIT_APPROVED_POINTS;
 				elseif ($optionname == 'permit_delete_hidden' || $optionname == 'permit_edit_silent')
-					$narrowest = QA_PERMIT_ADMINS;
+					$narrowest = ILYA__PERMIT_ADMINS;
 				elseif ($optionname == 'permit_view_voters_flaggers')
-					$narrowest = QA_PERMIT_SUPERS;
+					$narrowest = ILYA__PERMIT_SUPERS;
 				else
-					$narrowest = QA_PERMIT_EXPERTS;
+					$narrowest = ILYA__PERMIT_EXPERTS;
 
-				$permitoptions = ilya_admin_permit_options($widest, $narrowest, (!QA_FINAL_EXTERNAL_USERS) && ilya_opt('confirm_user_emails'), $dopoints);
+				$permitoptions = ilya_admin_permit_options($widest, $narrowest, (!ILYA__FINAL_EXTERNAL_USERS) && ilya_opt('confirm_user_emails'), $dopoints);
 
 				if (count($permitoptions) > 1) {
 					ilya_optionfield_make_select($optionfield, $permitoptions, $value,
-						($value == QA_PERMIT_CONFIRMED) ? QA_PERMIT_USERS : min(array_keys($permitoptions)));
+						($value == ILYA__PERMIT_CONFIRMED) ? ILYA__PERMIT_USERS : min(array_keys($permitoptions)));
 				} else {
 					$optionfield['type'] = 'static';
 					$optionfield['value'] = reset($permitoptions);
@@ -1587,9 +1587,9 @@ foreach ($showoptions as $optionname) {
 
 switch ($adminsection) {
 	case 'users':
-		require_once QA_INCLUDE_DIR . 'app/format.php';
+		require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
-		if (!QA_FINAL_EXTERNAL_USERS) {
+		if (!ILYA__FINAL_EXTERNAL_USERS) {
 			$userfields = ilya_db_single_select(ilya_db_userfields_selectspec());
 
 			$listhtml = '';
@@ -1710,7 +1710,7 @@ switch ($adminsection) {
 			'value' => ilya_lang_html('options/permit_moderators'),
 		);
 
-		if (!QA_FINAL_EXTERNAL_USERS) {
+		if (!ILYA__FINAL_EXTERNAL_USERS) {
 			$ilya_content['form']['fields']['permit_approve_users'] = array(
 				'type' => 'static',
 				'label' => ilya_lang_html('options/permit_approve_users'),
@@ -1751,7 +1751,7 @@ switch ($adminsection) {
 		break;
 
 	case 'mailing':
-		require_once QA_INCLUDE_DIR . 'util/sort.php';
+		require_once ILYA__INCLUDE_DIR . 'util/sort.php';
 
 		if (isset($mailingprogress)) {
 			unset($ilya_content['form']['buttons']['save']);

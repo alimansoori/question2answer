@@ -19,20 +19,20 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/captcha.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/captcha.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 
 // Get useful information on the logged in user
 
 $userid = ilya_get_logged_in_userid();
 
-if (isset($userid) && !QA_FINAL_EXTERNAL_USERS) {
+if (isset($userid) && !ILYA__FINAL_EXTERNAL_USERS) {
 	list($useraccount, $userprofile) = ilya_db_select_with_pending(
 		ilya_db_user_account_selectspec($userid, true),
 		ilya_db_user_profile_selectspec($userid, true)
@@ -45,7 +45,7 @@ $usecaptcha = ilya_opt('captcha_on_feedback') && ilya_user_use_captcha();
 // Check feedback is enabled and the person isn't blocked
 
 if (!ilya_opt('feedback_enabled'))
-	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 
 if (ilya_user_permit_error()) {
 	$ilya_content = ilya_content_prepare();
@@ -60,8 +60,8 @@ if (ilya_user_permit_error()) {
 $feedbacksent = false;
 
 if (ilya_clicked('dofeedback')) {
-	require_once QA_INCLUDE_DIR . 'app/emails.php';
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'app/emails.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	$inmessage = ilya_post_text('message');
 	$inname = ilya_post_text('name');

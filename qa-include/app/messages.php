@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -35,16 +35,16 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  */
 function ilya_wall_error_html($fromuserid, $touserid, $touserflags)
 {
-	require_once QA_INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
 
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	if (!QA_FINAL_EXTERNAL_USERS && ilya_opt('allow_user_walls')) {
-		if (($touserflags & QA_USER_FLAGS_NO_WALL_POSTS) && !(isset($fromuserid) && $fromuserid == $touserid))
+	if (!ILYA__FINAL_EXTERNAL_USERS && ilya_opt('allow_user_walls')) {
+		if (($touserflags & ILYA__USER_FLAGS_NO_WALL_POSTS) && !(isset($fromuserid) && $fromuserid == $touserid))
 			return ilya_lang_html('profile/post_wall_blocked');
 
 		else {
-			switch (ilya_user_permit_error('permit_post_wall', QA_LIMIT_WALL_POSTS)) {
+			switch (ilya_user_permit_error('permit_post_wall', ILYA__LIMIT_WALL_POSTS)) {
 				case 'limit':
 					return ilya_lang_html('profile/post_wall_limit');
 					break;
@@ -91,8 +91,8 @@ function ilya_wall_add_post($userid, $handle, $cookieid, $touserid, $tohandle, $
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'app/format.php';
-	require_once QA_INCLUDE_DIR . 'db/messages.php';
+	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA__INCLUDE_DIR . 'db/messages.php';
 
 	$messageid = ilya_db_message_create($userid, $touserid, $content, $format, true);
 	ilya_db_user_recount_posts($touserid);
@@ -120,7 +120,7 @@ function ilya_wall_add_post($userid, $handle, $cookieid, $touserid, $tohandle, $
  */
 function ilya_wall_delete_post($userid, $handle, $cookieid, $message)
 {
-	require_once QA_INCLUDE_DIR . 'db/messages.php';
+	require_once ILYA__INCLUDE_DIR . 'db/messages.php';
 
 	ilya_db_message_delete($message['messageid']);
 	ilya_db_user_recount_posts($message['touserid']);
@@ -171,7 +171,7 @@ function ilya_wall_posts_add_rules($usermessages, $start)
  */
 function ilya_wall_post_view($message)
 {
-	require_once QA_INCLUDE_DIR . 'app/format.php';
+	require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 	$options = ilya_message_html_defaults();
 
@@ -222,7 +222,7 @@ function ilya_wall_view_more_link($handle, $start)
  */
 function ilya_pm_delete($userid, $handle, $cookieid, $message, $box)
 {
-	require_once QA_INCLUDE_DIR . 'db/messages.php';
+	require_once ILYA__INCLUDE_DIR . 'db/messages.php';
 
 	ilya_db_message_user_hide($message['messageid'], $box);
 	ilya_db_message_delete($message['messageid'], false);

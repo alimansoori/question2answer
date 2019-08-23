@@ -72,7 +72,7 @@ class ilya_html_theme extends ilya_html_theme_base
 	{
 		// add RTL CSS file
 		if ($this->isRTL)
-			$this->content['css_src'][] = $this->rooturl . 'ilya-styles-rtl.css?' . QA_VERSION;
+			$this->content['css_src'][] = $this->rooturl . 'ilya-styles-rtl.css?' . ILYA__VERSION;
 
 		if ($this->localfonts) {
 			// add Ubuntu font locally (inlined for speed)
@@ -119,7 +119,7 @@ class ilya_html_theme extends ilya_html_theme_base
 	 */
 	public function head_script()
 	{
-		$jsUrl = $this->rooturl . $this->js_dir . '/snow-core.js?' . QA_VERSION;
+		$jsUrl = $this->rooturl . $this->js_dir . '/snow-core.js?' . ILYA__VERSION;
 		$this->content['script'][] = '<script src="' . $jsUrl . '"></script>';
 
 		parent::head_script();
@@ -184,7 +184,7 @@ class ilya_html_theme extends ilya_html_theme_base
 		$this->output('<div class="qam-account-items clearfix">');
 
 		if (!ilya_is_logged_in()) {
-			if (isset($this->content['navigation']['user']['login']) && !QA_FINAL_EXTERNAL_USERS) {
+			if (isset($this->content['navigation']['user']['login']) && !ILYA__FINAL_EXTERNAL_USERS) {
 				$login = $this->content['navigation']['user']['login'];
 				$this->output(
 					'<form action="' . $login['url'] . '" method="post">',
@@ -643,7 +643,7 @@ class ilya_html_theme extends ilya_html_theme_base
 			$handle = ilya_get_logged_in_user_field('handle');
 			$toggleClass = 'qam-logged-in';
 
-			if (QA_FINAL_EXTERNAL_USERS)
+			if (ILYA__FINAL_EXTERNAL_USERS)
 				$tobar_avatar = ilya_get_external_avatar_html(ilya_get_logged_in_user_field('userid'), $this->nav_bar_avatar_size, true);
 			else {
 				$tobar_avatar = ilya_get_user_avatar_html(

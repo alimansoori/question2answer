@@ -61,7 +61,7 @@ class Q2A_Plugin_PluginManager
 			$pluginInfo = array(
 				'pluginfile' => $pluginFile,
 				'directory' => $pluginDirectory,
-				'urltoroot' => substr($pluginDirectory, strlen(QA_BASE_DIR)),
+				'urltoroot' => substr($pluginDirectory, strlen(ILYA__BASE_DIR)),
 			);
 
 			if (isset($metadata['load_order'])) {
@@ -120,7 +120,7 @@ class Q2A_Plugin_PluginManager
 
 		if ($fullPath) {
 			foreach ($pluginDirectories as $key => &$pluginDirectory) {
-				$pluginDirectory = QA_PLUGIN_DIR . $pluginDirectory . '/';
+				$pluginDirectory = ILYA__PLUGIN_DIR . $pluginDirectory . '/';
 			}
 		}
 
@@ -136,7 +136,7 @@ class Q2A_Plugin_PluginManager
 	{
 		$result = array();
 
-		$fileSystemPluginFiles = glob(QA_PLUGIN_DIR . '*/ilya-plugin.php');
+		$fileSystemPluginFiles = glob(ILYA__PLUGIN_DIR . '*/ilya-plugin.php');
 
 		foreach ($fileSystemPluginFiles as $pluginFile) {
 			$directory = dirname($pluginFile) . '/';

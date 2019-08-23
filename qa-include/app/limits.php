@@ -19,27 +19,27 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 
-define('QA_LIMIT_QUESTIONS', 'Q');
-define('QA_LIMIT_ANSWERS', 'A');
-define('QA_LIMIT_COMMENTS', 'C');
-define('QA_LIMIT_VOTES', 'V');
-define('QA_LIMIT_REGISTRATIONS', 'R');
-define('QA_LIMIT_LOGINS', 'L');
-define('QA_LIMIT_UPLOADS', 'U');
-define('QA_LIMIT_FLAGS', 'F');
-define('QA_LIMIT_MESSAGES', 'M'); // i.e. private messages
-define('QA_LIMIT_WALL_POSTS', 'W');
+define('ILYA__LIMIT_QUESTIONS', 'Q');
+define('ILYA__LIMIT_ANSWERS', 'A');
+define('ILYA__LIMIT_COMMENTS', 'C');
+define('ILYA__LIMIT_VOTES', 'V');
+define('ILYA__LIMIT_REGISTRATIONS', 'R');
+define('ILYA__LIMIT_LOGINS', 'L');
+define('ILYA__LIMIT_UPLOADS', 'U');
+define('ILYA__LIMIT_FLAGS', 'F');
+define('ILYA__LIMIT_MESSAGES', 'M'); // i.e. private messages
+define('ILYA__LIMIT_WALL_POSTS', 'W');
 
 
 /**
  * How many more times the logged in user (and requesting IP address) can perform an action this hour.
- * @param string $action One of the QA_LIMIT_* constants defined above.
+ * @param string $action One of the ILYA__LIMIT_* constants defined above.
  * @return int
  */
 function ilya_user_limits_remaining($action)
@@ -51,7 +51,7 @@ function ilya_user_limits_remaining($action)
 }
 
 /**
- * Return how many more times user $userid and/or the requesting IP can perform $action (a QA_LIMIT_* constant) this hour.
+ * Return how many more times user $userid and/or the requesting IP can perform $action (a ILYA__LIMIT_* constant) this hour.
  * @deprecated Deprecated from 1.6.0; use `ilya_user_limits_remaining($action)` instead.
  * @param int $userid
  * @param string $action
@@ -61,7 +61,7 @@ function ilya_limits_remaining($userid, $action)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'db/limits.php';
+	require_once ILYA__INCLUDE_DIR . 'db/limits.php';
 
 	$dblimits = ilya_db_limits_get($userid, ilya_remote_ip_address(), $action);
 
@@ -70,7 +70,7 @@ function ilya_limits_remaining($userid, $action)
 
 /**
  * Calculate how many more times an action can be performed this hour by the user/IP.
- * @param string $action One of the QA_LIMIT_* constants defined above.
+ * @param string $action One of the ILYA__LIMIT_* constants defined above.
  * @param array $userlimits Limits for the user.
  * @param array $iplimits Limits for the requesting IP.
  * @return mixed
@@ -78,48 +78,48 @@ function ilya_limits_remaining($userid, $action)
 function ilya_limits_calc_remaining($action, $userlimits, $iplimits)
 {
 	switch ($action) {
-		case QA_LIMIT_QUESTIONS:
+		case ILYA__LIMIT_QUESTIONS:
 			$usermax = ilya_opt('max_rate_user_qs');
 			$ipmax = ilya_opt('max_rate_ip_qs');
 			break;
 
-		case QA_LIMIT_ANSWERS:
+		case ILYA__LIMIT_ANSWERS:
 			$usermax = ilya_opt('max_rate_user_as');
 			$ipmax = ilya_opt('max_rate_ip_as');
 			break;
 
-		case QA_LIMIT_COMMENTS:
+		case ILYA__LIMIT_COMMENTS:
 			$usermax = ilya_opt('max_rate_user_cs');
 			$ipmax = ilya_opt('max_rate_ip_cs');
 			break;
 
-		case QA_LIMIT_VOTES:
+		case ILYA__LIMIT_VOTES:
 			$usermax = ilya_opt('max_rate_user_votes');
 			$ipmax = ilya_opt('max_rate_ip_votes');
 			break;
 
-		case QA_LIMIT_REGISTRATIONS:
+		case ILYA__LIMIT_REGISTRATIONS:
 			$usermax = 1; // not really relevant
 			$ipmax = ilya_opt('max_rate_ip_registers');
 			break;
 
-		case QA_LIMIT_LOGINS:
+		case ILYA__LIMIT_LOGINS:
 			$usermax = 1; // not really relevant
 			$ipmax = ilya_opt('max_rate_ip_logins');
 			break;
 
-		case QA_LIMIT_UPLOADS:
+		case ILYA__LIMIT_UPLOADS:
 			$usermax = ilya_opt('max_rate_user_uploads');
 			$ipmax = ilya_opt('max_rate_ip_uploads');
 			break;
 
-		case QA_LIMIT_FLAGS:
+		case ILYA__LIMIT_FLAGS:
 			$usermax = ilya_opt('max_rate_user_flags');
 			$ipmax = ilya_opt('max_rate_ip_flags');
 			break;
 
-		case QA_LIMIT_MESSAGES:
-		case QA_LIMIT_WALL_POSTS:
+		case ILYA__LIMIT_MESSAGES:
+		case ILYA__LIMIT_WALL_POSTS:
 			$usermax = ilya_opt('max_rate_user_messages');
 			$ipmax = ilya_opt('max_rate_ip_messages');
 			break;
@@ -295,14 +295,14 @@ function ilya_report_write_action($userid, $cookieid, $action, $questionid, $ans
 /**
  * Take note for rate limits that a user and/or the requesting IP just performed an action.
  * @param int $userid User performing the action.
- * @param string $action One of the QA_LIMIT_* constants defined above.
+ * @param string $action One of the ILYA__LIMIT_* constants defined above.
  * @return mixed
  */
 function ilya_limits_increment($userid, $action)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'db/limits.php';
+	require_once ILYA__INCLUDE_DIR . 'db/limits.php';
 
 	$period = (int)(ilya_opt('db_time') / 3600);
 

@@ -19,21 +19,21 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/users.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'util/image.php';
+require_once ILYA__INCLUDE_DIR . 'db/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'util/image.php';
 
 
 // Check we're not using single-sign on integration, that we're logged in
 
-if (QA_FINAL_EXTERNAL_USERS)
+if (ILYA__FINAL_EXTERNAL_USERS)
 	ilya_fatal_error('User accounts are handled by external code');
 
 $userid = ilya_get_logged_in_userid();
@@ -52,11 +52,11 @@ list($useraccount, $userprofile, $userpoints, $userfields) = ilya_db_select_with
 );
 
 $changehandle = ilya_opt('allow_change_usernames') || (!$userpoints['qposts'] && !$userpoints['aposts'] && !$userpoints['cposts']);
-$doconfirms = ilya_opt('confirm_user_emails') && $useraccount['level'] < QA_USER_LEVEL_EXPERT;
-$isconfirmed = ($useraccount['flags'] & QA_USER_FLAGS_EMAIL_CONFIRMED) ? true : false;
+$doconfirms = ilya_opt('confirm_user_emails') && $useraccount['level'] < ILYA__USER_LEVEL_EXPERT;
+$isconfirmed = ($useraccount['flags'] & ILYA__USER_FLAGS_EMAIL_CONFIRMED) ? true : false;
 
 $haspasswordold = isset($useraccount['passsalt']) && isset($useraccount['passcheck']);
-if (QA_PASSWORD_HASH) {
+if (ILYA__PASSWORD_HASH) {
 	$haspassword = isset($useraccount['passhash']);
 } else {
 	$haspassword = $haspasswordold;
@@ -71,7 +71,7 @@ $pending_confirmation = $doconfirms && !$isconfirmed;
 if (ilya_post_limit_exceeded())
 	$errors['avatar'] = ilya_lang('main/file_upload_limit_exceeded');
 else {
-	require_once QA_INCLUDE_DIR . 'app/users-edit.php';
+	require_once ILYA__INCLUDE_DIR . 'app/users-edit.php';
 
 	if (ilya_clicked('dosaveprofile') && !$isblocked) {
 		$inhandle = $changehandle ? ilya_post_text('handle') : $useraccount['handle'];
@@ -95,7 +95,7 @@ else {
 
 			if (!isset($errors['email']) && $inemail !== $useraccount['email']) {
 				ilya_db_user_set($userid, 'email', $inemail);
-				ilya_db_user_set_flag($userid, QA_USER_FLAGS_EMAIL_CONFIRMED, false);
+				ilya_db_user_set_flag($userid, ILYA__USER_FLAGS_EMAIL_CONFIRMED, false);
 				$isconfirmed = false;
 
 				if ($doconfirms)
@@ -103,16 +103,16 @@ else {
 			}
 
 			if (ilya_opt('allow_private_messages'))
-				ilya_db_user_set_flag($userid, QA_USER_FLAGS_NO_MESSAGES, !$inmessages);
+				ilya_db_user_set_flag($userid, ILYA__USER_FLAGS_NO_MESSAGES, !$inmessages);
 
 			if (ilya_opt('allow_user_walls'))
-				ilya_db_user_set_flag($userid, QA_USER_FLAGS_NO_WALL_POSTS, !$inwallposts);
+				ilya_db_user_set_flag($userid, ILYA__USER_FLAGS_NO_WALL_POSTS, !$inwallposts);
 
 			if (ilya_opt('mailing_enabled'))
-				ilya_db_user_set_flag($userid, QA_USER_FLAGS_NO_MAILINGS, !$inmailings);
+				ilya_db_user_set_flag($userid, ILYA__USER_FLAGS_NO_MAILINGS, !$inmailings);
 
-			ilya_db_user_set_flag($userid, QA_USER_FLAGS_SHOW_AVATAR, ($inavatar == 'uploaded'));
-			ilya_db_user_set_flag($userid, QA_USER_FLAGS_SHOW_GRAVATAR, ($inavatar == 'gravatar'));
+			ilya_db_user_set_flag($userid, ILYA__USER_FLAGS_SHOW_AVATAR, ($inavatar == 'uploaded'));
+			ilya_db_user_set_flag($userid, ILYA__USER_FLAGS_SHOW_GRAVATAR, ($inavatar == 'gravatar'));
 
 			if (is_array(@$_FILES['file'])) {
 				$avatarfileerror = $_FILES['file']['error'];
@@ -121,9 +121,9 @@ else {
 				if ($avatarfileerror === 1)
 					$errors['avatar'] = ilya_lang('main/file_upload_limit_exceeded');
 				elseif ($avatarfileerror === 0 && $_FILES['file']['size'] > 0) {
-					require_once QA_INCLUDE_DIR . 'app/limits.php';
+					require_once ILYA__INCLUDE_DIR . 'app/limits.php';
 
-					switch (ilya_user_permit_error(null, QA_LIMIT_UPLOADS)) {
+					switch (ilya_user_permit_error(null, ILYA__LIMIT_UPLOADS)) {
 						case 'limit':
 							$errors['avatar'] = ilya_lang('main/upload_limit');
 							break;
@@ -133,7 +133,7 @@ else {
 							break;
 
 						case false:
-							ilya_limits_increment($userid, QA_LIMIT_UPLOADS);
+							ilya_limits_increment($userid, ILYA__LIMIT_UPLOADS);
 							$toobig = ilya_image_file_too_big($_FILES['file']['tmp_name'], ilya_opt('avatar_store_size'));
 
 							if ($toobig)
@@ -179,7 +179,7 @@ else {
 
 			if (!isset($errors['email']) && $inemail !== $useraccount['email']) {
 				ilya_db_user_set($userid, 'email', $inemail);
-				ilya_db_user_set_flag($userid, QA_USER_FLAGS_EMAIL_CONFIRMED, false);
+				ilya_db_user_set_flag($userid, ILYA__USER_FLAGS_EMAIL_CONFIRMED, false);
 				$isconfirmed = false;
 
 				if ($doconfirms)
@@ -209,7 +209,7 @@ else {
 			$errors = array();
 			$legacyPassError = !hash_equals(strtolower($useraccount['passcheck']), strtolower(ilya_db_calc_passcheck($inoldpassword, $useraccount['passsalt'])));
 
-			if (QA_PASSWORD_HASH) {
+			if (ILYA__PASSWORD_HASH) {
 				$passError = !password_verify($inoldpassword, $useraccount['passhash']);
 				if (($haspasswordold && $legacyPassError) || (!$haspasswordold && $haspassword && $passError)) {
 					$errors['oldpassword'] = ilya_lang('users/password_wrong');
@@ -286,7 +286,7 @@ $ilya_content['form_profile'] = array(
 			'label' => ilya_lang_html('users/private_messages'),
 			'tags' => 'name="messages"' . ($pending_confirmation ? ' disabled' : ''),
 			'type' => 'checkbox',
-			'value' => !($useraccount['flags'] & QA_USER_FLAGS_NO_MESSAGES),
+			'value' => !($useraccount['flags'] & ILYA__USER_FLAGS_NO_MESSAGES),
 			'note' => ilya_lang_html('users/private_messages_explanation'),
 		),
 
@@ -294,7 +294,7 @@ $ilya_content['form_profile'] = array(
 			'label' => ilya_lang_html('users/wall_posts'),
 			'tags' => 'name="wall"' . ($pending_confirmation ? ' disabled' : ''),
 			'type' => 'checkbox',
-			'value' => !($useraccount['flags'] & QA_USER_FLAGS_NO_WALL_POSTS),
+			'value' => !($useraccount['flags'] & ILYA__USER_FLAGS_NO_WALL_POSTS),
 			'note' => ilya_lang_html('users/wall_posts_explanation'),
 		),
 
@@ -302,7 +302,7 @@ $ilya_content['form_profile'] = array(
 			'label' => ilya_lang_html('users/mass_mailings'),
 			'tags' => 'name="mailings"',
 			'type' => 'checkbox',
-			'value' => !($useraccount['flags'] & QA_USER_FLAGS_NO_MAILINGS),
+			'value' => !($useraccount['flags'] & ILYA__USER_FLAGS_NO_MAILINGS),
 			'note' => ilya_lang_html('users/mass_mailings_explanation'),
 		),
 
@@ -366,7 +366,7 @@ if (ilya_opt('avatar_allow_gravatar') || ilya_opt('avatar_allow_upload')) {
 				'^2' => '</a>',
 			)) . '</span>';
 
-		if ($useraccount['flags'] & QA_USER_FLAGS_SHOW_GRAVATAR)
+		if ($useraccount['flags'] & ILYA__USER_FLAGS_SHOW_GRAVATAR)
 			$avatarvalue = $avataroptions['gravatar'];
 	}
 
@@ -378,7 +378,7 @@ if (ilya_opt('avatar_allow_gravatar') || ilya_opt('avatar_allow_upload')) {
 				ilya_get_avatar_blob_html($useraccount['avatarblobid'], $useraccount['avatarwidth'], $useraccount['avatarheight'], 32) .
 				'</span>' . $avataroptions['uploaded'];
 
-		if ($useraccount['flags'] & QA_USER_FLAGS_SHOW_AVATAR)
+		if ($useraccount['flags'] & ILYA__USER_FLAGS_SHOW_AVATAR)
 			$avatarvalue = $avataroptions['uploaded'];
 	}
 
@@ -412,7 +412,7 @@ foreach ($userfields as $userfield) {
 		'tags' => 'name="field_' . $userfield['fieldid'] . '"',
 		'value' => ilya_html($value),
 		'error' => ilya_html(@$errors[$userfield['fieldid']]),
-		'rows' => ($userfield['flags'] & QA_FIELD_FLAGS_MULTI_LINE) ? 8 : null,
+		'rows' => ($userfield['flags'] & ILYA__FIELD_FLAGS_MULTI_LINE) ? 8 : null,
 		'type' => $isblocked ? 'static' : 'text',
 	);
 }

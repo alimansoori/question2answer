@@ -19,11 +19,11 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-require_once QA_INCLUDE_DIR . 'app/admin.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/admin.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
 
-if (ilya_get_logged_in_level() < QA_USER_LEVEL_ADMIN) {
-	echo "QA_AJAX_RESPONSE\n0\n" . ilya_lang_html('admin/no_privileges');
+if (ilya_get_logged_in_level() < ILYA__USER_LEVEL_ADMIN) {
+	echo "ILYA__AJAX_RESPONSE\n0\n" . ilya_lang_html('admin/no_privileges');
 	return;
 }
 
@@ -77,4 +77,4 @@ if ($isCore) {
 	}
 }
 
-echo "QA_AJAX_RESPONSE\n1\n" . $response;
+echo "ILYA__AJAX_RESPONSE\n1\n" . $response;

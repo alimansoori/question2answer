@@ -19,26 +19,26 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 
 // Check we're not using single-sign on integration
 
-if (QA_FINAL_EXTERNAL_USERS) {
+if (ILYA__FINAL_EXTERNAL_USERS) {
 	ilya_fatal_error('User accounts are handled by external code');
 }
 
 
 // Get list of special users
 
-$users = ilya_db_select_with_pending(ilya_db_users_from_level_selectspec(QA_USER_LEVEL_EXPERT));
+$users = ilya_db_select_with_pending(ilya_db_users_from_level_selectspec(ILYA__USER_LEVEL_EXPERT));
 
 
 // Check we have permission to view this page (moderator or above)

@@ -19,10 +19,10 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-require_once QA_INCLUDE_DIR . 'app/messages.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'app/cookies.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/messages.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 
 $loginUserId = ilya_get_logged_in_userid();
@@ -34,7 +34,7 @@ $box = ilya_post_text('box');
 $pagesize = ilya_opt('page_size_pms');
 
 if (!isset($loginUserId) || $loginUserHandle !== $fromhandle || !in_array($box, array('inbox', 'outbox'))) {
-	echo "QA_AJAX_RESPONSE\n0\n";
+	echo "ILYA__AJAX_RESPONSE\n0\n";
 	return;
 }
 
@@ -47,10 +47,10 @@ foreach ($userMessages as $message) {
 	if (ilya_clicked('m' . $message['messageid'] . '_dodelete')) {
 		if (ilya_check_form_security_code('pm-' . $fromhandle, ilya_post_text('code'))) {
 			ilya_pm_delete($loginUserId, ilya_get_logged_in_handle(), ilya_cookie_get(), $message, $box);
-			echo "QA_AJAX_RESPONSE\n1\n";
+			echo "ILYA__AJAX_RESPONSE\n1\n";
 			return;
 		}
 	}
 }
 
-echo "QA_AJAX_RESPONSE\n0\n";
+echo "ILYA__AJAX_RESPONSE\n0\n";

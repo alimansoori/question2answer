@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -165,7 +165,7 @@ function ilya_db_favorite_create($userid, $entitytype, $entityid)
 	} else {
 		// Otherwise if we're going to record this in user-specific streams ...
 
-		require_once QA_INCLUDE_DIR . 'db/events.php';
+		require_once ILYA__INCLUDE_DIR . 'db/events.php';
 
 		// ... copy across recent events from the shared stream
 

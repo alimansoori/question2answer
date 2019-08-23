@@ -19,12 +19,12 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/options.php';
+require_once ILYA__INCLUDE_DIR . 'app/options.php';
 
 
 /**
@@ -62,15 +62,15 @@ function ilya_send_notification($userid, $email, $handle, $subject, $body, $subs
 	if ($ilya_notifications_suspended > 0)
 		return false;
 
-	require_once QA_INCLUDE_DIR . 'db/selects.php';
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	if (isset($userid)) {
 		$needemail = !ilya_email_validate(@$email); // take from user if invalid, e.g. @ used in practice
 		$needhandle = empty($handle);
 
 		if ($needemail || $needhandle) {
-			if (QA_FINAL_EXTERNAL_USERS) {
+			if (ILYA__FINAL_EXTERNAL_USERS) {
 				if ($needhandle) {
 					$handles = ilya_get_public_from_userids(array($userid));
 					$handle = @$handles[$userid];
@@ -133,7 +133,7 @@ function ilya_send_email($params)
 
 	// @error_log(print_r($params, true));
 
-	require_once QA_INCLUDE_DIR . 'vendor/PHPMailer/PHPMailerAutoload.php';
+	require_once ILYA__INCLUDE_DIR . 'vendor/PHPMailer/PHPMailerAutoload.php';
 
 	$mailer = new PHPMailer();
 	$mailer->CharSet = 'utf-8';

@@ -3,13 +3,13 @@
  * @deprecated This file is deprecated from Q2A 1.7; use the below file instead.
  */
 
-if (!defined('QA_VERSION')) {
+if (!defined('ILYA__VERSION')) {
 	header('Location: ../');
 	exit;
 }
 
-if (defined('QA_DEBUG_PERFORMANCE') && QA_DEBUG_PERFORMANCE) {
+if (defined('ILYA__DEBUG_PERFORMANCE') && ILYA__DEBUG_PERFORMANCE) {
 	trigger_error('Included file ' . basename(__FILE__) . ' is deprecated');
 }
 
-require_once QA_INCLUDE_DIR.'pages/admin/admin-recalc.php';
+require_once ILYA__INCLUDE_DIR.'pages/admin/admin-recalc.php';

@@ -19,13 +19,13 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 
 $categoryslugs = ilya_request_parts(1);
@@ -42,7 +42,7 @@ list($categories, $categoryid, $favoritecats) = ilya_db_select_with_pending(
 );
 
 if ($countslugs && !isset($categoryid)) {
-	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 }
 
 

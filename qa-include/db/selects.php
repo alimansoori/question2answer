@@ -19,12 +19,12 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR.'db/maxima.php';
+require_once ILYA__INCLUDE_DIR.'db/maxima.php';
 
 
 /**
@@ -34,7 +34,7 @@ require_once QA_INCLUDE_DIR.'db/maxima.php';
  */
 function ilya_db_select_with_pending() // any number of parameters read via func_get_args()
 {
-	require_once QA_INCLUDE_DIR . 'app/options.php';
+	require_once ILYA__INCLUDE_DIR . 'app/options.php';
 
 	global $ilya_db_pending_selectspecs, $ilya_db_pending_results;
 
@@ -168,14 +168,14 @@ function ilya_db_posts_basic_selectspec($voteuserid = null, $full = false, $user
 	);
 
 	if (isset($voteuserid)) {
-		require_once QA_INCLUDE_DIR . 'app/updates.php';
+		require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 		$selectspec['columns']['uservote'] = '^uservotes.vote';
 		$selectspec['columns']['userflag'] = '^uservotes.flag';
 		$selectspec['columns']['userfavoriteq'] = '^userfavorites.entityid<=>^posts.postid';
 		$selectspec['source'] .= ' LEFT JOIN ^uservotes ON ^posts.postid=^uservotes.postid AND ^uservotes.userid=$';
 		$selectspec['source'] .= ' LEFT JOIN ^userfavorites ON ^posts.postid=^userfavorites.entityid AND ^userfavorites.userid=$ AND ^userfavorites.entitytype=$';
-		array_push($selectspec['arguments'], $voteuserid, $voteuserid, QA_ENTITY_QUESTION);
+		array_push($selectspec['arguments'], $voteuserid, $voteuserid, ILYA__ENTITY_QUESTION);
 	}
 
 	if ($full) {
@@ -196,7 +196,7 @@ function ilya_db_posts_basic_selectspec($voteuserid = null, $full = false, $user
 		$selectspec['columns']['createip'] = '^posts.createip';
 		$selectspec['columns'][] = '^userpoints.points';
 
-		if (!QA_FINAL_EXTERNAL_USERS) {
+		if (!ILYA__FINAL_EXTERNAL_USERS) {
 			$selectspec['columns'][] = '^users.flags';
 			$selectspec['columns'][] = '^users.level';
 			$selectspec['columns']['email'] = '^users.email';
@@ -269,7 +269,7 @@ function ilya_db_add_selectspec_opost(&$selectspec, $poststable, $fromupdated = 
  */
 function ilya_db_add_selectspec_ousers(&$selectspec, $userstable, $pointstable)
 {
-	if (!QA_FINAL_EXTERNAL_USERS) {
+	if (!ILYA__FINAL_EXTERNAL_USERS) {
 		$selectspec['columns']['oflags'] = $userstable . '.flags';
 		$selectspec['columns']['olevel'] = $userstable . '.level';
 		$selectspec['columns']['oemail'] = $userstable . '.email';
@@ -314,9 +314,9 @@ function ilya_db_categoryslugs_sql_args($categoryslugs, &$arguments)
 
 	$levels = count($categoryslugs);
 
-	if ($levels > 0 && $levels <= QA_CATEGORY_DEPTH) {
+	if ($levels > 0 && $levels <= ILYA__CATEGORY_DEPTH) {
 		$arguments[] = ilya_db_slugs_to_backpath($categoryslugs);
-		return (($levels == QA_CATEGORY_DEPTH) ? 'categoryid' : ('catidpath' . $levels)) . '=(SELECT categoryid FROM ^categories WHERE backpath=$ LIMIT 1) AND ';
+		return (($levels == ILYA__CATEGORY_DEPTH) ? 'categoryid' : ('catidpath' . $levels)) . '=(SELECT categoryid FROM ^categories WHERE backpath=$ LIMIT 1) AND ';
 	}
 
 	return '';
@@ -346,7 +346,7 @@ function ilya_db_qs_selectspec($voteuserid, $sort, $start, $categoryslugs = null
 		$type = $specialtype ? 'Q_HIDDEN' : 'Q'; // for backwards compatibility
 	}
 
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	switch ($sort) {
 		case 'acount':
@@ -409,7 +409,7 @@ function ilya_db_unanswered_qs_selectspec($voteuserid, $by, $start, $categoryslu
 		$type = $specialtype ? 'Q_HIDDEN' : 'Q'; // for backwards compatibility
 	}
 
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	switch ($by) {
 		case 'selchildid':
@@ -460,7 +460,7 @@ function ilya_db_recent_a_qs_selectspec($voteuserid, $start, $categoryslugs = nu
 		$type = $specialtype ? 'A_HIDDEN' : 'A'; // for backwards compatibility
 	}
 
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
@@ -469,7 +469,7 @@ function ilya_db_recent_a_qs_selectspec($voteuserid, $start, $categoryslugs = nu
 
 	$selectspec['source'] .=
 		" JOIN ^posts AS aposts ON ^posts.postid=aposts.parentid" .
-		(QA_FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS ausers ON aposts.userid=ausers.userid") .
+		(ILYA__FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS ausers ON aposts.userid=ausers.userid") .
 		" LEFT JOIN ^userpoints AS auserpoints ON aposts.userid=auserpoints.userid" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
 		ilya_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
@@ -512,7 +512,7 @@ function ilya_db_recent_c_qs_selectspec($voteuserid, $start, $categoryslugs = nu
 		$type = $specialtype ? 'C_HIDDEN' : 'C'; // for backwards compatibility
 	}
 
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
@@ -523,7 +523,7 @@ function ilya_db_recent_c_qs_selectspec($voteuserid, $start, $categoryslugs = nu
 		" JOIN ^posts AS parentposts ON" .
 		" ^posts.postid=(CASE LEFT(parentposts.type, 1) WHEN 'A' THEN parentposts.parentid ELSE parentposts.postid END)" .
 		" JOIN ^posts AS cposts ON parentposts.postid=cposts.parentid" .
-		(QA_FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS cusers ON cposts.userid=cusers.userid") .
+		(ILYA__FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS cusers ON cposts.userid=cusers.userid") .
 		" LEFT JOIN ^userpoints AS cuserpoints ON cposts.userid=cuserpoints.userid" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
 		ilya_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
@@ -560,7 +560,7 @@ function ilya_db_recent_c_qs_selectspec($voteuserid, $start, $categoryslugs = nu
  */
 function ilya_db_recent_edit_qs_selectspec($voteuserid, $start, $categoryslugs = null, $lastip = null, $onlyvisible = true, $fulledited = false, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
@@ -571,7 +571,7 @@ function ilya_db_recent_edit_qs_selectspec($voteuserid, $start, $categoryslugs =
 		" JOIN ^posts AS parentposts ON" .
 		" ^posts.postid=IF(LEFT(parentposts.type, 1)='Q', parentposts.postid, parentposts.parentid)" .
 		" JOIN ^posts AS editposts ON parentposts.postid=IF(LEFT(editposts.type, 1)='Q', editposts.postid, editposts.parentid)" .
-		(QA_FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS editusers ON editposts.lastuserid=editusers.userid") .
+		(ILYA__FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS editusers ON editposts.lastuserid=editusers.userid") .
 		" LEFT JOIN ^userpoints AS edituserpoints ON editposts.lastuserid=edituserpoints.userid" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
 		ilya_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
@@ -605,7 +605,7 @@ function ilya_db_recent_edit_qs_selectspec($voteuserid, $start, $categoryslugs =
  */
 function ilya_db_flagged_post_qs_selectspec($voteuserid, $start, $fullflagged = false, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
@@ -616,7 +616,7 @@ function ilya_db_flagged_post_qs_selectspec($voteuserid, $start, $fullflagged = 
 		" JOIN ^posts AS parentposts ON" .
 		" ^posts.postid=IF(LEFT(parentposts.type, 1)='Q', parentposts.postid, parentposts.parentid)" .
 		" JOIN ^posts AS flagposts ON parentposts.postid=IF(LEFT(flagposts.type, 1)='Q', flagposts.postid, flagposts.parentid)" .
-		(QA_FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS flagusers ON flagposts.userid=flagusers.userid") .
+		(ILYA__FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS flagusers ON flagposts.userid=flagusers.userid") .
 		" LEFT JOIN ^userpoints AS flaguserpoints ON flagposts.userid=flaguserpoints.userid" .
 		" JOIN (SELECT postid FROM ^posts WHERE flagcount>0 AND type IN ('Q', 'A', 'C') ORDER BY ^posts.flagcount DESC, ^posts.created DESC LIMIT #,#) y ON flagposts.postid=y.postid";
 
@@ -833,7 +833,7 @@ function ilya_db_post_meta_selectspec($postid, $title)
  */
 function ilya_db_related_qs_selectspec($voteuserid, $questionid, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
@@ -843,8 +843,8 @@ function ilya_db_related_qs_selectspec($voteuserid, $questionid, $count = null)
 
 	$selectspec['source'] .= " JOIN (SELECT postid, SUM(score)+LOG(postid)/1000000 AS score FROM ((SELECT ^titlewords.postid, LOG(#/titlecount) AS score FROM ^titlewords JOIN ^words ON ^titlewords.wordid=^words.wordid JOIN ^titlewords AS source ON ^titlewords.wordid=source.wordid WHERE source.postid=# AND titlecount<#) UNION ALL (SELECT ^posttags.postid, 2*LOG(#/tagcount) AS score FROM ^posttags JOIN ^words ON ^posttags.wordid=^words.wordid JOIN ^posttags AS source ON ^posttags.wordid=source.wordid WHERE source.postid=# AND tagcount<#) UNION ALL (SELECT ^posts.postid, LOG(#/^categories.qcount) FROM ^posts JOIN ^categories ON ^posts.categoryid=^categories.categoryid AND ^posts.type='Q' WHERE ^categories.categoryid=(SELECT categoryid FROM ^posts WHERE postid=#) AND ^categories.qcount<#)) x WHERE postid!=# GROUP BY postid ORDER BY score DESC LIMIT #) y ON ^posts.postid=y.postid";
 
-	array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ, $questionid, QA_IGNORED_WORDS_FREQ, QA_IGNORED_WORDS_FREQ,
-		$questionid, QA_IGNORED_WORDS_FREQ, QA_IGNORED_WORDS_FREQ, $questionid, QA_IGNORED_WORDS_FREQ, $questionid, $count);
+	array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ, $questionid, ILYA__IGNORED_WORDS_FREQ, ILYA__IGNORED_WORDS_FREQ,
+		$questionid, ILYA__IGNORED_WORDS_FREQ, ILYA__IGNORED_WORDS_FREQ, $questionid, ILYA__IGNORED_WORDS_FREQ, $questionid, $count);
 
 	$selectspec['sortdesc'] = 'score';
 
@@ -882,7 +882,7 @@ function ilya_db_related_qs_selectspec($voteuserid, $questionid, $count = null)
  */
 function ilya_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, $tagwords, $handlewords, $handle, $start, $full = false, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	// add LOG(postid)/1000000 here to ensure ordering is deterministic even if several posts have same score
 	// The score also gives a bonus for hot questions, where the bonus scales linearly with hotness. The hottest
@@ -894,7 +894,7 @@ function ilya_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords
 	$selectspec['columns'][] = 'matchparts';
 	$selectspec['source'] .= " JOIN (SELECT questionid, SUM(score)+2*(LOG(#)*(MAX(^posts.hotness)-(SELECT MIN(hotness) FROM ^posts WHERE type='Q'))/((SELECT MAX(hotness) FROM ^posts WHERE type='Q')-(SELECT MIN(hotness) FROM ^posts WHERE type='Q')))+LOG(questionid)/1000000 AS score, GROUP_CONCAT(CONCAT_WS(':', matchposttype, matchpostid, ROUND(score,3))) AS matchparts FROM (";
 	$selectspec['sortdesc'] = 'score';
-	array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ);
+	array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ);
 
 	$selectparts = 0;
 
@@ -904,7 +904,7 @@ function ilya_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords
 		$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
 			"(SELECT postid AS questionid, LOG(#/titlecount) AS score, 'Q' AS matchposttype, postid AS matchpostid FROM ^titlewords JOIN ^words ON ^titlewords.wordid=^words.wordid WHERE word IN ($) AND titlecount<#)";
 
-		array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ, $titlewords, QA_IGNORED_WORDS_FREQ);
+		array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ, $titlewords, ILYA__IGNORED_WORDS_FREQ);
 	}
 
 	if (!empty($contentwords)) {
@@ -917,7 +917,7 @@ function ilya_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords
 		$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
 			"(SELECT questionid, (1-1/(1+count))*LOG(#/contentcount)*(CASE ^contentwords.type WHEN 'Q' THEN 1.0 WHEN 'A' THEN 0.5 ELSE 0.25 END) AS score, ^contentwords.type AS matchposttype, ^contentwords.postid AS matchpostid FROM ^contentwords JOIN ^words ON ^contentwords.wordid=^words.wordid WHERE word IN ($) AND contentcount<#)";
 
-		array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ, $contentwords, QA_IGNORED_WORDS_FREQ);
+		array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ, $contentwords, ILYA__IGNORED_WORDS_FREQ);
 	}
 
 	if (!empty($tagwords)) {
@@ -927,12 +927,12 @@ function ilya_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords
 		$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
 			"(SELECT postid AS questionid, 2*LOG(#/tagwordcount) AS score, 'Q' AS matchposttype, postid AS matchpostid FROM ^tagwords JOIN ^words ON ^tagwords.wordid=^words.wordid WHERE word IN ($) AND tagwordcount<#)";
 
-		array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ, $tagwords, QA_IGNORED_WORDS_FREQ);
+		array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ, $tagwords, ILYA__IGNORED_WORDS_FREQ);
 	}
 
 	if (!empty($handlewords)) {
-		if (QA_FINAL_EXTERNAL_USERS) {
-			require_once QA_INCLUDE_DIR . 'app/users.php';
+		if (ILYA__FINAL_EXTERNAL_USERS) {
+			require_once ILYA__INCLUDE_DIR . 'app/users.php';
 
 			$userids = ilya_get_userids_from_public($handlewords);
 
@@ -940,33 +940,33 @@ function ilya_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords
 				$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
 					"(SELECT postid AS questionid, LOG(#/qposts) AS score, 'Q' AS matchposttype, postid AS matchpostid FROM ^posts JOIN ^userpoints ON ^posts.userid=^userpoints.userid WHERE ^posts.userid IN ($) AND type='Q')";
 
-				array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ, $userids);
+				array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ, $userids);
 			}
 
 		} else {
 			$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
 				"(SELECT postid AS questionid, LOG(#/qposts) AS score, 'Q' AS matchposttype, postid AS matchpostid FROM ^posts JOIN ^users ON ^posts.userid=^users.userid JOIN ^userpoints ON ^userpoints.userid=^users.userid WHERE handle IN ($) AND type='Q')";
 
-			array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ, $handlewords);
+			array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ, $handlewords);
 		}
 	}
 
 	if (strlen($handle)) { // to allow searching for multi-word usernames (only works if search query contains full username and nothing else)
-		if (QA_FINAL_EXTERNAL_USERS) {
+		if (ILYA__FINAL_EXTERNAL_USERS) {
 			$userids = ilya_get_userids_from_public(array($handle));
 
 			if (count($userids)) {
 				$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
 					"(SELECT postid AS questionid, LOG(#/qposts) AS score, 'Q' AS matchposttype, postid AS matchpostid FROM ^posts JOIN ^userpoints ON ^posts.userid=^userpoints.userid WHERE ^posts.userid=$ AND type='Q')";
 
-				array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ, reset($userids));
+				array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ, reset($userids));
 			}
 
 		} else {
 			$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
 				"(SELECT postid AS questionid, LOG(#/qposts) AS score, 'Q' AS matchposttype, postid AS matchpostid FROM ^posts JOIN ^users ON ^posts.userid=^users.userid JOIN ^userpoints ON ^userpoints.userid=^users.userid WHERE handle=$ AND type='Q')";
 
-			array_push($selectspec['arguments'], QA_IGNORED_WORDS_FREQ, $handle);
+			array_push($selectspec['arguments'], ILYA__IGNORED_WORDS_FREQ, $handle);
 		}
 	}
 
@@ -1061,7 +1061,7 @@ function ilya_db_category_nav_selectspec($slugsorid, $isid, $ispostid = false, $
 		$slugsorid = ilya_db_slugs_to_backpath($slugsorid);
 	}
 
-	$parentselects = array( // requires QA_CATEGORY_DEPTH=4
+	$parentselects = array( // requires ILYA__CATEGORY_DEPTH=4
 		'SELECT NULL AS parentkey', // top level
 		'SELECT grandparent.parentid FROM ^categories JOIN ^categories AS parent ON ^categories.parentid=parent.categoryid JOIN ^categories AS grandparent ON parent.parentid=grandparent.categoryid WHERE ^categories.' . $identifiersql, // 2 gens up
 		'SELECT parent.parentid FROM ^categories JOIN ^categories AS parent ON ^categories.parentid=parent.categoryid WHERE ^categories.' . $identifiersql,
@@ -1210,9 +1210,9 @@ function ilya_db_page_full_selectspec($slugorpageid, $ispageid)
  */
 function ilya_db_tag_recent_qs_selectspec($voteuserid, $tag, $start, $full = false, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, $full);
 
@@ -1254,11 +1254,11 @@ function ilya_db_tag_word_selectspec($tag)
  */
 function ilya_db_user_recent_qs_selectspec($voteuserid, $identifier, $count = null, $start = 0)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
-	$selectspec['source'] .= " WHERE ^posts.userid=" . (QA_FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") . " AND type='Q' ORDER BY ^posts.created DESC LIMIT #,#";
+	$selectspec['source'] .= " WHERE ^posts.userid=" . (ILYA__FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") . " AND type='Q' ORDER BY ^posts.created DESC LIMIT #,#";
 	array_push($selectspec['arguments'], $identifier, $start, $count);
 	$selectspec['sortdesc'] = 'created';
 
@@ -1279,7 +1279,7 @@ function ilya_db_user_recent_qs_selectspec($voteuserid, $identifier, $count = nu
  */
 function ilya_db_user_recent_a_qs_selectspec($voteuserid, $identifier, $count = null, $start = 0)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
@@ -1292,7 +1292,7 @@ function ilya_db_user_recent_a_qs_selectspec($voteuserid, $identifier, $count = 
 	$selectspec['source'] .=
 		" JOIN ^posts AS aposts ON ^posts.postid=aposts.parentid" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
-		" userid=" . (QA_FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") .
+		" userid=" . (ILYA__FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") .
 		" AND type='A' ORDER BY created DESC LIMIT #,#) y ON aposts.postid=y.postid WHERE ^posts.type='Q'";
 
 	array_push($selectspec['arguments'], $identifier, $start, $count);
@@ -1314,7 +1314,7 @@ function ilya_db_user_recent_a_qs_selectspec($voteuserid, $identifier, $count = 
  */
 function ilya_db_user_recent_c_qs_selectspec($voteuserid, $identifier, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
@@ -1325,7 +1325,7 @@ function ilya_db_user_recent_c_qs_selectspec($voteuserid, $identifier, $count = 
 		" ^posts.postid=(CASE parentposts.type WHEN 'A' THEN parentposts.parentid ELSE parentposts.postid END)" .
 		" JOIN ^posts AS cposts ON parentposts.postid=cposts.parentid" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
-		" userid=" . (QA_FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") .
+		" userid=" . (ILYA__FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") .
 		" AND type='C' ORDER BY created DESC LIMIT #) y ON cposts.postid=y.postid WHERE ^posts.type='Q' AND parentposts.type IN ('Q', 'A')";
 
 	array_push($selectspec['arguments'], $identifier, $count);
@@ -1347,7 +1347,7 @@ function ilya_db_user_recent_c_qs_selectspec($voteuserid, $identifier, $count = 
  */
 function ilya_db_user_recent_edit_qs_selectspec($voteuserid, $identifier, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_QS_AS) : ILYA__DB_RETRIEVE_QS_AS;
 
 	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
@@ -1358,7 +1358,7 @@ function ilya_db_user_recent_edit_qs_selectspec($voteuserid, $identifier, $count
 		" ^posts.postid=IF(LEFT(parentposts.type, 1)='Q', parentposts.postid, parentposts.parentid)" .
 		" JOIN ^posts AS editposts ON parentposts.postid=IF(LEFT(editposts.type, 1)='Q', editposts.postid, editposts.parentid)" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
-		" lastuserid=" . (QA_FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") .
+		" lastuserid=" . (ILYA__FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") .
 		" AND type IN ('Q', 'A', 'C') ORDER BY updated DESC LIMIT #) y ON editposts.postid=y.postid " .
 		" WHERE parentposts.type IN ('Q', 'A', 'C') AND ^posts.type IN ('Q', 'A', 'C')";
 
@@ -1378,7 +1378,7 @@ function ilya_db_user_recent_edit_qs_selectspec($voteuserid, $identifier, $count
  */
 function ilya_db_popular_tags_selectspec($start, $count = null)
 {
-	$count = isset($count) ? $count : QA_DB_RETRIEVE_TAGS;
+	$count = isset($count) ? $count : ILYA__DB_RETRIEVE_TAGS;
 
 	return array(
 		'columns' => array('word', 'tagcount'),
@@ -1472,7 +1472,7 @@ function ilya_db_user_notices_selectspec($userid)
  * @param bool $isuserid
  * @return array
  */
-function ilya_db_user_points_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS)
+function ilya_db_user_points_selectspec($identifier, $isuserid = ILYA__FINAL_EXTERNAL_USERS)
 {
 	return array(
 		'columns' => array('points', 'qposts', 'aposts', 'cposts', 'aselects', 'aselecteds', 'qupvotes', 'qdownvotes', 'aupvotes', 'adownvotes', 'qvoteds', 'avoteds', 'upvoteds', 'downvoteds', 'bonus'),
@@ -1490,7 +1490,7 @@ function ilya_db_user_points_selectspec($identifier, $isuserid = QA_FINAL_EXTERN
  * @param bool $isuserid
  * @return array
  */
-function ilya_db_user_rank_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS)
+function ilya_db_user_rank_selectspec($identifier, $isuserid = ILYA__FINAL_EXTERNAL_USERS)
 {
 	return array(
 		'columns' => array('rank' => '1+COUNT(*)'),
@@ -1511,9 +1511,9 @@ function ilya_db_user_rank_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL
  */
 function ilya_db_top_users_selectspec($start, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_USERS) : QA_DB_RETRIEVE_USERS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_USERS) : ILYA__DB_RETRIEVE_USERS;
 
-	if (QA_FINAL_EXTERNAL_USERS) {
+	if (ILYA__FINAL_EXTERNAL_USERS) {
 		return array(
 			'columns' => array('userid', 'points'),
 			'source' => '^userpoints ORDER BY points DESC LIMIT #,#',
@@ -1524,7 +1524,7 @@ function ilya_db_top_users_selectspec($start, $count = null)
 	}
 
 	// If the site is configured to share the ^users table then there might not be a record in the ^userpoints table
-	if (defined('QA_MYSQL_USERS_PREFIX')) {
+	if (defined('ILYA__MYSQL_USERS_PREFIX')) {
 		$basePoints = (int)ilya_opt('points_base');
 		$source = '^users JOIN (SELECT ^users.userid, COALESCE(points,' . $basePoints . ') AS points FROM ^users LEFT JOIN ^userpoints ON ^users.userid=^userpoints.userid ORDER BY points DESC LIMIT #,#) y ON ^users.userid=y.userid';
 	} else {
@@ -1550,7 +1550,7 @@ function ilya_db_top_users_selectspec($start, $count = null)
  */
 function ilya_db_newest_users_selectspec($start, $count = null)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_USERS) : QA_DB_RETRIEVE_USERS;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_USERS) : ILYA__DB_RETRIEVE_USERS;
 
 	return array(
 		'columns' => array('userid', 'handle', 'flags', 'email', 'created' => 'UNIX_TIMESTAMP(created)', 'avatarblobid' => 'BINARY avatarblobid', 'avatarwidth', 'avatarheight'),
@@ -1591,7 +1591,7 @@ function ilya_db_users_with_flag_selectspec($flag, $start = 0, $limit = null)
 	$arguments = array($flag);
 
 	if (isset($limit)) {
-		$limit = min($limit, QA_DB_RETRIEVE_USERS);
+		$limit = min($limit, ILYA__DB_RETRIEVE_USERS);
 		$source .= ' LIMIT #,#';
 		array_push($arguments, $start, $limit);
 	}
@@ -1641,7 +1641,7 @@ function ilya_db_messages_columns()
  */
 function ilya_db_recent_messages_selectspec($fromidentifier, $fromisuserid, $toidentifier, $toisuserid, $count = null, $start = 0)
 {
-	$count = isset($count) ? min($count, QA_DB_RETRIEVE_MESSAGES) : QA_DB_RETRIEVE_MESSAGES;
+	$count = isset($count) ? min($count, ILYA__DB_RETRIEVE_MESSAGES) : ILYA__DB_RETRIEVE_MESSAGES;
 
 	if (isset($fromidentifier)) {
 		$fromsub = $fromisuserid ? '$' : '(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)';
@@ -1685,7 +1685,7 @@ function ilya_db_messages_inbox_selectspec($type, $toidentifier, $toisuserid, $s
 	$arguments = array($toidentifier, $type);
 
 	if (isset($limit)) {
-		$limit = min($limit, QA_DB_RETRIEVE_MESSAGES);
+		$limit = min($limit, ILYA__DB_RETRIEVE_MESSAGES);
 		$source .= ' LIMIT #,#';
 		$arguments[] = $start;
 		$arguments[] = $limit;
@@ -1721,7 +1721,7 @@ function ilya_db_messages_outbox_selectspec($type, $fromidentifier, $fromisuseri
 	$arguments = array($fromidentifier, $type);
 
 	if (isset($limit)) {
-		$limit = min($limit, QA_DB_RETRIEVE_MESSAGES);
+		$limit = min($limit, ILYA__DB_RETRIEVE_MESSAGES);
 		$source .= ' LIMIT #,#';
 		$arguments[] = $start;
 		$arguments[] = $limit;
@@ -1747,7 +1747,7 @@ function ilya_db_messages_outbox_selectspec($type, $fromidentifier, $fromisuseri
  */
 function ilya_db_is_favorite_selectspec($userid, $entitytype, $identifier)
 {
-	require_once QA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 	$selectspec = array(
 		'columns' => array('flags' => 'COUNT(*)'),
@@ -1757,15 +1757,15 @@ function ilya_db_is_favorite_selectspec($userid, $entitytype, $identifier)
 	);
 
 	switch ($entitytype) {
-		case QA_ENTITY_USER:
+		case ILYA__ENTITY_USER:
 			$selectspec['source'] .= ' AND entityid=(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)';
 			break;
 
-		case QA_ENTITY_TAG:
+		case ILYA__ENTITY_TAG:
 			$selectspec['source'] .= ' AND entityid=(SELECT wordid FROM ^words WHERE word=$ LIMIT 1)';
 			break;
 
-		case QA_ENTITY_CATEGORY:
+		case ILYA__ENTITY_CATEGORY:
 			$selectspec['source'] .= ' AND entityid=(SELECT categoryid FROM ^categories WHERE backpath=$ LIMIT 1)';
 			$identifier = ilya_db_slugs_to_backpath($identifier);
 			break;
@@ -1791,16 +1791,16 @@ function ilya_db_is_favorite_selectspec($userid, $entitytype, $identifier)
  */
 function ilya_db_user_favorite_qs_selectspec($userid, $limit = null, $start = 0)
 {
-	require_once QA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 	$selectspec = ilya_db_posts_basic_selectspec($userid);
 
 	$selectspec['source'] .= ' JOIN ^userfavorites AS selectfave ON ^posts.postid=selectfave.entityid WHERE selectfave.userid=$ AND selectfave.entitytype=$ AND ^posts.type="Q" ORDER BY ^posts.created DESC';
 	$selectspec['arguments'][] = $userid;
-	$selectspec['arguments'][] = QA_ENTITY_QUESTION;
+	$selectspec['arguments'][] = ILYA__ENTITY_QUESTION;
 
 	if (isset($limit)) {
-		$limit = min($limit, QA_DB_RETRIEVE_QS_AS);
+		$limit = min($limit, ILYA__DB_RETRIEVE_QS_AS);
 		$selectspec['source'] .= ' LIMIT #,#';
 		$selectspec['arguments'][] = $start;
 		$selectspec['arguments'][] = $limit;
@@ -1822,13 +1822,13 @@ function ilya_db_user_favorite_qs_selectspec($userid, $limit = null, $start = 0)
  */
 function ilya_db_user_favorite_users_selectspec($userid, $limit = null, $start = 0)
 {
-	require_once QA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 	$source = '^users JOIN ^userpoints ON ^users.userid=^userpoints.userid JOIN ^userfavorites ON ^users.userid=^userfavorites.entityid WHERE ^userfavorites.userid=$ AND ^userfavorites.entitytype=$ ORDER BY ^users.handle';
-	$arguments = array($userid, QA_ENTITY_USER);
+	$arguments = array($userid, ILYA__ENTITY_USER);
 
 	if (isset($limit)) {
-		$limit = min($limit, QA_DB_RETRIEVE_USERS);
+		$limit = min($limit, ILYA__DB_RETRIEVE_USERS);
 		$source .= ' LIMIT #,#';
 		$arguments[] = $start;
 		$arguments[] = $limit;
@@ -1853,13 +1853,13 @@ function ilya_db_user_favorite_users_selectspec($userid, $limit = null, $start =
  */
 function ilya_db_user_favorite_tags_selectspec($userid, $limit = null, $start = 0)
 {
-	require_once QA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 	$source = '^words JOIN ^userfavorites ON ^words.wordid=^userfavorites.entityid WHERE ^userfavorites.userid=$ AND ^userfavorites.entitytype=$ ORDER BY ^words.tagcount DESC';
-	$arguments = array($userid, QA_ENTITY_TAG);
+	$arguments = array($userid, ILYA__ENTITY_TAG);
 
 	if (isset($limit)) {
-		$limit = min($limit, QA_DB_RETRIEVE_TAGS);
+		$limit = min($limit, ILYA__DB_RETRIEVE_TAGS);
 		$source .= ' LIMIT #,#';
 		$arguments[] = $start;
 		$arguments[] = $limit;
@@ -1881,12 +1881,12 @@ function ilya_db_user_favorite_tags_selectspec($userid, $limit = null, $start = 
  */
 function ilya_db_user_favorite_categories_selectspec($userid)
 {
-	require_once QA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 	return array(
 		'columns' => array('categoryid', 'title', 'tags', 'qcount', 'backpath', 'content'),
 		'source' => "^categories JOIN ^userfavorites ON ^categories.categoryid=^userfavorites.entityid WHERE ^userfavorites.userid=$ AND ^userfavorites.entitytype=$",
-		'arguments' => array($userid, QA_ENTITY_CATEGORY),
+		'arguments' => array($userid, ILYA__ENTITY_CATEGORY),
 		'sortasc' => 'title',
 	);
 }
@@ -1900,12 +1900,12 @@ function ilya_db_user_favorite_categories_selectspec($userid)
  */
 function ilya_db_user_favorite_non_qs_selectspec($userid)
 {
-	require_once QA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 	return array(
 		'columns' => array('type' => 'entitytype', 'userid' => 'IF (entitytype=$, entityid, NULL)', 'categorybackpath' => '^categories.backpath', 'tags' => '^words.word'),
 		'source' => '^userfavorites LEFT JOIN ^words ON entitytype=$ AND wordid=entityid LEFT JOIN ^categories ON entitytype=$ AND categoryid=entityid WHERE userid=$ AND entitytype!=$',
-		'arguments' => array(QA_ENTITY_USER, QA_ENTITY_TAG, QA_ENTITY_CATEGORY, $userid, QA_ENTITY_QUESTION),
+		'arguments' => array(ILYA__ENTITY_USER, ILYA__ENTITY_TAG, ILYA__ENTITY_CATEGORY, $userid, ILYA__ENTITY_QUESTION),
 	);
 }
 
@@ -1922,11 +1922,11 @@ function ilya_db_user_favorite_non_qs_selectspec($userid)
  */
 function ilya_db_user_updates_selectspec($userid, $forfavorites = true, $forcontent = true)
 {
-	require_once QA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 	$selectspec = ilya_db_posts_basic_selectspec($userid);
 
-	$nonesql = ilya_db_argument_to_mysql(QA_ENTITY_NONE, true);
+	$nonesql = ilya_db_argument_to_mysql(ILYA__ENTITY_NONE, true);
 
 	$selectspec['columns']['obasetype'] = 'LEFT(updateposts.type, 1)';
 	$selectspec['columns']['oupdatetype'] = 'fullevents.updatetype';
@@ -1956,9 +1956,9 @@ function ilya_db_user_updates_selectspec($userid, $forfavorites = true, $forcont
 		" JOIN ^posts AS updateposts ON updateposts.postid=fullevents.lastpostid" .
 		" AND (updateposts.type IN ('Q', 'A', 'C') OR fullevents.entitytype=" . $nonesql . ")" .
 		" AND (^posts.selchildid=fullevents.lastpostid OR NOT fullevents.updatetype<=>$) AND ^posts.type IN ('Q', 'Q_HIDDEN')" .
-		(QA_FINAL_EXTERNAL_USERS ? '' : ' LEFT JOIN ^users AS eventusers ON fullevents.lastuserid=eventusers.userid') .
+		(ILYA__FINAL_EXTERNAL_USERS ? '' : ' LEFT JOIN ^users AS eventusers ON fullevents.lastuserid=eventusers.userid') .
 		' LEFT JOIN ^userpoints AS eventuserpoints ON fullevents.lastuserid=eventuserpoints.userid';
-	$selectspec['arguments'][] = QA_UPDATE_SELECTED;
+	$selectspec['arguments'][] = ILYA__UPDATE_SELECTED;
 
 	unset($selectspec['arraykey']); // allow same question to be retrieved multiple times
 
@@ -2009,9 +2009,9 @@ function ilya_db_ip_limits_selectspec($ip)
  * @param bool $full
  * @return array
  */
-function ilya_db_user_levels_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS, $full = false)
+function ilya_db_user_levels_selectspec($identifier, $isuserid = ILYA__FINAL_EXTERNAL_USERS, $full = false)
 {
-	require_once QA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 	$selectspec = array(
 		'columns' => array('entityid', 'entitytype', 'level'),
@@ -2021,7 +2021,7 @@ function ilya_db_user_levels_selectspec($identifier, $isuserid = QA_FINAL_EXTERN
 
 	if ($full) {
 		array_push($selectspec['columns'], 'title', 'backpath');
-		array_unshift($selectspec['arguments'], QA_ENTITY_CATEGORY);
+		array_unshift($selectspec['arguments'], ILYA__ENTITY_CATEGORY);
 	}
 
 	return $selectspec;

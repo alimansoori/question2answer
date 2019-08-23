@@ -19,13 +19,13 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/admin.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/admin.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 
 // Get current list of user fields and determine the state of this admin page
@@ -57,8 +57,8 @@ if (ilya_clicked('docancel'))
 	ilya_redirect('admin/users');
 
 elseif (ilya_clicked('dosavefield')) {
-	require_once QA_INCLUDE_DIR . 'db/admin.php';
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'db/admin.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	if (!ilya_check_form_security_code('admin/userfields', ilya_post_text('code')))
 		$securityexpired = true;
@@ -72,7 +72,7 @@ elseif (ilya_clicked('dosavefield')) {
 			$inname = ilya_post_text('name');
 			$intype = ilya_post_text('type');
 			$inonregister = (int)ilya_post_text('onregister');
-			$inflags = $intype | ($inonregister ? QA_FIELD_FLAGS_ON_REGISTER : 0);
+			$inflags = $intype | ($inonregister ? ILYA__FIELD_FLAGS_ON_REGISTER : 0);
 			$inposition = ilya_post_text('position');
 			$inpermit = (int)ilya_post_text('permit');
 
@@ -80,8 +80,8 @@ elseif (ilya_clicked('dosavefield')) {
 
 			// Verify the name is legitimate
 
-			if (ilya_strlen($inname) > QA_DB_MAX_PROFILE_TITLE_LENGTH)
-				$errors['name'] = ilya_lang_sub('main/max_length_x', QA_DB_MAX_PROFILE_TITLE_LENGTH);
+			if (ilya_strlen($inname) > ILYA__DB_MAX_PROFILE_TITLE_LENGTH)
+				$errors['name'] = ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_PROFILE_TITLE_LENGTH);
 
 			// Perform appropriate database action
 
@@ -102,7 +102,7 @@ elseif (ilya_clicked('dosavefield')) {
 			} elseif (empty($errors)) { // creating a new user field
 				for ($attempt = 0; $attempt < 1000; $attempt++) {
 					$suffix = $attempt ? ('-' . (1 + $attempt)) : '';
-					$newtag = ilya_substr(implode('-', ilya_string_to_words($inname)), 0, QA_DB_MAX_PROFILE_TITLE_LENGTH - strlen($suffix)) . $suffix;
+					$newtag = ilya_substr(implode('-', ilya_string_to_words($inname)), 0, ILYA__DB_MAX_PROFILE_TITLE_LENGTH - strlen($suffix)) . $suffix;
 					$uniquetag = true;
 
 					foreach ($userfields as $userfield) {
@@ -158,11 +158,11 @@ else {
 
 $typeoptions = array(
 	0 => ilya_lang_html('admin/field_single_line'),
-	QA_FIELD_FLAGS_MULTI_LINE => ilya_lang_html('admin/field_multi_line'),
-	QA_FIELD_FLAGS_LINK_URL => ilya_lang_html('admin/field_link_url'),
+	ILYA__FIELD_FLAGS_MULTI_LINE => ilya_lang_html('admin/field_multi_line'),
+	ILYA__FIELD_FLAGS_LINK_URL => ilya_lang_html('admin/field_link_url'),
 );
 
-$permitoptions = ilya_admin_permit_options(QA_PERMIT_ALL, QA_PERMIT_ADMINS, false, false);
+$permitoptions = ilya_admin_permit_options(ILYA__PERMIT_ALL, ILYA__PERMIT_ADMINS, false, false);
 $permitvalue = @$permitoptions[isset($inpermit) ? $inpermit : $editfield['permit']];
 
 $ilya_content['form'] = array(
@@ -191,7 +191,7 @@ $ilya_content['form'] = array(
 			'label' => ilya_lang_html('admin/field_type'),
 			'type' => 'select',
 			'options' => $typeoptions,
-			'value' => @$typeoptions[isset($intype) ? $intype : (@$editfield['flags'] & (QA_FIELD_FLAGS_MULTI_LINE | QA_FIELD_FLAGS_LINK_URL))],
+			'value' => @$typeoptions[isset($intype) ? $intype : (@$editfield['flags'] & (ILYA__FIELD_FLAGS_MULTI_LINE | ILYA__FIELD_FLAGS_LINK_URL))],
 		),
 
 		'permit' => array(
@@ -217,7 +217,7 @@ $ilya_content['form'] = array(
 			'tags' => 'name="onregister"',
 			'label' => ilya_lang_html('admin/show_on_register_form'),
 			'type' => 'checkbox',
-			'value' => isset($inonregister) ? $inonregister : (@$editfield['flags'] & QA_FIELD_FLAGS_ON_REGISTER),
+			'value' => isset($inonregister) ? $inonregister : (@$editfield['flags'] & ILYA__FIELD_FLAGS_ON_REGISTER),
 		),
 	),
 

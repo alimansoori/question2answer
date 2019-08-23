@@ -19,14 +19,14 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/users.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'db/users.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 
 // Get list of all users
@@ -55,7 +55,7 @@ $ilya_content['ranking'] = array(
 
 if (count($users)) {
 	foreach ($users as $userid => $user) {
-		if (QA_FINAL_EXTERNAL_USERS)
+		if (ILYA__FINAL_EXTERNAL_USERS)
 			$avatarhtml = ilya_get_external_avatar_html($user['userid'], ilya_opt('avatar_users_size'), true);
 		else {
 			$avatarhtml = ilya_get_user_avatar_html($user['flags'], $user['email'], $user['handle'],

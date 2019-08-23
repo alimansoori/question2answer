@@ -1,6 +1,6 @@
 <?php
-require_once QA_INCLUDE_DIR.'app/format.php';
-require_once QA_INCLUDE_DIR.'app/options.php';
+require_once ILYA__INCLUDE_DIR.'app/format.php';
+require_once ILYA__INCLUDE_DIR.'app/options.php';
 
 class AppOptionsTest extends PHPUnit_Framework_TestCase
 {
@@ -10,10 +10,10 @@ class AppOptionsTest extends PHPUnit_Framework_TestCase
 		'voting_on_cs' => 1,
 		'voting_on_q_page_only' => 1,
 		'votes_separated' => 0,
-		'permit_vote_q' => QA_PERMIT_USERS,
-		'permit_vote_a' => QA_PERMIT_USERS,
-		'permit_vote_c' => QA_PERMIT_USERS,
-		'permit_vote_down' => QA_PERMIT_USERS,
+		'permit_vote_q' => ILYA__PERMIT_USERS,
+		'permit_vote_a' => ILYA__PERMIT_USERS,
+		'permit_vote_c' => ILYA__PERMIT_USERS,
+		'permit_vote_down' => ILYA__PERMIT_USERS,
 	);
 
 	private $mockUser = array(

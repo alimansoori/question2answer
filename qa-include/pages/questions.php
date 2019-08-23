@@ -19,19 +19,19 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'app/q-list.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/q-list.php';
 
 $categoryslugs = ilya_request_parts(1);
 $countslugs = count($categoryslugs);
 
-$sort = ($countslugs && !QA_ALLOW_UNINDEXED_QUERIES) ? null : ilya_get('sort');
+$sort = ($countslugs && !ILYA__ALLOW_UNINDEXED_QUERIES) ? null : ilya_get('sort');
 $start = ilya_get_start();
 $userid = ilya_get_logged_in_userid();
 
@@ -68,7 +68,7 @@ list($questions, $categories, $categoryid) = ilya_db_select_with_pending(
 
 if ($countslugs) {
 	if (!isset($categoryid)) {
-		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+		return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 	}
 
 	$categorytitlehtml = ilya_html($categories[$categoryid]['title']);
@@ -79,7 +79,7 @@ if ($countslugs) {
 }
 
 
-$categorypathprefix = QA_ALLOW_UNINDEXED_QUERIES ? 'questions/' : null; // this default is applied if sorted not by recent
+$categorypathprefix = ILYA__ALLOW_UNINDEXED_QUERIES ? 'questions/' : null; // this default is applied if sorted not by recent
 $feedpathprefix = null;
 $linkparams = array('sort' => $sort);
 
@@ -129,7 +129,7 @@ $ilya_content = ilya_q_list_page_content(
 	$linkparams // category nav params
 );
 
-if (QA_ALLOW_UNINDEXED_QUERIES || !$countslugs) {
+if (ILYA__ALLOW_UNINDEXED_QUERIES || !$countslugs) {
 	$ilya_content['navigation']['sub'] = ilya_qs_sub_navigation($sort, $categoryslugs);
 }
 

@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../');
 	exit;
 }
@@ -28,7 +28,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 ilya_report_process_stage('init_feed');
 
-require_once QA_INCLUDE_DIR . 'app/options.php';
+require_once ILYA__INCLUDE_DIR . 'app/options.php';
 
 
 // Functions used within this file
@@ -130,13 +130,13 @@ switch ($feedtype) {
 
 	case 'hot':
 		$feedoption = 'feed_for_hot';
-		if (!QA_ALLOW_UNINDEXED_QUERIES)
+		if (!ILYA__ALLOW_UNINDEXED_QUERIES)
 			$categoryslugs = null;
 		break;
 
 	case 'unanswered':
 		$feedoption = 'feed_for_unanswered';
-		if (!QA_ALLOW_UNINDEXED_QUERIES)
+		if (!ILYA__ALLOW_UNINDEXED_QUERIES)
 			$categoryslugs = null;
 		break;
 
@@ -179,7 +179,7 @@ if (!(ilya_opt($feedoption) && ($countslugs ? (ilya_using_categories() && ilya_o
 
 // Retrieve the appropriate questions and other information for this feed
 
-require_once QA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 $sitetitle = ilya_opt('site_title');
 $siteurl = ilya_opt('site_url');
@@ -249,7 +249,7 @@ switch ($feedtype) {
 		break;
 
 	case 'search':
-		require_once QA_INCLUDE_DIR . 'app/search.php';
+		require_once ILYA__INCLUDE_DIR . 'app/search.php';
 
 		$query = $feedparams[0];
 
@@ -278,10 +278,10 @@ switch ($feedtype) {
 
 // Remove duplicate questions (perhaps referenced in an answer and a comment) and cut down to size
 
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'app/updates.php';
-require_once QA_INCLUDE_DIR . 'app/posts.php';
-require_once QA_INCLUDE_DIR . 'util/string.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/updates.php';
+require_once ILYA__INCLUDE_DIR . 'app/posts.php';
+require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 if ($feedtype != 'search' && $feedtype != 'hot') // leave search results and hot questions sorted by relevance
 	$questions = ilya_any_sort_and_dedupe($questions);
@@ -333,19 +333,19 @@ foreach ($questions as $question) {
 				$langstring = null;
 				break;
 
-			case 'Q-' . QA_UPDATE_VISIBLE:
+			case 'Q-' . ILYA__UPDATE_VISIBLE:
 				$langstring = $question['hidden'] ? 'misc/feed_hidden_prefix' : 'misc/feed_reshown_prefix';
 				break;
 
-			case 'Q-' . QA_UPDATE_CLOSED:
+			case 'Q-' . ILYA__UPDATE_CLOSED:
 				$langstring = ilya_post_is_closed($question) ? 'misc/feed_closed_prefix' : 'misc/feed_reopened_prefix';
 				break;
 
-			case 'Q-' . QA_UPDATE_TAGS:
+			case 'Q-' . ILYA__UPDATE_TAGS:
 				$langstring = 'misc/feed_retagged_prefix';
 				break;
 
-			case 'Q-' . QA_UPDATE_CATEGORY:
+			case 'Q-' . ILYA__UPDATE_CATEGORY:
 				$langstring = 'misc/feed_recategorized_prefix';
 				break;
 
@@ -353,15 +353,15 @@ foreach ($questions as $question) {
 				$langstring = 'misc/feed_a_prefix';
 				break;
 
-			case 'A-' . QA_UPDATE_SELECTED:
+			case 'A-' . ILYA__UPDATE_SELECTED:
 				$langstring = 'misc/feed_a_selected_prefix';
 				break;
 
-			case 'A-' . QA_UPDATE_VISIBLE:
+			case 'A-' . ILYA__UPDATE_VISIBLE:
 				$langstring = $question['ohidden'] ? 'misc/feed_hidden_prefix' : 'misc/feed_a_reshown_prefix';
 				break;
 
-			case 'A-' . QA_UPDATE_CONTENT:
+			case 'A-' . ILYA__UPDATE_CONTENT:
 				$langstring = 'misc/feed_a_edited_prefix';
 				break;
 
@@ -369,19 +369,19 @@ foreach ($questions as $question) {
 				$langstring = 'misc/feed_c_prefix';
 				break;
 
-			case 'C-' . QA_UPDATE_TYPE:
+			case 'C-' . ILYA__UPDATE_TYPE:
 				$langstring = 'misc/feed_c_moved_prefix';
 				break;
 
-			case 'C-' . QA_UPDATE_VISIBLE:
+			case 'C-' . ILYA__UPDATE_VISIBLE:
 				$langstring = $question['ohidden'] ? 'misc/feed_hidden_prefix' : 'misc/feed_c_reshown_prefix';
 				break;
 
-			case 'C-' . QA_UPDATE_CONTENT:
+			case 'C-' . ILYA__UPDATE_CONTENT:
 				$langstring = 'misc/feed_c_edited_prefix';
 				break;
 
-			case 'Q-' . QA_UPDATE_CONTENT:
+			case 'Q-' . ILYA__UPDATE_CONTENT:
 			default:
 				$langstring = 'misc/feed_edited_prefix';
 				break;

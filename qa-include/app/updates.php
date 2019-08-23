@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -27,27 +27,27 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 // Character codes for the different types of entity that can be followed (entitytype columns)
 
-define('QA_ENTITY_QUESTION', 'Q');
-define('QA_ENTITY_USER', 'U');
-define('QA_ENTITY_TAG', 'T');
-define('QA_ENTITY_CATEGORY', 'C');
-define('QA_ENTITY_NONE', '-');
+define('ILYA__ENTITY_QUESTION', 'Q');
+define('ILYA__ENTITY_USER', 'U');
+define('ILYA__ENTITY_TAG', 'T');
+define('ILYA__ENTITY_CATEGORY', 'C');
+define('ILYA__ENTITY_NONE', '-');
 
 
 // Character codes for the different types of updates on a post (updatetype columns)
 
-define('QA_UPDATE_CATEGORY', 'A'); // questions only, category changed
-define('QA_UPDATE_CLOSED', 'C'); // questions only, closed or reopened
-define('QA_UPDATE_CONTENT', 'E'); // title or content edited
-define('QA_UPDATE_PARENT', 'M'); // e.g. comment moved when converting its parent answer to a comment
-define('QA_UPDATE_SELECTED', 'S'); // answers only, removed if unselected
-define('QA_UPDATE_TAGS', 'T'); // questions only
-define('QA_UPDATE_TYPE', 'Y'); // e.g. answer to comment
-define('QA_UPDATE_VISIBLE', 'H'); // hidden or reshown
+define('ILYA__UPDATE_CATEGORY', 'A'); // questions only, category changed
+define('ILYA__UPDATE_CLOSED', 'C'); // questions only, closed or reopened
+define('ILYA__UPDATE_CONTENT', 'E'); // title or content edited
+define('ILYA__UPDATE_PARENT', 'M'); // e.g. comment moved when converting its parent answer to a comment
+define('ILYA__UPDATE_SELECTED', 'S'); // answers only, removed if unselected
+define('ILYA__UPDATE_TAGS', 'T'); // questions only
+define('ILYA__UPDATE_TYPE', 'Y'); // e.g. answer to comment
+define('ILYA__UPDATE_VISIBLE', 'H'); // hidden or reshown
 
 
 // Character codes for types of update that only appear in the streams tables, not on the posts themselves
 
-define('QA_UPDATE_FOLLOWS', 'F'); // if a new question was asked related to one of its answers, or for a comment that follows another
-define('QA_UPDATE_C_FOR_Q', 'U'); // if comment created was on a question of the user whose stream this appears in
-define('QA_UPDATE_C_FOR_A', 'N'); // if comment created was on an answer of the user whose stream this appears in
+define('ILYA__UPDATE_FOLLOWS', 'F'); // if a new question was asked related to one of its answers, or for a comment that follows another
+define('ILYA__UPDATE_C_FOR_Q', 'U'); // if comment created was on a question of the user whose stream this appears in
+define('ILYA__UPDATE_C_FOR_A', 'N'); // if comment created was on an answer of the user whose stream this appears in

@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -120,15 +120,15 @@ function ilya_array_insert(&$array, $beforekey, $addelements)
 
 // Special values for the $beforekey parameter for ilya_array_reorder() - use floats since these cannot be real keys
 
-define('QA_ARRAY_WITH_FIRST', null); // collect the elements together in the position of the first one found
-define('QA_ARRAY_WITH_LAST', 0.6); // collect the elements together in the position of the last one found
-define('QA_ARRAY_AT_START', 0.1); // place all the elements at the start of the array
-define('QA_ARRAY_AT_END', 0.9); // place all the elements at the end of the array
+define('ILYA__ARRAY_WITH_FIRST', null); // collect the elements together in the position of the first one found
+define('ILYA__ARRAY_WITH_LAST', 0.6); // collect the elements together in the position of the last one found
+define('ILYA__ARRAY_AT_START', 0.1); // place all the elements at the start of the array
+define('ILYA__ARRAY_AT_END', 0.9); // place all the elements at the end of the array
 
 /**
  * Moves all of the elements in $array whose keys are in the parameter $keys. They can be moved to before a specific
  * element by passing the key of that element in $beforekey (if $beforekey is not found, the elements are moved to the
- * end of the array). Any of the QA_ARRAY_* values defined above can also be passed in the $beforekey parameter.
+ * end of the array). Any of the ILYA__ARRAY_* values defined above can also be passed in the $beforekey parameter.
  * If $reorderrelative is true, the relative ordering between the elements will also be set by the order in $keys.
  * @param $array
  * @param $keys
@@ -151,7 +151,7 @@ function ilya_array_reorder(&$array, $keys, $beforekey = null, $reorderrelative 
 	$insertkeys = array();
 	$offset = null;
 
-	if ($beforekey == QA_ARRAY_AT_START)
+	if ($beforekey == ILYA__ARRAY_AT_START)
 		$offset = 0;
 
 	foreach ($array as $key => $value) {
@@ -164,14 +164,14 @@ function ilya_array_reorder(&$array, $keys, $beforekey = null, $reorderrelative 
 			else
 				$insertkeys[] = $key; // in order of original array
 
-			if ($beforekey == QA_ARRAY_WITH_LAST || ($beforekey === QA_ARRAY_WITH_FIRST && !isset($offset)))
+			if ($beforekey == ILYA__ARRAY_WITH_LAST || ($beforekey === ILYA__ARRAY_WITH_FIRST && !isset($offset)))
 				$offset = count($newkeys);
 
 		} else
 			$newkeys[] = $key;
 	}
 
-	if (!isset($offset)) // also good for QA_ARRAY_AT_END
+	if (!isset($offset)) // also good for ILYA__ARRAY_AT_END
 		$offset = count($newkeys);
 
 	if ($reorderrelative)

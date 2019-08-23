@@ -19,13 +19,13 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/events.php';
-require_once QA_INCLUDE_DIR . 'app/updates.php';
+require_once ILYA__INCLUDE_DIR . 'db/events.php';
+require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 
 /**
@@ -42,10 +42,10 @@ require_once QA_INCLUDE_DIR . 'app/updates.php';
  */
 function ilya_create_event_for_q_user($questionid, $lastpostid, $updatetype, $lastuserid, $otheruserid = null, $timestamp = null)
 {
-	ilya_db_event_create_for_entity(QA_ENTITY_QUESTION, $questionid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp); // anyone who favorited the question
+	ilya_db_event_create_for_entity(ILYA__ENTITY_QUESTION, $questionid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp); // anyone who favorited the question
 
-	if (isset($lastuserid) && !QA_FINAL_EXTERNAL_USERS)
-		ilya_db_event_create_for_entity(QA_ENTITY_USER, $lastuserid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp); // anyone who favorited the user who did it
+	if (isset($lastuserid) && !ILYA__FINAL_EXTERNAL_USERS)
+		ilya_db_event_create_for_entity(ILYA__ENTITY_USER, $lastuserid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp); // anyone who favorited the user who did it
 
 	if (isset($otheruserid) && ($otheruserid != $lastuserid))
 		ilya_db_event_create_not_entity($otheruserid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp); // possible other user to be informed
@@ -65,12 +65,12 @@ function ilya_create_event_for_q_user($questionid, $lastpostid, $updatetype, $la
  */
 function ilya_create_event_for_tags($tagstring, $questionid, $updatetype, $lastuserid, $timestamp = null)
 {
-	require_once QA_INCLUDE_DIR . 'util/string.php';
-	require_once QA_INCLUDE_DIR . 'db/post-create.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'db/post-create.php';
 
 	$tagwordids = ilya_db_word_mapto_ids(array_unique(ilya_tagstring_to_tags($tagstring)));
 	foreach ($tagwordids as $wordid) {
-		ilya_db_event_create_for_entity(QA_ENTITY_TAG, $wordid, $questionid, $questionid, $updatetype, $lastuserid, $timestamp);
+		ilya_db_event_create_for_entity(ILYA__ENTITY_TAG, $wordid, $questionid, $questionid, $updatetype, $lastuserid, $timestamp);
 	}
 }
 
@@ -89,12 +89,12 @@ function ilya_create_event_for_tags($tagstring, $questionid, $updatetype, $lastu
 function ilya_create_event_for_category($categoryid, $questionid, $updatetype, $lastuserid, $timestamp = null)
 {
 	if (isset($categoryid)) {
-		require_once QA_INCLUDE_DIR . 'db/selects.php';
-		require_once QA_INCLUDE_DIR . 'app/format.php';
+		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+		require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 		$categories = ilya_category_path(ilya_db_single_select(ilya_db_category_nav_selectspec($categoryid, true)), $categoryid);
 		foreach ($categories as $category) {
-			ilya_db_event_create_for_entity(QA_ENTITY_CATEGORY, $category['categoryid'], $questionid, $questionid, $updatetype, $lastuserid, $timestamp);
+			ilya_db_event_create_for_entity(ILYA__ENTITY_CATEGORY, $category['categoryid'], $questionid, $questionid, $updatetype, $lastuserid, $timestamp);
 		}
 	}
 }

@@ -166,7 +166,7 @@ class ilya_html_theme_layer extends ilya_html_theme_base
 	private function retrieve_queued_voters_flaggers()
 	{
 		if (count($this->ilya_voters_flaggers_queue)) {
-			require_once QA_INCLUDE_DIR . 'db/votes.php';
+			require_once ILYA__INCLUDE_DIR . 'db/votes.php';
 
 			$postids = array_keys($this->ilya_voters_flaggers_queue);
 
@@ -176,7 +176,7 @@ class ilya_html_theme_layer extends ilya_html_theme_base
 
 			$newvotersflaggers = ilya_db_uservoteflag_posts_get($postids);
 
-			if (QA_FINAL_EXTERNAL_USERS) {
+			if (ILYA__FINAL_EXTERNAL_USERS) {
 				$keyuserids = array();
 				foreach ($newvotersflaggers as $voterflagger) {
 					$keyuserids[$voterflagger['userid']] = true;
@@ -198,7 +198,7 @@ class ilya_html_theme_layer extends ilya_html_theme_base
 
 	private function get_post_voters_flaggers($post, $postid)
 	{
-		require_once QA_INCLUDE_DIR . 'util/sort.php';
+		require_once ILYA__INCLUDE_DIR . 'util/sort.php';
 
 		if (!isset($this->ilya_voters_flaggers_cache[$postid])) {
 			$this->queue_post_voters_flaggers($post);

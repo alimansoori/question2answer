@@ -43,7 +43,7 @@
 	Recalculated in dorecalccategories:
 	===================================
 	^posts (categoryid): assign to answers and comments based on their antecedent question
-	^posts (catidpath1, catidpath2, catidpath3): hierarchical path to category ids (requires QA_CATEGORY_DEPTH=4)
+	^posts (catidpath1, catidpath2, catidpath3): hierarchical path to category ids (requires ILYA__CATEGORY_DEPTH=4)
 	^categories (qcount): number of (visible) questions in each category
 	^categories (backpath): full (backwards) path of slugs to that category
 
@@ -55,20 +55,20 @@
 	[but these are not entirely redundant since they can contain historical information no longer in ^posts]
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/recalc.php';
-require_once QA_INCLUDE_DIR . 'db/post-create.php';
-require_once QA_INCLUDE_DIR . 'db/points.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'db/admin.php';
-require_once QA_INCLUDE_DIR . 'db/users.php';
-require_once QA_INCLUDE_DIR . 'app/options.php';
-require_once QA_INCLUDE_DIR . 'app/post-create.php';
-require_once QA_INCLUDE_DIR . 'app/post-update.php';
+require_once ILYA__INCLUDE_DIR . 'db/recalc.php';
+require_once ILYA__INCLUDE_DIR . 'db/post-create.php';
+require_once ILYA__INCLUDE_DIR . 'db/points.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'db/admin.php';
+require_once ILYA__INCLUDE_DIR . 'db/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/options.php';
+require_once ILYA__INCLUDE_DIR . 'app/post-create.php';
+require_once ILYA__INCLUDE_DIR . 'app/post-update.php';
 
 
 /**
@@ -92,12 +92,12 @@ function ilya_recalc_perform_step(&$state)
 			$pages = ilya_db_pages_get_for_reindexing($next, 10);
 
 			if (count($pages)) {
-				require_once QA_INCLUDE_DIR . 'app/format.php';
+				require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 				$lastpageid = max(array_keys($pages));
 
 				foreach ($pages as $pageid => $page) {
-					if (!($page['flags'] & QA_PAGE_FLAGS_EXTERNAL)) {
+					if (!($page['flags'] & ILYA__PAGE_FLAGS_EXTERNAL)) {
 						$searchmodules = ilya_load_modules_with('search', 'unindex_page');
 						foreach ($searchmodules as $searchmodule) {
 							$searchmodule->unindex_page($pageid);
@@ -134,7 +134,7 @@ function ilya_recalc_perform_step(&$state)
 			$posts = ilya_db_posts_get_for_reindexing($next, 10);
 
 			if (count($posts)) {
-				require_once QA_INCLUDE_DIR . 'app/format.php';
+				require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 				$lastpostid = max(array_keys($posts));
 
@@ -272,9 +272,9 @@ function ilya_recalc_perform_step(&$state)
 			$questionids = ilya_db_qs_get_for_event_refilling($next, 1);
 
 			if (count($questionids)) {
-				require_once QA_INCLUDE_DIR . 'app/events.php';
-				require_once QA_INCLUDE_DIR . 'app/updates.php';
-				require_once QA_INCLUDE_DIR . 'util/sort.php';
+				require_once ILYA__INCLUDE_DIR . 'app/events.php';
+				require_once ILYA__INCLUDE_DIR . 'app/updates.php';
+				require_once ILYA__INCLUDE_DIR . 'util/sort.php';
 
 				$lastquestionid = max($questionids);
 
@@ -305,11 +305,11 @@ function ilya_recalc_perform_step(&$state)
 						$followonq = ($post['basetype'] == 'Q') && ($postid != $questionid);
 
 						if ($followonq) {
-							$updatetype = QA_UPDATE_FOLLOWS;
+							$updatetype = ILYA__UPDATE_FOLLOWS;
 						} elseif ($post['basetype'] == 'C' && @$posts[$post['parentid']]['basetype'] == 'Q') {
-							$updatetype = QA_UPDATE_C_FOR_Q;
+							$updatetype = ILYA__UPDATE_C_FOR_Q;
 						} elseif ($post['basetype'] == 'C' && @$posts[$post['parentid']]['basetype'] == 'A') {
-							$updatetype = QA_UPDATE_C_FOR_A;
+							$updatetype = ILYA__UPDATE_C_FOR_A;
 						} else {
 							$updatetype = null;
 						}
@@ -346,7 +346,7 @@ function ilya_recalc_perform_step(&$state)
 						foreach ($comments as $comment) {
 							foreach ($keyuserids as $keyuserid => $dummy) {
 								if ($keyuserid != $comment['userid'] && $keyuserid != @$posts[$parentid]['userid']) {
-									ilya_db_event_create_not_entity($keyuserid, $questionid, $comment['postid'], QA_UPDATE_FOLLOWS, $comment['userid'], $comment['created']);
+									ilya_db_event_create_not_entity($keyuserid, $questionid, $comment['postid'], ILYA__UPDATE_FOLLOWS, $comment['userid'], $comment['created']);
 								}
 							}
 
@@ -437,7 +437,7 @@ function ilya_recalc_perform_step(&$state)
 			$posts = ilya_db_posts_get_for_deleting('C', $next, 1);
 
 			if (count($posts)) {
-				require_once QA_INCLUDE_DIR . 'app/posts.php';
+				require_once ILYA__INCLUDE_DIR . 'app/posts.php';
 
 				$postid = $posts[0];
 				ilya_post_delete($postid);
@@ -454,7 +454,7 @@ function ilya_recalc_perform_step(&$state)
 			$posts = ilya_db_posts_get_for_deleting('A', $next, 1);
 
 			if (count($posts)) {
-				require_once QA_INCLUDE_DIR . 'app/posts.php';
+				require_once ILYA__INCLUDE_DIR . 'app/posts.php';
 
 				$postid = $posts[0];
 				ilya_post_delete($postid);
@@ -472,7 +472,7 @@ function ilya_recalc_perform_step(&$state)
 			$posts = ilya_db_posts_get_for_deleting('Q', $next, 1);
 
 			if (count($posts)) {
-				require_once QA_INCLUDE_DIR . 'app/posts.php';
+				require_once ILYA__INCLUDE_DIR . 'app/posts.php';
 
 				$postid = $posts[0];
 				ilya_post_delete($postid);
@@ -494,8 +494,8 @@ function ilya_recalc_perform_step(&$state)
 			$blob = ilya_db_get_next_blob_in_db($next);
 
 			if (isset($blob)) {
-				require_once QA_INCLUDE_DIR . 'app/blobs.php';
-				require_once QA_INCLUDE_DIR . 'db/blobs.php';
+				require_once ILYA__INCLUDE_DIR . 'app/blobs.php';
+				require_once ILYA__INCLUDE_DIR . 'db/blobs.php';
 
 				if (ilya_write_blob_file($blob['blobid'], $blob['content'], $blob['format'])) {
 					ilya_db_blob_set_content($blob['blobid'], null);
@@ -517,8 +517,8 @@ function ilya_recalc_perform_step(&$state)
 			$blob = ilya_db_get_next_blob_on_disk($next);
 
 			if (isset($blob)) {
-				require_once QA_INCLUDE_DIR . 'app/blobs.php';
-				require_once QA_INCLUDE_DIR . 'db/blobs.php';
+				require_once ILYA__INCLUDE_DIR . 'app/blobs.php';
+				require_once ILYA__INCLUDE_DIR . 'db/blobs.php';
 
 				$content = ilya_read_blob_file($blob['blobid'], $blob['format']);
 				ilya_db_blob_set_content($blob['blobid'], $content);
@@ -576,7 +576,7 @@ function ilya_recalc_perform_step(&$state)
 function ilya_recalc_transition(&$state, $operation)
 {
 	$length = ilya_recalc_stage_length($operation);
-	$next = (QA_FINAL_EXTERNAL_USERS && ($operation == 'dorecalcpoints_recalc')) ? '' : 0;
+	$next = (ILYA__FINAL_EXTERNAL_USERS && ($operation == 'dorecalcpoints_recalc')) ? '' : 0;
 	$done = 0;
 
 	$state = $operation . "\t" . $length . "\t" . $next . "\t" . $done;
@@ -684,7 +684,7 @@ function ilya_recalc_progress_lang($langId, $progress, $total)
  */
 function ilya_recalc_get_message($state)
 {
-	require_once QA_INCLUDE_DIR . 'app/format.php';
+	require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 	@list($operation, $length, $next, $done) = explode("\t", $state);
 

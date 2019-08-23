@@ -19,25 +19,25 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/options.php';
+require_once ILYA__INCLUDE_DIR . 'db/options.php';
 
-define('QA_PERMIT_ALL', 150);
-define('QA_PERMIT_USERS', 120);
-define('QA_PERMIT_CONFIRMED', 110);
-define('QA_PERMIT_POINTS', 106);
-define('QA_PERMIT_POINTS_CONFIRMED', 104);
-define('QA_PERMIT_APPROVED', 103);
-define('QA_PERMIT_APPROVED_POINTS', 102);
-define('QA_PERMIT_EXPERTS', 100);
-define('QA_PERMIT_EDITORS', 70);
-define('QA_PERMIT_MODERATORS', 40);
-define('QA_PERMIT_ADMINS', 20);
-define('QA_PERMIT_SUPERS', 0);
+define('ILYA__PERMIT_ALL', 150);
+define('ILYA__PERMIT_USERS', 120);
+define('ILYA__PERMIT_CONFIRMED', 110);
+define('ILYA__PERMIT_POINTS', 106);
+define('ILYA__PERMIT_POINTS_CONFIRMED', 104);
+define('ILYA__PERMIT_APPROVED', 103);
+define('ILYA__PERMIT_APPROVED_POINTS', 102);
+define('ILYA__PERMIT_EXPERTS', 100);
+define('ILYA__PERMIT_EDITORS', 70);
+define('ILYA__PERMIT_MODERATORS', 40);
+define('ILYA__PERMIT_ADMINS', 20);
+define('ILYA__PERMIT_SUPERS', 0);
 
 
 /**
@@ -56,7 +56,7 @@ function ilya_get_options($names)
 		ilya_preload_options();
 
 	if (!$ilya_options_loaded) {
-		require_once QA_INCLUDE_DIR . 'db/selects.php';
+		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 		ilya_load_options_results(array(
 			ilya_db_get_pending_result('options'),
@@ -109,7 +109,7 @@ function ilya_opt_if_loaded($name)
 
 /**
  * Load all of the Q2A options from the database.
- * From Q2A 1.8 we always load the options in a separate query regardless of QA_OPTIMIZE_DISTANT_DB.
+ * From Q2A 1.8 we always load the options in a separate query regardless of ILYA__OPTIMIZE_DISTANT_DB.
  */
 function ilya_preload_options()
 {
@@ -300,7 +300,7 @@ function ilya_default_option($name)
 		'nav_tags' => 1,
 		'nav_unanswered' => 1,
 		'nav_users' => 1,
-		'neat_urls' => QA_URL_FORMAT_SAFEST,
+		'neat_urls' => ILYA__URL_FORMAT_SAFEST,
 		'notify_users_default' => 1,
 		'page_size_activity' => 20,
 		'page_size_ask_check_qs' => 5,
@@ -318,26 +318,26 @@ function ilya_default_option($name)
 		'page_size_users' => 30,
 		'page_size_wall' => 10,
 		'pages_prev_next' => 3,
-		'permit_anon_view_ips' => QA_PERMIT_EDITORS,
-		'permit_close_q' => QA_PERMIT_EDITORS,
-		'permit_delete_hidden' => QA_PERMIT_MODERATORS,
-		'permit_edit_a' => QA_PERMIT_EXPERTS,
-		'permit_edit_c' => QA_PERMIT_EDITORS,
-		'permit_edit_q' => QA_PERMIT_EDITORS,
-		'permit_edit_silent' => QA_PERMIT_MODERATORS,
-		'permit_flag' => QA_PERMIT_CONFIRMED,
-		'permit_hide_show' => QA_PERMIT_EDITORS,
-		'permit_moderate' => QA_PERMIT_EXPERTS,
-		'permit_post_wall' => QA_PERMIT_CONFIRMED,
-		'permit_select_a' => QA_PERMIT_EXPERTS,
-		'permit_view_q_page' => QA_PERMIT_ALL,
-		'permit_view_new_users_page' => QA_PERMIT_EDITORS,
-		'permit_view_special_users_page' => QA_PERMIT_MODERATORS,
-		'permit_view_voters_flaggers' => QA_PERMIT_ADMINS,
-		'permit_vote_a' => QA_PERMIT_USERS,
-		'permit_vote_c' => QA_PERMIT_USERS,
-		'permit_vote_down' => QA_PERMIT_USERS,
-		'permit_vote_q' => QA_PERMIT_USERS,
+		'permit_anon_view_ips' => ILYA__PERMIT_EDITORS,
+		'permit_close_q' => ILYA__PERMIT_EDITORS,
+		'permit_delete_hidden' => ILYA__PERMIT_MODERATORS,
+		'permit_edit_a' => ILYA__PERMIT_EXPERTS,
+		'permit_edit_c' => ILYA__PERMIT_EDITORS,
+		'permit_edit_q' => ILYA__PERMIT_EDITORS,
+		'permit_edit_silent' => ILYA__PERMIT_MODERATORS,
+		'permit_flag' => ILYA__PERMIT_CONFIRMED,
+		'permit_hide_show' => ILYA__PERMIT_EDITORS,
+		'permit_moderate' => ILYA__PERMIT_EXPERTS,
+		'permit_post_wall' => ILYA__PERMIT_CONFIRMED,
+		'permit_select_a' => ILYA__PERMIT_EXPERTS,
+		'permit_view_q_page' => ILYA__PERMIT_ALL,
+		'permit_view_new_users_page' => ILYA__PERMIT_EDITORS,
+		'permit_view_special_users_page' => ILYA__PERMIT_MODERATORS,
+		'permit_view_voters_flaggers' => ILYA__PERMIT_ADMINS,
+		'permit_vote_a' => ILYA__PERMIT_USERS,
+		'permit_vote_c' => ILYA__PERMIT_USERS,
+		'permit_vote_down' => ILYA__PERMIT_USERS,
+		'permit_vote_q' => ILYA__PERMIT_USERS,
 		'points_a_selected' => 30,
 		'points_a_voted_max_gain' => 20,
 		'points_a_voted_max_loss' => 5,
@@ -449,22 +449,22 @@ function ilya_default_option($name)
 
 		case 'editor_for_qs':
 		case 'editor_for_as':
-			require_once QA_INCLUDE_DIR . 'app/format.php';
+			require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 			$value = '-'; // to match none by default, i.e. choose based on who is best at editing HTML
 			ilya_load_editor('', 'html', $value);
 			break;
 
 		case 'permit_post_q': // convert from deprecated option if available
-			$value = ilya_opt('ask_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
+			$value = ilya_opt('ask_needs_login') ? ILYA__PERMIT_USERS : ILYA__PERMIT_ALL;
 			break;
 
 		case 'permit_post_a': // convert from deprecated option if available
-			$value = ilya_opt('answer_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
+			$value = ilya_opt('answer_needs_login') ? ILYA__PERMIT_USERS : ILYA__PERMIT_ALL;
 			break;
 
 		case 'permit_post_c': // convert from deprecated option if available
-			$value = ilya_opt('comment_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
+			$value = ilya_opt('comment_needs_login') ? ILYA__PERMIT_USERS : ILYA__PERMIT_ALL;
 			break;
 
 		case 'permit_retag_cat': // convert from previous option that used to contain it too
@@ -520,7 +520,7 @@ function ilya_default_option($name)
 			break;
 
 		case 'form_security_salt':
-			require_once QA_INCLUDE_DIR . 'util/string.php';
+			require_once ILYA__INCLUDE_DIR . 'util/string.php';
 			$value = ilya_random_alphanum(32);
 			break;
 
@@ -569,7 +569,7 @@ function ilya_post_html_defaults($basetype, $full = false)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'app/users.php';
+	require_once ILYA__INCLUDE_DIR . 'app/users.php';
 
 	return array(
 		'tagsview' => $basetype == 'Q' && ilya_using_tags(),
@@ -714,7 +714,7 @@ function ilya_get_vote_view($postorbasetype, $full = false, $enabledif = true)
 
 
 /**
- * Returns true if the home page has been customized, either due to admin setting, or $QA_CONST_PATH_MAP
+ * Returns true if the home page has been customized, either due to admin setting, or $ILYA__CONST_PATH_MAP
  */
 function ilya_has_custom_home()
 {
@@ -753,7 +753,7 @@ function ilya_get_block_words_preg()
 		$blockwordstring = ilya_opt('block_bad_words');
 
 		if (strlen($blockwordstring)) {
-			require_once QA_INCLUDE_DIR . 'util/string.php';
+			require_once ILYA__INCLUDE_DIR . 'util/string.php';
 			$ilya_blockwordspreg = ilya_block_words_to_preg($blockwordstring);
 
 		} else

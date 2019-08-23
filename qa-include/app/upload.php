@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -71,16 +71,16 @@ function ilya_upload_file($localfilename, $sourcefilename, $maxfilesize = null, 
 
 	// Check per-user upload limits
 
-	require_once QA_INCLUDE_DIR . 'app/users.php';
-	require_once QA_INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA__INCLUDE_DIR . 'app/users.php';
+	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
 
-	switch (ilya_user_permit_error(null, QA_LIMIT_UPLOADS)) {
+	switch (ilya_user_permit_error(null, ILYA__LIMIT_UPLOADS)) {
 		case 'limit':
 			$result['error'] = ilya_lang('main/upload_limit');
 			return $result;
 
 		case false:
-			ilya_limits_increment(ilya_get_logged_in_userid(), QA_LIMIT_UPLOADS);
+			ilya_limits_increment(ilya_get_logged_in_userid(), ILYA__LIMIT_UPLOADS);
 			break;
 
 		default:
@@ -145,7 +145,7 @@ function ilya_upload_file($localfilename, $sourcefilename, $maxfilesize = null, 
 
 	// If appropriate, get more accurate image size and apply constraints to it
 
-	require_once QA_INCLUDE_DIR . 'util/image.php';
+	require_once ILYA__INCLUDE_DIR . 'util/image.php';
 
 	if ($isimage && ilya_has_gd_image()) {
 		$image = @imagecreatefromstring($content);
@@ -178,7 +178,7 @@ function ilya_upload_file($localfilename, $sourcefilename, $maxfilesize = null, 
 
 	// Create the blob and return
 
-	require_once QA_INCLUDE_DIR . 'app/blobs.php';
+	require_once ILYA__INCLUDE_DIR . 'app/blobs.php';
 
 	$userid = ilya_get_logged_in_userid();
 	$cookieid = isset($userid) ? ilya_cookie_get() : ilya_cookie_get_create();

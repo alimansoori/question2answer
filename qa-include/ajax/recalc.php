@@ -19,11 +19,11 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'app/recalc.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/recalc.php';
 
 
-if (ilya_get_logged_in_level() >= QA_USER_LEVEL_ADMIN) {
+if (ilya_get_logged_in_level() >= ILYA__USER_LEVEL_ADMIN) {
 	if (!ilya_check_form_security_code('admin/recalc', ilya_post_text('code'))) {
 		$state = '';
 		$message = ilya_lang('misc/form_security_reload');
@@ -45,4 +45,4 @@ if (ilya_get_logged_in_level() >= QA_USER_LEVEL_ADMIN) {
 }
 
 
-echo "QA_AJAX_RESPONSE\n1\n" . $state . "\n" . ilya_html($message);
+echo "ILYA__AJAX_RESPONSE\n1\n" . $state . "\n" . ilya_html($message);

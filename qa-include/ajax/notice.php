@@ -19,29 +19,29 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'db/notices.php';
-require_once QA_INCLUDE_DIR . 'db/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'db/notices.php';
+require_once ILYA__INCLUDE_DIR . 'db/users.php';
 
 
 $noticeid = ilya_post_text('noticeid');
 
 if (!ilya_check_form_security_code('notice-' . $noticeid, ilya_post_text('code')))
-	echo "QA_AJAX_RESPONSE\n0\n" . ilya_lang('misc/form_security_reload');
+	echo "ILYA__AJAX_RESPONSE\n0\n" . ilya_lang('misc/form_security_reload');
 
 else {
 	if ($noticeid == 'visitor')
-		setcookie('ilya_noticed', 1, time() + 86400 * 3650, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
+		setcookie('ilya_noticed', 1, time() + 86400 * 3650, '/', ILYA__COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
 
 	else {
 		$userid = ilya_get_logged_in_userid();
 
 		if ($noticeid == 'welcome')
-			ilya_db_user_set_flag($userid, QA_USER_FLAGS_WELCOME_NOTICE, false);
+			ilya_db_user_set_flag($userid, ILYA__USER_FLAGS_WELCOME_NOTICE, false);
 		else
 			ilya_db_usernotice_delete($userid, $noticeid);
 	}
 
 
-	echo "QA_AJAX_RESPONSE\n1";
+	echo "ILYA__AJAX_RESPONSE\n1";
 }

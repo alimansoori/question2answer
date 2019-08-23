@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -50,11 +50,11 @@ function ilya_db_calc_passcheck($password, $salt)
  */
 function ilya_db_user_create($email, $password, $handle, $level, $ip)
 {
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	$ipHex = bin2hex(@inet_pton($ip));
 
-	if (QA_PASSWORD_HASH) {
+	if (ILYA__PASSWORD_HASH) {
 		ilya_db_query_sub(
 			'INSERT INTO ^users (created, createip, email, passhash, level, handle, loggedin, loginip) ' .
 			'VALUES (NOW(), UNHEX($), $, $, #, $, NOW(), UNHEX($))',
@@ -201,9 +201,9 @@ function ilya_db_user_set_password($userid, $password)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
-	if (QA_PASSWORD_HASH) {
+	if (ILYA__PASSWORD_HASH) {
 		ilya_db_query_sub(
 			'UPDATE ^users SET passhash=$, passsalt=NULL, passcheck=NULL WHERE userid=$',
 			password_hash($password, PASSWORD_BCRYPT), $userid
@@ -241,7 +241,7 @@ function ilya_db_user_rand_emailcode()
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	return ilya_random_alphanum(8);
 }
@@ -254,7 +254,7 @@ function ilya_db_user_rand_sessioncode()
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once QA_INCLUDE_DIR . 'util/string.php';
+	require_once ILYA__INCLUDE_DIR . 'util/string.php';
 
 	return ilya_random_alphanum(8);
 }
@@ -400,13 +400,13 @@ function ilya_db_users_get_mailing_next($lastuserid, $count)
  */
 function ilya_db_uapprovecount_update()
 {
-	if (ilya_should_update_counts() && !QA_FINAL_EXTERNAL_USERS) {
+	if (ilya_should_update_counts() && !ILYA__FINAL_EXTERNAL_USERS) {
 		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_uapprovecount', COUNT(*) FROM ^users " .
 			"WHERE level < # AND NOT (flags & #) " .
 			"ON DUPLICATE KEY UPDATE content = VALUES(content)",
-			QA_USER_LEVEL_APPROVED, QA_USER_FLAGS_USER_BLOCKED
+			ILYA__USER_LEVEL_APPROVED, ILYA__USER_FLAGS_USER_BLOCKED
 		);
 	}
 }

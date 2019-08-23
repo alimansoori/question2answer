@@ -19,12 +19,12 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-define('QA_BASE_DIR', dirname(dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME'])) . '/');
+define('ILYA__BASE_DIR', dirname(dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME'])) . '/');
 
 require 'ilya-base.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
 
-if (ilya_get_logged_in_level() < QA_USER_LEVEL_ADMIN)
+if (ilya_get_logged_in_level() < ILYA__USER_LEVEL_ADMIN)
 	ilya_redirect('admin/general', null, ilya_opt('site_url'));
 
 header('Content-type: text/html; charset=utf-8');
@@ -66,7 +66,7 @@ echo '<code class="warning">Orange = probably safe to ignore.</code>';
 
 echo '<h1>Checking US English files in <code>ilya-include</code>...</h1>';
 
-$includefiles = array_merge(glob(QA_INCLUDE_DIR . 'ilya-*.php'), glob(QA_INCLUDE_DIR . '*/ilya-*.php'), glob(QA_PLUGIN_DIR . '*/ilya-*.php'));
+$includefiles = array_merge(glob(ILYA__INCLUDE_DIR . 'ilya-*.php'), glob(ILYA__INCLUDE_DIR . '*/ilya-*.php'), glob(ILYA__PLUGIN_DIR . '*/ilya-*.php'));
 
 $definite = array();
 $probable = array();
@@ -147,7 +147,7 @@ foreach ($backmap as $phrase => $where) {
 	}
 }
 
-require_once QA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA__INCLUDE_DIR . 'app/admin.php';
 
 $languages = ilya_admin_language_options();
 unset($languages['']);
@@ -158,7 +158,7 @@ foreach ($languages as $code => $language) {
 	$langdefined = array();
 	$langdifferent = array();
 	$langsubstitutions = array();
-	$langincludefiles = glob(QA_LANG_DIR . $code . '/ilya-*.php');
+	$langincludefiles = glob(ILYA__LANG_DIR . $code . '/ilya-*.php');
 	$langnewphrases = array();
 
 	output_start_includes();

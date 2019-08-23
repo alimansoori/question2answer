@@ -19,13 +19,13 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 
-if (QA_FINAL_EXTERNAL_USERS) {
+if (ILYA__FINAL_EXTERNAL_USERS) {
 	$request = ilya_request();
 	$topath = ilya_get('to'); // lets user switch between login and register without losing destination page
 	$userlinks = ilya_get_login_links(ilya_path_to_root(), isset($topath) ? $topath : ilya_path($request, $_GET, ''));

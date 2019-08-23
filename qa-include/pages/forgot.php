@@ -19,18 +19,18 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'db/users.php';
-require_once QA_INCLUDE_DIR . 'app/captcha.php';
+require_once ILYA__INCLUDE_DIR . 'db/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/captcha.php';
 
 
 // Check we're not using single-sign on integration and that we're not logged in
 
-if (QA_FINAL_EXTERNAL_USERS)
+if (ILYA__FINAL_EXTERNAL_USERS)
 	ilya_fatal_error('User login is handled by external code');
 
 if (ilya_is_logged_in())
@@ -40,7 +40,7 @@ if (ilya_is_logged_in())
 // Start the 'I forgot my password' process, sending email if appropriate
 
 if (ilya_clicked('doforgot')) {
-	require_once QA_INCLUDE_DIR . 'app/users-edit.php';
+	require_once ILYA__INCLUDE_DIR . 'app/users-edit.php';
 
 	$inemailhandle = ilya_post_text('emailhandle');
 

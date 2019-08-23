@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -70,7 +70,7 @@ function ilya_db_posts_calc_category_path($firstpostid, $lastpostid = null)
 		"IF (parent2.parentid IS NOT NULL, parent0.parentid, IF (parent1.parentid IS NOT NULL, parent0.categoryid, NULL)) AS catidpath3 " .
 		"FROM ^posts LEFT JOIN ^categories AS parent0 ON ^posts.categoryid=parent0.categoryid LEFT JOIN ^categories AS parent1 ON parent0.parentid=parent1.categoryid LEFT JOIN ^categories AS parent2 ON parent1.parentid=parent2.categoryid WHERE ^posts.postid BETWEEN # AND #) AS a SET x.catidpath1=a.catidpath1, x.catidpath2=a.catidpath2, x.catidpath3=a.catidpath3 WHERE x.postid=a.postid",
 		$firstpostid, $lastpostid
-	); // requires QA_CATEGORY_DEPTH=4
+	); // requires ILYA__CATEGORY_DEPTH=4
 }
 
 
@@ -84,7 +84,7 @@ function ilya_db_post_get_category_path($postid)
 	return ilya_db_read_one_assoc(ilya_db_query_sub(
 		'SELECT categoryid, catidpath1, catidpath2, catidpath3 FROM ^posts WHERE postid=#',
 		$postid
-	)); // requires QA_CATEGORY_DEPTH=4
+	)); // requires ILYA__CATEGORY_DEPTH=4
 }
 
 
@@ -109,7 +109,7 @@ function ilya_db_post_acount_update($questionid)
  */
 function ilya_db_category_path_qcount_update($path)
 {
-	ilya_db_ifcategory_qcount_update($path['categoryid']); // requires QA_CATEGORY_DEPTH=4
+	ilya_db_ifcategory_qcount_update($path['categoryid']); // requires ILYA__CATEGORY_DEPTH=4
 	ilya_db_ifcategory_qcount_update($path['catidpath1']);
 	ilya_db_ifcategory_qcount_update($path['catidpath2']);
 	ilya_db_ifcategory_qcount_update($path['catidpath3']);
@@ -128,7 +128,7 @@ function ilya_db_ifcategory_qcount_update($categoryid)
 		ilya_db_query_sub(
 			"UPDATE ^categories SET qcount=GREATEST( (SELECT COUNT(*) FROM ^posts WHERE categoryid=# AND type='Q'), (SELECT COUNT(*) FROM ^posts WHERE catidpath1=# AND type='Q'), (SELECT COUNT(*) FROM ^posts WHERE catidpath2=# AND type='Q'), (SELECT COUNT(*) FROM ^posts WHERE catidpath3=# AND type='Q') ) WHERE categoryid=#",
 			$categoryid, $categoryid, $categoryid, $categoryid, $categoryid
-		); // requires QA_CATEGORY_DEPTH=4
+		); // requires ILYA__CATEGORY_DEPTH=4
 	}
 }
 

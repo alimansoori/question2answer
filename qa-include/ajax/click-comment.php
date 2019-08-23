@@ -19,12 +19,12 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-require_once QA_INCLUDE_DIR . 'app/cookies.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'pages/question-view.php';
-require_once QA_INCLUDE_DIR . 'pages/question-submit.php';
+require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'pages/question-view.php';
+require_once ILYA__INCLUDE_DIR . 'pages/question-submit.php';
 
 
 // Load relevant information about this comment
@@ -55,7 +55,7 @@ if (@$comment['basetype'] == 'C' && @$question['basetype'] == 'Q' &&
 
 		// If so, page content to be updated via Ajax
 
-		echo "QA_AJAX_RESPONSE\n1";
+		echo "ILYA__AJAX_RESPONSE\n1";
 
 		// If the comment was not deleted...
 
@@ -84,4 +84,4 @@ if (@$comment['basetype'] == 'C' && @$question['basetype'] == 'Q' &&
 }
 
 
-echo "QA_AJAX_RESPONSE\n0\n"; // fall back to non-Ajax submission if something failed
+echo "ILYA__AJAX_RESPONSE\n0\n"; // fall back to non-Ajax submission if something failed

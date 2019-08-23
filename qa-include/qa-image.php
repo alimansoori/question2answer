@@ -41,7 +41,7 @@ ilya_report_process_stage('init_image');
 
 // Retrieve the scaled image from the cache if available
 
-require_once QA_INCLUDE_DIR . 'db/cache.php';
+require_once ILYA__INCLUDE_DIR . 'db/cache.php';
 
 ilya_db_connect('ilya_image_db_fail_handler');
 ilya_initialize_postdb_plugins();
@@ -59,9 +59,9 @@ if (isset($content)) {
 	echo $content;
 
 } else {
-	require_once QA_INCLUDE_DIR . 'app/options.php';
-	require_once QA_INCLUDE_DIR . 'app/blobs.php';
-	require_once QA_INCLUDE_DIR . 'util/image.php';
+	require_once ILYA__INCLUDE_DIR . 'app/options.php';
+	require_once ILYA__INCLUDE_DIR . 'app/blobs.php';
+	require_once ILYA__INCLUDE_DIR . 'util/image.php';
 
 
 	// Otherwise retrieve the raw image and scale as appropriate

@@ -19,19 +19,19 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'app/cookies.php';
-require_once QA_INCLUDE_DIR . 'app/format.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
-require_once QA_INCLUDE_DIR . 'util/sort.php';
-require_once QA_INCLUDE_DIR . 'util/string.php';
-require_once QA_INCLUDE_DIR . 'app/captcha.php';
-require_once QA_INCLUDE_DIR . 'pages/question-view.php';
-require_once QA_INCLUDE_DIR . 'app/updates.php';
+require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+require_once ILYA__INCLUDE_DIR . 'util/string.php';
+require_once ILYA__INCLUDE_DIR . 'app/captcha.php';
+require_once ILYA__INCLUDE_DIR . 'pages/question-view.php';
+require_once ILYA__INCLUDE_DIR . 'app/updates.php';
 
 $questionid = ilya_request_part(0);
 $userid = ilya_get_logged_in_userid();
@@ -60,7 +60,7 @@ if (!isset($questionData)) {
 		ilya_db_post_duplicates_selectspec($questionid),
 		ilya_db_post_meta_selectspec($questionid, 'ilya_q_extra'),
 		ilya_db_category_nav_selectspec($questionid, true, true, true),
-		isset($userid) ? ilya_db_is_favorite_selectspec($userid, QA_ENTITY_QUESTION, $questionid) : null
+		isset($userid) ? ilya_db_is_favorite_selectspec($userid, ILYA__ENTITY_QUESTION, $questionid) : null
 	);
 
 	// whether to save the cache (actioned below, after basic checks)
@@ -105,7 +105,7 @@ if (isset($question)) {
 // Deal with question not found or not viewable, otherwise report the view event
 
 if (!isset($question))
-	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
+	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
 
 if (!$question['viewable']) {
 	$ilya_content = ilya_content_prepare();
@@ -196,7 +196,7 @@ if (substr($pagestate, 0, 13) == 'showcomments-') {
 }
 
 if (ilya_is_http_post() || strlen($pagestate))
-	require QA_INCLUDE_DIR . 'pages/question-post.php';
+	require ILYA__INCLUDE_DIR . 'pages/question-post.php';
 
 $formrequested = isset($formtype);
 
@@ -218,7 +218,7 @@ $usershtml = ilya_userids_handles_html(array_merge(array($question), $answers, $
 $ilya_content = ilya_content_prepare(true, array_keys(ilya_category_path($categories, $question['categoryid'])));
 
 if (isset($userid) && !$formrequested)
-	$ilya_content['favorite'] = ilya_favorite_form(QA_ENTITY_QUESTION, $questionid, $favorite,
+	$ilya_content['favorite'] = ilya_favorite_form(ILYA__ENTITY_QUESTION, $questionid, $favorite,
 		ilya_lang($favorite ? 'question/remove_q_favorites' : 'question/add_q_favorites'));
 
 if (isset($pageerror))

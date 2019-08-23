@@ -19,10 +19,10 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-require_once QA_INCLUDE_DIR . 'app/messages.php';
-require_once QA_INCLUDE_DIR . 'app/users.php';
-require_once QA_INCLUDE_DIR . 'app/cookies.php';
-require_once QA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA__INCLUDE_DIR . 'app/messages.php';
+require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 
 
 $message = ilya_post_text('message');
@@ -35,7 +35,7 @@ $loginuserid = ilya_get_logged_in_userid();
 $errorhtml = ilya_wall_error_html($loginuserid, $touseraccount['userid'], $touseraccount['flags']);
 
 if ($errorhtml || !strlen($message) || !ilya_check_form_security_code('wall-' . $tohandle, ilya_post_text('code'))) {
-	echo "QA_AJAX_RESPONSE\n0"; // if there's an error, process in non-Ajax way
+	echo "ILYA__AJAX_RESPONSE\n0"; // if there's an error, process in non-Ajax way
 } else {
 	$messageid = ilya_wall_add_post($loginuserid, ilya_get_logged_in_handle(), ilya_cookie_get(),
 		$touseraccount['userid'], $touseraccount['handle'], $message, '');
@@ -47,7 +47,7 @@ if ($errorhtml || !strlen($message) || !ilya_check_form_security_code('wall-' . 
 	$themeclass = ilya_load_theme_class(ilya_get_site_theme(), 'wall', null, null);
 	$themeclass->initialize();
 
-	echo "QA_AJAX_RESPONSE\n1\n";
+	echo "ILYA__AJAX_RESPONSE\n1\n";
 
 	echo 'm' . $messageid . "\n"; // element in list to be revealed
 
