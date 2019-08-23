@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/mouseover-layer/qa-mouseover-layer.php
+	File: ilya-plugin/mouseover-layer/ilya-mouseover-layer.php
 	Description: Theme layer class for mouseover layer plugin
 
 

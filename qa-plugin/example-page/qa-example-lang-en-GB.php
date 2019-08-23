@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/example-page/qa-example-lang-en-GB.php
+	File: ilya-plugin/example-page/ilya-example-lang-en-GB.php
 	Description: UK English language phrases for example plugin
 
 

@@ -56,17 +56,17 @@ class qa_related_qs
 
 		if ($region == 'side') {
 			$themeobject->output(
-				'<div class="qa-related-qs">',
+				'<div class="ilya-related-qs">',
 				'<h2 style="margin-top:0; padding-top:0;">',
 				$titlehtml,
 				'</h2>'
 			);
 
-			$themeobject->output('<ul class="qa-related-q-list">');
+			$themeobject->output('<ul class="ilya-related-q-list">');
 
 			foreach ($questions as $question) {
 				$themeobject->output(
-					'<li class="qa-related-q-item">' .
+					'<li class="ilya-related-q-item">' .
 					'<a href="' . qa_q_path_html($question['postid'], $question['title']) . '">' .
 					qa_html($question['title']) .
 					'</a>' .

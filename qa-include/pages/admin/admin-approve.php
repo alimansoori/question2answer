@@ -80,7 +80,7 @@ if (count($users)) {
 	foreach ($users as $user) {
 		$message = array();
 
-		$message['tags'] = 'id="p' . qa_html($user['userid']) . '"'; // use p prefix for qa_admin_click() in qa-admin.js
+		$message['tags'] = 'id="p' . qa_html($user['userid']) . '"'; // use p prefix for qa_admin_click() in ilya-admin.js
 
 		$message['content'] = qa_lang_html('users/registered_label') . ' ' .
 			strtr(qa_lang_html('users/x_ago_from_y'), array(
@@ -130,7 +130,7 @@ if (count($users)) {
 
 
 $qa_content['navigation']['sub'] = qa_admin_sub_navigation();
-$qa_content['script_rel'][] = 'qa-content/qa-admin.js?' . QA_VERSION;
+$qa_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
 
 
 return $qa_content;

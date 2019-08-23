@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/example-page/qa-example-page.php
+	File: ilya-plugin/example-page/ilya-example-page.php
 	Description: Page module class for example page plugin
 
 

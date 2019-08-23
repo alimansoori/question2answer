@@ -47,7 +47,7 @@ list($questions1, $questions2, $questions3, $questions4, $categories, $categoryi
 
 if ($countslugs) {
 	if (!isset($categoryid))
-		return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 	$categorytitlehtml = qa_html($categories[$categoryid]['title']);
 	$sometitle = qa_lang_html_sub('main/recent_activity_in_x', $categorytitlehtml);

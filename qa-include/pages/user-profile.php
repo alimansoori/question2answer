@@ -30,7 +30,7 @@ require_once QA_INCLUDE_DIR . 'app/limits.php';
 require_once QA_INCLUDE_DIR . 'app/updates.php';
 
 
-// $handle, $userhtml are already set by /qa-include/page/user.php - also $userid if using external user integration
+// $handle, $userhtml are already set by /ilya-include/page/user.php - also $userid if using external user integration
 
 
 // Redirect to 'My Account' page if button clicked
@@ -75,7 +75,7 @@ if (!QA_FINAL_EXTERNAL_USERS) { // if we're using integrated user management, we
 	require_once QA_INCLUDE_DIR . 'app/messages.php';
 
 	if (!is_array($userpoints) && !is_array($useraccount))
-		return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 	$userid = $useraccount['userid'];
 	$fieldseditable = false;
@@ -758,8 +758,8 @@ $qa_content['form_activity'] = array(
 			'type' => 'static',
 			'label' => qa_lang_html('profile/score'),
 			'value' => (@$userpoints['points'] == 1)
-				? qa_lang_html_sub('main/1_point', '<span class="qa-uf-user-points">1</span>', '1')
-				: qa_lang_html_sub('main/x_points', '<span class="qa-uf-user-points">' . qa_html(qa_format_number(@$userpoints['points'])) . '</span>'),
+				? qa_lang_html_sub('main/1_point', '<span class="ilya-uf-user-points">1</span>', '1')
+				: qa_lang_html_sub('main/x_points', '<span class="ilya-uf-user-points">' . qa_html(qa_format_number(@$userpoints['points'])) . '</span>'),
 			'id' => 'points',
 		),
 
@@ -773,14 +773,14 @@ $qa_content['form_activity'] = array(
 		'questions' => array(
 			'type' => 'static',
 			'label' => qa_lang_html('profile/questions'),
-			'value' => '<span class="qa-uf-user-q-posts">' . qa_html(qa_format_number(@$userpoints['qposts'])) . '</span>',
+			'value' => '<span class="ilya-uf-user-q-posts">' . qa_html(qa_format_number(@$userpoints['qposts'])) . '</span>',
 			'id' => 'questions',
 		),
 
 		'answers' => array(
 			'type' => 'static',
 			'label' => qa_lang_html('profile/answers'),
-			'value' => '<span class="qa-uf-user-a-posts">' . qa_html(qa_format_number(@$userpoints['aposts'])) . '</span>',
+			'value' => '<span class="ilya-uf-user-a-posts">' . qa_html(qa_format_number(@$userpoints['aposts'])) . '</span>',
 			'id' => 'answers',
 		),
 	),
@@ -811,7 +811,7 @@ if (qa_opt('comment_on_qs') || qa_opt('comment_on_as')) { // only show comment c
 	$qa_content['form_activity']['fields']['comments'] = array(
 		'type' => 'static',
 		'label' => qa_lang_html('profile/comments'),
-		'value' => '<span class="qa-uf-user-c-posts">' . qa_html(qa_format_number(@$userpoints['cposts'])) . '</span>',
+		'value' => '<span class="ilya-uf-user-c-posts">' . qa_html(qa_format_number(@$userpoints['cposts'])) . '</span>',
 		'id' => 'comments',
 	);
 }
@@ -822,7 +822,7 @@ if (qa_opt('voting_on_qs') || qa_opt('voting_on_as')) { // only show vote record
 	if (qa_opt('voting_on_qs')) {
 		$qvotes = @$userpoints['qupvotes'] + @$userpoints['qdownvotes'];
 
-		$innervalue = '<span class="qa-uf-user-q-votes">' . qa_format_number($qvotes) . '</span>';
+		$innervalue = '<span class="ilya-uf-user-q-votes">' . qa_format_number($qvotes) . '</span>';
 		$votedonvalue .= ($qvotes == 1) ? qa_lang_html_sub('main/1_question', $innervalue, '1')
 			: qa_lang_html_sub('main/x_questions', $innervalue);
 
@@ -833,7 +833,7 @@ if (qa_opt('voting_on_qs') || qa_opt('voting_on_as')) { // only show vote record
 	if (qa_opt('voting_on_as')) {
 		$avotes = @$userpoints['aupvotes'] + @$userpoints['adownvotes'];
 
-		$innervalue = '<span class="qa-uf-user-a-votes">' . qa_format_number($avotes) . '</span>';
+		$innervalue = '<span class="ilya-uf-user-a-votes">' . qa_format_number($avotes) . '</span>';
 		$votedonvalue .= ($avotes == 1) ? qa_lang_html_sub('main/1_answer', $innervalue, '1')
 			: qa_lang_html_sub('main/x_answers', $innervalue);
 	}
@@ -846,11 +846,11 @@ if (qa_opt('voting_on_qs') || qa_opt('voting_on_as')) { // only show vote record
 	);
 
 	$upvotes = @$userpoints['qupvotes'] + @$userpoints['aupvotes'];
-	$innervalue = '<span class="qa-uf-user-upvotes">' . qa_format_number($upvotes) . '</span>';
+	$innervalue = '<span class="ilya-uf-user-upvotes">' . qa_format_number($upvotes) . '</span>';
 	$votegavevalue = (($upvotes == 1) ? qa_lang_html_sub('profile/1_up_vote', $innervalue, '1') : qa_lang_html_sub('profile/x_up_votes', $innervalue)) . ', ';
 
 	$downvotes = @$userpoints['qdownvotes'] + @$userpoints['adownvotes'];
-	$innervalue = '<span class="qa-uf-user-downvotes">' . qa_format_number($downvotes) . '</span>';
+	$innervalue = '<span class="ilya-uf-user-downvotes">' . qa_format_number($downvotes) . '</span>';
 	$votegavevalue .= ($downvotes == 1) ? qa_lang_html_sub('profile/1_down_vote', $innervalue, '1') : qa_lang_html_sub('profile/x_down_votes', $innervalue);
 
 	$qa_content['form_activity']['fields']['votegave'] = array(
@@ -860,11 +860,11 @@ if (qa_opt('voting_on_qs') || qa_opt('voting_on_as')) { // only show vote record
 		'id' => 'votegave',
 	);
 
-	$innervalue = '<span class="qa-uf-user-upvoteds">' . qa_format_number(@$userpoints['upvoteds']) . '</span>';
+	$innervalue = '<span class="ilya-uf-user-upvoteds">' . qa_format_number(@$userpoints['upvoteds']) . '</span>';
 	$votegotvalue = ((@$userpoints['upvoteds'] == 1) ? qa_lang_html_sub('profile/1_up_vote', $innervalue, '1')
 			: qa_lang_html_sub('profile/x_up_votes', $innervalue)) . ', ';
 
-	$innervalue = '<span class="qa-uf-user-downvoteds">' . qa_format_number(@$userpoints['downvoteds']) . '</span>';
+	$innervalue = '<span class="ilya-uf-user-downvoteds">' . qa_format_number(@$userpoints['downvoteds']) . '</span>';
 	$votegotvalue .= (@$userpoints['downvoteds'] == 1) ? qa_lang_html_sub('profile/1_down_vote', $innervalue, '1')
 		: qa_lang_html_sub('profile/x_down_votes', $innervalue);
 
@@ -878,19 +878,19 @@ if (qa_opt('voting_on_qs') || qa_opt('voting_on_as')) { // only show vote record
 
 if (@$userpoints['points']) {
 	$qa_content['form_activity']['fields']['points']['value'] .=
-		qa_lang_html_sub('profile/ranked_x', '<span class="qa-uf-user-rank">' . qa_format_number($userrank) . '</span>');
+		qa_lang_html_sub('profile/ranked_x', '<span class="ilya-uf-user-rank">' . qa_format_number($userrank) . '</span>');
 }
 
 if (@$userpoints['aselects']) {
 	$qa_content['form_activity']['fields']['questions']['value'] .= ($userpoints['aselects'] == 1)
-		? qa_lang_html_sub('profile/1_with_best_chosen', '<span class="qa-uf-user-q-selects">1</span>', '1')
-		: qa_lang_html_sub('profile/x_with_best_chosen', '<span class="qa-uf-user-q-selects">' . qa_format_number($userpoints['aselects']) . '</span>');
+		? qa_lang_html_sub('profile/1_with_best_chosen', '<span class="ilya-uf-user-q-selects">1</span>', '1')
+		: qa_lang_html_sub('profile/x_with_best_chosen', '<span class="ilya-uf-user-q-selects">' . qa_format_number($userpoints['aselects']) . '</span>');
 }
 
 if (@$userpoints['aselecteds']) {
 	$qa_content['form_activity']['fields']['answers']['value'] .= ($userpoints['aselecteds'] == 1)
-		? qa_lang_html_sub('profile/1_chosen_as_best', '<span class="qa-uf-user-a-selecteds">1</span>', '1')
-		: qa_lang_html_sub('profile/x_chosen_as_best', '<span class="qa-uf-user-a-selecteds">' . qa_format_number($userpoints['aselecteds']) . '</span>');
+		? qa_lang_html_sub('profile/1_chosen_as_best', '<span class="ilya-uf-user-a-selecteds">1</span>', '1')
+		: qa_lang_html_sub('profile/x_chosen_as_best', '<span class="ilya-uf-user-a-selecteds">' . qa_format_number($userpoints['aselecteds']) . '</span>');
 }
 
 

@@ -92,7 +92,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 	So we could keep track of the maximum number of event streams any user is subscribed to, and use its square root.
 	Instead of that, we adopt an on-the-fly approach. We start by setting T=10 (see 'max_copy_user_updates' in
-	/qa-include/app/options.php) since it's no big deal to write 10 rows to a table. Recall that whenever an event stream
+	/ilya-include/app/options.php) since it's no big deal to write 10 rows to a table. Recall that whenever an event stream
 	gets more than T subscribers, we switch those subscribers over to the shared stream. At that point, we check the
 	maximum number of (total) shared streams that any of those users are subscribed to. If this is above T, that means that
 	our maximum cost of retrieving a list of news updates is starting to go past our maximum cost of recording an event. So

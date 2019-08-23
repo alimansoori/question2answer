@@ -30,10 +30,10 @@ define('QA_BUILD_DATE', '2019-01-12');
  * slowly and carefully to maintain backwards compatibility, and does not apply to plugins, themes, nor most of the core
  * for that matter.
  *
- * Classes are stored in the qa-include/Q2A folder, and then in subfolders depending on their categorization.
+ * Classes are stored in the ilya-include/Q2A folder, and then in subfolders depending on their categorization.
  * Class names should be of the form Q2A_<Namespace>_<Class>, e.g. Q2A_Util_Debug. There may be multiple "namespaces".
  * Classes are mapped to PHP files with the underscores converted to directory separators. The Q2A_Util_Debug class is in
- * the file qa-include/Q2A/Util/Debug.php. A class named Q2A_Db_User_Messages would be in a file qa-include/Q2A/Db/User/Messages.php.
+ * the file ilya-include/Q2A/Util/Debug.php. A class named Q2A_Db_User_Messages would be in a file ilya-include/Q2A/Db/User/Messages.php.
  *
  * @param $class
  */
@@ -64,7 +64,7 @@ qa_initialize_modularity();
 qa_register_core_modules();
 
 qa_initialize_predb_plugins();
-require_once QA_INCLUDE_DIR . 'qa-db.php';
+require_once QA_INCLUDE_DIR . 'ilya-db.php';
 qa_db_allow_connect();
 
 // $qa_autoconnect defaults to true so that optional plugins will load for external code. Q2A core
@@ -172,18 +172,18 @@ function qa_initialize_constants_1()
 	define('QA_CATEGORY_DEPTH', 4); // you can't change this number!
 
 	if (!defined('QA_BASE_DIR'))
-		define('QA_BASE_DIR', dirname(dirname(__FILE__)) . '/'); // try out best if not set in index.php or qa-index.php - won't work with symbolic links
+		define('QA_BASE_DIR', dirname(dirname(__FILE__)) . '/'); // try out best if not set in index.php or ilya-index.php - won't work with symbolic links
 
-	define('QA_EXTERNAL_DIR', QA_BASE_DIR . 'qa-external/');
-	define('QA_INCLUDE_DIR', QA_BASE_DIR . 'qa-include/');
-	define('QA_LANG_DIR', QA_BASE_DIR . 'qa-lang/');
-	define('QA_THEME_DIR', QA_BASE_DIR . 'qa-theme/');
-	define('QA_PLUGIN_DIR', QA_BASE_DIR . 'qa-plugin/');
+	define('QA_EXTERNAL_DIR', QA_BASE_DIR . 'ilya-external/');
+	define('QA_INCLUDE_DIR', QA_BASE_DIR . 'ilya-include/');
+	define('QA_LANG_DIR', QA_BASE_DIR . 'ilya-lang/');
+	define('QA_THEME_DIR', QA_BASE_DIR . 'ilya-theme/');
+	define('QA_PLUGIN_DIR', QA_BASE_DIR . 'ilya-plugin/');
 
-	if (!file_exists(QA_BASE_DIR . 'qa-config.php'))
-		qa_fatal_error('The config file could not be found. Please read the instructions in qa-config-example.php.');
+	if (!file_exists(QA_BASE_DIR . 'ilya-config.php'))
+		qa_fatal_error('The config file could not be found. Please read the instructions in ilya-config-example.php.');
 
-	require_once QA_BASE_DIR . 'qa-config.php';
+	require_once QA_BASE_DIR . 'ilya-config.php';
 
 	$qa_request_map = isset($QA_CONST_PATH_MAP) && is_array($QA_CONST_PATH_MAP) ? $QA_CONST_PATH_MAP : array();
 
@@ -192,14 +192,14 @@ function qa_initialize_constants_1()
 		define('QA_WORDPRESS_LOAD_FILE', QA_FINAL_WORDPRESS_INTEGRATE_PATH . 'wp-load.php');
 
 		if (!is_readable(QA_WORDPRESS_LOAD_FILE)) {
-			qa_fatal_error('Could not find wp-load.php file for WordPress integration - please check QA_WORDPRESS_INTEGRATE_PATH in qa-config.php');
+			qa_fatal_error('Could not find wp-load.php file for WordPress integration - please check QA_WORDPRESS_INTEGRATE_PATH in ilya-config.php');
 		}
 	} elseif (defined('QA_JOOMLA_INTEGRATE_PATH') && strlen(QA_JOOMLA_INTEGRATE_PATH)) {
 		define('QA_FINAL_JOOMLA_INTEGRATE_PATH', QA_JOOMLA_INTEGRATE_PATH . ((substr(QA_JOOMLA_INTEGRATE_PATH, -1) == '/') ? '' : '/'));
 		define('QA_JOOMLA_LOAD_FILE', QA_FINAL_JOOMLA_INTEGRATE_PATH . 'configuration.php');
 
 		if (!is_readable(QA_JOOMLA_LOAD_FILE)) {
-			qa_fatal_error('Could not find configuration.php file for Joomla integration - please check QA_JOOMLA_INTEGRATE_PATH in qa-config.php');
+			qa_fatal_error('Could not find configuration.php file for Joomla integration - please check QA_JOOMLA_INTEGRATE_PATH in ilya-config.php');
 		}
 	}
 
@@ -234,7 +234,7 @@ function qa_initialize_constants_1()
  */
 function qa_initialize_constants_2()
 {
-	// Default values if not set in qa-config.php
+	// Default values if not set in ilya-config.php
 
 	$defaults = array(
 		'QA_COOKIE_DOMAIN' => '',
@@ -363,17 +363,17 @@ function qa_initialize_buffering($request = '')
  */
 function qa_register_core_modules()
 {
-	qa_register_module('filter', 'plugins/qa-filter-basic.php', 'qa_filter_basic', '');
-	qa_register_module('editor', 'plugins/qa-editor-basic.php', 'qa_editor_basic', '');
-	qa_register_module('viewer', 'plugins/qa-viewer-basic.php', 'qa_viewer_basic', '');
-	qa_register_module('event', 'plugins/qa-event-limits.php', 'qa_event_limits', 'Q2A Event Limits');
-	qa_register_module('event', 'plugins/qa-event-notify.php', 'qa_event_notify', 'Q2A Event Notify');
-	qa_register_module('event', 'plugins/qa-event-updates.php', 'qa_event_updates', 'Q2A Event Updates');
-	qa_register_module('search', 'plugins/qa-search-basic.php', 'qa_search_basic', '');
-	qa_register_module('widget', 'plugins/qa-widget-activity-count.php', 'qa_activity_count', 'Activity Count');
-	qa_register_module('widget', 'plugins/qa-widget-ask-box.php', 'qa_ask_box', 'Ask Box');
-	qa_register_module('widget', 'plugins/qa-widget-related-qs.php', 'qa_related_qs', 'Related Questions');
-	qa_register_module('widget', 'plugins/qa-widget-category-list.php', 'qa_category_list', 'Categories');
+	qa_register_module('filter', 'plugins/ilya-filter-basic.php', 'qa_filter_basic', '');
+	qa_register_module('editor', 'plugins/ilya-editor-basic.php', 'qa_editor_basic', '');
+	qa_register_module('viewer', 'plugins/ilya-viewer-basic.php', 'qa_viewer_basic', '');
+	qa_register_module('event', 'plugins/ilya-event-limits.php', 'qa_event_limits', 'Q2A Event Limits');
+	qa_register_module('event', 'plugins/ilya-event-notify.php', 'qa_event_notify', 'Q2A Event Notify');
+	qa_register_module('event', 'plugins/ilya-event-updates.php', 'qa_event_updates', 'Q2A Event Updates');
+	qa_register_module('search', 'plugins/ilya-search-basic.php', 'qa_search_basic', '');
+	qa_register_module('widget', 'plugins/ilya-widget-activity-count.php', 'qa_activity_count', 'Activity Count');
+	qa_register_module('widget', 'plugins/ilya-widget-ask-box.php', 'qa_ask_box', 'Ask Box');
+	qa_register_module('widget', 'plugins/ilya-widget-related-qs.php', 'qa_related_qs', 'Related Questions');
+	qa_register_module('widget', 'plugins/ilya-widget-category-list.php', 'qa_category_list', 'Categories');
 }
 
 
@@ -426,14 +426,14 @@ function qa_page_db_fail_handler($type, $errno = null, $error = null, $query = n
 	$pass_failure_error = $error;
 	$pass_failure_query = $query;
 
-	require_once QA_INCLUDE_DIR . 'qa-install.php';
+	require_once QA_INCLUDE_DIR . 'ilya-install.php';
 
 	qa_exit('error');
 }
 
 
 /**
- * Retrieve metadata information from the $contents of a qa-theme.php or qa-plugin.php file, specified by $type ('Plugin' or 'Theme').
+ * Retrieve metadata information from the $contents of a ilya-theme.php or ilya-plugin.php file, specified by $type ('Plugin' or 'Theme').
  * If $versiononly is true, only min version metadata is parsed.
  * Name, Description, Min Q2A & Min PHP are not currently used by themes.
  *
@@ -607,7 +607,7 @@ function qa_register_overrides($include, $directory = QA_INCLUDE_DIR, $urltoroot
 /**
  * Register a set of language phrases, which should be accessed by the prefix $name/ in the qa_lang_*() functions.
  * Pass in the $pattern representing the PHP files that define these phrases, where * in the pattern is replaced with
- * the language code (e.g. 'fr') and/or 'default'. These files should be formatted like Q2A's qa-lang-*.php files.
+ * the language code (e.g. 'fr') and/or 'default'. These files should be formatted like Q2A's ilya-lang-*.php files.
  * @param $pattern
  * @param $name
  */
@@ -615,7 +615,7 @@ function qa_register_phrases($pattern, $name)
 {
 	global $qa_lang_file_pattern;
 
-	if (file_exists(QA_INCLUDE_DIR . 'lang/qa-lang-' . $name . '.php')) {
+	if (file_exists(QA_INCLUDE_DIR . 'lang/ilya-lang-' . $name . '.php')) {
 		qa_fatal_error('The name "' . $name . '" for phrases is reserved and cannot be used by plugins.' . "\n\nPhrases: " . $pattern);
 	}
 
@@ -628,11 +628,11 @@ function qa_register_phrases($pattern, $name)
 }
 
 
-// Function for registering varieties of Q2A modularity, which are (only) called from qa-plugin.php files
+// Function for registering varieties of Q2A modularity, which are (only) called from ilya-plugin.php files
 
 /**
  * Register a plugin module of $type named $name, whose class named $class is defined in file $include (or null if no include necessary)
- * This function relies on some global variable values and can only be called from a plugin's qa-plugin.php file
+ * This function relies on some global variable values and can only be called from a plugin's ilya-plugin.php file
  * @param $type
  * @param $include
  * @param $class
@@ -643,7 +643,7 @@ function qa_register_plugin_module($type, $include, $class, $name)
 	global $qa_plugin_directory, $qa_plugin_urltoroot;
 
 	if (empty($qa_plugin_directory) || empty($qa_plugin_urltoroot)) {
-		qa_fatal_error('qa_register_plugin_module() can only be called from a plugin qa-plugin.php file');
+		qa_fatal_error('qa_register_plugin_module() can only be called from a plugin ilya-plugin.php file');
 	}
 
 	qa_register_module($type, $include, $class, $name, $qa_plugin_directory, $qa_plugin_urltoroot);
@@ -651,7 +651,7 @@ function qa_register_plugin_module($type, $include, $class, $name)
 
 
 /**
- * Register a plugin layer named $name, defined in file $include. Can only be called from a plugin's qa-plugin.php file
+ * Register a plugin layer named $name, defined in file $include. Can only be called from a plugin's ilya-plugin.php file
  * @param $include
  * @param $name
  */
@@ -660,7 +660,7 @@ function qa_register_plugin_layer($include, $name)
 	global $qa_plugin_directory, $qa_plugin_urltoroot;
 
 	if (empty($qa_plugin_directory) || empty($qa_plugin_urltoroot)) {
-		qa_fatal_error('qa_register_plugin_layer() can only be called from a plugin qa-plugin.php file');
+		qa_fatal_error('qa_register_plugin_layer() can only be called from a plugin ilya-plugin.php file');
 	}
 
 	qa_register_layer($include, $name, $qa_plugin_directory, $qa_plugin_urltoroot);
@@ -668,7 +668,7 @@ function qa_register_plugin_layer($include, $name)
 
 
 /**
- * Register a plugin file $include containing override functions. Can only be called from a plugin's qa-plugin.php file
+ * Register a plugin file $include containing override functions. Can only be called from a plugin's ilya-plugin.php file
  * @param $include
  */
 function qa_register_plugin_overrides($include)
@@ -676,7 +676,7 @@ function qa_register_plugin_overrides($include)
 	global $qa_plugin_directory, $qa_plugin_urltoroot;
 
 	if (empty($qa_plugin_directory) || empty($qa_plugin_urltoroot)) {
-		qa_fatal_error('qa_register_plugin_overrides() can only be called from a plugin qa-plugin.php file');
+		qa_fatal_error('qa_register_plugin_overrides() can only be called from a plugin ilya-plugin.php file');
 	}
 
 	qa_register_overrides($include, $qa_plugin_directory, $qa_plugin_urltoroot);
@@ -693,7 +693,7 @@ function qa_register_plugin_phrases($pattern, $name)
 	global $qa_plugin_directory, $qa_plugin_urltoroot;
 
 	if (empty($qa_plugin_directory) || empty($qa_plugin_urltoroot)) {
-		qa_fatal_error('qa_register_plugin_phrases() can only be called from a plugin qa-plugin.php file');
+		qa_fatal_error('qa_register_plugin_phrases() can only be called from a plugin ilya-plugin.php file');
 	}
 
 	qa_register_phrases($qa_plugin_directory . $pattern, $name);
@@ -846,7 +846,7 @@ function qa_fatal_error($message)
 
 	$backtrace = array_reverse(array_slice(debug_backtrace(), 1));
 	foreach ($backtrace as $trace) {
-		$color = strpos(@$trace['file'], '/qa-plugin/') !== false ? 'red' : '#999';
+		$color = strpos(@$trace['file'], '/ilya-plugin/') !== false ? 'red' : '#999';
 		echo sprintf(
 			'<code style="color: %s">%s() in %s:%s</code><br>',
 			$color, qa_html(@$trace['function']), basename(@$trace['file']), @$trace['line']
@@ -1396,7 +1396,7 @@ function qa_is_mobile_probably()
  * Return the translated string for $identifier, unless we're using external translation logic.
  * This will retrieve the 'site_language' option so make sure you've already loaded/set that if
  * loading an option now will cause a problem (see issue in qa_default_option()). The part of
- * $identifier before the slash (/) replaces the * in the qa-lang-*.php file references, and the
+ * $identifier before the slash (/) replaces the * in the ilya-lang-*.php file references, and the
  * part after the / is the key of the array element to be taken from that file's returned result.
  * @param $identifier
  * @return string
@@ -1417,24 +1417,24 @@ function qa_lang($identifier)
 		if (isset($qa_lang_file_pattern[$group]))
 			$include = str_replace('*', 'default', $qa_lang_file_pattern[$group]);
 		else
-			$include = QA_INCLUDE_DIR . 'lang/qa-lang-' . $group . '.php';
+			$include = QA_INCLUDE_DIR . 'lang/ilya-lang-' . $group . '.php';
 
 		$qa_phrases_full[$group] = is_file($include) ? (array)(include_once $include) : array();
 
-		// look for a localized file in qa-lang/<lang>/
+		// look for a localized file in ilya-lang/<lang>/
 		$languagecode = qa_opt('site_language');
 		if (strlen($languagecode)) {
 			if (isset($qa_lang_file_pattern[$group]))
 				$include = str_replace('*', $languagecode, $qa_lang_file_pattern[$group]);
 			else
-				$include = QA_LANG_DIR . $languagecode . '/qa-lang-' . $group . '.php';
+				$include = QA_LANG_DIR . $languagecode . '/ilya-lang-' . $group . '.php';
 
 			$phrases = is_file($include) ? (array)(include $include) : array();
 			$qa_phrases_full[$group] = array_merge($qa_phrases_full[$group], $phrases);
 		}
 
-		// add any custom phrases from qa-lang/custom/
-		$include = QA_LANG_DIR . 'custom/qa-lang-' . $group . '.php';
+		// add any custom phrases from ilya-lang/custom/
+		$include = QA_LANG_DIR . 'custom/ilya-lang-' . $group . '.php';
 		$phrases = is_file($include) ? (array)(include $include) : array();
 		$qa_phrases_full[$group] = array_merge($qa_phrases_full[$group], $phrases);
 
@@ -1522,7 +1522,7 @@ function qa_path_to_root()
 
 
 /**
- * Return an array of mappings of Q2A requests, as defined in the qa-config.php file
+ * Return an array of mappings of Q2A requests, as defined in the ilya-config.php file
  */
 function qa_get_request_map()
 {

@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-include/util/string.php
+	File: ilya-include/util/string.php
 	Description: Some useful string-related stuff
 
 

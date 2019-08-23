@@ -12,4 +12,4 @@ if (defined('QA_DEBUG_PERFORMANCE') && QA_DEBUG_PERFORMANCE) {
 	trigger_error('Included file ' . basename(__FILE__) . ' is deprecated');
 }
 
-return (include QA_INCLUDE_DIR.'lang/qa-lang-admin.php');
+return (include QA_INCLUDE_DIR.'lang/ilya-lang-admin.php');

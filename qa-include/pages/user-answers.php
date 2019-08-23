@@ -28,7 +28,7 @@ require_once QA_INCLUDE_DIR . 'db/selects.php';
 require_once QA_INCLUDE_DIR . 'app/format.php';
 
 
-// $handle, $userhtml are already set by /qa-include/page/user.php - also $userid if using external user integration
+// $handle, $userhtml are already set by /ilya-include/page/user.php - also $userid if using external user integration
 
 $start = qa_get_start();
 
@@ -45,7 +45,7 @@ list($useraccount, $userpoints, $questions) = qa_db_select_with_pending(
 );
 
 if (!QA_FINAL_EXTERNAL_USERS && !is_array($useraccount)) // check the user exists
-	return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 
 // Get information on user questions

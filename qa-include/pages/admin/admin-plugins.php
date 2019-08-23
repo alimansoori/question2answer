@@ -40,7 +40,7 @@ $qa_content['title'] = qa_lang_html('admin/admin_title') . ' - ' . qa_lang_html(
 
 $qa_content['error'] = qa_admin_page_error();
 
-$qa_content['script_rel'][] = 'qa-content/qa-admin.js?' . QA_VERSION;
+$qa_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
 
 
 $pluginManager = new Q2A_Plugin_PluginManager();
@@ -123,7 +123,7 @@ if (!empty($fileSystemPlugins)) {
 		$pluginDirectoryPath = QA_PLUGIN_DIR . $pluginDirectory;
 		$metadata = $metadataUtil->fetchFromAddonPath($pluginDirectoryPath);
 		if (empty($metadata)) {
-			$pluginFile = $pluginDirectoryPath . '/qa-plugin.php';
+			$pluginFile = $pluginDirectoryPath . '/ilya-plugin.php';
 
 			// limit plugin parsing to first 8kB
 			$contents = file_get_contents($pluginFile, false, null, 0, 8192);

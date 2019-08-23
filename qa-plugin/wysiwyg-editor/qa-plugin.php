@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/wysiwyg-editor/qa-plugin.php
+	File: ilya-plugin/wysiwyg-editor/ilya-plugin.php
 	Description: Initiates WYSIWYG editor plugin
 
 
@@ -40,7 +40,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('editor', 'qa-wysiwyg-editor.php', 'qa_wysiwyg_editor', 'WYSIWYG Editor');
-qa_register_plugin_module('page', 'qa-wysiwyg-upload.php', 'qa_wysiwyg_upload', 'WYSIWYG Upload');
+qa_register_plugin_module('editor', 'ilya-wysiwyg-editor.php', 'qa_wysiwyg_editor', 'WYSIWYG Editor');
+qa_register_plugin_module('page', 'ilya-wysiwyg-upload.php', 'qa_wysiwyg_upload', 'WYSIWYG Upload');
 
-qa_register_plugin_module('page', 'qa-wysiwyg-ajax.php', 'qa_wysiwyg_ajax', 'WYSIWYG Editor AJAX handler');
+qa_register_plugin_module('page', 'ilya-wysiwyg-ajax.php', 'qa_wysiwyg_ajax', 'WYSIWYG Editor AJAX handler');

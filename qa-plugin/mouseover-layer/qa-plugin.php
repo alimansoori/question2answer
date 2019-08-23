@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/mouseover-layer/qa-plugin.php
+	File: ilya-plugin/mouseover-layer/ilya-plugin.php
 	Description: Initiates mouseover layer plugin
 
 
@@ -40,5 +40,5 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_layer('qa-mouseover-layer.php', 'Mouseover Layer');
-qa_register_plugin_module('module', 'qa-mouseover-admin-form.php', 'qa_mouseover_admin_form', 'Mouseover Layer');
+qa_register_plugin_layer('ilya-mouseover-layer.php', 'Mouseover Layer');
+qa_register_plugin_module('module', 'ilya-mouseover-admin-form.php', 'qa_mouseover_admin_form', 'Mouseover Layer');

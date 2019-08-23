@@ -26,7 +26,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 
 $maximaDefaults = array(
-	// Maximum column sizes - any of these can be defined in qa-config.php to override the defaults below,
+	// Maximum column sizes - any of these can be defined in ilya-config.php to override the defaults below,
 	// but you need to do so before creating the database, otherwise it's too late.
 	'QA_DB_MAX_EMAIL_LENGTH' => 80,
 	'QA_DB_MAX_HANDLE_LENGTH' => 20,

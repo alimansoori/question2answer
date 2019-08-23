@@ -65,7 +65,7 @@ function qa_admin_language_options()
 
 	/**
 	 * @deprecated The hardcoded language ids will be removed in favor of language metadata files.
-	 * See qa-lang/en-GB directory for a clear example of how to use them.
+	 * See ilya-lang/en-GB directory for a clear example of how to use them.
 	 */
 	$codetolanguage = array( // 2-letter language codes as per ISO 639-1
 		'ar' => 'Arabic - العربية',
@@ -151,7 +151,7 @@ function qa_admin_theme_options()
 		$metadata = $metadataUtil->fetchFromAddonPath($directory);
 		if (empty($metadata)) {
 			// limit theme parsing to first 8kB
-			$contents = @file_get_contents($directory . '/qa-styles.css', false, null, 0, 8192);
+			$contents = @file_get_contents($directory . '/ilya-styles.css', false, null, 0, 8192);
 			$metadata = qa_addon_metadata($contents, 'Theme');
 		}
 		$options[$theme] = isset($metadata['name']) ? $metadata['name'] : $theme;
@@ -610,7 +610,7 @@ function qa_admin_check_clicks()
 
 
 /**
- * Retrieve metadata information from the $contents of a qa-theme.php or qa-plugin.php file, mapping via $fields.
+ * Retrieve metadata information from the $contents of a ilya-theme.php or ilya-plugin.php file, mapping via $fields.
  *
  * @deprecated Deprecated from 1.7; use `qa_addon_metadata($contents, $type)` instead.
  * @param $contents

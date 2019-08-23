@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/opensearch-support/qa-opensearch-layer.php
+	File: ilya-plugin/opensearch-support/ilya-opensearch-layer.php
 	Description: Theme layer class for OpenSearch plugin
 
 

@@ -2,8 +2,8 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-content/qa-user.js
-	Description: THIS FILE HAS BEEN DEPRECATED IN FAVOUR OF qa-global.js
+	File: ilya-content/ilya-user.js
+	Description: THIS FILE HAS BEEN DEPRECATED IN FAVOUR OF ilya-global.js
 
 
 	This program is free software; you can redistribute it and/or

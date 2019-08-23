@@ -28,7 +28,7 @@ require_once QA_INCLUDE_DIR . 'db/selects.php';
 require_once QA_INCLUDE_DIR . 'app/q-list.php';
 
 
-// Get list of hottest questions, allow per-category if QA_ALLOW_UNINDEXED_QUERIES set in qa-config.php
+// Get list of hottest questions, allow per-category if QA_ALLOW_UNINDEXED_QUERIES set in ilya-config.php
 
 $categoryslugs = QA_ALLOW_UNINDEXED_QUERIES ? qa_request_parts(1) : null;
 $countslugs = @count($categoryslugs);
@@ -44,7 +44,7 @@ list($questions, $categories, $categoryid) = qa_db_select_with_pending(
 
 if ($countslugs) {
 	if (!isset($categoryid))
-		return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 	$categorytitlehtml = qa_html($categories[$categoryid]['title']);
 	$sometitle = qa_lang_html_sub('main/hot_qs_in_x', $categorytitlehtml);

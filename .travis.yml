@@ -27,10 +27,10 @@ before_script:
   # PHPUnit - manually download old version so that it works on PHP 7
   - curl -L -o phpunit.phar https://phar.phpunit.de/phpunit-4.8.35.phar
   # Basic config required for PHPUnit
-  - cp qa-tests/phpunit-qa-config.php qa-config.php
+  - cp ilya-tests/phpunit-ilya-config.php ilya-config.php
 
 script:
   # PHP_CodeSniffer
-  - php phpcs.phar --report=emacs --extensions=php --standard=qa-tests/phpcs/ruleset.xml .
+  - php phpcs.phar --report=emacs --extensions=php --standard=ilya-tests/phpcs/ruleset.xml .
   # PHPUnit
-  - php phpunit.phar --bootstrap qa-tests/autoload.php qa-tests
+  - php phpunit.phar --bootstrap ilya-tests/autoload.php ilya-tests

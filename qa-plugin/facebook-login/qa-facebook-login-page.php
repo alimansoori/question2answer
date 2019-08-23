@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/facebook-login/qa-facebook-login-page.php
+	File: ilya-plugin/facebook-login/ilya-facebook-login-page.php
 	Description: Page which performs Facebook login action
 
 

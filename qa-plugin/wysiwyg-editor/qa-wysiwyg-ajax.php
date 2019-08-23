@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/wysiwyg-editor/qa-wysiwyg-editor.php
+	File: ilya-plugin/wysiwyg-editor/ilya-wysiwyg-editor.php
 	Description: Editor module class for WYSIWYG editor plugin
 
 
@@ -31,7 +31,7 @@ class qa_wysiwyg_ajax
 	// Fix path to WYSIWYG editor smileys
 	public function process_request($request)
 	{
-		require_once QA_INCLUDE_DIR.'qa-app-posts.php';
+		require_once QA_INCLUDE_DIR.'ilya-app-posts.php';
 
 		// smiley replacement regexes
 		$rxSearch = '<(img|a)([^>]+)(src|href)="([^"]+)/wysiwyg-editor/plugins/smiley/images/([^"]+)"';

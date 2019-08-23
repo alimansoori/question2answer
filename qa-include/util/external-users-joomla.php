@@ -127,7 +127,7 @@ function qa_get_public_from_userids($userids)
 function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 {
 	$publicusername = $logged_in_user['publicusername'];
-	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="qa-user-link">' . htmlspecialchars($publicusername) . '</a>';
+	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
 }
 
 function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
@@ -140,7 +140,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 		$usershtml[$userid] = htmlspecialchars($publicusername);
 
 		if ($should_include_link) {
-			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="qa-user-link">' . $usershtml[$userid] . '</a>';
+			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
 		}
 	}
 
@@ -152,7 +152,7 @@ function qa_avatar_html_from_userid($userid, $size, $padding)
 	$jhelper = new qa_joomla_helper();
 	$avatarURL = $jhelper->trigger_get_avatar_event($userid, $size);
 
-	$avatarHTML = $avatarURL ? "<img src='{$avatarURL}' class='qa-avatar-image' alt=''/>" : '';
+	$avatarHTML = $avatarURL ? "<img src='{$avatarURL}' class='ilya-avatar-image' alt=''/>" : '';
 	if ($padding) {
 		// If $padding is true, the HTML you return should render to a square of $size x $size pixels, even if the avatar is not square.
 		$avatarHTML = "<span style='display:inline-block; width:{$size}px; height:{$size}px; overflow:hidden;'>{$avatarHTML}</span>";

@@ -327,7 +327,7 @@ function qa_db_prefix_callback($matches)
 
 
 /**
- * Substitute ^, $ and # symbols in $query. ^ symbols are replaced with the table prefix set in qa-config.php.
+ * Substitute ^, $ and # symbols in $query. ^ symbols are replaced with the table prefix set in ilya-config.php.
  * $ and # symbols are replaced in order by the corresponding element in $arguments (if the element is an array,
  * it is converted recursively into comma-separated list). Each element in $arguments is escaped.
  * $ is replaced by the argument in quotes (even if it's a number), # only adds quotes if the argument is non-numeric.
@@ -522,7 +522,7 @@ function qa_db_list_tables($onlyTablesWithPrefix = false)
 
 	For writes we worry less, since the user is more likely to be expecting a delay.
 
-	If QA_OPTIMIZE_DISTANT_DB is set to false in qa-config.php, we assume zero latency and go back to
+	If QA_OPTIMIZE_DISTANT_DB is set to false in ilya-config.php, we assume zero latency and go back to
 	simple queries, since this will allow both MySQL and PHP to provide quicker results.
 */
 

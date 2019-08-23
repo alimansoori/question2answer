@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/event-logger/qa-event-logger.php
+	File: ilya-plugin/event-logger/ilya-event-logger.php
 	Description: Event module class for event logger plugin
 
 

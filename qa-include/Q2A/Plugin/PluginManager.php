@@ -4,7 +4,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-include/Q2A/Plugin/PluginManager.php
+	File: ilya-include/Q2A/Plugin/PluginManager.php
 	Description: Keeps track of the installed plugins
 
 
@@ -34,7 +34,7 @@ class Q2A_Plugin_PluginManager
 		$pluginDirectories = $this->getFilesystemPlugins(true);
 
 		foreach ($pluginDirectories as $pluginDirectory) {
-			$pluginFile = $pluginDirectory . 'qa-plugin.php';
+			$pluginFile = $pluginDirectory . 'ilya-plugin.php';
 
 			if (!file_exists($pluginFile)) {
 				continue;
@@ -136,7 +136,7 @@ class Q2A_Plugin_PluginManager
 	{
 		$result = array();
 
-		$fileSystemPluginFiles = glob(QA_PLUGIN_DIR . '*/qa-plugin.php');
+		$fileSystemPluginFiles = glob(QA_PLUGIN_DIR . '*/ilya-plugin.php');
 
 		foreach ($fileSystemPluginFiles as $pluginFile) {
 			$directory = dirname($pluginFile) . '/';

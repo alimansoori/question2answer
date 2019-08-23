@@ -29,28 +29,28 @@ if (!defined('QA_BASE_DIR')) {
 // If this is an special non-page request, branch off here
 
 if (isset($_POST['qa']) && $_POST['qa'] == 'ajax') {
-	require 'qa-ajax.php';
+	require 'ilya-ajax.php';
 }
 
 elseif (isset($_GET['qa']) && $_GET['qa'] == 'image') {
-	require 'qa-image.php';
+	require 'ilya-image.php';
 }
 
 elseif (isset($_GET['qa']) && $_GET['qa'] == 'blob') {
-	require 'qa-blob.php';
+	require 'ilya-blob.php';
 }
 
 else {
 	// Otherwise, load the Q2A base file which sets up a bunch of crucial stuff
 	$qa_autoconnect = false;
-	require 'qa-base.php';
+	require 'ilya-base.php';
 
 	/**
 	 * Determine the request and root of the installation, and the requested start position used by many pages.
 	 *
 	 * Apache and Nginx behave slightly differently:
-	 *   Apache qa-rewrite unescapes characters, converts `+` to ` `, cuts off at `#` or `&`
-	 *   Nginx qa-rewrite unescapes characters, retains `+`, contains true path
+	 *   Apache ilya-rewrite unescapes characters, converts `+` to ` `, cuts off at `#` or `&`
+	 *   Nginx ilya-rewrite unescapes characters, retains `+`, contains true path
 	 */
 	function qa_index_set_request()
 	{
@@ -58,11 +58,11 @@ else {
 
 		$relativedepth = 0;
 
-		if (isset($_GET['qa-rewrite'])) { // URLs rewritten by .htaccess or Nginx
+		if (isset($_GET['ilya-rewrite'])) { // URLs rewritten by .htaccess or Nginx
 			$urlformat = QA_URL_FORMAT_NEAT;
-			$qa_rewrite = strtr(qa_gpc_to_string($_GET['qa-rewrite']), '+', ' '); // strtr required by Nginx
+			$qa_rewrite = strtr(qa_gpc_to_string($_GET['ilya-rewrite']), '+', ' '); // strtr required by Nginx
 			$requestparts = explode('/', $qa_rewrite);
-			unset($_GET['qa-rewrite']);
+			unset($_GET['ilya-rewrite']);
 
 			if (!empty($_SERVER['REQUEST_URI'])) { // workaround for the fact that Apache unescapes characters while rewriting
 				$origpath = $_SERVER['REQUEST_URI'];
@@ -82,9 +82,9 @@ else {
 					$origpath = substr($origpath, 0, $questionpos);
 				}
 
-				// Generally we assume that $_GET['qa-rewrite'] has the right path depth, but this won't be the case if there's
+				// Generally we assume that $_GET['ilya-rewrite'] has the right path depth, but this won't be the case if there's
 				// a & or # somewhere in the middle of the path, due to Apache unescaping. So we make a special case for that.
-				// If 'REQUEST_URI' and 'qa-rewrite' already match (as on Nginx), we can skip this.
+				// If 'REQUEST_URI' and 'ilya-rewrite' already match (as on Nginx), we can skip this.
 				$normalizedpath = urldecode($origpath);
 				if (substr($normalizedpath, -strlen($qa_rewrite)) !== $qa_rewrite) {
 					$keepparts = count($requestparts);
@@ -175,17 +175,17 @@ else {
 	$requestlower = strtolower(qa_request());
 
 	if ($requestlower == 'install') {
-		require QA_INCLUDE_DIR . 'qa-install.php';
+		require QA_INCLUDE_DIR . 'ilya-install.php';
 	} elseif ($requestlower == 'url/test/' . QA_URL_TEST_STRING) {
-		require QA_INCLUDE_DIR . 'qa-url-test.php';
+		require QA_INCLUDE_DIR . 'ilya-url-test.php';
 	} else {
 		// enable gzip compression for output (needs to come early)
 		qa_initialize_buffering($requestlower);
 
 		if (substr($requestlower, 0, 5) == 'feed/') {
-			require QA_INCLUDE_DIR . 'qa-feed.php';
+			require QA_INCLUDE_DIR . 'ilya-feed.php';
 		} else {
-			require QA_INCLUDE_DIR . 'qa-page.php';
+			require QA_INCLUDE_DIR . 'ilya-page.php';
 		}
 	}
 }

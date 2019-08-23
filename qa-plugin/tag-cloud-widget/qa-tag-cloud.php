@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/tag-cloud-widget/qa-tag-cloud.php
+	File: ilya-plugin/tag-cloud-widget/ilya-tag-cloud.php
 	Description: Widget module class for tag cloud plugin
 
 

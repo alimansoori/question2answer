@@ -49,7 +49,7 @@ function qa_set_outer_html(elem, type, html)
 function qa_show_waiting_after(elem, inside)
 {
 	if (elem && !elem.qa_waiting_shown) {
-		var w = document.getElementById('qa-waiting-template');
+		var w = document.getElementById('ilya-waiting-template');
 
 		if (w) {
 			var c = w.cloneNode(true);
@@ -94,7 +94,7 @@ function qa_vote_click(elem)
 				if (!mess) {
 					mess = document.createElement('div');
 					mess.id = 'errorbox';
-					mess.className = 'qa-error';
+					mess.className = 'ilya-error';
 					mess.innerHTML = lines[1];
 					mess.style.display = 'none';
 				}

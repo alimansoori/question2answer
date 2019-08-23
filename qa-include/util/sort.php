@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-include/util/sort.php
+	File: ilya-include/util/sort.php
 	Description: A useful general-purpose 'sort by' function
 
 

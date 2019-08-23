@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/tag-cloud-widget/qa-plugin.php
+	File: ilya-plugin/tag-cloud-widget/ilya-plugin.php
 	Description: Initiates tag cloud widget plugin
 
 
@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('widget', 'qa-tag-cloud.php', 'qa_tag_cloud', 'Tag Cloud');
+qa_register_plugin_module('widget', 'ilya-tag-cloud.php', 'qa_tag_cloud', 'Tag Cloud');

@@ -40,7 +40,7 @@ if (!strlen($handle)) {
 if (QA_FINAL_EXTERNAL_USERS) {
 	$userid = qa_handle_to_userid($handle);
 	if (!isset($userid))
-		return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 	$usershtml = qa_get_users_html(array($userid), false, qa_path_to_root(), true);
 	$userhtml = @$usershtml[$userid];
@@ -77,7 +77,7 @@ switch (qa_request_part(2)) {
 		break;
 
 	default:
-		$qa_content = include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+		$qa_content = include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 		break;
 }
 

@@ -19,7 +19,7 @@ class qa_html_theme extends qa_html_theme_base
 						'<div class="qam-rememberbox"><input type="checkbox" name="remember" id="qam-rememberme" value="1"/>',
 						'<label for="qam-rememberme" class="qam-remember">'.qa_lang_html('users/remember').'</label></div>',
 						'<input type="hidden" name="code" value="'.qa_html(qa_get_form_security_code('login')).'"/>',
-						'<input type="submit" value="' . qa_lang_html('users/login_button') . '" class="qa-form-tall-button qa-form-tall-button-login" name="dologin"/>',
+						'<input type="submit" value="' . qa_lang_html('users/login_button') . '" class="ilya-form-tall-button ilya-form-tall-button-login" name="dologin"/>',
 					'</form>'
 				);
 
@@ -37,7 +37,7 @@ class qa_html_theme extends qa_html_theme_base
 
 		if (qa_is_logged_in()) // output user avatar to login bar
 			$this->output(
-				'<div class="qa-logged-in-avatar">',
+				'<div class="ilya-logged-in-avatar">',
 				QA_FINAL_EXTERNAL_USERS
 				? qa_get_external_avatar_html(qa_get_logged_in_userid(), 24, true)
 				: qa_get_user_avatar_html(qa_get_logged_in_flags(), qa_get_logged_in_email(), qa_get_logged_in_handle(),
@@ -56,7 +56,7 @@ class qa_html_theme extends qa_html_theme_base
 				: qa_lang_html_sub('main/x_points', qa_html(qa_format_number($userpoints)));
 
 			$this->output(
-				'<span class="qa-logged-in-points">',
+				'<span class="ilya-logged-in-points">',
 				'('.$pointshtml.')',
 				'</span>'
 			);
@@ -84,16 +84,16 @@ class qa_html_theme extends qa_html_theme_base
 	// removes user navigation and search from header and replaces with custom header content. Also opens new <div>s
 	public function header()
 	{
-		$this->output('<div class="qa-header">');
+		$this->output('<div class="ilya-header">');
 
 		$this->logo();
 		$this->header_clear();
 		$this->header_custom();
 
-		$this->output('</div> <!-- END qa-header -->', '');
+		$this->output('</div> <!-- END ilya-header -->', '');
 
-		$this->output('<div class="qa-main-shadow">', '');
-		$this->output('<div class="qa-main-wrapper">', '');
+		$this->output('<div class="ilya-main-shadow">', '');
+		$this->output('<div class="ilya-main-wrapper">', '');
 		$this->nav_main_sub();
 	}
 
@@ -119,14 +119,14 @@ class qa_html_theme extends qa_html_theme_base
 		$feed = @$this->content['feed'];
 
 		if (!empty($feed)) {
-			$this->output('<a href="'.$feed['url'].'" title="'.@$feed['label'].'"><img src="'.$this->rooturl.'images/rss.jpg" alt="" width="16" height="16" class="qa-rss-icon"/></a>');
+			$this->output('<a href="'.$feed['url'].'" title="'.@$feed['label'].'"><img src="'.$this->rooturl.'images/rss.jpg" alt="" width="16" height="16" class="ilya-rss-icon"/></a>');
 		}
 	}
 
 	// add view count to question list
 	public function q_item_stats($q_item)
 	{
-		$this->output('<div class="qa-q-item-stats">');
+		$this->output('<div class="ilya-q-item-stats">');
 
 		$this->voting($q_item);
 		$this->a_count($q_item);
@@ -145,7 +145,7 @@ class qa_html_theme extends qa_html_theme_base
 	// to replace standard Q2A footer
 	public function body_suffix()
 	{
-		$this->output('<div class="qa-footer-bottom-group">');
+		$this->output('<div class="ilya-footer-bottom-group">');
 		qa_html_theme_base::footer();
 		$this->output('</div> <!-- END footer-bottom-group -->', '');
 	}
@@ -153,7 +153,7 @@ class qa_html_theme extends qa_html_theme_base
 	public function attribution()
 	{
 		$this->output(
-			'<div class="qa-attribution">',
+			'<div class="ilya-attribution">',
 			'&nbsp;| Snow Theme by <a href="http://www.q2amarket.com">Q2A Market</a>',
 			'</div>'
 		);

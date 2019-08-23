@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/basic-adsense/qa-plugin.php
+	File: ilya-plugin/basic-adsense/ilya-plugin.php
 	Description: Initiates Adsense widget plugin
 
 
@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('widget', 'qa-basic-adsense.php', 'qa_basic_adsense', 'Basic AdSense');
+qa_register_plugin_module('widget', 'ilya-basic-adsense.php', 'qa_basic_adsense', 'Basic AdSense');

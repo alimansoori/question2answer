@@ -4,7 +4,7 @@
 	http://www.question2answer.org/
 
 	File: index.php
-	Description: A stub that only sets up the Q2A root and includes qa-index.php
+	Description: A stub that only sets up the Q2A root and includes ilya-index.php
 
 
 	This program is free software; you can redistribute it and/or
@@ -24,4 +24,4 @@
 
 define('QA_BASE_DIR', dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME']) . '/');
 
-require 'qa-include/qa-index.php';
+require 'ilya-include/ilya-index.php';

@@ -167,7 +167,7 @@ function qa_check_page_clicks()
 
 
 /**
- *	Run the appropriate /qa-include/pages/*.php file for this request and return back the $qa_content it passed
+ *	Run the appropriate /ilya-include/pages/*.php file for this request and return back the $qa_content it passed
  */
 function qa_get_request_content()
 {
@@ -387,7 +387,7 @@ function qa_do_content_stats($qa_content)
 // Other functions which might be called from anywhere
 
 /**
- * Return an array of the default Q2A requests and which /qa-include/pages/*.php file implements them
+ * Return an array of the default Q2A requests and which /ilya-include/pages/*.php file implements them
  * If the key of an element ends in /, it should be used for any request with that key as its prefix
  */
 function qa_page_routing()
@@ -617,7 +617,7 @@ function qa_content_prepare($voting = false, $categoryids = array())
 		);
 	}
 
-	// Only the 'level' permission error prevents the menu option being shown - others reported on /qa-include/pages/ask.php
+	// Only the 'level' permission error prevents the menu option being shown - others reported on /ilya-include/pages/ask.php
 
 	if (qa_opt('nav_ask') && qa_user_maximum_permit_error('permit_post_q') != 'level') {
 		$qa_content['navigation']['main']['ask'] = array(
@@ -702,12 +702,12 @@ function qa_content_prepare($voting = false, $categoryids = array())
 	$logoheight = qa_opt('logo_height');
 
 	if ($logoshow) {
-		$qa_content['logo'] = '<a href="' . qa_path_html('') . '" class="qa-logo-link" title="' . qa_html(qa_opt('site_title')) . '">' .
+		$qa_content['logo'] = '<a href="' . qa_path_html('') . '" class="ilya-logo-link" title="' . qa_html(qa_opt('site_title')) . '">' .
 			'<img src="' . qa_html(is_numeric(strpos($logourl, '://')) ? $logourl : qa_path_to_root() . $logourl) . '"' .
 			($logowidth ? (' width="' . $logowidth . '"') : '') . ($logoheight ? (' height="' . $logoheight . '"') : '') .
 			' alt="' . qa_html(qa_opt('site_title')) . '"/></a>';
 	} else {
-		$qa_content['logo'] = '<a href="' . qa_path_html('') . '" class="qa-logo-link">' . qa_html(qa_opt('site_title')) . '</a>';
+		$qa_content['logo'] = '<a href="' . qa_path_html('') . '" class="ilya-logo-link">' . qa_html(qa_opt('site_title')) . '</a>';
 	}
 
 	$topath = qa_get('to'); // lets user switch between login and register without losing destination page
@@ -798,8 +798,8 @@ function qa_content_prepare($voting = false, $categoryids = array())
 		}
 	}
 
-	$qa_content['script_rel'] = array('qa-content/jquery-3.3.1.min.js');
-	$qa_content['script_rel'][] = 'qa-content/qa-global.js?' . QA_VERSION;
+	$qa_content['script_rel'] = array('ilya-content/jquery-3.3.1.min.js');
+	$qa_content['script_rel'][] = 'ilya-content/ilya-global.js?' . QA_VERSION;
 
 	if ($voting)
 		$qa_content['error'] = @$qa_page_error_html;
@@ -814,7 +814,7 @@ function qa_content_prepare($voting = false, $categoryids = array())
 
 
 /**
- * Get the start parameter which should be used, as constrained by the setting in qa-config.php
+ * Get the start parameter which should be used, as constrained by the setting in ilya-config.php
  * @return int
  */
 function qa_get_start()

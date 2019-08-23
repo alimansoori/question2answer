@@ -17,7 +17,7 @@ if (defined('QA_DEBUG_PERFORMANCE') && QA_DEBUG_PERFORMANCE) {
 
 function qa_usage_init()
 {
-	// should already be initialised in qa-base.php
+	// should already be initialised in ilya-base.php
 	global $qa_usage;
 	if (empty($qa_usage))
 		$qa_usage = new Q2A_Util_Usage;

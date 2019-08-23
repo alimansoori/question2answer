@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-theme/Candy/qa-theme.php
+	File: ilya-theme/Candy/ilya-theme.php
 	Description: Override base theme class for Classic theme
 
 

@@ -41,7 +41,7 @@ if ($req === null)
 elseif ($req === 'sent')
 	$showOutbox = true;
 else
-	return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 if (QA_FINAL_EXTERNAL_USERS)
 	qa_fatal_error('User accounts are handled by external code');
@@ -53,7 +53,7 @@ if (!isset($loginUserId)) {
 }
 
 if (!qa_opt('allow_private_messages') || !qa_opt('show_message_history'))
-	return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 
 // Find the messages for this user

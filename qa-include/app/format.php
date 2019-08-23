@@ -194,9 +194,9 @@ function qa_tag_html($tag, $microdata = false, $favorited = false)
 
 	$url = qa_path_html('tag/' . $tag);
 	$attrs = $microdata ? ' rel="tag"' : '';
-	$class = $favorited ? ' qa-tag-favorited' : '';
+	$class = $favorited ? ' ilya-tag-favorited' : '';
 
-	return '<a href="' . $url . '"' . $attrs . ' class="qa-tag-link' . $class . '">' . qa_html($tag) . '</a>';
+	return '<a href="' . $url . '"' . $attrs . ' class="ilya-tag-link' . $class . '">' . qa_html($tag) . '</a>';
 }
 
 
@@ -269,7 +269,7 @@ function qa_ip_anchor_html($ip, $anchorhtml = null)
 	if (!strlen($anchorhtml))
 		$anchorhtml = qa_html($ip);
 
-	return '<a href="' . qa_path_html('ip/' . $ip) . '" title="' . qa_lang_html_sub('main/ip_address_x', qa_html($ip)) . '" class="qa-ip-link">' . $anchorhtml . '</a>';
+	return '<a href="' . qa_path_html('ip/' . $ip) . '" title="' . qa_lang_html_sub('main/ip_address_x', qa_html($ip)) . '" class="ilya-ip-link">' . $anchorhtml . '</a>';
 }
 
 
@@ -278,7 +278,7 @@ function qa_ip_anchor_html($ip, $anchorhtml = null)
  * $userid and $cookieid refer to the user *viewing* the page.
  * $usershtml is an array of [user id] => [HTML representation of user] built ahead of time.
  * $dummy is a placeholder (used to be $categories parameter but that's no longer needed)
- * $options is an array which sets what is displayed (see qa_post_html_defaults() in /qa-include/app/options.php)
+ * $options is an array which sets what is displayed (see qa_post_html_defaults() in /ilya-include/app/options.php)
  * If something is missing from $post (e.g. ['content']), correponding HTML also omitted.
  * @param $post
  * @param $userid
@@ -320,9 +320,9 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 	$fields['queued'] = isset($post['queued']) ? $post['queued'] : null;
 	$fields['tags'] = 'id="' . qa_html($elementid) . '"';
 
-	$fields['classes'] = ($isquestion && $favoritedview && @$post['userfavoriteq']) ? 'qa-q-favorited' : '';
+	$fields['classes'] = ($isquestion && $favoritedview && @$post['userfavoriteq']) ? 'ilya-q-favorited' : '';
 	if ($isquestion && qa_post_is_closed($post)) {
-		$fields['classes'] = ltrim($fields['classes'] . ' qa-q-closed');
+		$fields['classes'] = ltrim($fields['classes'] . ' ilya-q-closed');
 	}
 
 	if ($microdata) {
@@ -385,18 +385,18 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 
 			if (isset($favoritemap['category']) && !empty($favoritemap['category'])) {
 				if (isset($favoritemap['category'][$post['categorybackpath']])) {
-					$favoriteclass = ' qa-cat-favorited';
+					$favoriteclass = ' ilya-cat-favorited';
 				} else {
 					foreach ($favoritemap['category'] as $categorybackpath => $dummy) {
 						if (substr('/' . $post['categorybackpath'], -strlen($categorybackpath)) == $categorybackpath)
-							$favoriteclass = ' qa-cat-parent-favorited';
+							$favoriteclass = ' ilya-cat-parent-favorited';
 					}
 				}
 			}
 
 			$fields['where'] = qa_lang_html_sub_split('main/in_category_x',
 				'<a href="' . qa_path_html(@$options['categorypathprefix'] . implode('/', array_reverse(explode('/', $post['categorybackpath'])))) .
-				'" class="qa-category-link' . $favoriteclass . '">' . qa_html($post['categoryname']) . '</a>');
+				'" class="ilya-category-link' . $favoriteclass . '">' . qa_html($post['categoryname']) . '</a>');
 		}
 	}
 
@@ -685,7 +685,7 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
  * Generate array of mostly HTML representing a message, to be passed to theme layer.
  *
  * @param array $message  The message object (as retrieved from database).
- * @param array $options  Viewing options (see qa_message_html_defaults() in /qa-include/app/options.php).
+ * @param array $options  Viewing options (see qa_message_html_defaults() in /ilya-include/app/options.php).
  * @return array  The HTML.
  */
 function qa_message_html_fields($message, $options = array())
@@ -1686,7 +1686,7 @@ function qa_set_display_rules(&$qa_content, $effects)
  */
 function qa_set_up_tag_field(&$qa_content, &$field, $fieldname, $tags, $exampletags, $completetags, $maxtags)
 {
-	$template = '<a href="#" class="qa-tag-link" onclick="return qa_tag_click(this);">^</a>';
+	$template = '<a href="#" class="ilya-tag-link" onclick="return qa_tag_click(this);">^</a>';
 
 	$qa_content['script_var']['qa_tag_template'] = $template;
 	$qa_content['script_var']['qa_tag_onlycomma'] = (int)qa_opt('tag_separator_comma');
@@ -1972,19 +1972,19 @@ function qa_load_theme_class($theme, $template, $content, $request)
 
 	// First load the default class
 
-	require_once QA_INCLUDE_DIR . 'qa-theme-base.php';
+	require_once QA_INCLUDE_DIR . 'ilya-theme-base.php';
 
 	$classname = 'qa_html_theme_base';
 
 	// Then load the selected theme if valid, otherwise load the Classic theme
 
-	if (!file_exists(QA_THEME_DIR . $theme . '/qa-styles.css'))
+	if (!file_exists(QA_THEME_DIR . $theme . '/ilya-styles.css'))
 		$theme = 'Classic';
 
-	$themeroothtml = qa_html(qa_path_to_root() . 'qa-theme/' . $theme . '/');
+	$themeroothtml = qa_html(qa_path_to_root() . 'ilya-theme/' . $theme . '/');
 
-	if (file_exists(QA_THEME_DIR . $theme . '/qa-theme.php')) {
-		require_once QA_THEME_DIR . $theme . '/qa-theme.php';
+	if (file_exists(QA_THEME_DIR . $theme . '/ilya-theme.php')) {
+		require_once QA_THEME_DIR . $theme . '/ilya-theme.php';
 
 		if (class_exists('qa_html_theme'))
 			$classname = 'qa_html_theme';
@@ -1997,7 +1997,7 @@ function qa_load_theme_class($theme, $template, $content, $request)
 	if (!qa_user_maximum_permit_error('permit_view_voters_flaggers')) {
 		$loadlayers[] = array(
 			'directory' => QA_INCLUDE_DIR . 'plugins/',
-			'include' => 'qa-layer-voters-flaggers.php',
+			'include' => 'ilya-layer-voters-flaggers.php',
 			'urltoroot' => null,
 		);
 	}
@@ -2260,7 +2260,7 @@ function qa_get_avatar_blob_html($blobId, $width, $height, $size, $padding = fal
 		$width && $height ? sprintf(' width="%d" height="%d"', $width, $height) : '',
 	);
 
-	$html = vsprintf('<img src="%s"%s class="qa-avatar-image" alt=""/>', $params);
+	$html = vsprintf('<img src="%s"%s class="ilya-avatar-image" alt=""/>', $params);
 
 	if ($padding && $width && $height) {
 		$padleft = floor(($size - $width) / 2);
@@ -2290,7 +2290,7 @@ function qa_get_gravatar_html($email, $size)
 
 	$size = (int)$size;
 	if ($size > 0) {
-		return sprintf('<img src="%s" width="%d" height="%d" class="qa-avatar-image" alt="" />', $avatarLink, $size, $size);
+		return sprintf('<img src="%s" width="%d" height="%d" class="ilya-avatar-image" alt="" />', $avatarLink, $size, $size);
 	} else {
 		return null;
 	}

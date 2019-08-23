@@ -28,9 +28,9 @@ require_once QA_INCLUDE_DIR . 'db/selects.php';
 require_once QA_INCLUDE_DIR . 'app/format.php';
 
 
-$ip = qa_request_part(1); // picked up from qa-page.php
+$ip = qa_request_part(1); // picked up from ilya-page.php
 if (filter_var($ip, FILTER_VALIDATE_IP) === false)
-	return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 
 // Find recently (hidden, queued or not) questions, answers, comments and edits for this IP

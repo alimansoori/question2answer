@@ -275,7 +275,7 @@ if (defined('QA_BLOBS_DIRECTORY')) {
 }
 
 
-$qa_content['script_rel'][] = 'qa-content/qa-admin.js?' . QA_VERSION;
+$qa_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
 $qa_content['script_var']['qa_warning_recalc'] = qa_lang('admin/stop_recalc_warning');
 
 $qa_content['script_onloads'][] = array(

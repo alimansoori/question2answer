@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/facebook-login/qa-facebook-login.php
+	File: ilya-plugin/facebook-login/ilya-facebook-login.php
 	Description: Login module class for Facebook login plugin
 
 

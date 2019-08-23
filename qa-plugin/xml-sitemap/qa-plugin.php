@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/xml-sitemap/qa-plugin.php
+	File: ilya-plugin/xml-sitemap/ilya-plugin.php
 	Description: Initiates XML sitemap plugin
 
 
@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('page', 'qa-xml-sitemap.php', 'qa_xml_sitemap', 'XML Sitemap');
+qa_register_plugin_module('page', 'ilya-xml-sitemap.php', 'qa_xml_sitemap', 'XML Sitemap');

@@ -68,7 +68,7 @@ list($questions, $categories, $categoryid) = qa_db_select_with_pending(
 
 if ($countslugs) {
 	if (!isset($categoryid)) {
-		return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 	}
 
 	$categorytitlehtml = qa_html($categories[$categoryid]['title']);

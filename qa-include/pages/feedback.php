@@ -45,7 +45,7 @@ $usecaptcha = qa_opt('captcha_on_feedback') && qa_user_use_captcha();
 // Check feedback is enabled and the person isn't blocked
 
 if (!qa_opt('feedback_enabled'))
-	return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 if (qa_user_permit_error()) {
 	$qa_content = qa_content_prepare();

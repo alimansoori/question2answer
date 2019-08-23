@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-lang/en-GB/qa-lang-admin.php
+	File: ilya-lang/en-GB/ilya-lang-admin.php
 	Description: UK English translations - not much to do here
 
 

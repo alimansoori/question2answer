@@ -21,7 +21,7 @@
 
 define('QA_BASE_DIR', dirname(dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME'])) . '/');
 
-require 'qa-base.php';
+require 'ilya-base.php';
 require_once QA_INCLUDE_DIR . 'app/users.php';
 
 if (qa_get_logged_in_level() < QA_USER_LEVEL_ADMIN)
@@ -64,9 +64,9 @@ function get_phrase_substitutions($phrase)
 echo '<code class="severe">Red = important to review.</code><br>';
 echo '<code class="warning">Orange = probably safe to ignore.</code>';
 
-echo '<h1>Checking US English files in <code>qa-include</code>...</h1>';
+echo '<h1>Checking US English files in <code>ilya-include</code>...</h1>';
 
-$includefiles = array_merge(glob(QA_INCLUDE_DIR . 'qa-*.php'), glob(QA_INCLUDE_DIR . '*/qa-*.php'), glob(QA_PLUGIN_DIR . '*/qa-*.php'));
+$includefiles = array_merge(glob(QA_INCLUDE_DIR . 'ilya-*.php'), glob(QA_INCLUDE_DIR . '*/ilya-*.php'), glob(QA_PLUGIN_DIR . '*/ilya-*.php'));
 
 $definite = array();
 $probable = array();
@@ -99,7 +99,7 @@ foreach ($includefiles as $includefile) {
 		@$probable[$matchparts[1]][$matchparts[2]]++;
 	}
 
-	if (preg_match('|/qa-include/qa-lang-([a-z]+)\.php$|', $includefile, $matches)) { // it's a lang file
+	if (preg_match('|/ilya-include/ilya-lang-([a-z]+)\.php$|', $includefile, $matches)) { // it's a lang file
 		$prefix = $matches[1];
 
 		output_reading_include($includefile);
@@ -153,18 +153,18 @@ $languages = qa_admin_language_options();
 unset($languages['']);
 
 foreach ($languages as $code => $language) {
-	echo '<h1>Checking ' . $language . ' files in <code>qa-lang/' . $code . '</code>...</h1>';
+	echo '<h1>Checking ' . $language . ' files in <code>ilya-lang/' . $code . '</code>...</h1>';
 
 	$langdefined = array();
 	$langdifferent = array();
 	$langsubstitutions = array();
-	$langincludefiles = glob(QA_LANG_DIR . $code . '/qa-*.php');
+	$langincludefiles = glob(QA_LANG_DIR . $code . '/ilya-*.php');
 	$langnewphrases = array();
 
 	output_start_includes();
 
 	foreach ($langincludefiles as $langincludefile) {
-		if (preg_match('/qa-lang-([a-z]+)\.php$/', $langincludefile, $matches)) { // it's a lang file
+		if (preg_match('/ilya-lang-([a-z]+)\.php$/', $langincludefile, $matches)) { // it's a lang file
 			$prefix = $matches[1];
 
 			output_reading_include($langincludefile);
@@ -220,9 +220,9 @@ foreach ($languages as $code => $language) {
 	}
 
 	foreach ($langnewphrases as $prefix => $phrases) {
-		echo '<h2>' . $language . ' phrases to add to <code>qa-lang/' . $code . '/qa-lang-' . $prefix . '.php</code>:</h2>';
+		echo '<h2>' . $language . ' phrases to add to <code>ilya-lang/' . $code . '/ilya-lang-' . $prefix . '.php</code>:</h2>';
 
-		echo 'Copy and paste this into the middle of <code>qa-lang/' . $code . '/qa-lang-' . $prefix . '.php</code> then translate the right-hand side after the <code>=></code> symbol.';
+		echo 'Copy and paste this into the middle of <code>ilya-lang/' . $code . '/ilya-lang-' . $prefix . '.php</code> then translate the right-hand side after the <code>=></code> symbol.';
 
 		echo '<pre>';
 
@@ -242,7 +242,7 @@ function output_lang_issue($prefix, $key, $issue, $error = true)
 	$htmlKey = strlen($key) > 0 ? "'<strong>" . qa_html($key) . "</strong>'" : '';
 
 	echo sprintf(
-		'<code class="%s">qa-lang-<strong>%s</strong>.php:%s</code> &nbsp; %s<br>',
+		'<code class="%s">ilya-lang-<strong>%s</strong>.php:%s</code> &nbsp; %s<br>',
 		$colorClass, qa_html($prefix), $htmlKey, qa_html($issue)
 	);
 }

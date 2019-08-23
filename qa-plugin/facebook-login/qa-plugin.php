@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/facebook-login/qa-plugin.php
+	File: ilya-plugin/facebook-login/ilya-plugin.php
 	Description: Initiates Facebook login plugin
 
 
@@ -43,7 +43,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 // login modules don't work with external user integration
 if (!QA_FINAL_EXTERNAL_USERS) {
-	qa_register_plugin_module('login', 'qa-facebook-login.php', 'qa_facebook_login', 'Facebook Login');
-	qa_register_plugin_module('page', 'qa-facebook-login-page.php', 'qa_facebook_login_page', 'Facebook Login Page');
-	qa_register_plugin_layer('qa-facebook-layer.php', 'Facebook Login Layer');
+	qa_register_plugin_module('login', 'ilya-facebook-login.php', 'qa_facebook_login', 'Facebook Login');
+	qa_register_plugin_module('page', 'ilya-facebook-login-page.php', 'qa_facebook_login_page', 'Facebook Login Page');
+	qa_register_plugin_layer('ilya-facebook-layer.php', 'Facebook Login Layer');
 }

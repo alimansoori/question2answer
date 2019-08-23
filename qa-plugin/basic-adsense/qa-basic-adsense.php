@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/basic-adsense/qa-basic-adsense.php
+	File: ilya-plugin/basic-adsense/ilya-basic-adsense.php
 	Description: Widget module class for AdSense widget plugin
 
 

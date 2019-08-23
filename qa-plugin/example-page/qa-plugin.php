@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/example-page/qa-plugin.php
+	File: ilya-plugin/example-page/ilya-plugin.php
 	Description: Initiates example page plugin
 
 
@@ -40,5 +40,5 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('page', 'qa-example-page.php', 'qa_example_page', 'Example Page');
-qa_register_plugin_phrases('qa-example-lang-*.php', 'example_page');
+qa_register_plugin_module('page', 'ilya-example-page.php', 'qa_example_page', 'Example Page');
+qa_register_plugin_phrases('ilya-example-lang-*.php', 'example_page');

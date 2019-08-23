@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/opensearch-support/qa-opensearch-page.php
+	File: ilya-plugin/opensearch-support/ilya-opensearch-page.php
 	Description: Page module class for XML sitemap plugin
 
 

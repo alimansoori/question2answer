@@ -67,7 +67,7 @@ $favtype = qa_request_part(1);
 $start = qa_get_start();
 
 if (!array_key_exists($favtype, $favswitch) || ($favtype === 'users' && QA_FINAL_EXTERNAL_USERS))
-	return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 extract($favswitch[$favtype]); // get switch variables
 
@@ -92,7 +92,7 @@ $qa_content[$key] = $fn_view($items, $usershtml);
 
 // Sub navigation for account pages and suggestion
 
-$qa_content['suggest_next'] = qa_lang_html_sub('misc/suggest_favorites_add', '<span class="qa-favorite-image">&nbsp;</span>');
+$qa_content['suggest_next'] = qa_lang_html_sub('misc/suggest_favorites_add', '<span class="ilya-favorite-image">&nbsp;</span>');
 
 $qa_content['page_links'] = qa_html_page_links(qa_request(), $start, $pagesize, $count, qa_opt('pages_prev_next'));
 

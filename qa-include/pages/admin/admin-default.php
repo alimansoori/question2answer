@@ -671,7 +671,7 @@ switch ($adminsection) {
 				return $pagemodule->process_request($request);
 		}
 
-		return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 		break;
 }
 
@@ -866,7 +866,7 @@ $qa_content = qa_content_prepare();
 $qa_content['title'] = qa_lang_html('admin/admin_title') . ' - ' . qa_lang_html($subtitle);
 $qa_content['error'] = $securityexpired ? qa_lang_html('admin/form_security_expired') : qa_admin_page_error();
 
-$qa_content['script_rel'][] = 'qa-content/qa-admin.js?' . QA_VERSION;
+$qa_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
 
 $qa_content['form'] = array(
 	'ok' => $formokhtml,
@@ -992,7 +992,7 @@ foreach ($showoptions as $optionname) {
 				qa_optionfield_make_select($optionfield, qa_admin_language_options(), $value, '');
 
 				$optionfield['suffix'] = strtr(qa_lang_html('admin/check_language_suffix'), array(
-					'^1' => '<a href="' . qa_html(qa_path_to_root() . 'qa-include/qa-check-lang.php') . '">',
+					'^1' => '<a href="' . qa_html(qa_path_to_root() . 'ilya-include/ilya-check-lang.php') . '">',
 					'^2' => '</a>',
 				));
 
@@ -1042,7 +1042,7 @@ foreach ($showoptions as $optionname) {
 				$metadata = $metadataUtil->fetchFromAddonPath($themedirectory);
 				if (empty($metadata)) {
 					// limit theme parsing to first 8kB
-					$contents = @file_get_contents($themedirectory . '/qa-styles.css', false, null, 0, 8192);
+					$contents = @file_get_contents($themedirectory . '/ilya-styles.css', false, null, 0, 8192);
 					$metadata = qa_addon_metadata($contents, 'Theme');
 				}
 
@@ -1205,7 +1205,7 @@ foreach ($showoptions as $optionname) {
 				break;
 
 			case 'recalc_hotness_q_view':
-				$optionfield['note'] = '<span class="qa-form-wide-help" title="' . qa_lang_html('admin/recalc_hotness_q_view_note') . '">?</span>';
+				$optionfield['note'] = '<span class="ilya-form-wide-help" title="' . qa_lang_html('admin/recalc_hotness_q_view_note') . '">?</span>';
 				break;
 
 			case 'min_num_q_tags':

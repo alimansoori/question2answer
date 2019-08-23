@@ -119,7 +119,7 @@ function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 {
 	$publicusername = $logged_in_user['publicusername'];
 
-	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="qa-user-link">' . htmlspecialchars($publicusername) . '</a>';
+	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
 }
 
 
@@ -135,7 +135,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 		$usershtml[$userid] = htmlspecialchars($publicusername);
 
 		if ($should_include_link)
-			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="qa-user-link">' . $usershtml[$userid] . '</a>';
+			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
 	}
 
 	return $usershtml;

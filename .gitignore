@@ -1,6 +1,6 @@
 # Ignore config file in development
-qa-config.php
-qa-cache/*/
+ilya-config.php
+ilya-cache/*/
 
 # Other files
 .DS_Store

@@ -33,7 +33,7 @@ class qa_activity_count
 
 	public function output_widget($region, $place, $themeobject, $template, $request, $qa_content)
 	{
-		$themeobject->output('<div class="qa-activity-count">');
+		$themeobject->output('<div class="ilya-activity-count">');
 
 		$this->output_count($themeobject, qa_opt('cache_qcount'), 'main/1_question', 'main/x_questions');
 		$this->output_count($themeobject, qa_opt('cache_acount'), 'main/1_answer', 'main/x_answers');
@@ -50,12 +50,12 @@ class qa_activity_count
 	{
 		require_once QA_INCLUDE_DIR . 'app/format.php';
 
-		$themeobject->output('<p class="qa-activity-count-item">');
+		$themeobject->output('<p class="ilya-activity-count-item">');
 
 		if ($value == 1)
-			$themeobject->output(qa_lang_html_sub($langsingular, '<span class="qa-activity-count-data">1</span>', '1'));
+			$themeobject->output(qa_lang_html_sub($langsingular, '<span class="ilya-activity-count-data">1</span>', '1'));
 		else
-			$themeobject->output(qa_lang_html_sub($langplural, '<span class="qa-activity-count-data">' . qa_format_number((int)$value, 0, true) . '</span>'));
+			$themeobject->output(qa_lang_html_sub($langplural, '<span class="ilya-activity-count-data">' . qa_format_number((int)$value, 0, true) . '</span>'));
 
 		$themeobject->output('</p>');
 	}

@@ -49,7 +49,7 @@ if (!function_exists('qa_install_db_fail_handler')) {
 		$pass_failure_query = $query;
 		$pass_failure_from_install = true;
 
-		require QA_INCLUDE_DIR.'qa-install.php';
+		require QA_INCLUDE_DIR.'ilya-install.php';
 
 		qa_exit('error');
 	}

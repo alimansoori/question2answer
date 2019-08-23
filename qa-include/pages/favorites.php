@@ -72,7 +72,7 @@ $qa_content['q_list'] = qa_favorite_q_list_view($questions, $usershtml);
 $qa_content['q_list']['title'] = count($questions) ? qa_lang_html('main/nav_qs') : qa_lang_html('misc/no_favorite_qs');
 if ($numQs['count'] > count($questions)) {
 	$url = qa_path_html('favorites/questions', array('start' => $pagesize_qs));
-	$qa_content['q_list']['footer'] = '<p class="qa-link-next"><a href="' . $url . '">' . qa_lang_html('misc/more_favorite_qs') . '</a></p>';
+	$qa_content['q_list']['footer'] = '<p class="ilya-link-next"><a href="' . $url . '">' . qa_lang_html('misc/more_favorite_qs') . '</a></p>';
 }
 
 
@@ -83,7 +83,7 @@ if (!QA_FINAL_EXTERNAL_USERS) {
 	$qa_content['ranking_users']['title'] = count($users) ? qa_lang_html('main/nav_users') : qa_lang_html('misc/no_favorite_users');
 	if ($numUsers['count'] > count($users)) {
 		$url = qa_path_html('favorites/users', array('start' => $pagesize_users));
-		$qa_content['ranking_users']['footer'] = '<p class="qa-link-next"><a href="' . $url . '">' . qa_lang_html('misc/more_favorite_users') . '</a></p>';
+		$qa_content['ranking_users']['footer'] = '<p class="ilya-link-next"><a href="' . $url . '">' . qa_lang_html('misc/more_favorite_users') . '</a></p>';
 	}
 }
 
@@ -95,7 +95,7 @@ if (qa_using_tags()) {
 	$qa_content['ranking_tags']['title'] = count($tags) ? qa_lang_html('main/nav_tags') : qa_lang_html('misc/no_favorite_tags');
 	if ($numTags['count'] > count($tags)) {
 		$url = qa_path_html('favorites/tags', array('start' => $pagesize_tags));
-		$qa_content['ranking_tags']['footer'] = '<p class="qa-link-next"><a href="' . $url . '">' . qa_lang_html('misc/more_favorite_tags') . '</a></p>';
+		$qa_content['ranking_tags']['footer'] = '<p class="ilya-link-next"><a href="' . $url . '">' . qa_lang_html('misc/more_favorite_tags') . '</a></p>';
 	}
 }
 
@@ -110,7 +110,7 @@ if (qa_using_categories()) {
 
 // Sub navigation for account pages and suggestion
 
-$qa_content['suggest_next'] = qa_lang_html_sub('misc/suggest_favorites_add', '<span class="qa-favorite-image">&nbsp;</span>');
+$qa_content['suggest_next'] = qa_lang_html_sub('misc/suggest_favorites_add', '<span class="ilya-favorite-image">&nbsp;</span>');
 
 $qa_content['navigation']['sub'] = qa_user_sub_navigation(qa_get_logged_in_handle(), 'favorites', true);
 

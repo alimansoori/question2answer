@@ -40,7 +40,7 @@ $(document).ready(function () {
 	 * Main navigation toggle script
 	 */
 	$('.qam-menu-toggle').click(function () {
-		$('.qa-nav-main').slideToggle(100);
+		$('.ilya-nav-main').slideToggle(100);
 		$(this).toggleClass('current');
 	});
 
@@ -64,16 +64,16 @@ $(document).ready(function () {
 	/*
 	 * add wrapper to the message sent note 'td'
 	 */
-	$('.qa-part-form-message .qa-form-tall-ok').wrapInner('<div class="qam-pm-message"></div>');
+	$('.ilya-part-form-message .ilya-form-tall-ok').wrapInner('<div class="qam-pm-message"></div>');
 
 	// fix the visible issue for main nav, top search-box
 	$(window).resize(function () {
 		if (window.matchMedia('(min-width: 980px)').matches) {
-			$(".qam-search.the-top .qa-search").hide();
-			$(".qa-nav-main").show('fast', function() { $(this).css('display','inline-block'); });
+			$(".qam-search.the-top .ilya-search").hide();
+			$(".ilya-nav-main").show('fast', function() { $(this).css('display','inline-block'); });
 		} else {
-			$(".qam-search.the-top .qa-search").show();
-			$(".qa-nav-main").hide();
+			$(".qam-search.the-top .ilya-search").show();
+			$(".ilya-nav-main").hide();
 			$('.qam-menu-toggle').removeClass('current');
 		}
 	});

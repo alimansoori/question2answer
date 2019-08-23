@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/facebook-login/qa-facebook-layer.php
+	File: ilya-plugin/facebook-login/ilya-facebook-layer.php
 	Description: Theme layer class for mouseover layer plugin
 
 

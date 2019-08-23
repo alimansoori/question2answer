@@ -131,7 +131,7 @@ $pagesize = qa_opt('page_size_home');
 
 if ($countslugs) {
 	if (!isset($categoryid)) {
-		return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 	}
 
 	$categorytitlehtml = qa_html($categories[$categoryid]['title']);

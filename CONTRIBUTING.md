@@ -9,7 +9,7 @@ If you find a bug (error) with Question2Answer, please [submit an issue here](ht
 
 If you think you've found a security issue, you can responsibly disclose it to us using the [contact form here](http://www.question2answer.org/feedback.php).
 
-Note that general troubleshooting issues such as installation or how to use a feature should continue to be asked on the [Question2Answer Q&A](http://www.question2answer.org/qa/).
+Note that general troubleshooting issues such as installation or how to use a feature should continue to be asked on the [Question2Answer Q&A](http://www.question2answer.org/ilya/).
 
 
 ## Pull requests

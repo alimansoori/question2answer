@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/mouseover-layer/qa-mouseover-admin-form.php
+	File: ilya-plugin/mouseover-layer/ilya-mouseover-admin-form.php
 	Description: Generic module class for mouseover layer plugin to provide admin form and default option
 
 

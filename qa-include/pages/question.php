@@ -105,7 +105,7 @@ if (isset($question)) {
 // Deal with question not found or not viewable, otherwise report the view event
 
 if (!isset($question))
-	return include QA_INCLUDE_DIR . 'qa-page-not-found.php';
+	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 if (!$question['viewable']) {
 	$qa_content = qa_content_prepare();
@@ -222,7 +222,7 @@ if (isset($userid) && !$formrequested)
 		qa_lang($favorite ? 'question/remove_q_favorites' : 'question/add_q_favorites'));
 
 if (isset($pageerror))
-	$qa_content['error'] = $pageerror; // might also show voting error set in qa-index.php
+	$qa_content['error'] = $pageerror; // might also show voting error set in ilya-index.php
 
 elseif ($question['queued'])
 	$qa_content['error'] = $question['isbyuser'] ? qa_lang_html('question/q_your_waiting_approval') : qa_lang_html('question/q_waiting_your_approval');

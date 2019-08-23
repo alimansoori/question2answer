@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/recaptcha-captcha/qa-plugin.php
+	File: ilya-plugin/recaptcha-captcha/ilya-plugin.php
 	Description: Initiates reCAPTCHA plugin
 
 
@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('captcha', 'qa-recaptcha-captcha.php', 'qa_recaptcha_captcha', 'reCAPTCHA');
+qa_register_plugin_module('captcha', 'ilya-recaptcha-captcha.php', 'qa_recaptcha_captcha', 'reCAPTCHA');

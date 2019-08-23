@@ -3,7 +3,7 @@
 	Snow Theme for Question2Answer Package
 	Copyright (C) 2014 Q2A Market <http://www.q2amarket.com>
 
-	File:           qa-theme.php
+	File:           ilya-theme.php
 	Version:        Snow 1.4
 	Description:    Q2A theme class
 
@@ -72,7 +72,7 @@ class qa_html_theme extends qa_html_theme_base
 	{
 		// add RTL CSS file
 		if ($this->isRTL)
-			$this->content['css_src'][] = $this->rooturl . 'qa-styles-rtl.css?' . QA_VERSION;
+			$this->content['css_src'][] = $this->rooturl . 'ilya-styles-rtl.css?' . QA_VERSION;
 
 		if ($this->localfonts) {
 			// add Ubuntu font locally (inlined for speed)
@@ -150,12 +150,12 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function body_tags()
 	{
-		$class = 'qa-template-' . qa_html($this->template);
-		$class .= empty($this->theme) ? '' : ' qa-theme-' . qa_html($this->theme);
+		$class = 'ilya-template-' . qa_html($this->template);
+		$class .= empty($this->theme) ? '' : ' ilya-theme-' . qa_html($this->theme);
 
 		if (isset($this->content['categoryids'])) {
 			foreach ($this->content['categoryids'] as $categoryid) {
-				$class .= ' qa-category-' . qa_html($categoryid);
+				$class .= ' ilya-category-' . qa_html($categoryid);
 			}
 		}
 
@@ -166,7 +166,7 @@ class qa_html_theme extends qa_html_theme_base
 		if ($this->fixed_topbar)
 			$class .= ' qam-body-fixed';
 
-		$this->output('class="' . $class . ' qa-body-js-off"');
+		$this->output('class="' . $class . ' ilya-body-js-off"');
 	}
 
 	/**
@@ -193,7 +193,7 @@ class qa_html_theme extends qa_html_theme_base
 						'<div><input type="checkbox" name="remember" id="qam-rememberme" value="1"/>',
 						'<label for="qam-rememberme">' . qa_lang_html('users/remember') . '</label></div>',
 						'<input type="hidden" name="code" value="' . qa_html(qa_get_form_security_code('login')) . '"/>',
-						'<input type="submit" value="' . $login['label'] . '" class="qa-form-tall-button qa-form-tall-button-login" name="dologin"/>',
+						'<input type="submit" value="' . $login['label'] . '" class="ilya-form-tall-button ilya-form-tall-button-login" name="dologin"/>',
 					'</form>'
 				);
 
@@ -243,7 +243,7 @@ class qa_html_theme extends qa_html_theme_base
 	/**
 	 * Rearranges the layout:
 	 * - Swaps the <tt>main()</tt> and <tt>sidepanel()</tt> functions
-	 * - Moves the header and footer functions outside qa-body-wrapper
+	 * - Moves the header and footer functions outside ilya-body-wrapper
 	 * - Keeps top/high and low/bottom widgets separated
 	 *
 	 * @since Snow 1.4
@@ -257,10 +257,10 @@ class qa_html_theme extends qa_html_theme_base
 		$this->header();
 
 		$extratags = isset($this->content['wrapper_tags']) ? $this->content['wrapper_tags'] : '';
-		$this->output('<div class="qa-body-wrapper"' . $extratags . '>', '');
+		$this->output('<div class="ilya-body-wrapper"' . $extratags . '>', '');
 		$this->widgets('full', 'high');
 
-		$this->output('<div class="qa-main-wrapper">', '');
+		$this->output('<div class="ilya-main-wrapper">', '');
 		$this->main();
 		$this->sidepanel();
 		$this->output('</div> <!-- END main-wrapper -->');
@@ -320,7 +320,7 @@ class qa_html_theme extends qa_html_theme_base
 			return;
 
 		$this->output('<div id="qam-sidepanel-toggle"><i class="icon-left-open-big"></i></div>');
-		$this->output('<div class="qa-sidepanel" id="qam-sidepanel-mobile">');
+		$this->output('<div class="ilya-sidepanel" id="qam-sidepanel-mobile">');
 		$this->qam_search();
 		$this->widgets('side', 'top');
 		$this->sidebar();
@@ -330,7 +330,7 @@ class qa_html_theme extends qa_html_theme_base
 			$this->output_raw($this->content['sidepanel']);
 		$this->feed();
 		$this->widgets('side', 'bottom');
-		$this->output('</div> <!-- qa-sidepanel -->', '');
+		$this->output('</div> <!-- ilya-sidepanel -->', '');
 	}
 
 	/**
@@ -343,9 +343,9 @@ class qa_html_theme extends qa_html_theme_base
 		if (isset($this->content['sidebar'])) {
 			$sidebar = $this->content['sidebar'];
 			if (!empty($sidebar)) {
-				$this->output('<div class="qa-sidebar ' . $this->welcome_widget_class . '">');
+				$this->output('<div class="ilya-sidebar ' . $this->welcome_widget_class . '">');
 				$this->output_raw($sidebar);
-				$this->output('</div> <!-- qa-sidebar -->', '');
+				$this->output('</div> <!-- ilya-sidebar -->', '');
 			}
 		}
 	}
@@ -364,7 +364,7 @@ class qa_html_theme extends qa_html_theme_base
 			: '<img src="' . $this->rooturl . $this->icon_url . '/closed-q-list.png" class="qam-q-list-close-icon" alt="' . $closedText . '" title="' . $closedText . '"/>';
 
 		$this->output(
-			'<div class="qa-q-item-title">',
+			'<div class="ilya-q-item-title">',
 			// add closed note in title
 			$imgHtml,
 			'<a href="' . $q_item['url'] . '">' . $q_item['title'] . '</a>',
@@ -423,7 +423,7 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function q_item_stats($q_item)
 	{
-		$this->output('<div class="qa-q-item-stats">');
+		$this->output('<div class="ilya-q-item-stats">');
 
 		$this->voting($q_item);
 		$this->a_count($q_item);
@@ -451,7 +451,7 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function q_view_stats($q_view)
 	{
-		$this->output('<div class="qa-q-view-stats">');
+		$this->output('<div class="ilya-q-view-stats">');
 
 		$this->voting($q_view);
 		$this->a_count($q_view);
@@ -468,18 +468,18 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function q_view_main($q_view)
 	{
-		$this->output('<div class="qa-q-view-main">');
+		$this->output('<div class="ilya-q-view-main">');
 
 		if (isset($q_view['main_form_tags'])) {
 			$this->output('<form ' . $q_view['main_form_tags'] . '>'); // form for buttons on question
 		}
 
-		$this->post_avatar_meta($q_view, 'qa-q-view');
+		$this->post_avatar_meta($q_view, 'ilya-q-view');
 		$this->q_view_content($q_view);
 		$this->q_view_extra($q_view);
 		$this->q_view_follows($q_view);
 		$this->q_view_closed($q_view);
-		$this->post_tags($q_view, 'qa-q-view');
+		$this->post_tags($q_view, 'ilya-q-view');
 
 		$this->q_view_buttons($q_view);
 
@@ -489,10 +489,10 @@ class qa_html_theme extends qa_html_theme_base
 			$this->output('</form>');
 		}
 
-		$this->c_list(isset($q_view['c_list']) ? $q_view['c_list'] : null, 'qa-q-view');
+		$this->c_list(isset($q_view['c_list']) ? $q_view['c_list'] : null, 'ilya-q-view');
 		$this->c_form(isset($q_view['c_form']) ? $q_view['c_form'] : null);
 
-		$this->output('</div> <!-- END qa-q-view-main -->');
+		$this->output('</div> <!-- END ilya-q-view-main -->');
 	}
 
 	/**
@@ -516,18 +516,18 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function a_item_main($a_item)
 	{
-		$this->output('<div class="qa-a-item-main">');
+		$this->output('<div class="ilya-a-item-main">');
 
 		if (isset($a_item['main_form_tags'])) {
 			$this->output('<form ' . $a_item['main_form_tags'] . '>'); // form for buttons on answer
 		}
 
-		$this->post_avatar_meta($a_item, 'qa-a-item');
+		$this->post_avatar_meta($a_item, 'ilya-a-item');
 
 		if ($a_item['hidden'])
-			$this->output('<div class="qa-a-item-hidden">');
+			$this->output('<div class="ilya-a-item-hidden">');
 		elseif ($a_item['selected'])
-			$this->output('<div class="qa-a-item-selected">');
+			$this->output('<div class="ilya-a-item-selected">');
 
 		$this->a_selection($a_item);
 		if (isset($a_item['error']))
@@ -545,10 +545,10 @@ class qa_html_theme extends qa_html_theme_base
 			$this->output('</form>');
 		}
 
-		$this->c_list(isset($a_item['c_list']) ? $a_item['c_list'] : null, 'qa-a-item');
+		$this->c_list(isset($a_item['c_list']) ? $a_item['c_list'] : null, 'ilya-a-item');
 		$this->c_form(isset($a_item['c_form']) ? $a_item['c_form'] : null);
 
-		$this->output('</div> <!-- END qa-a-item-main -->');
+		$this->output('</div> <!-- END ilya-a-item-main -->');
 	}
 
 	/**
@@ -557,14 +557,14 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function c_list_item($c_item)
 	{
-		$extraclass = @$c_item['classes'] . (@$c_item['hidden'] ? ' qa-c-item-hidden' : '');
+		$extraclass = @$c_item['classes'] . (@$c_item['hidden'] ? ' ilya-c-item-hidden' : '');
 
-		$this->output('<div class="qa-c-list-item ' . $extraclass . '" ' . @$c_item['tags'] . '>');
+		$this->output('<div class="ilya-c-list-item ' . $extraclass . '" ' . @$c_item['tags'] . '>');
 
 		$this->c_item_main($c_item);
 		$this->c_item_clear();
 
-		$this->output('</div> <!-- END qa-c-item -->');
+		$this->output('</div> <!-- END ilya-c-item -->');
 	}
 
 	/**
@@ -575,7 +575,7 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function c_item_main($c_item)
 	{
-		$this->post_avatar_meta($c_item, 'qa-c-item');
+		$this->post_avatar_meta($c_item, 'ilya-c-item');
 
 		if (isset($c_item['error']))
 			$this->error($c_item['error']);
@@ -602,7 +602,7 @@ class qa_html_theme extends qa_html_theme_base
 		else
 			$this->c_item_content($c_item);
 
-		$this->output('<div class="qa-c-item-footer">');
+		$this->output('<div class="ilya-c-item-footer">');
 		$this->c_item_buttons($c_item);
 		$this->output('</div>');
 
@@ -622,7 +622,7 @@ class qa_html_theme extends qa_html_theme_base
 	{
 		// floated right
 		$this->output(
-			'<div class="qa-attribution">',
+			'<div class="ilya-attribution">',
 			'Snow Theme by <a href="http://www.q2amarket.com">Q2A Market</a>',
 			'</div>'
 		);
@@ -709,15 +709,15 @@ class qa_html_theme extends qa_html_theme_base
 		$css = array('<style>');
 
 		if (!qa_is_logged_in())
-			$css[] = '.qa-nav-user { margin: 0 !important; }';
+			$css[] = '.ilya-nav-user { margin: 0 !important; }';
 
 		if (qa_request_part(1) !== qa_get_logged_in_handle()) {
 			$css[] = '@media (max-width: 979px) {';
-			$css[] = ' body.qa-template-user.fixed, body[class*="qa-template-user-"].fixed { padding-top: 118px !important; }';
-			$css[] = ' body.qa-template-users.fixed { padding-top: 95px !important; }';
+			$css[] = ' body.ilya-template-user.fixed, body[class*="ilya-template-user-"].fixed { padding-top: 118px !important; }';
+			$css[] = ' body.ilya-template-users.fixed { padding-top: 95px !important; }';
 			$css[] = '}';
 			$css[] = '@media (min-width: 980px) {';
-			$css[] = ' body.qa-template-users.fixed { padding-top: 105px !important;}';
+			$css[] = ' body.ilya-template-users.fixed { padding-top: 105px !important;}';
 			$css[] = '}';
 		}
 
@@ -755,6 +755,6 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function search_field($search)
 	{
-		$this->output('<input type="text" ' .'placeholder="' . $search['button_label'] . '..." ' . $search['field_tags'] . ' value="' . @$search['value'] . '" class="qa-search-field"/>');
+		$this->output('<input type="text" ' .'placeholder="' . $search['button_label'] . '..." ' . $search['field_tags'] . ' value="' . @$search['value'] . '" class="ilya-search-field"/>');
 	}
 }

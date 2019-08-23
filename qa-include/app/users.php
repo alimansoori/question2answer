@@ -64,7 +64,7 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	} elseif (defined('QA_FINAL_JOOMLA_INTEGRATE_PATH')) {
 		require_once QA_INCLUDE_DIR . 'util/external-users-joomla.php';
 	} else {
-		require_once QA_EXTERNAL_DIR . 'qa-external-users.php';
+		require_once QA_EXTERNAL_DIR . 'ilya-external-users.php';
 	}
 
 	// Access functions for user information
@@ -565,11 +565,11 @@ if (QA_FINAL_EXTERNAL_USERS) {
 		}
 
 		$url = qa_path_html('user/' . $handle);
-		$favclass = $favorited ? ' qa-user-favorited' : '';
+		$favclass = $favorited ? ' ilya-user-favorited' : '';
 		$mfAttr = $microdata ? ' itemprop="url"' : '';
 
 		$userHandle = $microdata ? '<span itemprop="name">' . qa_html($handle) . '</span>' : qa_html($handle);
-		$userHtml = '<a href="' . $url . '" class="qa-user-link' . $favclass . '"' . $mfAttr . '>' . $userHandle . '</a>';
+		$userHtml = '<a href="' . $url . '" class="ilya-user-link' . $favclass . '"' . $mfAttr . '>' . $userHandle . '</a>';
 
 		if ($microdata) {
 			$userHtml = '<span itemprop="author" itemscope itemtype="https://schema.org/Person">' . $userHtml . '</span>';
@@ -674,7 +674,7 @@ if (QA_FINAL_EXTERNAL_USERS) {
 				return null;
 		}
 
-		return sprintf('<a href="%s" class="qa-avatar-link">%s</a>', qa_path_html('user/' . $handle), $html);
+		return sprintf('<a href="%s" class="ilya-avatar-link">%s</a>', qa_path_html('user/' . $handle), $html);
 	}
 
 
@@ -1008,7 +1008,7 @@ function qa_user_maximum_permit_error($permitoption, $limitaction = null, $check
  * Check whether the logged in user has permission to perform an action.
  *
  * @param string $permitoption The permission to check (if null, this simply checks whether the user is blocked).
- * @param string $limitaction Constant from /qa-include/app/limits.php to check against user or IP rate limits.
+ * @param string $limitaction Constant from /ilya-include/app/limits.php to check against user or IP rate limits.
  * @param int $userlevel A QA_USER_LEVEL_* constant to consider the user at a different level to usual (e.g. if
  *   they are performing this action in a category for which they have elevated privileges).
  * @param bool $checkblocks Whether to check the user's blocked status.

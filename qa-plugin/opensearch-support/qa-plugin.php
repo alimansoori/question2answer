@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/opensearch-support/qa-plugin.php
+	File: ilya-plugin/opensearch-support/ilya-plugin.php
 	Description: Initiates OpenSearch plugin
 
 
@@ -40,5 +40,5 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_layer('qa-opensearch-layer.php', 'OpenSearch Layer');
-qa_register_plugin_module('page', 'qa-opensearch-page.php', 'qa_opensearch_xml', 'OpenSearch XML');
+qa_register_plugin_layer('ilya-opensearch-layer.php', 'OpenSearch Layer');
+qa_register_plugin_module('page', 'ilya-opensearch-page.php', 'qa_opensearch_xml', 'OpenSearch XML');

@@ -12,4 +12,4 @@ if (defined('QA_DEBUG_PERFORMANCE') && QA_DEBUG_PERFORMANCE) {
 	trigger_error('Included file ' . basename(__FILE__) . ' is deprecated');
 }
 
-require_once QA_INCLUDE_DIR.'plugins/qa-widget-activity-count.php';
+require_once QA_INCLUDE_DIR.'plugins/ilya-widget-activity-count.php';

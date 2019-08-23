@@ -28,7 +28,7 @@ require_once QA_INCLUDE_DIR . 'db/selects.php';
 require_once QA_INCLUDE_DIR . 'app/format.php';
 require_once QA_INCLUDE_DIR . 'app/updates.php';
 
-$tag = qa_request_part(1); // picked up from qa-page.php
+$tag = qa_request_part(1); // picked up from ilya-page.php
 $start = qa_get_start();
 $userid = qa_get_logged_in_userid();
 

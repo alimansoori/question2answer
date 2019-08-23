@@ -10,6 +10,6 @@ If you wish to run the tests (for example if you are contributing to Q2A) the fo
 2. Mark it as executable using the command `chmod +x phpunit.phar`
 3. Move it to your executable directory: `mv phpunit.phar /usr/local/bin/phpunit`
 4. Navigate to the Question2Answer root directory.
-5. Run `phpunit --bootstrap qa-tests/autoload.php qa-tests`
+5. Run `phpunit --bootstrap ilya-tests/autoload.php ilya-tests`
 
 Also check out the [PHPunit documentation](http://phpunit.de/getting-started.html) for more information about PHPUnit and unit testing in general.

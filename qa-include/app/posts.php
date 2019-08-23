@@ -24,7 +24,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 	exit;
 }
 
-require_once QA_INCLUDE_DIR . 'qa-db.php';
+require_once QA_INCLUDE_DIR . 'ilya-db.php';
 require_once QA_INCLUDE_DIR . 'db/selects.php';
 require_once QA_INCLUDE_DIR . 'app/format.php';
 require_once QA_INCLUDE_DIR . 'app/post-create.php';
@@ -263,7 +263,7 @@ function qa_post_set_hidden($postid, $hidden = true, $byuserid = null)
 
 /**
  * Change the status of $postid to $status, which should be one of the QA_POST_STATUS_* constants defined in
- * /qa-include/app/post-update.php. Pass the identify of the user making this change in $byuserid (or null for a silent change).
+ * /ilya-include/app/post-update.php. Pass the identify of the user making this change in $byuserid (or null for a silent change).
  * @param $postid
  * @param $status
  * @param $byuserid

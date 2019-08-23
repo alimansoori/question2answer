@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-plugin/event-logger/qa-plugin.php
+	File: ilya-plugin/event-logger/ilya-plugin.php
 	Description: Initiates event logger plugin
 
 
@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('event', 'qa-event-logger.php', 'qa_event_logger', 'Event Logger');
+qa_register_plugin_module('event', 'ilya-event-logger.php', 'qa_event_logger', 'Event Logger');

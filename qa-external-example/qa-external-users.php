@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: qa-external-example/qa-external-users.php
+	File: ilya-external-example/ilya-external-users.php
 	Description: Example of how to integrate with your own user database
 
 
@@ -26,7 +26,7 @@
 	THIS FILE ALLOWS YOU TO INTEGRATE WITH AN EXISTING USER MANAGEMENT SYSTEM
 	=========================================================================
 
-	It is used if QA_EXTERNAL_USERS is set to true in qa-config.php.
+	It is used if QA_EXTERNAL_USERS is set to true in ilya-config.php.
 */
 
 if (!defined('QA_VERSION')) { // don't allow this page to be requested directly from browser
@@ -444,7 +444,7 @@ function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 
 	$publicusername = $logged_in_user['publicusername'];
 
-	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="qa-user-link">' . htmlspecialchars($publicusername) . '</a>';
+	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
 
 	/*
 		Example 1 - suitable if:
@@ -455,7 +455,7 @@ function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 		$publicusername = $logged_in_user['publicusername'];
 
 		return '<a href="' . htmlspecialchars($relative_url_prefix . '../user/' . urlencode($publicusername)) .
-			'" class="qa-user-link">' . htmlspecialchars($publicusername) . '</a>';
+			'" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
 	*/
 
 	/*
@@ -467,7 +467,7 @@ function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 
 		$publicusername = $logged_in_user['publicusername'];
 
-		return '<a href="http://www.mysite.com/' . htmlspecialchars(urlencode($publicusername)) . '/" class="qa-user-link">' .
+		return '<a href="http://www.mysite.com/' . htmlspecialchars(urlencode($publicusername)) . '/" class="ilya-user-link">' .
 			'<img src="http://www.mysite.com/' . htmlspecialchars(urlencode($publicusername)) . '/photo-small.jpg" ' .
 			'style="width:16px; height:16px; border:none; margin-right:4px;">' . htmlspecialchars($publicusername) . '</a>';
 	*/
@@ -514,7 +514,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 		$usershtml[$userid] = htmlspecialchars($publicusername);
 
 		if ($should_include_link)
-			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="qa-user-link">' . $usershtml[$userid] . '</a>';
+			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
 	}
 
 	return $usershtml;
@@ -534,7 +534,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 
 			if ($should_include_link) {
 				$usershtml[$userid] = '<a href="' . htmlspecialchars($relative_url_prefix . '../user/' . urlencode($publicusername)) .
-					'" class="qa-user-link">' . $usershtml[$userid] . '</a>';
+					'" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
 			}
 		}
 
@@ -558,7 +558,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 
 			if ($should_include_link) {
 				$usershtml[$userid] = '<a href="http://www.mysite.com/' . htmlspecialchars(urlencode($publicusername)) .
-					'/" class="qa-user-link">' . $usershtml[$userid] . '</a>';
+					'/" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
 			}
 		}
 
@@ -581,7 +581,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
  *
  * If $padding is true, the HTML you return should render to a square of $size x $size pixels,
  * even if the avatar is not square. This can be achieved using CSS padding - see function
- * qa_get_avatar_blob_html(...) in qa-app-format.php for an example. If $padding is false,
+ * qa_get_avatar_blob_html(...) in ilya-app-format.php for an example. If $padding is false,
  * the HTML can render to anything which would fit inside a square of $size x $size pixels.
  *
  * Note that this function may be called many times to render an individual page, so it is not
@@ -606,7 +606,7 @@ function qa_avatar_html_from_userid($userid, $size, $padding)
 		$htmlsize = (int)$size;
 
 		return '<img src="http://www.mysite.com/avatar/' . htmlspecialchars($userid) . '-' . $htmlsize . 'x' . $htmlsize . '.jpg" ' .
-			'width="' . $htmlsize . '" height="' . $htmlsize . '" class="qa-avatar-image" alt=""/>';
+			'width="' . $htmlsize . '" height="' . $htmlsize . '" class="ilya-avatar-image" alt=""/>';
 	*/
 }
 
