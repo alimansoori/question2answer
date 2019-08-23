@@ -1,6 +1,6 @@
 <?php
 /**
- * @deprecated This file is deprecated; please use Q2A built-in functions for sending emails.
+ * @deprecated This file is deprecated; please use ILYA built-in functions for sending emails.
  */
 
 if (!defined('ILYA__VERSION')) {

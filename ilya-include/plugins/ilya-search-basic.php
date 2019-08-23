@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	Description: Basic module for indexing and searching Q2A posts
+	Description: Basic module for indexing and searching ILYA posts
 
 
 	This program is free software; you can redistribute it and/or

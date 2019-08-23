@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: ilya-include/Q2A/Util/Metadata.php
+	File: ilya-include/ILYA/Util/Metadata.php
 	Description: Some useful metadata handling stuff
 
 
@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class Q2A_Util_Metadata
+class ILYA_Util_Metadata
 {
 	const METADATA_FILE_JSON = 'metadata.json';
 

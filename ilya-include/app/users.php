@@ -164,7 +164,7 @@ if (ILYA__FINAL_EXTERNAL_USERS) {
 
 
 	/**
-	 * Returns a suffix to be used for names of session variables to prevent them being shared between multiple Q2A sites on the same server
+	 * Returns a suffix to be used for names of session variables to prevent them being shared between multiple ILYA sites on the same server
 	 */
 	function ilya_session_var_suffix()
 	{
@@ -236,7 +236,7 @@ if (ILYA__FINAL_EXTERNAL_USERS) {
 
 		$_SESSION['ilya_session_userid_' . $suffix] = $userid;
 		$_SESSION['ilya_session_source_' . $suffix] = $source;
-		// prevents one account on a shared server being able to create a log in a user to Q2A on another account on same server
+		// prevents one account on a shared server being able to create a log in a user to ILYA on another account on same server
 		$_SESSION['ilya_session_verify_' . $suffix] = ilya_session_verify_code($userid);
 	}
 

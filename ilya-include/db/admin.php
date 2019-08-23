@@ -35,7 +35,7 @@ function ilya_db_mysql_version()
 
 
 /**
- * Return the total size in bytes of all relevant tables in the Q2A database
+ * Return the total size in bytes of all relevant tables in the ILYA database
  */
 function ilya_db_table_size()
 {

@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: ilya-include/Q2A/Storage/CacheManager.php
+	File: ilya-include/ILYA/Storage/CacheManager.php
 	Description: Handler for caching system.
 
 
@@ -23,13 +23,13 @@
 /**
  * Caches data (typically from database queries) to the filesystem.
  */
-class Q2A_Storage_CacheFactory
+class ILYA_Storage_CacheFactory
 {
 	private static $cacheDriver = null;
 
 	/**
 	 * Get the appropriate cache handler.
-	 * @return Q2A_Storage_CacheDriver The cache handler.
+	 * @return ILYA_Storage_CacheDriver The cache handler.
 	 */
 	public static function getCacheDriver()
 	{
@@ -45,12 +45,12 @@ class Q2A_Storage_CacheFactory
 			switch($driver)
 			{
 				case 'memcached':
-					self::$cacheDriver = new Q2A_Storage_MemcachedDriver($config);
+					self::$cacheDriver = new ILYA_Storage_MemcachedDriver($config);
 					break;
 
 				case 'filesystem':
 				default:
-					self::$cacheDriver = new Q2A_Storage_FileCacheDriver($config);
+					self::$cacheDriver = new ILYA_Storage_FileCacheDriver($config);
 					break;
 			}
 

@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: ilya-include/Q2A/Storage/FileCache.php
+	File: ilya-include/ILYA/Storage/FileCache.php
 	Description: Interface for drivers of caching system.
 
 
@@ -23,7 +23,7 @@
 /**
  * Interface for caching drivers.
  */
-interface Q2A_Storage_CacheDriver
+interface ILYA_Storage_CacheDriver
 {
 	/**
 	 * Get the cached data for the supplied key. Data can be any format but is usually an array.
@@ -36,7 +36,7 @@ interface Q2A_Storage_CacheDriver
 	/**
 	 * Store something in the cache along with the key and expiry time. Data gets 'serialized' to a string before storing.
 	 * @param string $key The unique cache identifier.
-	 * @param mixed $data The data to cache (in core Q2A this is usually an array).
+	 * @param mixed $data The data to cache (in core ILYA this is usually an array).
 	 * @param int $ttl Number of minutes for which to cache the data.
 	 *
 	 * @return bool Whether the file was successfully cached.

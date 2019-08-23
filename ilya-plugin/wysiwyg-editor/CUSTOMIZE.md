@@ -1,7 +1,7 @@
 Customizing your editor
 =============================
 
-This Q2A plugin uses a custom build of CKEditor to keep it simple. However, if you would like to add new features it is straightforward to do so. All languages supported by Q2A are included, but if you are using a different language you can add add it using the tool, or remove all the languages you don't need to create an even smaller plugin.
+This ILYA plugin uses a custom build of CKEditor to keep it simple. However, if you would like to add new features it is straightforward to do so. All languages supported by ILYA are included, but if you are using a different language you can add add it using the tool, or remove all the languages you don't need to create an even smaller plugin.
 
 1. Go to the CKEditor Builder: http://ckeditor.com/builder
 2. Click the "Upload build-config.js" button in the top right, and select the `build-config.js` file from the `ckeditor` directory to start with the current config.

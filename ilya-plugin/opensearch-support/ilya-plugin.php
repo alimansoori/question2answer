@@ -23,7 +23,7 @@
 /*
 	Plugin Name: OpenSearch Support
 	Plugin URI:
-	Plugin Description: Allows OpenSearch clients to search Q2A site directly
+	Plugin Description: Allows OpenSearch clients to search ILYA site directly
 	Plugin Version: 1.0
 	Plugin Date: 2012-08-21
 	Plugin Author: Question2Answer

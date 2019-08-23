@@ -26,7 +26,7 @@ if (!defined('ILYA__VERSION')) { // don't allow this page to be requested direct
 
 
 /**
- * Indicates to the Q2A database layer that database connections are permitted fro this point forwards
+ * Indicates to the ILYA database layer that database connections are permitted fro this point forwards
  * (before this point, some plugins may not have had a chance to override some database access functions).
  */
 function ilya_db_allow_connect()
@@ -40,8 +40,8 @@ function ilya_db_allow_connect()
 
 
 /**
- * Connect to the Q2A database, select the right database, optionally install the $failhandler (and call it if necessary).
- * Uses mysqli as of Q2A 1.7.
+ * Connect to the ILYA database, select the right database, optionally install the $failhandler (and call it if necessary).
+ * Uses mysqli as of ILYA 1.7.
  * @param null $failhandler
  * @return mixed|void
  */
@@ -52,7 +52,7 @@ function ilya_db_connect($failhandler = null)
 	global $ilya_db_connection, $ilya_db_fail_handler, $ilya_db_allow_connect;
 
 	if (!$ilya_db_allow_connect)
-		ilya_fatal_error('It appears that a plugin is trying to access the database, but this is not allowed until Q2A initialization is complete.');
+		ilya_fatal_error('It appears that a plugin is trying to access the database, but this is not allowed until ILYA initialization is complete.');
 
 	if (isset($failhandler))
 		$ilya_db_fail_handler = $failhandler; // set this even if connection already opened
@@ -88,7 +88,7 @@ function ilya_db_connect($failhandler = null)
 	if ($conn_error)
 		ilya_db_fail_error('connect', $db->connect_errno, $conn_error);
 
-	// From Q2A 1.5, we explicitly set the character encoding of the MySQL connection, instead of using lots of "SELECT BINARY col"-style queries.
+	// From ILYA 1.5, we explicitly set the character encoding of the MySQL connection, instead of using lots of "SELECT BINARY col"-style queries.
 	// Testing showed that overhead is minimal, so this seems worth trading off against the benefit of more straightforward queries, especially
 	// for plugin developers.
 	if (!$db->set_charset('utf8'))
@@ -129,7 +129,7 @@ function ilya_db_fail_error($type, $errno = null, $error = null, $query = null)
 
 
 /**
- * Return the current connection to the Q2A database, connecting if necessary and $connect is true.
+ * Return the current connection to the ILYA database, connecting if necessary and $connect is true.
  * @param bool $connect
  * @return mixed
  */
@@ -151,7 +151,7 @@ function ilya_db_connection($connect = true)
 
 
 /**
- * Disconnect from the Q2A database.
+ * Disconnect from the ILYA database.
  */
 function ilya_db_disconnect()
 {
@@ -237,7 +237,7 @@ function ilya_db_query_execute($query)
 
 
 /**
- * Return $string escaped for use in queries to the Q2A database (to which a connection must have been made).
+ * Return $string escaped for use in queries to the ILYA database (to which a connection must have been made).
  * @param $string
  * @return mixed
  */
@@ -449,8 +449,8 @@ function ilya_db_random_bigint()
 
 
 /**
- * Return an array of the names of all tables in the Q2A database, converted to lower case.
- * No longer used by Q2A and shouldn't be needed.
+ * Return an array of the names of all tables in the ILYA database, converted to lower case.
+ * No longer used by ILYA and shouldn't be needed.
  */
 function ilya_db_list_tables_lc()
 {
@@ -459,7 +459,7 @@ function ilya_db_list_tables_lc()
 
 
 /**
- * Return an array of the names of all tables in the Q2A database.
+ * Return an array of the names of all tables in the ILYA database.
  *
  * @param bool $onlyTablesWithPrefix Determine if the result should only include tables with the
  * ILYA__MYSQL_TABLE_PREFIX or if it should include all tables in the database.
@@ -536,7 +536,7 @@ function ilya_db_single_select($selectspec)
 {
 	// check for cached results
 	if (isset($selectspec['caching'])) {
-		$cacheDriver = Q2A_Storage_CacheFactory::getCacheDriver();
+		$cacheDriver = ILYA_Storage_CacheFactory::getCacheDriver();
 		$cacheKey = 'query:' . $selectspec['caching']['key'];
 
 		if ($cacheDriver->isEnabled()) {

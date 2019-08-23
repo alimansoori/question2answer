@@ -90,7 +90,7 @@ function ilya_page_q_load_c_follows($question, $childposts, $achildposts, $dupli
 
 
 /**
- * Calculates which operations the current user may perform on a post. This function is a key part of Q2A's logic
+ * Calculates which operations the current user may perform on a post. This function is a key part of ILYA's logic
  * and is ripe for overriding by plugins. The latter two arrays can contain additional posts retrieved from the
  * database, and these will be ignored.
  *

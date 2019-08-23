@@ -167,7 +167,7 @@ else {
 				require_once ILYA__INCLUDE_DIR.'app/format.php';
 				$jconfig = new JConfig();
 
-				// create link back to Joomla! home page (Joomla doesn't have a 'home' config setting we can use like WP does, so we'll just assume that the Joomla home is the parent of the Q2A site. If it isn't, the user can fix the link for themselves later)
+				// create link back to Joomla! home page (Joomla doesn't have a 'home' config setting we can use like WP does, so we'll just assume that the Joomla home is the parent of the ILYA site. If it isn't, the user can fix the link for themselves later)
 				ilya_db_page_move(ilya_db_page_create($jconfig->sitename, ILYA__PAGE_FLAGS_EXTERNAL, '../', null, null, null), 'O', 1);
 				$success .= 'Your Question2Answer database has been created and integrated with your Joomla! site.';
 			}
@@ -258,7 +258,7 @@ if (ilya_db_connection(false) !== null && !@$pass_failure_from_install) {
 			break;
 
 		case 'non-users-missing':
-			$errorhtml = 'This Question2Answer site is sharing its users with another Q2A site, but it needs some additional database tables for its own content. Please click below to create them.';
+			$errorhtml = 'This Question2Answer site is sharing its users with another ILYA site, but it needs some additional database tables for its own content. Please click below to create them.';
 			$buttons = array('nonuser' => 'Set up the Tables');
 			break;
 

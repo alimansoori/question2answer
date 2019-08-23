@@ -1,5 +1,5 @@
 /*
-	Q2A Market (c) Jatin Soni
+	ILYA Market (c) Jatin Soni
 	http://www.q2amarket.com/
 
 	File:           js/snow-core.js

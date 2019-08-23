@@ -31,7 +31,7 @@ function ilya_blob_db_fail_handler()
 }
 
 
-// Load the Q2A base file which sets up a bunch of crucial stuff
+// Load the ILYA base file which sets up a bunch of crucial stuff
 
 $ilya_autoconnect = false;
 require 'ilya-base.php';

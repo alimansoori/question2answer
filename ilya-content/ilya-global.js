@@ -2,7 +2,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	Description: Common Javascript for Q2A pages including posting and AJAX
+	Description: Common Javascript for ILYA pages including posting and AJAX
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -154,7 +154,7 @@ function ilya_favorite_click(elem)
 
 function ilya_ajax_post(operation, params, callback)
 {
-	$.extend(params, {qa: 'ajax', ilya_operation: operation, ilya_root: ilya_root, ilya_request: ilya_request});
+	$.extend(params, {ilya: 'ajax', ilya_operation: operation, ilya_root: ilya_root, ilya_request: ilya_request});
 
 	$.post(ilya_root, params, function(response) {
 		var header = 'ILYA__AJAX_RESPONSE';

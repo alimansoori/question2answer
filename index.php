@@ -4,7 +4,7 @@
 	http://www.question2answer.org/
 
 	File: index.php
-	Description: A stub that only sets up the Q2A root and includes ilya-index.php
+	Description: A stub that only sets up the ILYA root and includes ilya-index.php
 
 
 	This program is free software; you can redistribute it and/or

@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	Description: Language phrases commonly used throughout Q2A
+	Description: Language phrases commonly used throughout ILYA
 
 
 	This program is free software; you can redistribute it and/or

@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	Description: Sets up Q2A environment, plus many globally useful functions
+	Description: Sets up ILYA environment, plus many globally useful functions
 
 
 	This program is free software; you can redistribute it and/or
@@ -25,21 +25,21 @@ define('ILYA__BUILD_DATE', '2019-01-12');
 
 
 /**
- * Autoloads some Q2A classes so it's possible to use them without adding a require_once first. From version 1.7 onwards.
+ * Autoloads some ILYA classes so it's possible to use them without adding a require_once first. From version 1.7 onwards.
  * These loosely follow PHP-FIG's PSR-0 standard where faux namespaces are separated by underscores. This is being done
  * slowly and carefully to maintain backwards compatibility, and does not apply to plugins, themes, nor most of the core
  * for that matter.
  *
- * Classes are stored in the ilya-include/Q2A folder, and then in subfolders depending on their categorization.
- * Class names should be of the form Q2A_<Namespace>_<Class>, e.g. Q2A_Util_Debug. There may be multiple "namespaces".
- * Classes are mapped to PHP files with the underscores converted to directory separators. The Q2A_Util_Debug class is in
- * the file ilya-include/Q2A/Util/Debug.php. A class named Q2A_Db_User_Messages would be in a file ilya-include/Q2A/Db/User/Messages.php.
+ * Classes are stored in the ilya-include/ILYA folder, and then in subfolders depending on their categorization.
+ * Class names should be of the form ILYA_<Namespace>_<Class>, e.g. ILYA_Util_Debug. There may be multiple "namespaces".
+ * Classes are mapped to PHP files with the underscores converted to directory separators. The ILYA_Util_Debug class is in
+ * the file ilya-include/ILYA/Util/Debug.php. A class named ILYA_Db_User_Messages would be in a file ilya-include/ILYA/Db/User/Messages.php.
  *
  * @param $class
  */
 function ilya_autoload($class)
 {
-	if (strpos($class, 'Q2A_') === 0)
+	if (strpos($class, 'ILYA_') === 0)
 		require ILYA__INCLUDE_DIR . strtr($class, '_', '/') . '.php';
 }
 spl_autoload_register('ilya_autoload');
@@ -67,7 +67,7 @@ ilya_initialize_predb_plugins();
 require_once ILYA__INCLUDE_DIR . 'ilya-db.php';
 ilya_db_allow_connect();
 
-// $ilya_autoconnect defaults to true so that optional plugins will load for external code. Q2A core
+// $ilya_autoconnect defaults to true so that optional plugins will load for external code. ILYA core
 // code sets $ilya_autoconnect to false so that we can use custom fail handlers.
 if (!isset($ilya_autoconnect) || $ilya_autoconnect !== false) {
 	ilya_db_connect('ilya_page_db_fail_handler');
@@ -103,7 +103,7 @@ function ilya_version_to_float($version)
 
 
 /**
- * Returns true if the current Q2A version is lower than $version
+ * Returns true if the current ILYA version is lower than $version
  * @param $version
  * @return bool
  */
@@ -127,12 +127,12 @@ function ilya_php_version_below($version)
 // Initialization functions called above
 
 /**
- * Set up and verify the PHP environment for Q2A, including unregistering globals if necessary
+ * Set up and verify the PHP environment for ILYA, including unregistering globals if necessary
  */
 function ilya_initialize_php()
 {
 	if (ilya_php_version_below('5.1.6'))
-		ilya_fatal_error('Q2A requires PHP 5.1.6 or later');
+		ilya_fatal_error('ILYA requires PHP 5.1.6 or later');
 
 	error_reporting(E_ALL); // be ultra-strict about error checking
 
@@ -163,7 +163,7 @@ function ilya_initialize_php()
 
 
 /**
- * First stage of setting up Q2A constants, before (if necessary) loading WordPress or Joomla! integration
+ * First stage of setting up ILYA constants, before (if necessary) loading WordPress or Joomla! integration
  */
 function ilya_initialize_constants_1()
 {
@@ -230,7 +230,7 @@ function ilya_initialize_constants_1()
 
 
 /**
- * Second stage of setting up Q2A constants, after (if necessary) loading WordPress or Joomla! integration
+ * Second stage of setting up ILYA constants, after (if necessary) loading WordPress or Joomla! integration
  */
 function ilya_initialize_constants_2()
 {
@@ -258,7 +258,7 @@ function ilya_initialize_constants_2()
 
 	if (ILYA__DEBUG_PERFORMANCE) {
 		global $ilya_usage;
-		$ilya_usage = new Q2A_Util_Usage;
+		$ilya_usage = new ILYA_Util_Usage;
 		// ensure errors are displayed
 		@ini_set('display_errors', 'On');
 	}
@@ -313,7 +313,7 @@ function ilya_initialize_constants_2()
 		define('ILYA__FINAL_MYSQL_PORT', ILYA__MYSQL_PORT);
 	}
 
-	// Possible URL schemes for Q2A and the string used for url scheme testing
+	// Possible URL schemes for ILYA and the string used for url scheme testing
 
 	define('ILYA__URL_FORMAT_INDEX', 0);  // http://...../index.php/123/why-is-the-sky-blue
 	define('ILYA__URL_FORMAT_NEAT', 1);   // http://...../123/why-is-the-sky-blue [requires .htaccess]
@@ -359,16 +359,16 @@ function ilya_initialize_buffering($request = '')
 
 
 /**
- * Register all modules that come as part of the Q2A core (as opposed to plugins)
+ * Register all modules that come as part of the ILYA core (as opposed to plugins)
  */
 function ilya_register_core_modules()
 {
 	ilya_register_module('filter', 'plugins/ilya-filter-basic.php', 'ilya_filter_basic', '');
 	ilya_register_module('editor', 'plugins/ilya-editor-basic.php', 'ilya_editor_basic', '');
 	ilya_register_module('viewer', 'plugins/ilya-viewer-basic.php', 'ilya_viewer_basic', '');
-	ilya_register_module('event', 'plugins/ilya-event-limits.php', 'ilya_event_limits', 'Q2A Event Limits');
-	ilya_register_module('event', 'plugins/ilya-event-notify.php', 'ilya_event_notify', 'Q2A Event Notify');
-	ilya_register_module('event', 'plugins/ilya-event-updates.php', 'ilya_event_updates', 'Q2A Event Updates');
+	ilya_register_module('event', 'plugins/ilya-event-limits.php', 'ilya_event_limits', 'ILYA Event Limits');
+	ilya_register_module('event', 'plugins/ilya-event-notify.php', 'ilya_event_notify', 'ILYA Event Notify');
+	ilya_register_module('event', 'plugins/ilya-event-updates.php', 'ilya_event_updates', 'ILYA Event Updates');
 	ilya_register_module('search', 'plugins/ilya-search-basic.php', 'ilya_search_basic', '');
 	ilya_register_module('widget', 'plugins/ilya-widget-activity-count.php', 'ilya_activity_count', 'Activity Count');
 	ilya_register_module('widget', 'plugins/ilya-widget-ask-box.php', 'ilya_ask_box', 'Ask Box');
@@ -384,7 +384,7 @@ function ilya_register_core_modules()
 function ilya_initialize_predb_plugins()
 {
 	global $ilya_pluginManager;
-	$ilya_pluginManager = new Q2A_Plugin_PluginManager();
+	$ilya_pluginManager = new ILYA_Plugin_PluginManager();
 	$ilya_pluginManager->readAllPluginMetadatas();
 
 	$ilya_pluginManager->loadPluginsBeforeDbInit();
@@ -435,9 +435,9 @@ function ilya_page_db_fail_handler($type, $errno = null, $error = null, $query =
 /**
  * Retrieve metadata information from the $contents of a ilya-theme.php or ilya-plugin.php file, specified by $type ('Plugin' or 'Theme').
  * If $versiononly is true, only min version metadata is parsed.
- * Name, Description, Min Q2A & Min PHP are not currently used by themes.
+ * Name, Description, Min ILYA & Min PHP are not currently used by themes.
  *
- * @deprecated Deprecated from 1.7; Q2A_Util_Metadata class and metadata.json files should be used instead
+ * @deprecated Deprecated from 1.7; ILYA_Util_Metadata class and metadata.json files should be used instead
  * @param $contents
  * @param $type
  * @param bool $versiononly
@@ -526,7 +526,7 @@ function ilya_load_override_files()
 }
 
 
-// Functions for registering different varieties of Q2A modularity
+// Functions for registering different varieties of ILYA modularity
 
 /**
  * Register a module of $type named $name, whose class named $class is defined in file $include (or null if no include necessary)
@@ -607,7 +607,7 @@ function ilya_register_overrides($include, $directory = ILYA__INCLUDE_DIR, $urlt
 /**
  * Register a set of language phrases, which should be accessed by the prefix $name/ in the ilya_lang_*() functions.
  * Pass in the $pattern representing the PHP files that define these phrases, where * in the pattern is replaced with
- * the language code (e.g. 'fr') and/or 'default'. These files should be formatted like Q2A's ilya-lang-*.php files.
+ * the language code (e.g. 'fr') and/or 'default'. These files should be formatted like ILYA's ilya-lang-*.php files.
  * @param $pattern
  * @param $name
  */
@@ -628,7 +628,7 @@ function ilya_register_phrases($pattern, $name)
 }
 
 
-// Function for registering varieties of Q2A modularity, which are (only) called from ilya-plugin.php files
+// Function for registering varieties of ILYA modularity, which are (only) called from ilya-plugin.php files
 
 /**
  * Register a plugin module of $type named $name, whose class named $class is defined in file $include (or null if no include necessary)
@@ -700,7 +700,7 @@ function ilya_register_plugin_phrases($pattern, $name)
 }
 
 
-// Low-level functions used throughout Q2A
+// Low-level functions used throughout ILYA
 
 /**
  * Calls eval() on the PHP code in $eval which came from the file $filename. It supplements PHP's regular error reporting by
@@ -1104,8 +1104,8 @@ function ilya_js($value, $forcequotes = false)
 // Finding out more about the current request
 
 /**
- * Inform Q2A that the current request is $request (slash-separated, independent of the url scheme chosen),
- * that the relative path to the Q2A root apperas to be $relativeroot, and the url scheme appears to be $usedformat
+ * Inform ILYA that the current request is $request (slash-separated, independent of the url scheme chosen),
+ * that the relative path to the ILYA root apperas to be $relativeroot, and the url scheme appears to be $usedformat
  * @param $request
  * @param $relativeroot
  * @param $usedformat
@@ -1124,7 +1124,7 @@ function ilya_set_request($request, $relativeroot, $usedformat = null)
 
 
 /**
- * Returns the current Q2A request (slash-separated, independent of the url scheme chosen)
+ * Returns the current ILYA request (slash-separated, independent of the url scheme chosen)
  */
 function ilya_request()
 {
@@ -1136,7 +1136,7 @@ function ilya_request()
 
 
 /**
- * Returns the indexed $part (as separated by slashes) of the current Q2A request, or null if it doesn't exist
+ * Returns the indexed $part (as separated by slashes) of the current ILYA request, or null if it doesn't exist
  * @param $part
  * @return
  */
@@ -1148,7 +1148,7 @@ function ilya_request_part($part)
 
 
 /**
- * Returns an array of parts (as separated by slashes) of the current Q2A request, starting at part $start
+ * Returns an array of parts (as separated by slashes) of the current ILYA request, starting at part $start
  * @param int $start
  * @return array
  */
@@ -1510,7 +1510,7 @@ function ilya_lang_html_sub_split($identifier, $htmlparam, $symbol = '^')
 // Request and path generation
 
 /**
- * Return the relative path to the Q2A root (if it was previously set by ilya_set_request())
+ * Return the relative path to the ILYA root (if it was previously set by ilya_set_request())
  */
 function ilya_path_to_root()
 {
@@ -1522,7 +1522,7 @@ function ilya_path_to_root()
 
 
 /**
- * Return an array of mappings of Q2A requests, as defined in the ilya-config.php file
+ * Return an array of mappings of ILYA requests, as defined in the ilya-config.php file
  */
 function ilya_get_request_map()
 {
@@ -1537,7 +1537,7 @@ function ilya_get_request_map()
  * Return the relative URI path for $request, with optional parameters $params and $anchor.
  * Slashes in $request will not be urlencoded, but any other characters will.
  * If $neaturls is set, use that, otherwise retrieve the option. If $rooturl is set, take
- * that as the root of the Q2A site, otherwise use path to root which was set elsewhere.
+ * that as the root of the ILYA site, otherwise use path to root which was set elsewhere.
  * @param $request
  * @param array $params
  * @param string $rooturl
@@ -1643,7 +1643,7 @@ function ilya_path_absolute($request, $params = null, $anchor = null)
 
 
 /**
- * Get Q2A request for a question, and make it search-engine friendly, shortening it if necessary
+ * Get ILYA request for a question, and make it search-engine friendly, shortening it if necessary
  * by removing shorter words which are generally less meaningful.
  * @param int $questionid The question ID
  * @param string $title The question title

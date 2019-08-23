@@ -33,7 +33,7 @@ if (!defined('ILYA__VERSION')) { // don't allow this page to be requested direct
 	referring back to the default method using double colon (ilya_html_theme_base::) notation.
 
 	Plugins can also do something similar by using a layer. For more information and to see some example
-	code, please consult the online Q2A documentation.
+	code, please consult the online ILYA documentation.
 */
 
 class ilya_html_theme_base
@@ -908,7 +908,7 @@ class ilya_html_theme_base
 
 	public function attribution()
 	{
-		// Hi there. I'd really appreciate you displaying this link on your Q2A site. Thank you - Gideon
+		// Hi there. I'd really appreciate you displaying this link on your ILYA site. Thank you - Gideon
 
 		$this->output(
 			'<div class="ilya-attribution">',

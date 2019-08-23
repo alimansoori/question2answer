@@ -66,7 +66,7 @@
 /*
 	If you wish, you can define ILYA__MYSQL_USERS_PREFIX separately from ILYA__MYSQL_TABLE_PREFIX.
 	If so, tables containing information about user accounts (not including users' activity and points)
-	get the prefix of ILYA__MYSQL_TABLE_PREFIX. This allows multiple Q2A sites to have shared logins
+	get the prefix of ILYA__MYSQL_TABLE_PREFIX. This allows multiple ILYA sites to have shared logins
 	and users, but separate posts and activity.
 
 	If you have installed question2answer with default "ilya_" prefix and want to setup a second
@@ -80,7 +80,7 @@
 	If you wish, you can define ILYA__BLOBS_DIRECTORY to store BLOBs (binary large objects) such
 	as avatars and uploaded files on disk, rather than in the database. If so this directory
 	must be writable by the web server process - on Unix/Linux use chown/chmod as appropriate.
-	Note than if multiple Q2A sites are using ILYA__MYSQL_USERS_PREFIX to share users, they must
+	Note than if multiple ILYA sites are using ILYA__MYSQL_USERS_PREFIX to share users, they must
 	also have the same value for ILYA__BLOBS_DIRECTORY.
 
 	If there are already some BLOBs stored in the database from previous uploads, click the
@@ -99,15 +99,15 @@
 */
 
 /*
-	If you wish, you can define ILYA__COOKIE_DOMAIN so that any cookies created by Q2A are assigned
+	If you wish, you can define ILYA__COOKIE_DOMAIN so that any cookies created by ILYA are assigned
 	to a specific domain name, instead of the full domain name of the request by default. This is
-	useful if you're running multiple Q2A sites on subdomains with a shared user base.
+	useful if you're running multiple ILYA sites on subdomains with a shared user base.
 
 	define('ILYA__COOKIE_DOMAIN', '.example.com'); // be sure to keep the leading period
 */
 
 /*
-	If you wish, you can define an array $ILYA__CONST_PATH_MAP to modify the URLs used in your Q2A site.
+	If you wish, you can define an array $ILYA__CONST_PATH_MAP to modify the URLs used in your ILYA site.
 	The key of each array element should be the standard part of the path, e.g. 'questions',
 	and the value should be the replacement for that standard part, e.g. 'topics'. If you edit this
 	file in UTF-8 encoding you can also use non-ASCII characters in these URLs.
@@ -125,7 +125,7 @@
 	This allows you to integrate with your existing user database and management system. For more details,
 	consult the online documentation on installing Question2Answer with single sign-on.
 
-	The constants ILYA__EXTERNAL_LANG and ILYA__EXTERNAL_EMAILER are deprecated from Q2A 1.5 since the same
+	The constants ILYA__EXTERNAL_LANG and ILYA__EXTERNAL_EMAILER are deprecated from ILYA 1.5 since the same
 	effect can now be achieved in plugins by using function overrides.
 */
 
@@ -142,7 +142,7 @@
 
 /*
 	Out-of-the-box Joomla! 3.x integration - to integrate with your Joomla! site, define
-	ILYA__JOOMLA_INTEGRATE_PATH. as the full path to the Joomla! directory. If your Q2A
+	ILYA__JOOMLA_INTEGRATE_PATH. as the full path to the Joomla! directory. If your ILYA
 	site is a subdirectory of your main Joomla site (recommended), you can specify
 	dirname(__DIR__) rather than the full path.
 	With this set, you do not need to set the ILYA__MYSQL_* constants above since these

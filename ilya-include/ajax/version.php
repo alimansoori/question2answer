@@ -47,7 +47,7 @@ if ($isCore) {
 		$response = ilya_lang_html('admin/version_latest_unknown');
 	}
 } else {
-	$metadataUtil = new Q2A_Util_Metadata();
+	$metadataUtil = new ILYA_Util_Metadata();
 	$metadata = $metadataUtil->fetchFromUrl($uri);
 
 	if (strlen(@$metadata['version']) > 0) {

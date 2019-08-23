@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: ilya-include/Q2A/Util/Usage.php
+	File: ilya-include/ILYA/Util/Usage.php
 	Description: Debugging stuff, currently used for tracking resource usage
 
 
@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class Q2A_Util_Usage
+class ILYA_Util_Usage
 {
 	private $stages;
 	private $startUsage;

@@ -69,7 +69,7 @@ function ilya_db_hotness_update($firstpostid, $lastpostid = null, $viewincrement
 		'(a.views+0.0)*#' .
 		') WHERE x.postid=a.postid';
 
-	// Additional multiples based on empirical analysis of activity on Q2A meta site to give approx equal influence for all factors
+	// Additional multiples based on empirical analysis of activity on ILYA meta site to give approx equal influence for all factors
 
 	$arguments = array(
 		$firstpostid,

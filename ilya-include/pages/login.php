@@ -29,7 +29,7 @@ if (ilya_is_logged_in()) {
 	ilya_redirect('');
 }
 
-// Check we're not using Q2A's single-sign on integration and that we're not logged in
+// Check we're not using ILYA's single-sign on integration and that we're not logged in
 if (ILYA__FINAL_EXTERNAL_USERS) {
 	$request = ilya_request();
 	$topath = ilya_get('to'); // lets user switch between login and register without losing destination page

@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: ilya-include/Q2A/Storage/MemcachedDriver.php
+	File: ilya-include/ILYA/Storage/MemcachedDriver.php
 	Description: Memcached-based driver for caching system.
 
 
@@ -23,7 +23,7 @@
 /**
  * Caches data (typically from database queries) in memory using Memcached.
  */
-class Q2A_Storage_MemcachedDriver implements Q2A_Storage_CacheDriver
+class ILYA_Storage_MemcachedDriver implements ILYA_Storage_CacheDriver
 {
 	private $memcached;
 	private $enabled = false;
@@ -88,7 +88,7 @@ class Q2A_Storage_MemcachedDriver implements Q2A_Storage_CacheDriver
 	/**
 	 * Store something in the cache along with the key and expiry time. Data gets 'serialized' to a string before storing.
 	 * @param string $key The unique cache identifier.
-	 * @param mixed $data The data to cache (in core Q2A this is usually an array).
+	 * @param mixed $data The data to cache (in core ILYA this is usually an array).
 	 * @param int $ttl Number of minutes for which to cache the data.
 	 *
 	 * @return bool Whether the file was successfully cached.

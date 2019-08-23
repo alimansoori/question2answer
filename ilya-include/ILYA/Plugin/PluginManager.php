@@ -4,7 +4,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	File: ilya-include/Q2A/Plugin/PluginManager.php
+	File: ilya-include/ILYA/Plugin/PluginManager.php
 	Description: Keeps track of the installed plugins
 
 
@@ -21,7 +21,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class Q2A_Plugin_PluginManager
+class ILYA_Plugin_PluginManager
 {
 	const PLUGIN_DELIMITER = ';';
 	const OPT_ENABLED_PLUGINS = 'enabled_plugins';
@@ -40,7 +40,7 @@ class Q2A_Plugin_PluginManager
 				continue;
 			}
 
-			$metadataUtil = new Q2A_Util_Metadata();
+			$metadataUtil = new ILYA_Util_Metadata();
 			$metadata = $metadataUtil->fetchFromAddonPath($pluginDirectory);
 			if (empty($metadata)) {
 				// limit plugin parsing to first 8kB
@@ -48,7 +48,7 @@ class Q2A_Plugin_PluginManager
 				$metadata = ilya_addon_metadata($contents, 'Plugin', true);
 			}
 
-			// skip plugin which requires a later version of Q2A
+			// skip plugin which requires a later version of ILYA
 			if (isset($metadata['min_q2a']) && ilya_ilya_version_below($metadata['min_q2a'])) {
 				continue;
 			}

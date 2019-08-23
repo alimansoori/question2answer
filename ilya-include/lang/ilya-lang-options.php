@@ -113,7 +113,7 @@ return array(
 	'links_in_new_window' => 'Open linked URLs in a new window:',
 	'logo_height' => 'Logo height:',
 	'logo_show' => 'Show a logo image in the page header',
-	'logo_url' => 'URL of logo - absolute or relative to Q2A root:',
+	'logo_url' => 'URL of logo - absolute or relative to ILYA root:',
 	'logo_width' => 'Logo width:',
 	'mailing_body' => 'Body text:',
 	'mailing_enabled' => 'Enable mass mailings to all users',

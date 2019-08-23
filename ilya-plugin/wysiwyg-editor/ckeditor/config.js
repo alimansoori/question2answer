@@ -1,6 +1,6 @@
 /**
- * Q2A custom config for CKEditor
- * NOTE: if you make changes to this file, make sure that you do not overwrite it when upgrading Q2A!
+ * ILYA custom config for CKEditor
+ * NOTE: if you make changes to this file, make sure that you do not overwrite it when upgrading ILYA!
  */
 
 CKEDITOR.editorConfig = function( config ) {

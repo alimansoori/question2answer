@@ -14,9 +14,9 @@ Note that general troubleshooting issues such as installation or how to use a fe
 
 ## Pull requests
 
-If you have found the cause of the bug in the Q2A code, you can submit the patch back to the Q2A repository. Create a fork of the repo, make the changes in your fork, then submit a pull request. Bug fix pull requests must be targeted to the **`bugfix`** branch. PRs for new features or large code changes must be made to the **`dev`** branch.
+If you have found the cause of the bug in the ILYA code, you can submit the patch back to the ILYA repository. Create a fork of the repo, make the changes in your fork, then submit a pull request. Bug fix pull requests must be targeted to the **`bugfix`** branch. PRs for new features or large code changes must be made to the **`dev`** branch.
 
-If you wish to implement a feature, you should start a discussion on the [Question2Answer Q&A][QA] first. We welcome all ideas but they may not be appropriate for the Q2A core. Consider whether your idea could be developed as a plugin.
+If you wish to implement a feature, you should start a discussion on the [Question2Answer Q&A][QA] first. We welcome all ideas but they may not be appropriate for the ILYA core. Consider whether your idea could be developed as a plugin.
 
 
 ## Coding style
@@ -33,7 +33,7 @@ From 1.7 onwards a new coding style has been implemented that is more in line wi
 - Opening braces for classes and functions should be on the next line.
 - Opening braces for control structures should be on the same line. All control structures should use braces.
 
-If in doubt, follow the style of the surrounding code. Code examples can be found in the [Q2A docs here](http://docs.question2answer.org/contribute/).
+If in doubt, follow the style of the surrounding code. Code examples can be found in the [ILYA docs here](http://docs.question2answer.org/contribute/).
 
 
 ## Documentation

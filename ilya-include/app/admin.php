@@ -121,7 +121,7 @@ function ilya_admin_language_options()
 	$options = array('' => 'English (US)');
 
 	// find all language folders
-	$metadataUtil = new Q2A_Util_Metadata();
+	$metadataUtil = new ILYA_Util_Metadata();
 	foreach (glob(ILYA__LANG_DIR . '*', GLOB_ONLYDIR) as $directory) {
 		$code = basename($directory);
 		$metadata = $metadataUtil->fetchFromAddonPath($directory);
@@ -145,7 +145,7 @@ function ilya_admin_theme_options()
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$metadataUtil = new Q2A_Util_Metadata();
+	$metadataUtil = new ILYA_Util_Metadata();
 	foreach (glob(ILYA__THEME_DIR . '*', GLOB_ONLYDIR) as $directory) {
 		$theme = basename($directory);
 		$metadata = $metadataUtil->fetchFromAddonPath($directory);
@@ -637,7 +637,7 @@ function ilya_admin_addon_metadata($contents, $fields)
  */
 function ilya_admin_plugin_directory_hash($directory)
 {
-	$pluginManager = new Q2A_Plugin_PluginManager();
+	$pluginManager = new ILYA_Plugin_PluginManager();
 	$hashes = $pluginManager->getHashesForPlugins(array($directory));
 
 	return reset($hashes);

@@ -250,7 +250,7 @@ class ilya_joomla_helper
 		$results = $dispatcher->trigger($event, $args);
 
 		if ($expectResponse && (!is_array($results) || count($results) < 1)) {
-			// no Q2A plugins installed in Joomla, so we'll have to resort to defaults
+			// no ILYA plugins installed in Joomla, so we'll have to resort to defaults
 			$results = $this->default_response($event, $args);
 		}
 		return array_pop($results);
@@ -263,7 +263,7 @@ class ilya_joomla_helper
 }
 
 /**
- * Implements the same methods as a Joomla plugin would implement, but called locally within Q2A.
+ * Implements the same methods as a Joomla plugin would implement, but called locally within ILYA.
  * This is intended as a set of default actions in case no Joomla plugin has been installed. It's
  * recommended to install the Joomla QAIntegration plugin for additional user-access control.
  */
@@ -279,7 +279,7 @@ class ilya_joomla_default_integration
 		$reg = 'index.php?option=com_users&view=registration';
 
 		return array(
-			// undo Joomla's escaping of characters since Q2A also escapes
+			// undo Joomla's escaping of characters since ILYA also escapes
 			'login' => htmlspecialchars_decode(JRoute::_($login)),
 			'logout' => htmlspecialchars_decode(JRoute::_($logout)),
 			'reg' => htmlspecialchars_decode(JRoute::_($reg)),
@@ -290,7 +290,7 @@ class ilya_joomla_default_integration
 	/**
 	 * Return the access levels available to the user. A proper Joomla plugin would allow you to fine tune this in as much
 	 * detail as you needed, but this default method can only look at the core Joomla system permissions and try to map
-	 * those to the Q2A perms. Not ideal; enough to get started, but recommend switching to the Joomla plugin if possible.
+	 * those to the ILYA perms. Not ideal; enough to get started, but recommend switching to the Joomla plugin if possible.
 	 */
 	public static function onQnaAccess(array $args)
 	{
@@ -327,7 +327,7 @@ class ilya_joomla_default_integration
 	}
 
 	/**
-	 * This method would be used to notify Joomla of a Q2A action, eg so it could write a log entry.
+	 * This method would be used to notify Joomla of a ILYA action, eg so it could write a log entry.
 	 * For this default method, we just won't do anything.
 	 */
 	public static function onWriteLog($args)

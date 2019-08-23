@@ -29,7 +29,7 @@ header('Content-Type: text/plain; charset=utf-8');
 @ini_set('display_errors', 0);
 
 
-// Load the Q2A base file which sets up a bunch of crucial functions
+// Load the ILYA base file which sets up a bunch of crucial functions
 
 $ilya_autoconnect = false;
 require 'ilya-base.php';

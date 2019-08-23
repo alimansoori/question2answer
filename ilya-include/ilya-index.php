@@ -3,7 +3,7 @@
 	Question2Answer by Gideon Greenspan and contributors
 	http://www.question2answer.org/
 
-	Description: The Grand Central of Q2A - most requests come through here
+	Description: The Grand Central of ILYA - most requests come through here
 
 
 	This program is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ elseif (isset($_GET['ilya']) && $_GET['ilya'] == 'blob') {
 }
 
 else {
-	// Otherwise, load the Q2A base file which sets up a bunch of crucial stuff
+	// Otherwise, load the ILYA base file which sets up a bunch of crucial stuff
 	$ilya_autoconnect = false;
 	require 'ilya-base.php';
 

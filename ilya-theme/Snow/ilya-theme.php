@@ -142,7 +142,7 @@ class ilya_html_theme extends ilya_html_theme_base
 			ilya_html_theme_base::view_count($q_item);
 	}
 
-	// to replace standard Q2A footer
+	// to replace standard ILYA footer
 	public function body_suffix()
 	{
 		$this->output('<div class="ilya-footer-bottom-group">');
@@ -154,7 +154,7 @@ class ilya_html_theme extends ilya_html_theme_base
 	{
 		$this->output(
 			'<div class="ilya-attribution">',
-			'&nbsp;| Snow Theme by <a href="http://www.q2amarket.com">Q2A Market</a>',
+			'&nbsp;| Snow Theme by <a href="http://www.q2amarket.com">ILYA Market</a>',
 			'</div>'
 		);
 

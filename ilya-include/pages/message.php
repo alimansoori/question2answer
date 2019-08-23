@@ -36,7 +36,7 @@ $fromhandle = ilya_get_logged_in_handle();
 $ilya_content = ilya_content_prepare();
 
 
-// Check we have a handle, we're not using Q2A's single-sign on integration and that we're logged in
+// Check we have a handle, we're not using ILYA's single-sign on integration and that we're logged in
 
 if (ILYA__FINAL_EXTERNAL_USERS)
 	ilya_fatal_error('User accounts are handled by external code');

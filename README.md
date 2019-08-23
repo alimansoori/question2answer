@@ -3,9 +3,9 @@ Question2Answer
 
 [![Build Status](https://travis-ci.org/q2a/question2answer.png?branch=dev)](https://travis-ci.org/q2a/question2answer/branches)
 
-[Question2Answer][Q2A] (Q2A) is a popular free open source Q&A platform for PHP/MySQL, used by over 20,898 [sites] in 40 languages.
+[Question2Answer][ILYA] (ILYA) is a popular free open source Q&A platform for PHP/MySQL, used by over 20,898 [sites] in 40 languages.
 
-Q2A is highly customisable with many awesome features:
+ILYA is highly customisable with many awesome features:
 
 - Asking and answering questions (duh!)
 - Voting, comments, best answer selection, follow-on and closed questions.
@@ -29,10 +29,10 @@ Q2A is highly customisable with many awesome features:
 - Beat spam with captchas, rate-limiting, moderation and/or flagging.
 - Block users, IP addresses, and censor words
 
-Q2A also features an extensive plugin system:
+ILYA also features an extensive plugin system:
 
 - Modify the HTML output for a page with *layers*.
-- Add custom pages to a Q2A site with *page modules*.
+- Add custom pages to a ILYA site with *page modules*.
 - Add extra content in various places with *widget modules*.
 - Allow login via an external identity provider such as Facebook with *login modules*.
 - Integrate WYSIWYG or other text editors with *editor/viewer modules*.
@@ -40,13 +40,13 @@ Q2A also features an extensive plugin system:
 - Validate and/or modify many types of user input with *filter modules*.
 - Implement a custom search engine with *search modules*.
 - Add extra spam protection with *captcha modules*.
-- Extend many core Q2A functions using *function overrides*.
+- Extend many core ILYA functions using *function overrides*.
 
 
 ----------
 
 
-As of version 1.6.3, all development is taking place through GitHub. The collaborative development process is being managed by [Scott Vivian][1]. (Note that official releases are still distributed via the [Q2A website][Q2A].)
+As of version 1.6.3, all development is taking place through GitHub. The collaborative development process is being managed by [Scott Vivian][1]. (Note that official releases are still distributed via the [ILYA website][ILYA].)
 
 Please read the [contributing page][2] for more information on how to get involved.
 
@@ -56,7 +56,7 @@ Thanks and enjoy!
 Gideon
 
 
-[Q2A]: http://www.question2answer.org/
+[ILYA]: http://www.question2answer.org/
 [1]: http://www.question2answer.org/ilya/user/Scott
 [2]: https://github.com/q2a/question2answer/blob/master/CONTRIBUTING.md
 [sites]: http://www.question2answer.org/sites.php

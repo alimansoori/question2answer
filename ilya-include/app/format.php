@@ -239,7 +239,7 @@ function ilya_category_path_html($navcategories, $categoryid)
 
 /**
  * Given $navcategories retrieved for $categoryid from the database (using ilya_db_category_nav_selectspec(...)),
- * return a Q2A request string that represents the category hierarchy down to $categoryid.
+ * return a ILYA request string that represents the category hierarchy down to $categoryid.
  * @param $navcategories
  * @param $categoryid
  * @return string
@@ -1210,7 +1210,7 @@ function ilya_insert_login_links($htmlmessage, $topage = null, $params = null)
 
 /**
  * Return structure to pass through to theme layer to show linked page numbers for $request.
- * Q2A uses offset-based paging, i.e. pages are referenced in the URL by a 'start' parameter.
+ * ILYA uses offset-based paging, i.e. pages are referenced in the URL by a 'start' parameter.
  * $start is current offset, there are $pagesize items per page and $count items in total
  * (unless $hasmore is true in which case there are at least $count items).
  * Show links to $prevnext pages before and after this one and include $params in the URLs.

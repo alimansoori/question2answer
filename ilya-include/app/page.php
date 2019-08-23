@@ -387,7 +387,7 @@ function ilya_do_content_stats($ilya_content)
 // Other functions which might be called from anywhere
 
 /**
- * Return an array of the default Q2A requests and which /ilya-include/pages/*.php file implements them
+ * Return an array of the default ILYA requests and which /ilya-include/pages/*.php file implements them
  * If the key of an element ends in /, it should be used for any request with that key as its prefix
  */
 function ilya_page_routing()

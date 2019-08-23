@@ -70,7 +70,7 @@ function ilya_db_table_definitions()
 	/*
 		Important note on character encoding in database and PHP connection to MySQL
 
-		[this note is no longer relevant since we *do* explicitly set the connection character set since Q2A 1.5 - see ilya-db.php
+		[this note is no longer relevant since we *do* explicitly set the connection character set since ILYA 1.5 - see ilya-db.php
 	*/
 
 	/*
@@ -82,7 +82,7 @@ function ilya_db_table_definitions()
 
 		* Starting in version 1.2, we explicitly name keys and foreign key constraints, instead of allowing MySQL
 		  to name these by default. Our chosen names match the default names that MySQL would have assigned, and
-		  indeed *did* assign for people who installed an earlier version of Q2A. By naming them explicitly, we're
+		  indeed *did* assign for people who installed an earlier version of ILYA. By naming them explicitly, we're
 		  on more solid ground for possible future changes to indexes and foreign keys in the schema.
 
 		* There are other foreign key constraints that it would be valid to add, but that would not serve much
@@ -588,7 +588,7 @@ function ilya_db_missing_columns($table, $definition)
 
 
 /**
- * Return the current version of the Q2A database, to determine need for DB upgrades
+ * Return the current version of the ILYA database, to determine need for DB upgrades
  */
 function ilya_db_get_db_version()
 {
@@ -774,7 +774,7 @@ function ilya_db_upgrade_tables()
 	$definitions = ilya_db_table_definitions();
 	$keyrecalc = array();
 
-	// Write-lock all Q2A tables before we start so no one can read or write anything
+	// Write-lock all ILYA tables before we start so no one can read or write anything
 
 	$keydbtables = ilya_array_to_keys(ilya_db_list_tables(true));
 
@@ -789,7 +789,7 @@ function ilya_db_upgrade_tables()
 	// Upgrade it step-by-step until it's up to date (do LOCK TABLES after ALTER TABLE because the lock can sometimes be lost)
 
 	// message (used in sprintf) for skipping shared user tables
-	$skipMessage = 'Skipping upgrading %s table since it was already upgraded by another Q2A site sharing it.';
+	$skipMessage = 'Skipping upgrading %s table since it was already upgraded by another ILYA site sharing it.';
 
 	while (1) {
 		$version = ilya_db_get_db_version();
@@ -1071,7 +1071,7 @@ function ilya_db_upgrade_tables()
 				// might be using blobs table shared with another installation, so check if we need to upgrade
 
 				if (isset($keycolumns['filename']))
-					ilya_db_upgrade_progress('Skipping upgrading blobs table since it was already upgraded by another Q2A site sharing it.');
+					ilya_db_upgrade_progress('Skipping upgrading blobs table since it was already upgraded by another ILYA site sharing it.');
 
 				else {
 					ilya_db_upgrade_query('ALTER TABLE ^blobs ADD COLUMN filename ' . $definitions['blobs']['filename'] . ' AFTER content, ADD COLUMN userid ' . $definitions['blobs']['userid'] . ' AFTER filename, ADD COLUMN cookieid ' . $definitions['blobs']['cookieid'] . ' AFTER userid, ADD COLUMN createip ' . $definitions['blobs']['createip'] . ' AFTER cookieid, ADD COLUMN created ' . $definitions['blobs']['created'] . ' AFTER createip');
@@ -1152,7 +1152,7 @@ function ilya_db_upgrade_tables()
 					// might be using messages table shared with another installation, so check if we need to upgrade
 
 					if (isset($keytables[ilya_db_add_table_prefix('messages')]))
-						ilya_db_upgrade_progress('Skipping messages table since it was already added by another Q2A site sharing these users.');
+						ilya_db_upgrade_progress('Skipping messages table since it was already added by another ILYA site sharing these users.');
 
 					else {
 						ilya_db_upgrade_query('UNLOCK TABLES');
@@ -1349,7 +1349,7 @@ function ilya_db_upgrade_tables()
 					// might be using messages table shared with another installation, so check if we need to upgrade
 
 					if (isset($keycolumns['type']))
-						ilya_db_upgrade_progress('Skipping upgrading messages table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading messages table since it was already upgraded by another ILYA site sharing it.');
 
 					else {
 						ilya_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN type ' . $definitions['messages']['type'] . ' AFTER messageid, DROP KEY fromuserid, ADD key type (type, fromuserid, touserid, created), ADD KEY touserid (touserid, type, created)');
@@ -1376,7 +1376,7 @@ function ilya_db_upgrade_tables()
 					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^userfields')));
 
 					if (isset($keycolumns['permit']))
-						ilya_db_upgrade_progress('Skipping upgrading userfields table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading userfields table since it was already upgraded by another ILYA site sharing it.');
 
 					else {
 						ilya_db_upgrade_query('ALTER TABLE ^userfields ADD COLUMN permit ' . $definitions['userfields']['permit'] . ' AFTER flags');
@@ -1390,7 +1390,7 @@ function ilya_db_upgrade_tables()
 					$keyindexes = ilya_array_to_keys(ilya_db_read_all_assoc(ilya_db_query_sub('SHOW INDEX FROM ^users'), null, 'Key_name'));
 
 					if (isset($keyindexes['created']))
-						ilya_db_upgrade_progress('Skipping upgrading users table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading users table since it was already upgraded by another ILYA site sharing it.');
 
 					else {
 						ilya_db_upgrade_query('ALTER TABLE ^users ADD KEY created (created, level, flags)');
@@ -1431,7 +1431,7 @@ function ilya_db_upgrade_tables()
 					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^users')));
 
 					if (isset($keycolumns['wallposts']))
-						ilya_db_upgrade_progress('Skipping upgrading users table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading users table since it was already upgraded by another ILYA site sharing it.');
 
 					else {
 						ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN wallposts ' . $definitions['users']['wallposts'] . ' AFTER flags');
@@ -1455,7 +1455,7 @@ function ilya_db_upgrade_tables()
 					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^messages')));
 
 					if (isset($keycolumns['fromhidden']))
-						ilya_db_upgrade_progress('Skipping upgrading messages table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading messages table since it was already upgraded by another ILYA site sharing it.');
 					else {
 						ilya_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN fromhidden ' . $definitions['messages']['fromhidden'] . ' AFTER touserid');
 						ilya_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN tohidden ' . $definitions['messages']['tohidden'] . ' AFTER fromhidden');
@@ -1560,7 +1560,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 64:
-				$pluginManager = new Q2A_Plugin_PluginManager();
+				$pluginManager = new ILYA_Plugin_PluginManager();
 				$allPlugins = $pluginManager->getFilesystemPlugins();
 				$pluginManager->setEnabledPlugins($allPlugins);
 				break;

@@ -108,8 +108,8 @@ function ilya_opt_if_loaded($name)
 
 
 /**
- * Load all of the Q2A options from the database.
- * From Q2A 1.8 we always load the options in a separate query regardless of ILYA__OPTIMIZE_DISTANT_DB.
+ * Load all of the ILYA options from the database.
+ * From ILYA 1.8 we always load the options in a separate query regardless of ILYA__OPTIMIZE_DISTANT_DB.
  */
 function ilya_preload_options()
 {

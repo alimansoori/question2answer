@@ -33,7 +33,7 @@ $loginUserId = ilya_get_logged_in_userid();
 $loginUserHandle = ilya_get_logged_in_handle();
 
 
-// Check which box we're showing (inbox/sent), we're not using Q2A's single-sign on integration and that we're logged in
+// Check which box we're showing (inbox/sent), we're not using ILYA's single-sign on integration and that we're logged in
 
 $req = ilya_request_part(1);
 if ($req === null)

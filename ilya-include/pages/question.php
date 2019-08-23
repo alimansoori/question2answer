@@ -41,7 +41,7 @@ $pagestate = ilya_get_state();
 
 // Get information about this question
 
-$cacheDriver = Q2A_Storage_CacheFactory::getCacheDriver();
+$cacheDriver = ILYA_Storage_CacheFactory::getCacheDriver();
 $cacheKey = "question:$questionid";
 $useCache = $userid === null && $cacheDriver->isEnabled() && !ilya_is_http_post() && empty($pagestate);
 $saveCache = false;

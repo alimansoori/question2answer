@@ -1037,7 +1037,7 @@ foreach ($showoptions as $optionname) {
 
 				ilya_optionfield_make_select($optionfield, $themeoptions, $value, 'Classic');
 
-				$metadataUtil = new Q2A_Util_Metadata();
+				$metadataUtil = new ILYA_Util_Metadata();
 				$themedirectory = ILYA__THEME_DIR . $value;
 				$metadata = $metadataUtil->fetchFromAddonPath($themedirectory);
 				if (empty($metadata)) {
@@ -1803,7 +1803,7 @@ switch ($adminsection) {
 		break;
 
 	case 'caching':
-		$cacheDriver = Q2A_Storage_CacheFactory::getCacheDriver();
+		$cacheDriver = ILYA_Storage_CacheFactory::getCacheDriver();
 		$ilya_content['error'] = $cacheDriver->getError();
 		$cacheStats = $cacheDriver->getStats();
 

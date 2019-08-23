@@ -1,6 +1,6 @@
 {
 	"name": "OpenSearch Support",
-	"description": "Allows OpenSearch clients to search Q2A site directly",
+	"description": "Allows OpenSearch clients to search ILYA site directly",
 	"version": "1.0",
 	"date": "2012-08-21",
 	"author": "Question2Answer",

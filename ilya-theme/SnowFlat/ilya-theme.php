@@ -1,11 +1,11 @@
 <?php
 /*
 	Snow Theme for Question2Answer Package
-	Copyright (C) 2014 Q2A Market <http://www.q2amarket.com>
+	Copyright (C) 2014 ILYA Market <http://www.q2amarket.com>
 
 	File:           ilya-theme.php
 	Version:        Snow 1.4
-	Description:    Q2A theme class
+	Description:    ILYA theme class
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
  * @category Theme
  * @since Snow 1.0
  * @version 1.4
- * @author Q2A Market <http://www.q2amarket.com>
- * @copyright (c) 2014, Q2A Market
+ * @author ILYA Market <http://www.q2amarket.com>
+ * @copyright (c) 2014, ILYA Market
  * @license http://www.gnu.org/copyleft/gpl.html
  */
 class ilya_html_theme extends ilya_html_theme_base
@@ -613,8 +613,8 @@ class ilya_html_theme extends ilya_html_theme_base
 	}
 
 	/**
-	 * Q2A Market attribution.
-	 * I'd really appreciate you displaying this link on your Q2A site. Thank you - Jatin
+	 * ILYA Market attribution.
+	 * I'd really appreciate you displaying this link on your ILYA site. Thank you - Jatin
 	 *
 	 * @since Snow 1.4
 	 */
@@ -623,7 +623,7 @@ class ilya_html_theme extends ilya_html_theme_base
 		// floated right
 		$this->output(
 			'<div class="ilya-attribution">',
-			'Snow Theme by <a href="http://www.q2amarket.com">Q2A Market</a>',
+			'Snow Theme by <a href="http://www.q2amarket.com">ILYA Market</a>',
 			'</div>'
 		);
 		parent::attribution();
@@ -698,7 +698,7 @@ class ilya_html_theme extends ilya_html_theme_base
 
 
 	/**
-	 * Dynamic <code>CSS</code> based on options and other interaction with Q2A.
+	 * Dynamic <code>CSS</code> based on options and other interaction with ILYA.
 	 *
 	 * @since Snow 1.4
 	 * @version 1.0

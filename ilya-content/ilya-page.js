@@ -154,7 +154,7 @@ function ilya_favorite_click(elem)
 
 function ilya_ajax_post(operation, params, callback)
 {
-	$.extend(params, {qa: 'ajax', ilya_operation: operation, ilya_root: ilya_root, ilya_request: ilya_request});
+	$.extend(params, {ilya: 'ajax', ilya_operation: operation, ilya_root: ilya_root, ilya_request: ilya_request});
 
 	$.post(ilya_root, params, function(response) {
 		var header = 'ILYA__AJAX_RESPONSE';

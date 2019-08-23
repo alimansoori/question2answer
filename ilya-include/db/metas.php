@@ -26,7 +26,7 @@ if (!defined('ILYA__VERSION')) { // don't allow this page to be requested direct
 
 
 /**
- * Set the metadata for user $userid with $key to $value. Keys beginning ilya_ are reserved for the Q2A core.
+ * Set the metadata for user $userid with $key to $value. Keys beginning ilya_ are reserved for the ILYA core.
  * @param $userid
  * @param $key
  * @param $value
@@ -62,7 +62,7 @@ function ilya_db_usermeta_get($userid, $key)
 
 
 /**
- * Set the metadata for post $postid with $key to $value. Keys beginning ilya_ are reserved for the Q2A core.
+ * Set the metadata for post $postid with $key to $value. Keys beginning ilya_ are reserved for the ILYA core.
  * @param $postid
  * @param $key
  * @param $value
@@ -98,7 +98,7 @@ function ilya_db_postmeta_get($postid, $key)
 
 
 /**
- * Set the metadata for category $categoryid with $key to $value. Keys beginning ilya_ are reserved for the Q2A core.
+ * Set the metadata for category $categoryid with $key to $value. Keys beginning ilya_ are reserved for the ILYA core.
  * @param $categoryid
  * @param $key
  * @param $value
@@ -134,7 +134,7 @@ function ilya_db_categorymeta_get($categoryid, $key)
 
 
 /**
- * Set the metadata for tag $tag with $key to $value. Keys beginning ilya_ are reserved for the Q2A core.
+ * Set the metadata for tag $tag with $key to $value. Keys beginning ilya_ are reserved for the ILYA core.
  * @param $tag
  * @param $key
  * @param $value

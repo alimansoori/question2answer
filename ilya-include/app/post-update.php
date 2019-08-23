@@ -626,7 +626,7 @@ function ilya_post_unindex($postid)
  */
 function ilya_question_uncache($questionId)
 {
-	$cacheDriver = Q2A_Storage_CacheFactory::getCacheDriver();
+	$cacheDriver = ILYA_Storage_CacheFactory::getCacheDriver();
 	return $cacheDriver->delete("question:$questionId");
 }
 

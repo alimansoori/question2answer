@@ -43,7 +43,7 @@ $ilya_content['error'] = ilya_admin_page_error();
 $ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
 
 
-$pluginManager = new Q2A_Plugin_PluginManager();
+$pluginManager = new ILYA_Plugin_PluginManager();
 $pluginManager->cleanRemovedPlugins();
 
 $enabledPlugins = $pluginManager->getEnabledPlugins();
@@ -116,7 +116,7 @@ foreach ($moduletypes as $type) {
 
 
 if (!empty($fileSystemPlugins)) {
-	$metadataUtil = new Q2A_Util_Metadata();
+	$metadataUtil = new ILYA_Util_Metadata();
 	$sortedPluginFiles = array();
 
 	foreach ($fileSystemPlugins as $pluginDirectory) {
