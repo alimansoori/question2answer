@@ -261,7 +261,8 @@ class ilya_html_theme extends ilya_html_theme_base
 		$this->widgets('full', 'high');
 
 		$this->output('<div class="ilya-main-wrapper">', '');
-		$this->main();
+        $this->sidenav();
+        $this->main();
 		$this->sidepanel();
 		$this->output('</div> <!-- END main-wrapper -->');
 
@@ -332,6 +333,35 @@ class ilya_html_theme extends ilya_html_theme_base
 		$this->widgets('side', 'bottom');
 		$this->output('</div> <!-- ilya-sidepanel -->', '');
 	}
+
+    public function sidenav()
+    {
+        $this->output('<div id="qam-sidenav-toggle"><i class="icon-right-open-big"></i></div>');
+        $this->output('<div class="ilya-sidenav" id="qam-sidenav-mobile">');
+        $this->sideCategory();
+        $this->output('</div> <!-- ilya-sidenav -->', '');
+    }
+
+    private function sideCategory()
+    {
+        if (isset($this->content['navigation']['cat'])) {
+            $nav = $this->content['navigation']['cat'];
+        } else {
+            $selectspec = ilya_db_category_nav_selectspec(null, true, false, true);
+            $selectspec['caching'] = array(
+                'key' => 'ilya_db_category_nav_selectspec:default:full',
+                'ttl' => ilya_opt('caching_catwidget_time'),
+            );
+            $navcategories = ilya_db_single_select($selectspec);
+            $nav = ilya_category_navigation($navcategories);
+        }
+
+        $this->output('<h2>' . ilya_lang_html('main/nav_categories') . '</h2>');
+        $this->set_context('nav_type', 'cat');
+        $this->nav_list($nav, 'nav-cat', 1);
+        $this->nav_clear('cat');
+        $this->clear_context('nav_type');
+    }
 
 	/**
 	 * Allow alternate sidebar color.

@@ -53,6 +53,12 @@ $(document).ready(function () {
 		$(this).find('i').toggleClass('icon-right-open-big');
 	});
 
+	$('#qam-sidenav-toggle').click(function () {
+		$('#qam-sidenav-mobile').toggleClass('open');
+		$(this).toggleClass('active');
+		$(this).find('i').toggleClass('icon-left-open-big');
+	});
+
 	/**
 	 * Toggle search box for small screen
 	 */
