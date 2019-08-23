@@ -317,9 +317,9 @@ function ilya_initialize_constants_2()
 
 	define('ILYA__URL_FORMAT_INDEX', 0);  // http://...../index.php/123/why-is-the-sky-blue
 	define('ILYA__URL_FORMAT_NEAT', 1);   // http://...../123/why-is-the-sky-blue [requires .htaccess]
-	define('ILYA__URL_FORMAT_PARAM', 3);  // http://...../?qa=123/why-is-the-sky-blue
-	define('ILYA__URL_FORMAT_PARAMS', 4); // http://...../?qa=123&ilya_1=why-is-the-sky-blue
-	define('ILYA__URL_FORMAT_SAFEST', 5); // http://...../index.php?qa=123&ilya_1=why-is-the-sky-blue
+	define('ILYA__URL_FORMAT_PARAM', 3);  // http://...../?ilya=123/why-is-the-sky-blue
+	define('ILYA__URL_FORMAT_PARAMS', 4); // http://...../?ilya=123&ilya_1=why-is-the-sky-blue
+	define('ILYA__URL_FORMAT_SAFEST', 5); // http://...../index.php?ilya=123&ilya_1=why-is-the-sky-blue
 
 	define('ILYA__URL_TEST_STRING', '$&-_~#%\\@^*()][`\';=:|".{},!<>?# π§½Жש'); // tests escaping, spaces, quote slashing and unicode - but not + and /
 }
@@ -1589,7 +1589,7 @@ function ilya_path($request, $params = null, $rooturl = null, $neaturls = null, 
 
 		case ILYA__URL_FORMAT_PARAM:
 			if (!empty($request))
-				$paramsextra = '?qa=' . $requestpath;
+				$paramsextra = '?ilya=' . $requestpath;
 			break;
 
 		default:
@@ -1598,7 +1598,7 @@ function ilya_path($request, $params = null, $rooturl = null, $neaturls = null, 
 		case ILYA__URL_FORMAT_PARAMS:
 			if (!empty($request)) {
 				foreach ($requestparts as $partindex => $requestpart)
-					$paramsextra .= (strlen($paramsextra) ? '&' : '?') . 'qa' . ($partindex ? ('_' . $partindex) : '') . '=' . $requestpart;
+					$paramsextra .= (strlen($paramsextra) ? '&' : '?') . 'ilya' . ($partindex ? ('_' . $partindex) : '') . '=' . $requestpart;
 			}
 			break;
 	}

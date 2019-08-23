@@ -244,7 +244,7 @@ function ilya_default_option($name)
 		'do_count_q_views' => 1,
 		'do_example_tags' => 1,
 		'feed_for_activity' => 1,
-		'feed_for_qa' => 1,
+		'feed_for_ilya' => 1,
 		'feed_for_questions' => 1,
 		'feed_for_unanswered' => 1,
 		'feed_full_text' => 1,
@@ -406,7 +406,7 @@ function ilya_default_option($name)
 			$value = ilya_opt('site_theme');
 			break;
 
-		case 'from_email': // heuristic to remove short prefix (e.g. www. or qa.)
+		case 'from_email': // heuristic to remove short prefix (e.g. www. or ilya.)
 			$parts = explode('.', @$_SERVER['HTTP_HOST']);
 
 			if (count($parts) > 2 && strlen($parts[0]) < 5 && !is_numeric($parts[0]))

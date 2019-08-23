@@ -97,7 +97,7 @@ class ilya_tag_cloud
 	public function allow_template($template)
 	{
 		$allowed = array(
-			'activity', 'qa', 'questions', 'hot', 'ask', 'categories', 'question',
+			'activity', 'ilya', 'questions', 'hot', 'ask', 'categories', 'question',
 			'tag', 'tags', 'unanswered', 'user', 'users', 'search', 'admin', 'custom',
 		);
 		return in_array($template, $allowed);

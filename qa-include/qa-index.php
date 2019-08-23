@@ -28,15 +28,15 @@ if (!defined('ILYA__BASE_DIR')) {
 
 // If this is an special non-page request, branch off here
 
-if (isset($_POST['qa']) && $_POST['qa'] == 'ajax') {
+if (isset($_POST['ilya']) && $_POST['ilya'] == 'ajax') {
 	require 'ilya-ajax.php';
 }
 
-elseif (isset($_GET['qa']) && $_GET['qa'] == 'image') {
+elseif (isset($_GET['ilya']) && $_GET['ilya'] == 'image') {
 	require 'ilya-image.php';
 }
 
-elseif (isset($_GET['qa']) && $_GET['qa'] == 'blob') {
+elseif (isset($_GET['ilya']) && $_GET['ilya'] == 'blob') {
 	require 'ilya-blob.php';
 }
 
@@ -103,11 +103,11 @@ else {
 			}
 
 			$relativedepth = count($requestparts);
-		} elseif (isset($_GET['qa'])) {
-			if (strpos($_GET['qa'], '/') === false) {
+		} elseif (isset($_GET['ilya'])) {
+			if (strpos($_GET['ilya'], '/') === false) {
 				$urlformat = (empty($_SERVER['REQUEST_URI']) || strpos($_SERVER['REQUEST_URI'], '/index.php') !== false)
 					? ILYA__URL_FORMAT_SAFEST : ILYA__URL_FORMAT_PARAMS;
-				$requestparts = array(ilya_gpc_to_string($_GET['qa']));
+				$requestparts = array(ilya_gpc_to_string($_GET['ilya']));
 
 				for ($part = 1; $part < 10; $part++) {
 					if (isset($_GET['ilya_' . $part])) {
@@ -117,10 +117,10 @@ else {
 				}
 			} else {
 				$urlformat = ILYA__URL_FORMAT_PARAM;
-				$requestparts = explode('/', ilya_gpc_to_string($_GET['qa']));
+				$requestparts = explode('/', ilya_gpc_to_string($_GET['ilya']));
 			}
 
-			unset($_GET['qa']);
+			unset($_GET['ilya']);
 		} else {
 			$normalizedpath = strtr($_SERVER['PHP_SELF'], '+', ' '); // seems necessary, and plus does not work with this scheme
 			$indexpath = '/index.php/';

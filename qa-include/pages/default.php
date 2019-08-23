@@ -28,10 +28,10 @@ require_once ILYA__INCLUDE_DIR . 'db/selects.php';
 require_once ILYA__INCLUDE_DIR . 'app/format.php';
 
 
-// Determine whether path begins with qa or not (question and answer listing can be accessed either way)
+// Determine whether path begins with ilya or not (question and answer listing can be accessed either way)
 
 $requestparts = explode('/', ilya_request());
-$explicitqa = (strtolower($requestparts[0]) == 'qa');
+$explicitqa = (strtolower($requestparts[0]) == 'ilya');
 
 if ($explicitqa) {
 	$slugs = array_slice($requestparts, 1);
@@ -87,7 +87,7 @@ if (isset($custompage) && !($custompage['flags'] & ILYA__PAGE_FLAGS_EXTERNAL)) {
 }
 
 
-// Then, see if we should redirect because the 'qa' page is the same as the home page
+// Then, see if we should redirect because the 'ilya' page is the same as the home page
 
 if ($explicitqa && !ilya_is_http_post() && !ilya_has_custom_home()) {
 	ilya_redirect(ilya_category_path_request($categories, $categoryid), $_GET);
@@ -125,7 +125,7 @@ if (!$explicitqa && !$countslugs && ilya_opt('show_custom_home')) {
 
 require_once ILYA__INCLUDE_DIR . 'app/q-list.php';
 
-ilya_set_template('qa');
+ilya_set_template('ilya');
 $questions = ilya_any_sort_and_dedupe(array_merge($questions1, $questions2));
 $pagesize = ilya_opt('page_size_home');
 
@@ -156,8 +156,8 @@ $ilya_content = ilya_q_list_page_content(
 	$categories, // categories for navigation
 	$categoryid, // selected category id
 	true, // show question counts in category navigation
-	$explicitqa ? 'qa/' : '', // prefix for links in category navigation
-	ilya_opt('feed_for_qa') ? 'qa' : null, // prefix for RSS feed paths (null to hide)
+	$explicitqa ? 'ilya/' : '', // prefix for links in category navigation
+	ilya_opt('feed_for_ilya') ? 'ilya' : null, // prefix for RSS feed paths (null to hide)
 	(count($questions) < $pagesize) // suggest what to do next
 		? ilya_html_suggest_ask($categoryid)
 		: ilya_html_suggest_qs_tags(ilya_using_tags(), ilya_category_path_request($categories, $categoryid)),

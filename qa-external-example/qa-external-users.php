@@ -112,7 +112,7 @@ function ilya_get_login_links($relative_url_prefix, $redirect_back_to_url)
 	/*
 		Example 1 - using absolute URLs, suitable if:
 
-		* Your Q2A site:       http://qa.mysite.com/
+		* Your Q2A site:       http://ilya.mysite.com/
 		* Your login page:     http://www.mysite.com/login
 		* Your register page:  http://www.mysite.com/register
 		* Your logout page:    http://www.mysite.com/logout
@@ -127,7 +127,7 @@ function ilya_get_login_links($relative_url_prefix, $redirect_back_to_url)
 	/*
 		Example 2 - using relative URLs, suitable if:
 
-		* Your Q2A site:       http://www.mysite.com/qa/
+		* Your Q2A site:       http://www.mysite.com/ilya/
 		* Your login page:     http://www.mysite.com/login.php
 		* Your register page:  http://www.mysite.com/register.php
 		* Your logout page:    http://www.mysite.com/logout.php
@@ -147,9 +147,9 @@ function ilya_get_login_links($relative_url_prefix, $redirect_back_to_url)
 		parameter once they have successfully logged in, registered or logged out.
 
 		return array(
-			'login' => $relative_url_prefix.'../login.php?redirect='.urlencode('qa/'.$redirect_back_to_url),
-			'register' => $relative_url_prefix.'../register.php?redirect='.urlencode('qa/'.$redirect_back_to_url),
-			'logout' => $relative_url_prefix.'../logout.php?redirect='.urlencode('qa/'.$redirect_back_to_url),
+			'login' => $relative_url_prefix.'../login.php?redirect='.urlencode('ilya/'.$redirect_back_to_url),
+			'register' => $relative_url_prefix.'../register.php?redirect='.urlencode('ilya/'.$redirect_back_to_url),
+			'logout' => $relative_url_prefix.'../logout.php?redirect='.urlencode('ilya/'.$redirect_back_to_url),
 		);
 	*/
 }
@@ -449,7 +449,7 @@ function ilya_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 	/*
 		Example 1 - suitable if:
 
-		* Your Q2A site:       http://www.mysite.com/qa/
+		* Your Q2A site:       http://www.mysite.com/ilya/
 		* Your user pages:     http://www.mysite.com/user/[username]
 
 		$publicusername = $logged_in_user['publicusername'];
@@ -461,7 +461,7 @@ function ilya_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 	/*
 		Example 2 - suitable if:
 
-		* Your Q2A site:       http://qa.mysite.com/
+		* Your Q2A site:       http://ilya.mysite.com/
 		* Your user pages:     http://www.mysite.com/[username]/
 		* 16x16 user photos:   http://www.mysite.com/[username]/photo-small.jpg
 
@@ -522,7 +522,7 @@ function ilya_get_users_html($userids, $should_include_link, $relative_url_prefi
 	/*
 		Example 1 - suitable if:
 
-		* Your Q2A site:       http://www.mysite.com/qa/
+		* Your Q2A site:       http://www.mysite.com/ilya/
 		* Your user pages:     http://www.mysite.com/user/[username]
 
 		$useridtopublic = ilya_get_public_from_userids($userids);
@@ -544,7 +544,7 @@ function ilya_get_users_html($userids, $should_include_link, $relative_url_prefi
 	/*
 		Example 2 - suitable if:
 
-		* Your Q2A site:       http://qa.mysite.com/
+		* Your Q2A site:       http://ilya.mysite.com/
 		* Your user pages:     http://www.mysite.com/[username]/
 		* User photos (16x16): http://www.mysite.com/[username]/photo-small.jpg
 
@@ -600,7 +600,7 @@ function ilya_avatar_html_from_userid($userid, $size, $padding)
 		Example 1 - suitable if:
 
 		* All your avatars are square
-		* Your Q2A site:       http://www.mysite.com/qa/
+		* Your Q2A site:       http://www.mysite.com/ilya/
 		* Your avatar images:  http://www.mysite.com/avatar/[userid]-[size]x[size].jpg
 
 		$htmlsize = (int)$size;

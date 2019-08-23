@@ -68,7 +68,7 @@ if (!ilya_admin_check_privileges($ilya_content))
 $templatelangkeys = array(
 	'question' => 'admin/question_pages',
 
-	'qa' => 'main/recent_qs_as_title',
+	'ilya' => 'main/recent_qs_as_title',
 	'activity' => 'main/recent_activity_title',
 	'questions' => 'admin/question_lists',
 	'hot' => 'main/hot_qs_title',

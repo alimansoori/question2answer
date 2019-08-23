@@ -191,7 +191,7 @@ function ilya_get_request_content()
 		$ilya_content = require ILYA__INCLUDE_DIR . 'pages/question.php';
 
 	} else {
-		ilya_set_template(strlen($firstlower) ? $firstlower : 'qa'); // will be changed later
+		ilya_set_template(strlen($firstlower) ? $firstlower : 'ilya'); // will be changed later
 		$ilya_content = require ILYA__INCLUDE_DIR . 'pages/default.php'; // handles many other pages, including custom pages and page modules
 	}
 
@@ -566,9 +566,9 @@ function ilya_content_prepare($voting = false, $categoryids = array())
 	$hascustomhome = ilya_has_custom_home();
 
 	if (ilya_opt($hascustomhome ? 'nav_ilya_not_home' : 'nav_ilya_is_home')) {
-		$ilya_content['navigation']['main'][$hascustomhome ? 'qa' : '$'] = array(
-			'url' => ilya_path_html($hascustomhome ? 'qa' : ''),
-			'label' => ilya_lang_html('main/nav_qa'),
+		$ilya_content['navigation']['main'][$hascustomhome ? 'ilya' : '$'] = array(
+			'url' => ilya_path_html($hascustomhome ? 'ilya' : ''),
+			'label' => ilya_lang_html('main/nav_ilya'),
 		);
 	}
 

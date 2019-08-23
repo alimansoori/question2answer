@@ -146,8 +146,8 @@ switch ($feedtype) {
 		$feedoption = 'feed_for_activity';
 		break;
 
-	case 'qa':
-		$feedoption = 'feed_for_qa';
+	case 'ilya':
+		$feedoption = 'feed_for_ilya';
 		break;
 
 	case 'tag':
@@ -221,7 +221,7 @@ switch ($feedtype) {
 		);
 		break;
 
-	case 'qa':
+	case 'ilya':
 		$questions = ilya_feed_load_ifcategory($categoryslugs, 'main/recent_qs_as_title', 'main/recent_qs_as_in_x', $title,
 			ilya_db_qs_selectspec(null, 'created', 0, $categoryslugs, null, false, $full, $count),
 			ilya_db_recent_a_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count)

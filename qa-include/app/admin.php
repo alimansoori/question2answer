@@ -468,7 +468,7 @@ function ilya_admin_is_slug_reserved($requestpart)
 
 	switch ($requestpart) {
 		case '':
-		case 'qa':
+		case 'ilya':
 		case 'feed':
 		case 'install':
 		case 'url':

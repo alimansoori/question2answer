@@ -24,7 +24,7 @@ class ilya_ask_box
 	public function allow_template($template)
 	{
 		$allowed = array(
-			'activity', 'categories', 'custom', 'feedback', 'qa', 'questions',
+			'activity', 'categories', 'custom', 'feedback', 'ilya', 'questions',
 			'hot', 'search', 'tag', 'tags', 'unanswered',
 		);
 		return in_array($template, $allowed);

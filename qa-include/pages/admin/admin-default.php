@@ -169,7 +169,7 @@ $optiontype = array(
 	'extra_field_display' => 'checkbox',
 	'feed_for_activity' => 'checkbox',
 	'feed_for_hot' => 'checkbox',
-	'feed_for_qa' => 'checkbox',
+	'feed_for_ilya' => 'checkbox',
 	'feed_for_questions' => 'checkbox',
 	'feed_for_search' => 'checkbox',
 	'feed_for_tag_qs' => 'checkbox',
@@ -536,7 +536,7 @@ switch ($adminsection) {
 	case 'feeds':
 		$subtitle = 'admin/feeds_title';
 
-		$showoptions = array('feed_for_questions', 'feed_for_qa', 'feed_for_activity');
+		$showoptions = array('feed_for_questions', 'feed_for_ilya', 'feed_for_activity');
 
 		array_push($showoptions, 'feed_for_hot', 'feed_for_unanswered');
 
@@ -551,7 +551,7 @@ switch ($adminsection) {
 		$formstyle = 'wide';
 
 		$checkboxtodisplay = array(
-			'feed_per_category' => 'option_feed_for_qa || option_feed_for_questions || option_feed_for_unanswered || option_feed_for_activity',
+			'feed_per_category' => 'option_feed_for_ilya || option_feed_for_questions || option_feed_for_unanswered || option_feed_for_activity',
 		);
 		break;
 
@@ -1445,8 +1445,8 @@ foreach ($showoptions as $optionname) {
 				$optionfield['note'] = ilya_lang_html('admin/points');
 				break;
 
-			case 'feed_for_qa':
-				$feedrequest = 'qa';
+			case 'feed_for_ilya':
+				$feedrequest = 'ilya';
 				break;
 
 			case 'feed_for_questions':
@@ -1473,8 +1473,8 @@ foreach ($showoptions as $optionname) {
 				} else
 					$categoryslug = 'example-category';
 
-				if (ilya_opt('feed_for_qa'))
-					$feedrequest = 'qa';
+				if (ilya_opt('feed_for_ilya'))
+					$feedrequest = 'ilya';
 				elseif (ilya_opt('feed_for_questions'))
 					$feedrequest = 'questions';
 				else
