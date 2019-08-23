@@ -28,29 +28,29 @@ require_once QA_INCLUDE_DIR . 'app/captcha.php';
 require_once QA_INCLUDE_DIR . 'db/users.php';
 
 
-if (qa_is_logged_in()) {
-	qa_redirect('');
+if (ilya_is_logged_in()) {
+	ilya_redirect('');
 }
 
 // Check we're not using single-sign on integration, that we're not logged in, and we're not blocked
 if (QA_FINAL_EXTERNAL_USERS) {
-	$request = qa_request();
-	$topath = qa_get('to'); // lets user switch between login and register without losing destination page
-	$userlinks = qa_get_login_links(qa_path_to_root(), isset($topath) ? $topath : qa_path($request, $_GET, ''));
+	$request = ilya_request();
+	$topath = ilya_get('to'); // lets user switch between login and register without losing destination page
+	$userlinks = ilya_get_login_links(ilya_path_to_root(), isset($topath) ? $topath : ilya_path($request, $_GET, ''));
 
 	if (!empty($userlinks['register'])) {
-		qa_redirect_raw($userlinks['register']);
+		ilya_redirect_raw($userlinks['register']);
 	}
-	qa_fatal_error('User registration should be handled by external code');
+	ilya_fatal_error('User registration should be handled by external code');
 }
 
 
 // Get information about possible additional fields
 
-$show_terms = qa_opt('show_register_terms');
+$show_terms = ilya_opt('show_register_terms');
 
-$userfields = qa_db_select_with_pending(
-	qa_db_userfields_selectspec()
+$userfields = ilya_db_select_with_pending(
+	ilya_db_userfields_selectspec()
 );
 
 foreach ($userfields as $index => $userfield) {
@@ -61,139 +61,139 @@ foreach ($userfields as $index => $userfield) {
 
 // Check we haven't suspended registration, and this IP isn't blocked
 
-if (qa_opt('suspend_register_users')) {
-	$qa_content = qa_content_prepare();
-	$qa_content['error'] = qa_lang_html('users/register_suspended');
-	return $qa_content;
+if (ilya_opt('suspend_register_users')) {
+	$ilya_content = ilya_content_prepare();
+	$ilya_content['error'] = ilya_lang_html('users/register_suspended');
+	return $ilya_content;
 }
 
-if (qa_user_permit_error()) {
-	$qa_content = qa_content_prepare();
-	$qa_content['error'] = qa_lang_html('users/no_permission');
-	return $qa_content;
+if (ilya_user_permit_error()) {
+	$ilya_content = ilya_content_prepare();
+	$ilya_content['error'] = ilya_lang_html('users/no_permission');
+	return $ilya_content;
 }
 
 
 // Process submitted form
 
-if (qa_clicked('doregister')) {
+if (ilya_clicked('doregister')) {
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 
-	if (qa_user_limits_remaining(QA_LIMIT_REGISTRATIONS)) {
+	if (ilya_user_limits_remaining(QA_LIMIT_REGISTRATIONS)) {
 		require_once QA_INCLUDE_DIR . 'app/users-edit.php';
 
-		$inemail = qa_post_text('email');
-		$inpassword = qa_post_text('password');
-		$inhandle = qa_post_text('handle');
-		$interms = (int)qa_post_text('terms');
+		$inemail = ilya_post_text('email');
+		$inpassword = ilya_post_text('password');
+		$inhandle = ilya_post_text('handle');
+		$interms = (int)ilya_post_text('terms');
 
 		$inprofile = array();
 		foreach ($userfields as $userfield)
-			$inprofile[$userfield['fieldid']] = qa_post_text('field_' . $userfield['fieldid']);
+			$inprofile[$userfield['fieldid']] = ilya_post_text('field_' . $userfield['fieldid']);
 
-		if (!qa_check_form_security_code('register', qa_post_text('code'))) {
-			$pageerror = qa_lang_html('misc/form_security_again');
+		if (!ilya_check_form_security_code('register', ilya_post_text('code'))) {
+			$pageerror = ilya_lang_html('misc/form_security_again');
 		} else {
 			// core validation
 			$errors = array_merge(
-				qa_handle_email_filter($inhandle, $inemail),
-				qa_password_validate($inpassword)
+				ilya_handle_email_filter($inhandle, $inemail),
+				ilya_password_validate($inpassword)
 			);
 
 			// T&Cs validation
 			if ($show_terms && !$interms)
-				$errors['terms'] = qa_lang_html('users/terms_not_accepted');
+				$errors['terms'] = ilya_lang_html('users/terms_not_accepted');
 
 			// filter module validation
 			if (count($inprofile)) {
-				$filtermodules = qa_load_modules_with('filter', 'filter_profile');
+				$filtermodules = ilya_load_modules_with('filter', 'filter_profile');
 				foreach ($filtermodules as $filtermodule)
 					$filtermodule->filter_profile($inprofile, $errors, null, null);
 			}
 
-			if (qa_opt('captcha_on_register'))
-				qa_captcha_validate_post($errors);
+			if (ilya_opt('captcha_on_register'))
+				ilya_captcha_validate_post($errors);
 
 			if (empty($errors)) {
 				// register and redirect
-				qa_limits_increment(null, QA_LIMIT_REGISTRATIONS);
+				ilya_limits_increment(null, QA_LIMIT_REGISTRATIONS);
 
-				$userid = qa_create_new_user($inemail, $inpassword, $inhandle);
+				$userid = ilya_create_new_user($inemail, $inpassword, $inhandle);
 
 				foreach ($userfields as $userfield)
-					qa_db_user_profile_set($userid, $userfield['title'], $inprofile[$userfield['fieldid']]);
+					ilya_db_user_profile_set($userid, $userfield['title'], $inprofile[$userfield['fieldid']]);
 
-				qa_set_logged_in_user($userid, $inhandle);
+				ilya_set_logged_in_user($userid, $inhandle);
 
-				$topath = qa_get('to');
+				$topath = ilya_get('to');
 
 				if (isset($topath))
-					qa_redirect_raw(qa_path_to_root() . $topath); // path already provided as URL fragment
+					ilya_redirect_raw(ilya_path_to_root() . $topath); // path already provided as URL fragment
 				else
-					qa_redirect('');
+					ilya_redirect('');
 			}
 		}
 
 	} else
-		$pageerror = qa_lang('users/register_limit');
+		$pageerror = ilya_lang('users/register_limit');
 }
 
 
 // Prepare content for theme
 
-$qa_content = qa_content_prepare();
+$ilya_content = ilya_content_prepare();
 
-$qa_content['title'] = qa_lang_html('users/register_title');
+$ilya_content['title'] = ilya_lang_html('users/register_title');
 
-$qa_content['error'] = @$pageerror;
+$ilya_content['error'] = @$pageerror;
 
-$qa_content['form'] = array(
-	'tags' => 'method="post" action="' . qa_self_html() . '"',
+$ilya_content['form'] = array(
+	'tags' => 'method="post" action="' . ilya_self_html() . '"',
 
 	'style' => 'tall',
 
 	'fields' => array(
 		'handle' => array(
-			'label' => qa_lang_html('users/handle_label'),
+			'label' => ilya_lang_html('users/handle_label'),
 			'tags' => 'name="handle" id="handle" dir="auto"',
-			'value' => qa_html(@$inhandle),
-			'error' => qa_html(@$errors['handle']),
+			'value' => ilya_html(@$inhandle),
+			'error' => ilya_html(@$errors['handle']),
 		),
 
 		'password' => array(
 			'type' => 'password',
-			'label' => qa_lang_html('users/password_label'),
+			'label' => ilya_lang_html('users/password_label'),
 			'tags' => 'name="password" id="password" dir="auto"',
-			'value' => qa_html(@$inpassword),
-			'error' => qa_html(@$errors['password']),
+			'value' => ilya_html(@$inpassword),
+			'error' => ilya_html(@$errors['password']),
 		),
 
 		'email' => array(
-			'label' => qa_lang_html('users/email_label'),
+			'label' => ilya_lang_html('users/email_label'),
 			'tags' => 'name="email" id="email" dir="auto"',
-			'value' => qa_html(@$inemail),
-			'note' => qa_opt('email_privacy'),
-			'error' => qa_html(@$errors['email']),
+			'value' => ilya_html(@$inemail),
+			'note' => ilya_opt('email_privacy'),
+			'error' => ilya_html(@$errors['email']),
 		),
 	),
 
 	'buttons' => array(
 		'register' => array(
-			'tags' => 'onclick="qa_show_waiting_after(this, false);"',
-			'label' => qa_lang_html('users/register_button'),
+			'tags' => 'onclick="ilya_show_waiting_after(this, false);"',
+			'label' => ilya_lang_html('users/register_button'),
 		),
 	),
 
 	'hidden' => array(
 		'doregister' => '1',
-		'code' => qa_get_form_security_code('register'),
+		'code' => ilya_get_form_security_code('register'),
 	),
 );
 
 // prepend custom message
-$custom = qa_opt('show_custom_register') ? trim(qa_opt('custom_register')) : '';
+$custom = ilya_opt('show_custom_register') ? trim(ilya_opt('custom_register')) : '';
 if (strlen($custom)) {
-	array_unshift($qa_content['form']['fields'], array(
+	array_unshift($ilya_content['form']['fields'], array(
 		'type' => 'custom',
 		'note' => $custom,
 	));
@@ -202,48 +202,48 @@ if (strlen($custom)) {
 foreach ($userfields as $userfield) {
 	$value = @$inprofile[$userfield['fieldid']];
 
-	$label = trim(qa_user_userfield_label($userfield), ':');
+	$label = trim(ilya_user_userfield_label($userfield), ':');
 	if (strlen($label))
 		$label .= ':';
 
-	$qa_content['form']['fields'][$userfield['title']] = array(
-		'label' => qa_html($label),
+	$ilya_content['form']['fields'][$userfield['title']] = array(
+		'label' => ilya_html($label),
 		'tags' => 'name="field_' . $userfield['fieldid'] . '"',
-		'value' => qa_html($value),
-		'error' => qa_html(@$errors[$userfield['fieldid']]),
+		'value' => ilya_html($value),
+		'error' => ilya_html(@$errors[$userfield['fieldid']]),
 		'rows' => ($userfield['flags'] & QA_FIELD_FLAGS_MULTI_LINE) ? 8 : null,
 	);
 }
 
-if (qa_opt('captcha_on_register'))
-	qa_set_up_captcha_field($qa_content, $qa_content['form']['fields'], @$errors);
+if (ilya_opt('captcha_on_register'))
+	ilya_set_up_captcha_field($ilya_content, $ilya_content['form']['fields'], @$errors);
 
 // show T&Cs checkbox
 if ($show_terms) {
-	$qa_content['form']['fields']['terms'] = array(
+	$ilya_content['form']['fields']['terms'] = array(
 		'type' => 'checkbox',
-		'label' => trim(qa_opt('register_terms')),
+		'label' => trim(ilya_opt('register_terms')),
 		'tags' => 'name="terms" id="terms"',
-		'value' => qa_html(@$interms),
-		'error' => qa_html(@$errors['terms']),
+		'value' => ilya_html(@$interms),
+		'error' => ilya_html(@$errors['terms']),
 	);
 }
 
-$loginmodules = qa_load_modules_with('login', 'login_html');
+$loginmodules = ilya_load_modules_with('login', 'login_html');
 
 foreach ($loginmodules as $module) {
 	ob_start();
-	$module->login_html(qa_opt('site_url') . qa_get('to'), 'register');
+	$module->login_html(ilya_opt('site_url') . ilya_get('to'), 'register');
 	$html = ob_get_clean();
 
 	if (strlen($html))
-		@$qa_content['custom'] .= '<br>' . $html . '<br>';
+		@$ilya_content['custom'] .= '<br>' . $html . '<br>';
 }
 
 // prioritize 'handle' for keyboard focus
-$qa_content['focusid'] = isset($errors['handle']) ? 'handle'
+$ilya_content['focusid'] = isset($errors['handle']) ? 'handle'
 	: (isset($errors['password']) ? 'password'
 		: (isset($errors['email']) ? 'email' : 'handle'));
 
 
-return $qa_content;
+return $ilya_content;

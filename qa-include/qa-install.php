@@ -26,12 +26,12 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 require_once QA_INCLUDE_DIR.'db/install.php';
 
-qa_report_process_stage('init_install');
+ilya_report_process_stage('init_install');
 
 
 // Define database failure handler for install process, if not defined already (file could be included more than once)
 
-if (!function_exists('qa_install_db_fail_handler')) {
+if (!function_exists('ilya_install_db_fail_handler')) {
 	/**
 	 * Handler function for database failures during the installation process
 	 * @param $type
@@ -39,7 +39,7 @@ if (!function_exists('qa_install_db_fail_handler')) {
 	 * @param string $error
 	 * @param string $query
 	 */
-	function qa_install_db_fail_handler($type, $errno = null, $error = null, $query = null)
+	function ilya_install_db_fail_handler($type, $errno = null, $error = null, $query = null)
 	{
 		global $pass_failure_from_install;
 
@@ -51,7 +51,7 @@ if (!function_exists('qa_install_db_fail_handler')) {
 
 		require QA_INCLUDE_DIR.'ilya-install.php';
 
-		qa_exit('error');
+		ilya_exit('error');
 	}
 }
 
@@ -74,28 +74,28 @@ $hidden = array();
 
 // Process user handling higher up to avoid 'headers already sent' warning
 
-if (!isset($pass_failure_type) && qa_clicked('super')) {
+if (!isset($pass_failure_type) && ilya_clicked('super')) {
 	require_once QA_INCLUDE_DIR.'db/admin.php';
 	require_once QA_INCLUDE_DIR.'db/users.php';
 	require_once QA_INCLUDE_DIR.'app/users-edit.php';
 
-	if (qa_db_count_users() == 0) { // prevent creating multiple accounts
-		$inemail = qa_post_text('email');
-		$inpassword = qa_post_text('password');
-		$inhandle = qa_post_text('handle');
+	if (ilya_db_count_users() == 0) { // prevent creating multiple accounts
+		$inemail = ilya_post_text('email');
+		$inpassword = ilya_post_text('password');
+		$inhandle = ilya_post_text('handle');
 
 		$fielderrors = array_merge(
-			qa_handle_email_filter($inhandle, $inemail),
-			qa_password_validate($inpassword)
+			ilya_handle_email_filter($inhandle, $inemail),
+			ilya_password_validate($inpassword)
 		);
 
 		if (empty($fielderrors)) {
 			require_once QA_INCLUDE_DIR.'app/users.php';
 
-			$userid = qa_create_new_user($inemail, $inpassword, $inhandle, QA_USER_LEVEL_SUPER);
-			qa_set_logged_in_user($userid, $inhandle);
+			$userid = ilya_create_new_user($inemail, $inpassword, $inhandle, QA_USER_LEVEL_SUPER);
+			ilya_set_logged_in_user($userid, $inhandle);
 
-			qa_set_option('feedback_email', $inemail);
+			ilya_set_option('feedback_email', $inemail);
 
 			$success .= "Congratulations - Your Question2Answer site is ready to go!\n\nYou are logged in as the super administrator and can start changing settings.\n\nThank you for installing Question2Answer.";
 		}
@@ -139,7 +139,7 @@ if (isset($pass_failure_type)) {
 			global $pass_failure_from_install;
 
 			if (@$pass_failure_from_install)
-				$errorhtml .= "Question2Answer was unable to perform the installation query below. Please check the user in the config file has CREATE and ALTER permissions:\n\n".qa_html($pass_failure_query."\n\nError ".$pass_failure_errno.": ".$pass_failure_error."\n\n");
+				$errorhtml .= "Question2Answer was unable to perform the installation query below. Please check the user in the config file has CREATE and ALTER permissions:\n\n".ilya_html($pass_failure_query."\n\nError ".$pass_failure_errno.": ".$pass_failure_error."\n\n");
 			else
 				$errorhtml .= "A Question2Answer database query failed when generating this page.\n\nA full description of the failure is available in the web server's error log file.";
 			break;
@@ -148,8 +148,8 @@ if (isset($pass_failure_type)) {
 else {
 	// this page was requested by user GET/POST, so handle any incoming clicks on buttons
 
-	if (qa_clicked('create')) {
-		qa_db_install_tables();
+	if (ilya_clicked('create')) {
+		ilya_db_install_tables();
 
 		if (QA_FINAL_EXTERNAL_USERS) {
 			if (defined('QA_FINAL_WORDPRESS_INTEGRATE_PATH')) {
@@ -157,7 +157,7 @@ else {
 				require_once QA_INCLUDE_DIR.'app/format.php';
 
 				// create link back to WordPress home page
-				qa_db_page_move(qa_db_page_create(get_option('blogname'), QA_PAGE_FLAGS_EXTERNAL, get_option('home'), null, null, null), 'O', 1);
+				ilya_db_page_move(ilya_db_page_create(get_option('blogname'), QA_PAGE_FLAGS_EXTERNAL, get_option('home'), null, null, null), 'O', 1);
 
 				$success .= 'Your Question2Answer database has been created and integrated with your WordPress site.';
 
@@ -168,7 +168,7 @@ else {
 				$jconfig = new JConfig();
 
 				// create link back to Joomla! home page (Joomla doesn't have a 'home' config setting we can use like WP does, so we'll just assume that the Joomla home is the parent of the Q2A site. If it isn't, the user can fix the link for themselves later)
-				qa_db_page_move(qa_db_page_create($jconfig->sitename, QA_PAGE_FLAGS_EXTERNAL, '../', null, null, null), 'O', 1);
+				ilya_db_page_move(ilya_db_page_create($jconfig->sitename, QA_PAGE_FLAGS_EXTERNAL, '../', null, null, null), 'O', 1);
 				$success .= 'Your Question2Answer database has been created and integrated with your Joomla! site.';
 			}
 			else {
@@ -180,36 +180,36 @@ else {
 		}
 	}
 
-	if (qa_clicked('nonuser')) {
-		qa_db_install_tables();
+	if (ilya_clicked('nonuser')) {
+		ilya_db_install_tables();
 		$success .= 'The additional Question2Answer database tables have been created.';
 	}
 
-	if (qa_clicked('upgrade')) {
-		qa_db_upgrade_tables();
+	if (ilya_clicked('upgrade')) {
+		ilya_db_upgrade_tables();
 		$success .= 'Your Question2Answer database has been updated.';
 	}
 
-	if (qa_clicked('repair')) {
-		qa_db_install_tables();
+	if (ilya_clicked('repair')) {
+		ilya_db_install_tables();
 		$success .= 'The Question2Answer database tables have been repaired.';
 	}
 
-	qa_initialize_postdb_plugins();
-	if (qa_clicked('module')) {
-		$moduletype = qa_post_text('moduletype');
-		$modulename = qa_post_text('modulename');
+	ilya_initialize_postdb_plugins();
+	if (ilya_clicked('module')) {
+		$moduletype = ilya_post_text('moduletype');
+		$modulename = ilya_post_text('modulename');
 
-		$module = qa_load_module($moduletype, $modulename);
+		$module = ilya_load_module($moduletype, $modulename);
 
-		$queries = $module->init_queries(qa_db_list_tables());
+		$queries = $module->init_queries(ilya_db_list_tables());
 
 		if (!empty($queries)) {
 			if (!is_array($queries))
 				$queries = array($queries);
 
 			foreach ($queries as $query)
-				qa_db_upgrade_query($query);
+				ilya_db_upgrade_query($query);
 		}
 
 		$success .= 'The '.$modulename.' '.$moduletype.' module has completed database initialization.';
@@ -217,8 +217,8 @@ else {
 
 }
 
-if (qa_db_connection(false) !== null && !@$pass_failure_from_install) {
-	$check = qa_db_check_tables(); // see where the database is at
+if (ilya_db_connection(false) !== null && !@$pass_failure_from_install) {
+	$check = ilya_db_check_tables(); // see where the database is at
 
 	switch ($check) {
 		case 'none':
@@ -229,14 +229,14 @@ if (qa_db_connection(false) !== null && !@$pass_failure_from_install) {
 
 			if (QA_FINAL_EXTERNAL_USERS) {
 				if (defined('QA_FINAL_WORDPRESS_INTEGRATE_PATH')) {
-					$errorhtml .= "\n\nWhen you click below, your Question2Answer site will be set up to integrate with the users of your WordPress site <a href=\"".qa_html(get_option('home'))."\" target=\"_blank\">".qa_html(get_option('blogname'))."</a>. Please consult the online documentation for more information.";
+					$errorhtml .= "\n\nWhen you click below, your Question2Answer site will be set up to integrate with the users of your WordPress site <a href=\"".ilya_html(get_option('home'))."\" target=\"_blank\">".ilya_html(get_option('blogname'))."</a>. Please consult the online documentation for more information.";
 				}
 				elseif (defined('QA_FINAL_JOOMLA_INTEGRATE_PATH')) {
 					$jconfig = new JConfig();
 					$errorhtml .= "\n\nWhen you click below, your Question2Answer site will be set up to integrate with the users of your Joomla! site <a href=\"../\" target=\"_blank\">".$jconfig->sitename."</a>. It's also recommended to install the Joomla QAIntegration plugin for additional user-access control. Please consult the online documentation for more information.";
 				}
 				else {
-					$errorhtml .= "\n\nWhen you click below, your Question2Answer site will be set up to integrate with your existing user database and management. Users will be referenced with database column type ".qa_html(qa_get_mysql_user_column_type()).". Please consult the online documentation for more information.";
+					$errorhtml .= "\n\nWhen you click below, your Question2Answer site will be set up to integrate with your existing user database and management. Users will be referenced with database column type ".ilya_html(ilya_get_mysql_user_column_type()).". Please consult the online documentation for more information.";
 				}
 
 				$buttons = array('create' => 'Set up the Database');
@@ -275,7 +275,7 @@ if (qa_db_connection(false) !== null && !@$pass_failure_from_install) {
 		default:
 			require_once QA_INCLUDE_DIR.'db/admin.php';
 
-			if (!QA_FINAL_EXTERNAL_USERS && qa_db_count_users() == 0) {
+			if (!QA_FINAL_EXTERNAL_USERS && ilya_db_count_users() == 0) {
 				$errorhtml .= "There are currently no users in the Question2Answer database.\n\nPlease enter your details below to create the super administrator:";
 				$fields = array(
 					'handle' => array('label' => 'Username:', 'type' => 'text'),
@@ -285,20 +285,20 @@ if (qa_db_connection(false) !== null && !@$pass_failure_from_install) {
 				$buttons = array('super' => 'Set up the Super Administrator');
 			}
 			else {
-				$tables = qa_db_list_tables();
+				$tables = ilya_db_list_tables();
 
-				$moduletypes = qa_list_module_types();
+				$moduletypes = ilya_list_module_types();
 
 				foreach ($moduletypes as $moduletype) {
-					$modules = qa_load_modules_with($moduletype, 'init_queries');
+					$modules = ilya_load_modules_with($moduletype, 'init_queries');
 
 					foreach ($modules as $modulename => $module) {
 						$queries = $module->init_queries($tables);
 						if (!empty($queries)) {
 							// also allows single query to be returned
-							$errorhtml = strtr(qa_lang_html('admin/module_x_database_init'), array(
-								'^1' => qa_html($modulename),
-								'^2' => qa_html($moduletype),
+							$errorhtml = strtr(ilya_lang_html('admin/module_x_database_init'), array(
+								'^1' => ilya_html($modulename),
+								'^2' => ilya_html($moduletype),
 								'^3' => '',
 								'^4' => '',
 							));
@@ -320,17 +320,17 @@ if (empty($errorhtml)) {
 	if (empty($success))
 		$success = 'Your Question2Answer database has been checked with no problems.';
 
-	$suggest = '<a href="'.qa_path_html('admin', null, null, QA_URL_FORMAT_SAFEST).'">Go to admin center</a>';
+	$suggest = '<a href="'.ilya_path_html('admin', null, null, QA_URL_FORMAT_SAFEST).'">Go to admin center</a>';
 }
 
 ?>
 
-		<form method="post" action="<?php echo qa_path_html('install', null, null, QA_URL_FORMAT_SAFEST)?>">
+		<form method="post" action="<?php echo ilya_path_html('install', null, null, QA_URL_FORMAT_SAFEST)?>">
 
 <?php
 
 if (strlen($success))
-	echo '<p class="msg-success">'.nl2br(qa_html($success)).'</p>';
+	echo '<p class="msg-success">'.nl2br(ilya_html($success)).'</p>';
 
 if (strlen($errorhtml))
 	echo '<p class="msg-error">'.nl2br($errorhtml).'</p>';
@@ -346,10 +346,10 @@ if (count($fields)) {
 
 	foreach ($fields as $name => $field) {
 		echo '<tr>';
-		echo '<th>'.qa_html($field['label']).'</th>';
-		echo '<td><input type="'.qa_html($field['type']).'" size="24" name="'.qa_html($name).'" value="'.qa_html(@${'in'.$name}).'"></td>';
+		echo '<th>'.ilya_html($field['label']).'</th>';
+		echo '<td><input type="'.ilya_html($field['type']).'" size="24" name="'.ilya_html($name).'" value="'.ilya_html(@${'in'.$name}).'"></td>';
 		if (isset($fielderrors[$name]))
-			echo '<td class="msg-error"><small>'.qa_html($fielderrors[$name]).'</small></td>';
+			echo '<td class="msg-error"><small>'.ilya_html($fielderrors[$name]).'</small></td>';
 		else
 			echo '<td></td>';
 		echo '</tr>';
@@ -359,12 +359,12 @@ if (count($fields)) {
 }
 
 foreach ($buttons as $name => $value)
-	echo '<input type="submit" name="'.qa_html($name).'" value="'.qa_html($value).'">';
+	echo '<input type="submit" name="'.ilya_html($name).'" value="'.ilya_html($value).'">';
 
 foreach ($hidden as $name => $value)
-	echo '<input type="hidden" name="'.qa_html($name).'" value="'.qa_html($value).'">';
+	echo '<input type="hidden" name="'.ilya_html($name).'" value="'.ilya_html($value).'">';
 
-qa_db_disconnect();
+ilya_db_disconnect();
 
 ?>
 

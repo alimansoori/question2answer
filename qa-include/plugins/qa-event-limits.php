@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_event_limits
+class ilya_event_limits
 {
 	public function process_event($event, $userid, $handle, $cookieid, $params)
 	{
@@ -36,20 +36,20 @@ class qa_event_limits
 			case 'q_queue':
 			case 'q_post':
 			case 'q_claim':
-				qa_limits_increment($userid, QA_LIMIT_QUESTIONS);
+				ilya_limits_increment($userid, QA_LIMIT_QUESTIONS);
 				break;
 
 			case 'a_queue':
 			case 'a_post':
 			case 'a_claim':
-				qa_limits_increment($userid, QA_LIMIT_ANSWERS);
+				ilya_limits_increment($userid, QA_LIMIT_ANSWERS);
 				break;
 
 			case 'c_queue':
 			case 'c_post':
 			case 'c_claim':
 			case 'a_to_c':
-				qa_limits_increment($userid, QA_LIMIT_COMMENTS);
+				ilya_limits_increment($userid, QA_LIMIT_COMMENTS);
 				break;
 
 			case 'q_vote_up':
@@ -61,21 +61,21 @@ class qa_event_limits
 			case 'c_vote_up':
 			case 'c_vote_down':
 			case 'c_vote_nil':
-				qa_limits_increment($userid, QA_LIMIT_VOTES);
+				ilya_limits_increment($userid, QA_LIMIT_VOTES);
 				break;
 
 			case 'q_flag':
 			case 'a_flag':
 			case 'c_flag':
-				qa_limits_increment($userid, QA_LIMIT_FLAGS);
+				ilya_limits_increment($userid, QA_LIMIT_FLAGS);
 				break;
 
 			case 'u_message':
-				qa_limits_increment($userid, QA_LIMIT_MESSAGES);
+				ilya_limits_increment($userid, QA_LIMIT_MESSAGES);
 				break;
 
 			case 'u_wall_post':
-				qa_limits_increment($userid, QA_LIMIT_WALL_POSTS);
+				ilya_limits_increment($userid, QA_LIMIT_WALL_POSTS);
 				break;
 		}
 
@@ -92,11 +92,11 @@ class qa_event_limits
 		) {
 			if (isset($userid)) {
 				require_once QA_INCLUDE_DIR . 'app/users.php';
-				qa_user_report_action($userid, $event);
+				ilya_user_report_action($userid, $event);
 
 			} elseif (isset($cookieid)) {
 				require_once QA_INCLUDE_DIR . 'app/cookies.php';
-				qa_cookie_report_action($cookieid, $event);
+				ilya_cookie_report_action($cookieid, $event);
 			}
 		}
 	}

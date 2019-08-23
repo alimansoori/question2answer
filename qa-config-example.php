@@ -61,7 +61,7 @@
 	MySQL database, or to include the Question2Answer tables in an existing MySQL database.
 */
 
-	define('QA_MYSQL_TABLE_PREFIX', 'qa_');
+	define('QA_MYSQL_TABLE_PREFIX', 'ilya_');
 
 /*
 	If you wish, you can define QA_MYSQL_USERS_PREFIX separately from QA_MYSQL_TABLE_PREFIX.
@@ -69,8 +69,8 @@
 	get the prefix of QA_MYSQL_TABLE_PREFIX. This allows multiple Q2A sites to have shared logins
 	and users, but separate posts and activity.
 
-	If you have installed question2answer with default "qa_" prefix and want to setup a second
-	installation, you define the QA_MYSQL_USERS_PREFIX as "qa_" so this new installation
+	If you have installed question2answer with default "ilya_" prefix and want to setup a second
+	installation, you define the QA_MYSQL_USERS_PREFIX as "ilya_" so this new installation
 	can access the same database as the first installation.
 
 	define('QA_MYSQL_USERS_PREFIX', 'sharedusers_');

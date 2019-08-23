@@ -33,9 +33,9 @@ define('QA_PAGE_FLAGS_NEW_WINDOW', 2);
  * @param $seconds
  * @return mixed|string
  */
-function qa_time_to_string($seconds)
+function ilya_time_to_string($seconds)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$seconds = max($seconds, 1);
 
@@ -54,9 +54,9 @@ function qa_time_to_string($seconds)
 			$count = floor($seconds / $scale);
 
 			if ($count == 1)
-				$string = qa_lang($phrases[0]);
+				$string = ilya_lang($phrases[0]);
 			else
-				$string = qa_lang_sub($phrases[1], $count);
+				$string = ilya_lang_sub($phrases[1], $count);
 
 			break;
 		}
@@ -74,7 +74,7 @@ function qa_time_to_string($seconds)
  * @param $cookieid
  * @return bool
  */
-function qa_post_is_by_user($post, $userid, $cookieid)
+function ilya_post_is_by_user($post, $userid, $cookieid)
 {
 	// In theory we should only test against NULL here, i.e. use isset($post['userid'])
 	// but the risk of doing so is so high (if a bug creeps in that allows userid=0)
@@ -97,7 +97,7 @@ function qa_post_is_by_user($post, $userid, $cookieid)
  * @param bool $microdata  Whether to include microdata.
  * @return array  The HTML.
  */
-function qa_userids_handles_html($useridhandles, $microdata = false)
+function ilya_userids_handles_html($useridhandles, $microdata = false)
 {
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 
@@ -113,23 +113,23 @@ function qa_userids_handles_html($useridhandles, $microdata = false)
 		}
 
 		if (count($keyuserids))
-			return qa_get_users_html(array_keys($keyuserids), true, qa_path_to_root(), $microdata);
+			return ilya_get_users_html(array_keys($keyuserids), true, ilya_path_to_root(), $microdata);
 
 		return array();
 	} else {
 		$usershtml = array();
-		$favoritemap = qa_get_favorite_non_qs_map();
+		$favoritemap = ilya_get_favorite_non_qs_map();
 
 		foreach ($useridhandles as $useridhandle) {
 			// only add each user to the array once
 			$uid = isset($useridhandle['userid']) ? $useridhandle['userid'] : null;
 			if ($uid && !isset($usershtml[$uid])) {
-				$usershtml[$uid] = qa_get_one_user_html($useridhandle['handle'], $microdata, @$favoritemap['user'][$uid]);
+				$usershtml[$uid] = ilya_get_one_user_html($useridhandle['handle'], $microdata, @$favoritemap['user'][$uid]);
 			}
 
 			$luid = isset($useridhandle['lastuserid']) ? $useridhandle['lastuserid'] : null;
 			if ($luid && !isset($usershtml[$luid])) {
-				$usershtml[$luid] = qa_get_one_user_html($useridhandle['lasthandle'], $microdata, @$favoritemap['user'][$luid]);
+				$usershtml[$luid] = ilya_get_one_user_html($useridhandle['lasthandle'], $microdata, @$favoritemap['user'][$luid]);
 			}
 		}
 
@@ -144,39 +144,39 @@ function qa_userids_handles_html($useridhandles, $microdata = false)
  * users, 'tag' for tags, 'category' for categories. The next level down has the identifier for each favorited entity in the *key*
  * of the array, and true for its value. If no user is logged in the empty array is returned. The result is cached for future calls.
  */
-function qa_get_favorite_non_qs_map()
+function ilya_get_favorite_non_qs_map()
 {
-	global $qa_favorite_non_qs_map;
+	global $ilya_favorite_non_qs_map;
 
-	if (!isset($qa_favorite_non_qs_map)) {
-		$qa_favorite_non_qs_map = array();
-		$loginuserid = qa_get_logged_in_userid();
+	if (!isset($ilya_favorite_non_qs_map)) {
+		$ilya_favorite_non_qs_map = array();
+		$loginuserid = ilya_get_logged_in_userid();
 
 		if (isset($loginuserid)) {
 			require_once QA_INCLUDE_DIR . 'db/selects.php';
 			require_once QA_INCLUDE_DIR . 'util/string.php';
 
-			$favoritenonqs = qa_db_get_pending_result('favoritenonqs', qa_db_user_favorite_non_qs_selectspec($loginuserid));
+			$favoritenonqs = ilya_db_get_pending_result('favoritenonqs', ilya_db_user_favorite_non_qs_selectspec($loginuserid));
 
 			foreach ($favoritenonqs as $favorite) {
 				switch ($favorite['type']) {
 					case QA_ENTITY_USER:
-						$qa_favorite_non_qs_map['user'][$favorite['userid']] = true;
+						$ilya_favorite_non_qs_map['user'][$favorite['userid']] = true;
 						break;
 
 					case QA_ENTITY_TAG:
-						$qa_favorite_non_qs_map['tag'][qa_strtolower($favorite['tags'])] = true;
+						$ilya_favorite_non_qs_map['tag'][ilya_strtolower($favorite['tags'])] = true;
 						break;
 
 					case QA_ENTITY_CATEGORY:
-						$qa_favorite_non_qs_map['category'][$favorite['categorybackpath']] = true;
+						$ilya_favorite_non_qs_map['category'][$favorite['categorybackpath']] = true;
 						break;
 				}
 			}
 		}
 	}
 
-	return $qa_favorite_non_qs_map;
+	return $ilya_favorite_non_qs_map;
 }
 
 
@@ -188,26 +188,26 @@ function qa_get_favorite_non_qs_map()
  * @param bool $favorited  Show the tag as favorited.
  * @return string  The tag HTML.
  */
-function qa_tag_html($tag, $microdata = false, $favorited = false)
+function ilya_tag_html($tag, $microdata = false, $favorited = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$url = qa_path_html('tag/' . $tag);
+	$url = ilya_path_html('tag/' . $tag);
 	$attrs = $microdata ? ' rel="tag"' : '';
 	$class = $favorited ? ' ilya-tag-favorited' : '';
 
-	return '<a href="' . $url . '"' . $attrs . ' class="ilya-tag-link' . $class . '">' . qa_html($tag) . '</a>';
+	return '<a href="' . $url . '"' . $attrs . ' class="ilya-tag-link' . $class . '">' . ilya_html($tag) . '</a>';
 }
 
 
 /**
- * Given $navcategories retrieved for $categoryid from the database (using qa_db_category_nav_selectspec(...)),
+ * Given $navcategories retrieved for $categoryid from the database (using ilya_db_category_nav_selectspec(...)),
  * return an array of elements from $navcategories for the hierarchy down to $categoryid.
  * @param $navcategories
  * @param $categoryid
  * @return array
  */
-function qa_category_path($navcategories, $categoryid)
+function ilya_category_path($navcategories, $categoryid)
 {
 	$upcategories = array();
 
@@ -219,34 +219,34 @@ function qa_category_path($navcategories, $categoryid)
 
 
 /**
- * Given $navcategories retrieved for $categoryid from the database (using qa_db_category_nav_selectspec(...)),
+ * Given $navcategories retrieved for $categoryid from the database (using ilya_db_category_nav_selectspec(...)),
  * return some HTML that shows the category hierarchy down to $categoryid.
  * @param $navcategories
  * @param $categoryid
  * @return string
  */
-function qa_category_path_html($navcategories, $categoryid)
+function ilya_category_path_html($navcategories, $categoryid)
 {
-	$categories = qa_category_path($navcategories, $categoryid);
+	$categories = ilya_category_path($navcategories, $categoryid);
 
 	$html = '';
 	foreach ($categories as $category)
-		$html .= (strlen($html) ? ' / ' : '') . qa_html($category['title']);
+		$html .= (strlen($html) ? ' / ' : '') . ilya_html($category['title']);
 
 	return $html;
 }
 
 
 /**
- * Given $navcategories retrieved for $categoryid from the database (using qa_db_category_nav_selectspec(...)),
+ * Given $navcategories retrieved for $categoryid from the database (using ilya_db_category_nav_selectspec(...)),
  * return a Q2A request string that represents the category hierarchy down to $categoryid.
  * @param $navcategories
  * @param $categoryid
  * @return string
  */
-function qa_category_path_request($navcategories, $categoryid)
+function ilya_category_path_request($navcategories, $categoryid)
 {
-	$categories = qa_category_path($navcategories, $categoryid);
+	$categories = ilya_category_path($navcategories, $categoryid);
 
 	$request = '';
 	foreach ($categories as $category)
@@ -262,14 +262,14 @@ function qa_category_path_request($navcategories, $categoryid)
  * @param null $anchorhtml
  * @return mixed|string
  */
-function qa_ip_anchor_html($ip, $anchorhtml = null)
+function ilya_ip_anchor_html($ip, $anchorhtml = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (!strlen($anchorhtml))
-		$anchorhtml = qa_html($ip);
+		$anchorhtml = ilya_html($ip);
 
-	return '<a href="' . qa_path_html('ip/' . $ip) . '" title="' . qa_lang_html_sub('main/ip_address_x', qa_html($ip)) . '" class="ilya-ip-link">' . $anchorhtml . '</a>';
+	return '<a href="' . ilya_path_html('ip/' . $ip) . '" title="' . ilya_lang_html_sub('main/ip_address_x', ilya_html($ip)) . '" class="ilya-ip-link">' . $anchorhtml . '</a>';
 }
 
 
@@ -278,7 +278,7 @@ function qa_ip_anchor_html($ip, $anchorhtml = null)
  * $userid and $cookieid refer to the user *viewing* the page.
  * $usershtml is an array of [user id] => [HTML representation of user] built ahead of time.
  * $dummy is a placeholder (used to be $categories parameter but that's no longer needed)
- * $options is an array which sets what is displayed (see qa_post_html_defaults() in /ilya-include/app/options.php)
+ * $options is an array which sets what is displayed (see ilya_post_html_defaults() in /ilya-include/app/options.php)
  * If something is missing from $post (e.g. ['content']), correponding HTML also omitted.
  * @param $post
  * @param $userid
@@ -288,9 +288,9 @@ function qa_ip_anchor_html($ip, $anchorhtml = null)
  * @param array $options
  * @return array
  */
-function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $options = array())
+function ilya_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $options = array())
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 	require_once QA_INCLUDE_DIR . 'app/posts.php';
@@ -306,22 +306,22 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 	$isquestion = $post['basetype'] == 'Q';
 	$isanswer = $post['basetype'] == 'A';
 	$iscomment = $post['basetype'] == 'C';
-	$isbyuser = qa_post_is_by_user($post, $userid, $cookieid);
-	$anchor = urlencode(qa_anchor($post['basetype'], $postid));
+	$isbyuser = ilya_post_is_by_user($post, $userid, $cookieid);
+	$anchor = urlencode(ilya_anchor($post['basetype'], $postid));
 	$elementid = isset($options['elementid']) ? $options['elementid'] : $anchor;
-	$microdata = qa_opt('use_microdata') && !empty($options['contentview']);
+	$microdata = ilya_opt('use_microdata') && !empty($options['contentview']);
 	$isselected = @$options['isselected'];
 	$favoritedview = @$options['favoritedview'];
-	$favoritemap = $favoritedview ? qa_get_favorite_non_qs_map() : array();
+	$favoritemap = $favoritedview ? ilya_get_favorite_non_qs_map() : array();
 
 	// High level information
 
 	$fields['hidden'] = isset($post['hidden']) ? $post['hidden'] : null;
 	$fields['queued'] = isset($post['queued']) ? $post['queued'] : null;
-	$fields['tags'] = 'id="' . qa_html($elementid) . '"';
+	$fields['tags'] = 'id="' . ilya_html($elementid) . '"';
 
 	$fields['classes'] = ($isquestion && $favoritedview && @$post['userfavoriteq']) ? 'ilya-q-favorited' : '';
-	if ($isquestion && qa_post_is_closed($post)) {
+	if ($isquestion && ilya_post_is_closed($post)) {
 		$fields['classes'] = ltrim($fields['classes'] . ' ilya-q-closed');
 	}
 
@@ -338,12 +338,12 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 
 	if ($isquestion) {
 		if (isset($post['title'])) {
-			$fields['url'] = qa_q_path_html($postid, $post['title']);
+			$fields['url'] = ilya_q_path_html($postid, $post['title']);
 
 			if (isset($options['blockwordspreg']))
-				$post['title'] = qa_block_words_replace($post['title'], $options['blockwordspreg']);
+				$post['title'] = ilya_block_words_replace($post['title'], $options['blockwordspreg']);
 
-			$fields['title'] = qa_html($post['title']);
+			$fields['title'] = ilya_html($post['title']);
 			if ($microdata) {
 				$fields['title'] = '<span itemprop="name">' . $fields['title'] . '</span>';
 			}
@@ -355,20 +355,20 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 		if (@$options['tagsview'] && isset($post['tags'])) {
 			$fields['q_tags'] = array();
 
-			$tags = qa_tagstring_to_tags($post['tags']);
+			$tags = ilya_tagstring_to_tags($post['tags']);
 			foreach ($tags as $tag) {
-				if (isset($options['blockwordspreg']) && count(qa_block_words_match_all($tag, $options['blockwordspreg']))) // skip censored tags
+				if (isset($options['blockwordspreg']) && count(ilya_block_words_match_all($tag, $options['blockwordspreg']))) // skip censored tags
 					continue;
 
-				$fields['q_tags'][] = qa_tag_html($tag, $microdata, @$favoritemap['tag'][qa_strtolower($tag)]);
+				$fields['q_tags'][] = ilya_tag_html($tag, $microdata, @$favoritemap['tag'][ilya_strtolower($tag)]);
 			}
 		}
 
 		if (@$options['answersview'] && isset($post['acount'])) {
 			$fields['answers_raw'] = $post['acount'];
 
-			$fields['answers'] = ($post['acount'] == 1) ? qa_lang_html_sub_split('main/1_answer', '1', '1')
-				: qa_lang_html_sub_split('main/x_answers', qa_format_number($post['acount'], 0, true));
+			$fields['answers'] = ($post['acount'] == 1) ? ilya_lang_html_sub_split('main/1_answer', '1', '1')
+				: ilya_lang_html_sub_split('main/x_answers', ilya_format_number($post['acount'], 0, true));
 
 			$fields['answer_selected'] = isset($post['selchildid']);
 		}
@@ -376,8 +376,8 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 		if (@$options['viewsview'] && isset($post['views'])) {
 			$fields['views_raw'] = $post['views'];
 
-			$fields['views'] = ($post['views'] == 1) ? qa_lang_html_sub_split('main/1_view', '1', '1') :
-				qa_lang_html_sub_split('main/x_views', qa_format_number($post['views'], 0, true));
+			$fields['views'] = ($post['views'] == 1) ? ilya_lang_html_sub_split('main/1_view', '1', '1') :
+				ilya_lang_html_sub_split('main/x_views', ilya_format_number($post['views'], 0, true));
 		}
 
 		if (@$options['categoryview'] && isset($post['categoryname']) && isset($post['categorybackpath'])) {
@@ -394,9 +394,9 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 				}
 			}
 
-			$fields['where'] = qa_lang_html_sub_split('main/in_category_x',
-				'<a href="' . qa_path_html(@$options['categorypathprefix'] . implode('/', array_reverse(explode('/', $post['categorybackpath'])))) .
-				'" class="ilya-category-link' . $favoriteclass . '">' . qa_html($post['categoryname']) . '</a>');
+			$fields['where'] = ilya_lang_html_sub_split('main/in_category_x',
+				'<a href="' . ilya_path_html(@$options['categorypathprefix'] . implode('/', array_reverse(explode('/', $post['categorybackpath'])))) .
+				'" class="ilya-category-link' . $favoriteclass . '">' . ilya_html($post['categoryname']) . '</a>');
 		}
 	}
 
@@ -406,13 +406,13 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 		$fields['selected'] = $isselected;
 
 		if ($isselected)
-			$fields['select_text'] = qa_lang_html('question/select_text');
+			$fields['select_text'] = ilya_lang_html('question/select_text');
 	}
 
 	// Post content
 
 	if (@$options['contentview'] && isset($post['content'])) {
-		$viewer = qa_load_viewer($post['content'], $post['format']);
+		$viewer = ilya_load_viewer($post['content'], $post['format']);
 
 		$fields['content'] = $viewer->get_html($post['content'], $post['format'], array(
 			'blockwordspreg' => @$options['blockwordspreg'],
@@ -426,7 +426,7 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 
 		// this is for backwards compatibility with any existing links using the old style of anchor
 		// that contained the post id only (changed to be valid under W3C specifications)
-		$fields['content'] = '<a name="' . qa_html($postid) . '"></a>' . $fields['content'];
+		$fields['content'] = '<a name="' . ilya_html($postid) . '"></a>' . $fields['content'];
 	}
 
 	// Voting stuff
@@ -453,8 +453,8 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 
 		// Create HTML versions...
 
-		$upvoteshtml = qa_html(qa_format_number($upvotes, 0, true));
-		$downvoteshtml = qa_html(qa_format_number($downvotes, 0, true));
+		$upvoteshtml = ilya_html(ilya_format_number($upvotes, 0, true));
+		$downvoteshtml = ilya_html(ilya_format_number($downvotes, 0, true));
 
 		if ($netvotes >= 1)
 			$netvotesPrefix = '+';
@@ -464,7 +464,7 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 			$netvotesPrefix = '';
 
 		$netvotes = abs($netvotes);
-		$netvoteshtml = $netvotesPrefix . qa_html(qa_format_number($netvotes, 0, true));
+		$netvoteshtml = $netvotesPrefix . ilya_html(ilya_format_number($netvotes, 0, true));
 
 		// Pass information on vote viewing
 
@@ -483,78 +483,78 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 			$fields['netvotes_view'] = array('prefix' => '', 'data' => $netvoteshtml, 'suffix' => '');
 		} else {
 			$fields['upvotes_view'] = $upvotes == 1
-				? qa_lang_html_sub_split('main/1_liked', $upvoteshtml, '1')
-				: qa_lang_html_sub_split('main/x_liked', $upvoteshtml);
+				? ilya_lang_html_sub_split('main/1_liked', $upvoteshtml, '1')
+				: ilya_lang_html_sub_split('main/x_liked', $upvoteshtml);
 			$fields['downvotes_view'] = $downvotes == 1
-				? qa_lang_html_sub_split('main/1_disliked', $downvoteshtml, '1')
-				: qa_lang_html_sub_split('main/x_disliked', $downvoteshtml);
+				? ilya_lang_html_sub_split('main/1_disliked', $downvoteshtml, '1')
+				: ilya_lang_html_sub_split('main/x_disliked', $downvoteshtml);
 			$fields['netvotes_view'] = $netvotes == 1
-				? qa_lang_html_sub_split('main/1_vote', $netvoteshtml, '1')
-				: qa_lang_html_sub_split('main/x_votes', $netvoteshtml);
+				? ilya_lang_html_sub_split('main/1_vote', $netvoteshtml, '1')
+				: ilya_lang_html_sub_split('main/x_votes', $netvoteshtml);
 		}
 
 		// schema.org microdata - vote display might be formatted (e.g. '2k') so we use meta tag for true count
 		if ($microdata) {
-			$fields['netvotes_view']['suffix'] .= ' <meta itemprop="upvoteCount" content="' . qa_html($netvotes) . '"/>';
-			$fields['upvotes_view']['suffix'] .= ' <meta itemprop="upvoteCount" content="' . qa_html($upvotes) . '"/>';
+			$fields['netvotes_view']['suffix'] .= ' <meta itemprop="upvoteCount" content="' . ilya_html($netvotes) . '"/>';
+			$fields['upvotes_view']['suffix'] .= ' <meta itemprop="upvoteCount" content="' . ilya_html($upvotes) . '"/>';
 		}
 
 		// Voting buttons
 
-		$fields['vote_tags'] = 'id="voting_' . qa_html($postid) . '"';
-		$onclick = 'onclick="return qa_vote_click(this);"';
+		$fields['vote_tags'] = 'id="voting_' . ilya_html($postid) . '"';
+		$onclick = 'onclick="return ilya_vote_click(this);"';
 
 		if ($fields['hidden']) {
 			$fields['vote_state'] = 'disabled';
-			$fields['vote_up_tags'] = 'title="' . qa_lang_html('main/vote_disabled_hidden_post') . '"';
+			$fields['vote_up_tags'] = 'title="' . ilya_lang_html('main/vote_disabled_hidden_post') . '"';
 			$fields['vote_down_tags'] = $fields['vote_up_tags'];
 
 		} elseif ($fields['queued']) {
 			$fields['vote_state'] = 'disabled';
-			$fields['vote_up_tags'] = 'title="' . qa_lang_html('main/vote_disabled_queued') . '"';
+			$fields['vote_up_tags'] = 'title="' . ilya_lang_html('main/vote_disabled_queued') . '"';
 			$fields['vote_down_tags'] = $fields['vote_up_tags'];
 
 		} elseif ($isbyuser) {
 			$fields['vote_state'] = 'disabled';
-			$fields['vote_up_tags'] = 'title="' . qa_lang_html('main/vote_disabled_my_post') . '"';
+			$fields['vote_up_tags'] = 'title="' . ilya_lang_html('main/vote_disabled_my_post') . '"';
 			$fields['vote_down_tags'] = $fields['vote_up_tags'];
 
 		} elseif (strpos($voteview, '-disabled-')) {
 			$fields['vote_state'] = (@$post['uservote'] > 0) ? 'voted_up_disabled' : ((@$post['uservote'] < 0) ? 'voted_down_disabled' : 'disabled');
 
 			if (strpos($voteview, '-disabled-page'))
-				$fields['vote_up_tags'] = 'title="' . qa_lang_html('main/vote_disabled_q_page_only') . '"';
+				$fields['vote_up_tags'] = 'title="' . ilya_lang_html('main/vote_disabled_q_page_only') . '"';
 			elseif (strpos($voteview, '-disabled-approve'))
-				$fields['vote_up_tags'] = 'title="' . qa_lang_html('main/vote_disabled_approve') . '"';
+				$fields['vote_up_tags'] = 'title="' . ilya_lang_html('main/vote_disabled_approve') . '"';
 			else
-				$fields['vote_up_tags'] = 'title="' . qa_lang_html('main/vote_disabled_level') . '"';
+				$fields['vote_up_tags'] = 'title="' . ilya_lang_html('main/vote_disabled_level') . '"';
 
 			$fields['vote_down_tags'] = $fields['vote_up_tags'];
 
 		} elseif (@$post['uservote'] > 0) {
 			$fields['vote_state'] = 'voted_up';
-			$fields['vote_up_tags'] = 'title="' . qa_lang_html('main/voted_up_popup') . '" name="' . qa_html('vote_' . $postid . '_0_' . $elementid) . '" ' . $onclick;
+			$fields['vote_up_tags'] = 'title="' . ilya_lang_html('main/voted_up_popup') . '" name="' . ilya_html('vote_' . $postid . '_0_' . $elementid) . '" ' . $onclick;
 			$fields['vote_down_tags'] = ' ';
 
 		} elseif (@$post['uservote'] < 0) {
 			$fields['vote_state'] = 'voted_down';
 			$fields['vote_up_tags'] = ' ';
-			$fields['vote_down_tags'] = 'title="' . qa_lang_html('main/voted_down_popup') . '" name="' . qa_html('vote_' . $postid . '_0_' . $elementid) . '" ' . $onclick;
+			$fields['vote_down_tags'] = 'title="' . ilya_lang_html('main/voted_down_popup') . '" name="' . ilya_html('vote_' . $postid . '_0_' . $elementid) . '" ' . $onclick;
 
 		} else {
-			$fields['vote_up_tags'] = 'title="' . qa_lang_html('main/vote_up_popup') . '" name="' . qa_html('vote_' . $postid . '_1_' . $elementid) . '" ' . $onclick;
+			$fields['vote_up_tags'] = 'title="' . ilya_lang_html('main/vote_up_popup') . '" name="' . ilya_html('vote_' . $postid . '_1_' . $elementid) . '" ' . $onclick;
 
 			if (strpos($voteview, '-uponly-level')) {
 				$fields['vote_state'] = 'up_only';
-				$fields['vote_down_tags'] = 'title="' . qa_lang_html('main/vote_disabled_down') . '"';
+				$fields['vote_down_tags'] = 'title="' . ilya_lang_html('main/vote_disabled_down') . '"';
 
 			} elseif (strpos($voteview, '-uponly-approve')) {
 				$fields['vote_state'] = 'up_only';
-				$fields['vote_down_tags'] = 'title="' . qa_lang_html('main/vote_disabled_down_approve') . '"';
+				$fields['vote_down_tags'] = 'title="' . ilya_lang_html('main/vote_disabled_down_approve') . '"';
 
 			} else {
 				$fields['vote_state'] = 'enabled';
-				$fields['vote_down_tags'] = 'title="' . qa_lang_html('main/vote_down_popup') . '" name="' . qa_html('vote_' . $postid . '_-1_' . $elementid) . '" ' . $onclick;
+				$fields['vote_down_tags'] = 'title="' . ilya_lang_html('main/vote_down_popup') . '" name="' . ilya_html('vote_' . $postid . '_-1_' . $elementid) . '" ' . $onclick;
 			}
 		}
 	}
@@ -562,21 +562,21 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 	// Flag count
 
 	if (@$options['flagsview'] && @$post['flagcount']) {
-		$fields['flags'] = ($post['flagcount'] == 1) ? qa_lang_html_sub_split('main/1_flag', '1', '1')
-			: qa_lang_html_sub_split('main/x_flags', $post['flagcount']);
+		$fields['flags'] = ($post['flagcount'] == 1) ? ilya_lang_html_sub_split('main/1_flag', '1', '1')
+			: ilya_lang_html_sub_split('main/x_flags', $post['flagcount']);
 	}
 
 	// Created when and by whom
 
-	$fields['meta_order'] = qa_lang_html('main/meta_order'); // sets ordering of meta elements which can be language-specific
+	$fields['meta_order'] = ilya_lang_html('main/meta_order'); // sets ordering of meta elements which can be language-specific
 
 	if (@$options['whatview']) {
-		$fields['what'] = qa_lang_html($isquestion ? 'main/asked' : ($isanswer ? 'main/answered' : 'main/commented'));
+		$fields['what'] = ilya_lang_html($isquestion ? 'main/asked' : ($isanswer ? 'main/answered' : 'main/commented'));
 
 		if (@$options['whatlink'] && strlen(@$options['q_request'])) {
 			$fields['what_url'] = $post['basetype'] == 'Q'
-				? qa_path_html($options['q_request'])
-				: qa_path_html($options['q_request'], array('show' => $postid), null, null, qa_anchor($post['basetype'], $postid));
+				? ilya_path_html($options['q_request'])
+				: ilya_path_html($options['q_request'], array('show' => $postid), null, null, ilya_anchor($post['basetype'], $postid));
 			if ($microdata) {
 				$fields['what_url_tags'] = ' itemprop="url"';
 			}
@@ -584,7 +584,7 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 	}
 
 	if (isset($post['created']) && @$options['whenview']) {
-		$fields['when'] = qa_when_to_html($post['created'], @$options['fulldatedays']);
+		$fields['when'] = ilya_when_to_html($post['created'], @$options['fulldatedays']);
 
 		if ($microdata) {
 			$gmdate = gmdate('Y-m-d\TH:i:sO', $post['created']);
@@ -593,26 +593,26 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 	}
 
 	if (@$options['whoview']) {
-		$fields['who'] = qa_who_to_html($isbyuser, @$post['userid'], $usershtml, @$options['ipview'] ? @inet_ntop(@$post['createip']) : null, $microdata, $post['name']);
+		$fields['who'] = ilya_who_to_html($isbyuser, @$post['userid'], $usershtml, @$options['ipview'] ? @inet_ntop(@$post['createip']) : null, $microdata, $post['name']);
 
 		if (isset($post['points'])) {
 			if (@$options['pointsview'])
-				$fields['who']['points'] = ($post['points'] == 1) ? qa_lang_html_sub_split('main/1_point', '1', '1')
-					: qa_lang_html_sub_split('main/x_points', qa_format_number($post['points'], 0, true));
+				$fields['who']['points'] = ($post['points'] == 1) ? ilya_lang_html_sub_split('main/1_point', '1', '1')
+					: ilya_lang_html_sub_split('main/x_points', ilya_format_number($post['points'], 0, true));
 
 			if (isset($options['pointstitle']))
-				$fields['who']['title'] = qa_get_points_title_html($post['points'], $options['pointstitle']);
+				$fields['who']['title'] = ilya_get_points_title_html($post['points'], $options['pointstitle']);
 		}
 
 		if (isset($post['level']))
-			$fields['who']['level'] = qa_html(qa_user_level_string($post['level']));
+			$fields['who']['level'] = ilya_html(ilya_user_level_string($post['level']));
 	}
 
 	if (@$options['avatarsize'] > 0) {
 		if (QA_FINAL_EXTERNAL_USERS)
-			$fields['avatar'] = qa_get_external_avatar_html($post['userid'], $options['avatarsize'], false);
+			$fields['avatar'] = ilya_get_external_avatar_html($post['userid'], $options['avatarsize'], false);
 		else
-			$fields['avatar'] = qa_get_user_avatar_html(@$post['flags'], @$post['email'], @$post['handle'],
+			$fields['avatar'] = ilya_get_user_avatar_html(@$post['flags'], @$post['email'], @$post['handle'],
 				@$post['avatarblobid'], @$post['avatarwidth'], @$post['avatarheight'], $options['avatarsize']);
 	}
 
@@ -623,7 +623,7 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 		( // otherwise check if one of these conditions is fulfilled...
 			(!isset($post['created'])) || // ... we didn't show the created time (should never happen in practice)
 			($post['hidden'] && ($post['updatetype'] == QA_UPDATE_VISIBLE)) || // ... the post was hidden as the last action
-			(qa_post_is_closed($post) && $post['updatetype'] == QA_UPDATE_CLOSED) || // ... the post was closed as the last action
+			(ilya_post_is_closed($post) && $post['updatetype'] == QA_UPDATE_CLOSED) || // ... the post was closed as the last action
 			(abs($post['updated'] - $post['created']) > 300) || // ... or over 5 minutes passed between create and update times
 			($post['lastuserid'] != $post['userid']) // ... or it was updated by a different user
 		)
@@ -643,7 +643,7 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 				break;
 
 			case QA_UPDATE_CLOSED:
-				$langstring = qa_post_is_closed($post) ? 'main/closed' : 'main/reopened';
+				$langstring = ilya_post_is_closed($post) ? 'main/closed' : 'main/reopened';
 				break;
 
 			case QA_UPDATE_TAGS:
@@ -659,10 +659,10 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 				break;
 		}
 
-		$fields['what_2'] = qa_lang_html($langstring);
+		$fields['what_2'] = ilya_lang_html($langstring);
 
 		if (@$options['whenview']) {
-			$fields['when_2'] = qa_when_to_html($post['updated'], @$options['fulldatedays']);
+			$fields['when_2'] = ilya_when_to_html($post['updated'], @$options['fulldatedays']);
 
 			if ($microdata) {
 				$gmdate = gmdate('Y-m-d\TH:i:sO', $post['updated']);
@@ -671,7 +671,7 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
 		}
 
 		if (isset($post['lastuserid']) && @$options['whoview'])
-			$fields['who_2'] = qa_who_to_html(isset($userid) && ($post['lastuserid'] == $userid), $post['lastuserid'], $usershtml, @$options['ipview'] ? @inet_ntop($post['lastip']) : null, false);
+			$fields['who_2'] = ilya_who_to_html(isset($userid) && ($post['lastuserid'] == $userid), $post['lastuserid'], $usershtml, @$options['ipview'] ? @inet_ntop($post['lastip']) : null, false);
 	}
 
 
@@ -685,20 +685,20 @@ function qa_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $opt
  * Generate array of mostly HTML representing a message, to be passed to theme layer.
  *
  * @param array $message  The message object (as retrieved from database).
- * @param array $options  Viewing options (see qa_message_html_defaults() in /ilya-include/app/options.php).
+ * @param array $options  Viewing options (see ilya_message_html_defaults() in /ilya-include/app/options.php).
  * @return array  The HTML.
  */
-function qa_message_html_fields($message, $options = array())
+function ilya_message_html_fields($message, $options = array())
 {
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$fields = array('raw' => $message);
-	$fields['tags'] = 'id="m' . qa_html($message['messageid']) . '"';
+	$fields['tags'] = 'id="m' . ilya_html($message['messageid']) . '"';
 
 	// message content
-	$viewer = qa_load_viewer($message['content'], $message['format']);
+	$viewer = ilya_load_viewer($message['content'], $message['format']);
 
 	$fields['content'] = $viewer->get_html($message['content'], $message['format'], array(
 		'blockwordspreg' => @$options['blockwordspreg'],
@@ -707,27 +707,27 @@ function qa_message_html_fields($message, $options = array())
 	));
 
 	// set ordering of meta elements which can be language-specific
-	$fields['meta_order'] = qa_lang_html('main/meta_order');
+	$fields['meta_order'] = ilya_lang_html('main/meta_order');
 
-	$fields['what'] = qa_lang_html('main/written');
+	$fields['what'] = ilya_lang_html('main/written');
 
 	// when it was written
 	if (@$options['whenview'])
-		$fields['when'] = qa_when_to_html($message['created'], @$options['fulldatedays']);
+		$fields['when'] = ilya_when_to_html($message['created'], @$options['fulldatedays']);
 
 	// who wrote it, and their avatar
 	if (@$options['towhomview']) {
 		// for sent private messages page (i.e. show who message was sent to)
-		$fields['who'] = qa_lang_html_sub_split('main/to_x', qa_get_one_user_html($message['tohandle'], false));
-		$fields['avatar'] = qa_get_user_avatar_html(@$message['toflags'], @$message['toemail'], @$message['tohandle'],
+		$fields['who'] = ilya_lang_html_sub_split('main/to_x', ilya_get_one_user_html($message['tohandle'], false));
+		$fields['avatar'] = ilya_get_user_avatar_html(@$message['toflags'], @$message['toemail'], @$message['tohandle'],
 			@$message['toavatarblobid'], @$message['toavatarwidth'], @$message['toavatarheight'], $options['avatarsize']);
 	} else {
 		// for everything else (received private messages, wall messages)
 		if (@$options['whoview']) {
-			$fields['who'] = qa_lang_html_sub_split('main/by_x', qa_get_one_user_html($message['fromhandle'], false));
+			$fields['who'] = ilya_lang_html_sub_split('main/by_x', ilya_get_one_user_html($message['fromhandle'], false));
 		}
 		if (@$options['avatarsize'] > 0) {
-			$fields['avatar'] = qa_get_user_avatar_html(@$message['fromflags'], @$message['fromemail'], @$message['fromhandle'],
+			$fields['avatar'] = ilya_get_user_avatar_html(@$message['fromflags'], @$message['fromemail'], @$message['fromhandle'],
 				@$message['fromavatarblobid'], @$message['fromavatarwidth'], @$message['fromavatarheight'], $options['avatarsize']);
 		}
 	}
@@ -747,30 +747,30 @@ function qa_message_html_fields($message, $options = array())
  * @param string $name The author's username.
  * @return array The HTML.
  */
-function qa_who_to_html($isbyuser, $postuserid, $usershtml, $ip = null, $microdata = false, $name = null)
+function ilya_who_to_html($isbyuser, $postuserid, $usershtml, $ip = null, $microdata = false, $name = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (isset($postuserid) && isset($usershtml[$postuserid])) {
 		$whohtml = $usershtml[$postuserid];
 	} else {
 		if (strlen($name))
-			$whohtml = qa_html($name);
+			$whohtml = ilya_html($name);
 		elseif ($isbyuser)
-			$whohtml = qa_lang_html('main/me');
+			$whohtml = ilya_lang_html('main/me');
 		else
-			$whohtml = qa_lang_html('main/anonymous');
+			$whohtml = ilya_lang_html('main/anonymous');
 
 		if ($microdata) {
-			// duplicate HTML from qa_get_one_user_html()
+			// duplicate HTML from ilya_get_one_user_html()
 			$whohtml = '<span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">' . $whohtml . '</span></span>';
 		}
 
 		if (isset($ip))
-			$whohtml = qa_ip_anchor_html($ip, $whohtml);
+			$whohtml = ilya_ip_anchor_html($ip, $whohtml);
 	}
 
-	return qa_lang_html_sub_split('main/by_x', $whohtml);
+	return ilya_lang_html_sub_split('main/by_x', $whohtml);
 }
 
 
@@ -781,31 +781,31 @@ function qa_who_to_html($isbyuser, $postuserid, $usershtml, $ip = null, $microda
  * @param int $fulldatedays  Number of days after which to show the full date.
  * @return array  The HTML.
  */
-function qa_when_to_html($timestamp, $fulldatedays)
+function ilya_when_to_html($timestamp, $fulldatedays)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$interval = qa_opt('db_time') - $timestamp;
+	$interval = ilya_opt('db_time') - $timestamp;
 
 	if ($interval < 0 || (isset($fulldatedays) && $interval > 86400 * $fulldatedays)) {
 		// full style date
 		$stampyear = date('Y', $timestamp);
-		$thisyear = date('Y', qa_opt('db_time'));
+		$thisyear = date('Y', ilya_opt('db_time'));
 
-		$dateFormat = qa_lang($stampyear == $thisyear ? 'main/date_format_this_year' : 'main/date_format_other_years');
+		$dateFormat = ilya_lang($stampyear == $thisyear ? 'main/date_format_this_year' : 'main/date_format_other_years');
 		$replaceData = array(
-			'^day' => date(qa_lang('main/date_day_min_digits') == 2 ? 'd' : 'j', $timestamp),
-			'^month' => qa_lang('main/date_month_' . date('n', $timestamp)),
-			'^year' => date(qa_lang('main/date_year_digits') == 2 ? 'y' : 'Y', $timestamp),
+			'^day' => date(ilya_lang('main/date_day_min_digits') == 2 ? 'd' : 'j', $timestamp),
+			'^month' => ilya_lang('main/date_month_' . date('n', $timestamp)),
+			'^year' => date(ilya_lang('main/date_year_digits') == 2 ? 'y' : 'Y', $timestamp),
 		);
 
 		return array(
-			'data' => qa_html(strtr($dateFormat, $replaceData)),
+			'data' => ilya_html(strtr($dateFormat, $replaceData)),
 		);
 
 	} else {
 		// ago-style date
-		return qa_lang_html_sub_split('main/x_ago', qa_html(qa_time_to_string($interval)));
+		return ilya_lang_html_sub_split('main/x_ago', ilya_html(ilya_time_to_string($interval)));
 	}
 }
 
@@ -813,7 +813,7 @@ function qa_when_to_html($timestamp, $fulldatedays)
 /**
  * Return array of mostly HTML to be passed to theme layer, to *link* to an answer, comment or edit on
  * $question, as retrieved from database, with fields prefixed 'o' for the answer, comment or edit.
- * $userid, $cookieid, $usershtml, $options are passed through to qa_post_html_fields(). If $question['opersonal']
+ * $userid, $cookieid, $usershtml, $options are passed through to ilya_post_html_fields(). If $question['opersonal']
  * is set and true then the item is displayed with its personal relevance to the user (for user updates page).
  * @param $question
  * @param $userid
@@ -823,13 +823,13 @@ function qa_when_to_html($timestamp, $fulldatedays)
  * @param $options
  * @return array
  */
-function qa_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, $dummy, $options)
+function ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, $dummy, $options)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
-	$fields = qa_post_html_fields($question, $userid, $cookieid, $usershtml, null, $options);
+	$fields = ilya_post_html_fields($question, $userid, $cookieid, $usershtml, null, $options);
 
 	switch ($question['obasetype'] . '-' . @$question['oupdatetype']) {
 		case 'Q-':
@@ -844,7 +844,7 @@ function qa_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, $d
 			break;
 
 		case 'Q-' . QA_UPDATE_CLOSED:
-			$isClosed = qa_post_is_closed($question);
+			$isClosed = ilya_post_is_closed($question);
 			if (@$question['opersonal'])
 				$langstring = $isClosed ? 'misc/your_q_closed' : 'misc/your_q_reopened';
 			else
@@ -919,16 +919,16 @@ function qa_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, $d
 			break;
 	}
 
-	$fields['what'] = qa_lang_html($langstring);
+	$fields['what'] = ilya_lang_html($langstring);
 
 	if (@$question['opersonal'])
 		$fields['what_your'] = true;
 
 	if ($question['obasetype'] != 'Q' || @$question['oupdatetype'] == QA_UPDATE_FOLLOWS)
-		$fields['what_url'] = qa_q_path_html($question['postid'], $question['title'], false, $question['obasetype'], $question['opostid']);
+		$fields['what_url'] = ilya_q_path_html($question['postid'], $question['title'], false, $question['obasetype'], $question['opostid']);
 
 	if (@$options['contentview'] && !empty($question['ocontent'])) {
-		$viewer = qa_load_viewer($question['ocontent'], $question['oformat']);
+		$viewer = ilya_load_viewer($question['ocontent'], $question['oformat']);
 
 		$fields['content'] = $viewer->get_html($question['ocontent'], $question['oformat'], array(
 			'blockwordspreg' => @$options['blockwordspreg'],
@@ -938,37 +938,37 @@ function qa_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, $d
 	}
 
 	if (@$options['whenview'])
-		$fields['when'] = qa_when_to_html($question['otime'], @$options['fulldatedays']);
+		$fields['when'] = ilya_when_to_html($question['otime'], @$options['fulldatedays']);
 
 	if (@$options['whoview']) {
-		$isbyuser = qa_post_is_by_user(array('userid' => $question['ouserid'], 'cookieid' => @$question['ocookieid']), $userid, $cookieid);
+		$isbyuser = ilya_post_is_by_user(array('userid' => $question['ouserid'], 'cookieid' => @$question['ocookieid']), $userid, $cookieid);
 
-		$fields['who'] = qa_who_to_html($isbyuser, $question['ouserid'], $usershtml, @$options['ipview'] ? @inet_ntop(@$question['oip']) : null, false, @$question['oname']);
+		$fields['who'] = ilya_who_to_html($isbyuser, $question['ouserid'], $usershtml, @$options['ipview'] ? @inet_ntop(@$question['oip']) : null, false, @$question['oname']);
 		if (isset($question['opoints'])) {
 			if (@$options['pointsview'])
-				$fields['who']['points'] = ($question['opoints'] == 1) ? qa_lang_html_sub_split('main/1_point', '1', '1')
-					: qa_lang_html_sub_split('main/x_points', qa_format_number($question['opoints'], 0, true));
+				$fields['who']['points'] = ($question['opoints'] == 1) ? ilya_lang_html_sub_split('main/1_point', '1', '1')
+					: ilya_lang_html_sub_split('main/x_points', ilya_format_number($question['opoints'], 0, true));
 
 			if (isset($options['pointstitle']))
-				$fields['who']['title'] = qa_get_points_title_html($question['opoints'], $options['pointstitle']);
+				$fields['who']['title'] = ilya_get_points_title_html($question['opoints'], $options['pointstitle']);
 		}
 
 		if (isset($question['olevel']))
-			$fields['who']['level'] = qa_html(qa_user_level_string($question['olevel']));
+			$fields['who']['level'] = ilya_html(ilya_user_level_string($question['olevel']));
 	}
 
 	unset($fields['flags']);
 	if (@$options['flagsview'] && @$question['oflagcount']) {
-		$fields['flags'] = ($question['oflagcount'] == 1) ? qa_lang_html_sub_split('main/1_flag', '1', '1')
-			: qa_lang_html_sub_split('main/x_flags', $question['oflagcount']);
+		$fields['flags'] = ($question['oflagcount'] == 1) ? ilya_lang_html_sub_split('main/1_flag', '1', '1')
+			: ilya_lang_html_sub_split('main/x_flags', $question['oflagcount']);
 	}
 
 	unset($fields['avatar']);
 	if (@$options['avatarsize'] > 0) {
 		if (QA_FINAL_EXTERNAL_USERS)
-			$fields['avatar'] = qa_get_external_avatar_html($question['ouserid'], $options['avatarsize'], false);
+			$fields['avatar'] = ilya_get_external_avatar_html($question['ouserid'], $options['avatarsize'], false);
 		else
-			$fields['avatar'] = qa_get_user_avatar_html($question['oflags'], $question['oemail'], $question['ohandle'],
+			$fields['avatar'] = ilya_get_user_avatar_html($question['oflags'], $question['oemail'], $question['ohandle'],
 				$question['oavatarblobid'], $question['oavatarwidth'], $question['oavatarheight'], $options['avatarsize']);
 	}
 
@@ -987,12 +987,12 @@ function qa_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, $d
  * @param $options
  * @return array
  */
-function qa_any_to_q_html_fields($question, $userid, $cookieid, $usershtml, $dummy, $options)
+function ilya_any_to_q_html_fields($question, $userid, $cookieid, $usershtml, $dummy, $options)
 {
 	if (isset($question['opostid']))
-		$fields = qa_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, null, $options);
+		$fields = ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, null, $options);
 	else
-		$fields = qa_post_html_fields($question, $userid, $cookieid, $usershtml, null, $options);
+		$fields = ilya_post_html_fields($question, $userid, $cookieid, $usershtml, null, $options);
 
 	return $fields;
 }
@@ -1004,16 +1004,16 @@ function qa_any_to_q_html_fields($question, $userid, $cookieid, $usershtml, $dum
  * @param $questions
  * @return mixed
  */
-function qa_any_sort_by_date($questions)
+function ilya_any_sort_by_date($questions)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'util/sort.php';
 
 	foreach ($questions as $key => $question) // collect information about action referenced by each $question
 		$questions[$key]['sort'] = -(isset($question['opostid']) ? $question['otime'] : $question['created']);
 
-	qa_sort_by($questions, 'sort');
+	ilya_sort_by($questions, 'sort');
 
 	return $questions;
 }
@@ -1025,9 +1025,9 @@ function qa_any_sort_by_date($questions)
  * @param $questions
  * @return array
  */
-function qa_any_sort_and_dedupe($questions)
+function ilya_any_sort_and_dedupe($questions)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'util/sort.php';
 
@@ -1044,7 +1044,7 @@ function qa_any_sort_and_dedupe($questions)
 
 		$questions[$key]['sort'] = -$questions[$key]['_time'];
 	}
-	qa_sort_by($questions, 'sort');
+	ilya_sort_by($questions, 'sort');
 
 	$keepquestions = array(); // now remove duplicate references to same question
 	foreach ($questions as $question) { // going in order from most recent to oldest
@@ -1082,7 +1082,7 @@ function qa_any_sort_and_dedupe($questions)
  * @param $questions
  * @return array
  */
-function qa_any_get_userids_handles($questions)
+function ilya_any_get_userids_handles($questions)
 {
 	$userids_handles = array();
 
@@ -1112,9 +1112,9 @@ function qa_any_get_userids_handles($questions)
  * @param bool $newwindow
  * @return mixed
  */
-function qa_html_convert_urls($html, $newwindow = false)
+function ilya_html_convert_urls($html, $newwindow = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$uc = 'a-z\x{00a1}-\x{ffff}';
 	$url_regex = '#\b((?:https?|ftp)://(?:[0-9' . $uc . '][0-9' . $uc . '-]*\.)+[' . $uc . ']{2,}(?::\d{2,5})?(?:/(?:[^\s<>]*[^\s<>\.])?)?)#iu';
@@ -1164,19 +1164,19 @@ function qa_html_convert_urls($html, $newwindow = false)
  * @param bool $newwindow
  * @return mixed|string
  */
-function qa_url_to_html_link($url, $newwindow = false)
+function ilya_url_to_html_link($url, $newwindow = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (is_numeric(strpos($url, '.'))) {
 		$linkurl = $url;
 		if (!is_numeric(strpos($linkurl, ':/')))
 			$linkurl = 'http://' . $linkurl;
 
-		return '<a href="' . qa_html($linkurl) . '" rel="nofollow"' . ($newwindow ? ' target="_blank"' : '') . '>' . qa_html($url) . '</a>';
+		return '<a href="' . ilya_html($linkurl) . '" rel="nofollow"' . ($newwindow ? ' target="_blank"' : '') . '>' . ilya_html($url) . '</a>';
 
 	} else
-		return qa_html($url);
+		return ilya_html($url);
 }
 
 
@@ -1187,21 +1187,21 @@ function qa_url_to_html_link($url, $newwindow = false)
  * @param null $params
  * @return string
  */
-function qa_insert_login_links($htmlmessage, $topage = null, $params = null)
+function ilya_insert_login_links($htmlmessage, $topage = null, $params = null)
 {
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 
-	$userlinks = qa_get_login_links(qa_path_to_root(), isset($topage) ? qa_path($topage, $params, '') : null);
+	$userlinks = ilya_get_login_links(ilya_path_to_root(), isset($topage) ? ilya_path($topage, $params, '') : null);
 
 	return strtr(
 		$htmlmessage,
 
 		array(
-			'^1' => empty($userlinks['login']) ? '' : '<a href="' . qa_html($userlinks['login']) . '">',
+			'^1' => empty($userlinks['login']) ? '' : '<a href="' . ilya_html($userlinks['login']) . '">',
 			'^2' => empty($userlinks['login']) ? '' : '</a>',
-			'^3' => empty($userlinks['register']) ? '' : '<a href="' . qa_html($userlinks['register']) . '">',
+			'^3' => empty($userlinks['register']) ? '' : '<a href="' . ilya_html($userlinks['register']) . '">',
 			'^4' => empty($userlinks['register']) ? '' : '</a>',
-			'^5' => empty($userlinks['confirm']) ? '' : '<a href="' . qa_html($userlinks['confirm']) . '">',
+			'^5' => empty($userlinks['confirm']) ? '' : '<a href="' . ilya_html($userlinks['confirm']) . '">',
 			'^6' => empty($userlinks['confirm']) ? '' : '</a>',
 		)
 	);
@@ -1224,15 +1224,15 @@ function qa_insert_login_links($htmlmessage, $topage = null, $params = null)
  * @param null $anchor
  * @return array|null
  */
-function qa_html_page_links($request, $start, $pagesize, $count, $prevnext, $params = array(), $hasmore = false, $anchor = null)
+function ilya_html_page_links($request, $start, $pagesize, $count, $prevnext, $params = array(), $hasmore = false, $anchor = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$thispage = 1 + floor($start / $pagesize);
 	$lastpage = ceil(min((int)$count, 1 + QA_MAX_LIMIT_START) / $pagesize);
 
 	if ($thispage > 1 || $lastpage > $thispage) {
-		$links = array('label' => qa_lang_html('main/page_label'), 'items' => array());
+		$links = array('label' => ilya_lang_html('main/page_label'), 'items' => array());
 
 		$keypages[1] = true;
 
@@ -1244,7 +1244,7 @@ function qa_html_page_links($request, $start, $pagesize, $count, $prevnext, $par
 		if ($thispage > 1) {
 			$links['items'][] = array(
 				'type' => 'prev',
-				'label' => qa_lang_html('main/page_prev'),
+				'label' => ilya_lang_html('main/page_prev'),
 				'page' => $thispage - 1,
 				'ellipsis' => false,
 			);
@@ -1262,7 +1262,7 @@ function qa_html_page_links($request, $start, $pagesize, $count, $prevnext, $par
 		if ($thispage < $lastpage) {
 			$links['items'][] = array(
 				'type' => 'next',
-				'label' => qa_lang_html('main/page_next'),
+				'label' => ilya_lang_html('main/page_next'),
 				'page' => $thispage + 1,
 				'ellipsis' => false,
 			);
@@ -1271,7 +1271,7 @@ function qa_html_page_links($request, $start, $pagesize, $count, $prevnext, $par
 		foreach ($links['items'] as $key => $link) {
 			if ($link['page'] != $thispage) {
 				$params['start'] = $pagesize * ($link['page'] - 1);
-				$links['items'][$key]['url'] = qa_path_html($request, $params, null, null, $anchor);
+				$links['items'][$key]['url'] = ilya_path_html($request, $params, null, null, $anchor);
 			}
 		}
 
@@ -1289,22 +1289,22 @@ function qa_html_page_links($request, $start, $pagesize, $count, $prevnext, $par
  * @param null $categoryrequest
  * @return mixed|string
  */
-function qa_html_suggest_qs_tags($usingtags = false, $categoryrequest = null)
+function ilya_html_suggest_qs_tags($usingtags = false, $categoryrequest = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$hascategory = strlen($categoryrequest);
 
-	$htmlmessage = $hascategory ? qa_lang_html('main/suggest_category_qs') :
-		($usingtags ? qa_lang_html('main/suggest_qs_tags') : qa_lang_html('main/suggest_qs'));
+	$htmlmessage = $hascategory ? ilya_lang_html('main/suggest_category_qs') :
+		($usingtags ? ilya_lang_html('main/suggest_qs_tags') : ilya_lang_html('main/suggest_qs'));
 
 	return strtr(
 		$htmlmessage,
 
 		array(
-			'^1' => '<a href="' . qa_path_html('questions' . ($hascategory ? ('/' . $categoryrequest) : '')) . '">',
+			'^1' => '<a href="' . ilya_path_html('questions' . ($hascategory ? ('/' . $categoryrequest) : '')) . '">',
 			'^2' => '</a>',
-			'^3' => '<a href="' . qa_path_html('tags') . '">',
+			'^3' => '<a href="' . ilya_path_html('tags') . '">',
 			'^4' => '</a>',
 		)
 	);
@@ -1316,17 +1316,17 @@ function qa_html_suggest_qs_tags($usingtags = false, $categoryrequest = null)
  * @param null $categoryid
  * @return mixed|string
  */
-function qa_html_suggest_ask($categoryid = null)
+function ilya_html_suggest_ask($categoryid = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$htmlmessage = qa_lang_html('main/suggest_ask');
+	$htmlmessage = ilya_lang_html('main/suggest_ask');
 
 	return strtr(
 		$htmlmessage,
 
 		array(
-			'^1' => '<a href="' . qa_path_html('ask', strlen($categoryid) ? array('cat' => $categoryid) : null) . '">',
+			'^1' => '<a href="' . ilya_path_html('ask', strlen($categoryid) ? array('cat' => $categoryid) : null) . '">',
 			'^2' => '</a>',
 		)
 	);
@@ -1343,24 +1343,24 @@ function qa_html_suggest_ask($categoryid = null)
  * @param null $pathparams
  * @return array|mixed
  */
-function qa_category_navigation($categories, $selectedid = null, $pathprefix = '', $showqcount = true, $pathparams = null)
+function ilya_category_navigation($categories, $selectedid = null, $pathprefix = '', $showqcount = true, $pathparams = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$parentcategories = array();
 
 	foreach ($categories as $category)
 		$parentcategories[$category['parentid']][] = $category;
 
-	$selecteds = qa_category_path($categories, $selectedid);
-	$favoritemap = qa_get_favorite_non_qs_map();
+	$selecteds = ilya_category_path($categories, $selectedid);
+	$favoritemap = ilya_get_favorite_non_qs_map();
 
-	return qa_category_navigation_sub($parentcategories, null, $selecteds, $pathprefix, $showqcount, $pathparams, $favoritemap);
+	return ilya_category_navigation_sub($parentcategories, null, $selecteds, $pathprefix, $showqcount, $pathparams, $favoritemap);
 }
 
 
 /**
- * Recursion function used by qa_category_navigation(...) to build hierarchical category menu.
+ * Recursion function used by ilya_category_navigation(...) to build hierarchical category menu.
  * @param $parentcategories
  * @param $parentid
  * @param $selecteds
@@ -1370,16 +1370,16 @@ function qa_category_navigation($categories, $selectedid = null, $pathprefix = '
  * @param null $favoritemap
  * @return array|mixed
  */
-function qa_category_navigation_sub($parentcategories, $parentid, $selecteds, $pathprefix, $showqcount, $pathparams, $favoritemap = null)
+function ilya_category_navigation_sub($parentcategories, $parentid, $selecteds, $pathprefix, $showqcount, $pathparams, $favoritemap = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$navigation = array();
 
 	if (!isset($parentid)) {
 		$navigation['all'] = array(
-			'url' => qa_path_html($pathprefix, $pathparams),
-			'label' => qa_lang_html('main/all_categories'),
+			'url' => ilya_path_html($pathprefix, $pathparams),
+			'label' => ilya_lang_html('main/all_categories'),
 			'selected' => !count($selecteds),
 			'categoryid' => null,
 		);
@@ -1387,13 +1387,13 @@ function qa_category_navigation_sub($parentcategories, $parentid, $selecteds, $p
 
 	if (isset($parentcategories[$parentid])) {
 		foreach ($parentcategories[$parentid] as $category) {
-			$navigation[qa_html($category['tags'])] = array(
-				'url' => qa_path_html($pathprefix . $category['tags'], $pathparams),
-				'label' => qa_html($category['title']),
-				'popup' => qa_html(@$category['content']),
+			$navigation[ilya_html($category['tags'])] = array(
+				'url' => ilya_path_html($pathprefix . $category['tags'], $pathparams),
+				'label' => ilya_html($category['title']),
+				'popup' => ilya_html(@$category['content']),
 				'selected' => isset($selecteds[$category['categoryid']]),
-				'note' => $showqcount ? ('(' . qa_html(qa_format_number($category['qcount'], 0, true)) . ')') : null,
-				'subnav' => qa_category_navigation_sub($parentcategories, $category['categoryid'], $selecteds,
+				'note' => $showqcount ? ('(' . ilya_html(ilya_format_number($category['qcount'], 0, true)) . ')') : null,
+				'subnav' => ilya_category_navigation_sub($parentcategories, $category['categoryid'], $selecteds,
 					$pathprefix . $category['tags'] . '/', $showqcount, $pathparams, $favoritemap),
 				'categoryid' => $category['categoryid'],
 				'favorited' => @$favoritemap['category'][$category['backpath']],
@@ -1408,7 +1408,7 @@ function qa_category_navigation_sub($parentcategories, $parentid, $selecteds, $p
 /**
  * Return the sub navigation structure for user listing pages
  */
-function qa_users_sub_navigation()
+function ilya_users_sub_navigation()
 {
 	if (QA_FINAL_EXTERNAL_USERS) {
 		return null;
@@ -1416,36 +1416,36 @@ function qa_users_sub_navigation()
 
 	$menuItems = array();
 
-	$moderatorPlus = qa_get_logged_in_level() >= QA_USER_LEVEL_MODERATOR;
-	$showNewUsersPage = !qa_user_permit_error('permit_view_new_users_page');
-	$showSpecialUsersPage = !qa_user_permit_error('permit_view_special_users_page');
+	$moderatorPlus = ilya_get_logged_in_level() >= QA_USER_LEVEL_MODERATOR;
+	$showNewUsersPage = !ilya_user_permit_error('permit_view_new_users_page');
+	$showSpecialUsersPage = !ilya_user_permit_error('permit_view_special_users_page');
 
 	if ($moderatorPlus || $showNewUsersPage || $showSpecialUsersPage) {
 		// We want to show this item when more than one item should be displayed
 		$menuItems['users$'] = array(
-			'label' => qa_lang_html('main/highest_users'),
-			'url' => qa_path_html('users'),
+			'label' => ilya_lang_html('main/highest_users'),
+			'url' => ilya_path_html('users'),
 		);
 	}
 
 	if ($showNewUsersPage) {
 		$menuItems['users/new'] = array(
-			'label' => qa_lang_html('main/newest_users'),
-			'url' => qa_path_html('users/new'),
+			'label' => ilya_lang_html('main/newest_users'),
+			'url' => ilya_path_html('users/new'),
 		);
 	}
 
 	if ($showSpecialUsersPage) {
 		$menuItems['users/special'] = array(
-			'label' => qa_lang('users/special_users'),
-			'url' => qa_path_html('users/special'),
+			'label' => ilya_lang('users/special_users'),
+			'url' => ilya_path_html('users/special'),
 		);
 	}
 
 	if ($moderatorPlus) {
 		$menuItems['users/blocked'] = array(
-			'label' => qa_lang('users/blocked_users'),
-			'url' => qa_path_html('users/blocked'),
+			'label' => ilya_lang('users/blocked_users'),
+			'url' => ilya_path_html('users/blocked'),
 		);
 	}
 
@@ -1460,54 +1460,54 @@ function qa_users_sub_navigation()
  * @param bool $ismyuser
  * @return array
  */
-function qa_user_sub_navigation($handle, $selected, $ismyuser = false)
+function ilya_user_sub_navigation($handle, $selected, $ismyuser = false)
 {
 	$navigation = array(
 		'profile' => array(
-			'label' => qa_lang_html_sub('profile/user_x', qa_html($handle)),
-			'url' => qa_path_html('user/' . $handle),
+			'label' => ilya_lang_html_sub('profile/user_x', ilya_html($handle)),
+			'url' => ilya_path_html('user/' . $handle),
 		),
 
 		'account' => array(
-			'label' => qa_lang_html('misc/nav_my_details'),
-			'url' => qa_path_html('account'),
+			'label' => ilya_lang_html('misc/nav_my_details'),
+			'url' => ilya_path_html('account'),
 		),
 
 		'favorites' => array(
-			'label' => qa_lang_html('misc/nav_my_favorites'),
-			'url' => qa_path_html('favorites'),
+			'label' => ilya_lang_html('misc/nav_my_favorites'),
+			'url' => ilya_path_html('favorites'),
 		),
 
 		'wall' => array(
-			'label' => qa_lang_html('misc/nav_user_wall'),
-			'url' => qa_path_html('user/' . $handle . '/wall'),
+			'label' => ilya_lang_html('misc/nav_user_wall'),
+			'url' => ilya_path_html('user/' . $handle . '/wall'),
 		),
 
 		'messages' => array(
-			'label' => qa_lang_html('misc/nav_user_pms'),
-			'url' => qa_path_html('messages'),
+			'label' => ilya_lang_html('misc/nav_user_pms'),
+			'url' => ilya_path_html('messages'),
 		),
 
 		'activity' => array(
-			'label' => qa_lang_html('misc/nav_user_activity'),
-			'url' => qa_path_html('user/' . $handle . '/activity'),
+			'label' => ilya_lang_html('misc/nav_user_activity'),
+			'url' => ilya_path_html('user/' . $handle . '/activity'),
 		),
 
 		'questions' => array(
-			'label' => qa_lang_html('misc/nav_user_qs'),
-			'url' => qa_path_html('user/' . $handle . '/questions'),
+			'label' => ilya_lang_html('misc/nav_user_qs'),
+			'url' => ilya_path_html('user/' . $handle . '/questions'),
 		),
 
 		'answers' => array(
-			'label' => qa_lang_html('misc/nav_user_as'),
-			'url' => qa_path_html('user/' . $handle . '/answers'),
+			'label' => ilya_lang_html('misc/nav_user_as'),
+			'url' => ilya_path_html('user/' . $handle . '/answers'),
 		),
 	);
 
 	if (isset($navigation[$selected]))
 		$navigation[$selected]['selected'] = true;
 
-	if (QA_FINAL_EXTERNAL_USERS || !qa_opt('allow_user_walls'))
+	if (QA_FINAL_EXTERNAL_USERS || !ilya_opt('allow_user_walls'))
 		unset($navigation['wall']);
 
 	if (QA_FINAL_EXTERNAL_USERS || !$ismyuser)
@@ -1516,7 +1516,7 @@ function qa_user_sub_navigation($handle, $selected, $ismyuser = false)
 	if (!$ismyuser)
 		unset($navigation['favorites']);
 
-	if (QA_FINAL_EXTERNAL_USERS || !$ismyuser || !qa_opt('allow_private_messages') || !qa_opt('show_message_history'))
+	if (QA_FINAL_EXTERNAL_USERS || !$ismyuser || !ilya_opt('allow_private_messages') || !ilya_opt('show_message_history'))
 		unset($navigation['messages']);
 
 	return $navigation;
@@ -1529,17 +1529,17 @@ function qa_user_sub_navigation($handle, $selected, $ismyuser = false)
  * @param null $selected
  * @return array
  */
-function qa_messages_sub_navigation($selected = null)
+function ilya_messages_sub_navigation($selected = null)
 {
 	$navigation = array(
 		'inbox' => array(
-			'label' => qa_lang_html('misc/inbox'),
-			'url' => qa_path_html('messages'),
+			'label' => ilya_lang_html('misc/inbox'),
+			'url' => ilya_path_html('messages'),
 		),
 
 		'outbox' => array(
-			'label' => qa_lang_html('misc/outbox'),
-			'url' => qa_path_html('messages/sent'),
+			'label' => ilya_lang_html('misc/outbox'),
+			'url' => ilya_path_html('messages/sent'),
 		),
 	);
 
@@ -1553,19 +1553,19 @@ function qa_messages_sub_navigation($selected = null)
 /**
  * Return the sub navigation structure for user account pages.
  *
- * @deprecated Deprecated from 1.6.3; use `qa_user_sub_navigation()` instead.
+ * @deprecated Deprecated from 1.6.3; use `ilya_user_sub_navigation()` instead.
  */
-function qa_account_sub_navigation()
+function ilya_account_sub_navigation()
 {
 	return array(
 		'account' => array(
-			'label' => qa_lang_html('misc/nav_my_details'),
-			'url' => qa_path_html('account'),
+			'label' => ilya_lang_html('misc/nav_my_details'),
+			'url' => ilya_path_html('account'),
 		),
 
 		'favorites' => array(
-			'label' => qa_lang_html('misc/nav_my_favorites'),
-			'url' => qa_path_html('favorites'),
+			'label' => ilya_lang_html('misc/nav_my_favorites'),
+			'url' => ilya_path_html('favorites'),
 		),
 	);
 }
@@ -1576,11 +1576,11 @@ function qa_account_sub_navigation()
  * @param $page
  * @return string
  */
-function qa_custom_page_url($page)
+function ilya_custom_page_url($page)
 {
 	return ($page['flags'] & QA_PAGE_FLAGS_EXTERNAL)
-		? (is_numeric(strpos($page['tags'], '://')) ? $page['tags'] : qa_path_to_root() . $page['tags'])
-		: qa_path($page['tags']);
+		? (is_numeric(strpos($page['tags'], '://')) ? $page['tags'] : ilya_path_to_root() . $page['tags'])
+		: ilya_path($page['tags']);
 }
 
 
@@ -1589,17 +1589,17 @@ function qa_custom_page_url($page)
  * @param $navigation
  * @param $page
  */
-function qa_navigation_add_page(&$navigation, $page)
+function ilya_navigation_add_page(&$navigation, $page)
 {
-	if (!isset($page['permit']) || !qa_permit_value_error($page['permit'], qa_get_logged_in_userid(), qa_get_logged_in_level(), qa_get_logged_in_flags())) {
-		$url = qa_custom_page_url($page);
+	if (!isset($page['permit']) || !ilya_permit_value_error($page['permit'], ilya_get_logged_in_userid(), ilya_get_logged_in_level(), ilya_get_logged_in_flags())) {
+		$url = ilya_custom_page_url($page);
 
 		$navigation[($page['flags'] & QA_PAGE_FLAGS_EXTERNAL) ? ('custom-' . $page['pageid']) : ($page['tags'] . '$')] = array(
-			'url' => qa_html($url),
-			'label' => qa_html($page['title']),
+			'url' => ilya_html($url),
+			'label' => ilya_html($page['title']),
 			'opposite' => ($page['nav'] == 'O'),
 			'target' => ($page['flags'] & QA_PAGE_FLAGS_NEW_WINDOW) ? '_blank' : null,
-			'selected' => ($page['flags'] & QA_PAGE_FLAGS_EXTERNAL) && (($url == qa_path(qa_request())) || ($url == qa_self_html())),
+			'selected' => ($page['flags'] & QA_PAGE_FLAGS_EXTERNAL) && (($url == ilya_path(ilya_request())) || ($url == ilya_self_html())),
 		);
 	}
 }
@@ -1610,7 +1610,7 @@ function qa_navigation_add_page(&$navigation, $page)
  * @param $match
  * @return int
  */
-function qa_match_to_min_score($match)
+function ilya_match_to_min_score($match)
 {
 	return 10 - 2 * $match;
 }
@@ -1619,13 +1619,13 @@ function qa_match_to_min_score($match)
 /**
  * Adds JavaScript to the page to handle toggling of form fields based on other fields.
  *
- * @param array $qa_content  Page content array.
+ * @param array $ilya_content  Page content array.
  * @param array $effects  List of rules for element toggling, with the structure:
  *   array('target1' => 'source1', 'target2' => 'source2', ...)
  *   When the source expression is true, the DOM element ID represented by target is shown. The
  *   source can be a combination of ID as a JS expression.
  */
-function qa_set_display_rules(&$qa_content, $effects)
+function ilya_set_display_rules(&$ilya_content, $effects)
 {
 	$keysourceids = array();
 	$jsVarRegex = '/[A-Za-z_][A-Za-z0-9_]*/';
@@ -1640,9 +1640,9 @@ function qa_set_display_rules(&$qa_content, $effects)
 		}
 	}
 
-	$funcOrd = isset($qa_content['script_lines']) ? count($qa_content['script_lines']) : 0;
-	$function = "qa_display_rule_$funcOrd";
-	$optVar = "qa_optids_$funcOrd";
+	$funcOrd = isset($ilya_content['script_lines']) ? count($ilya_content['script_lines']) : 0;
+	$function = "ilya_display_rule_$funcOrd";
+	$optVar = "ilya_optids_$funcOrd";
 
 	// set up variables
 	$funcscript = array("var $optVar = " . json_encode($keysourceids) . ";");
@@ -1656,7 +1656,7 @@ function qa_set_display_rules(&$qa_content, $effects)
 	$funcscript[] = "\t}";
 	foreach ($effects as $target => $sources) {
 		$sourcesobj = preg_replace($jsVarRegex, 'opts.$0', $sources);
-		$funcscript[] = "\tqa_display_rule_show(" . qa_js($target) . ", (" . $sourcesobj . "), first);";
+		$funcscript[] = "\tilya_display_rule_show(" . ilya_js($target) . ", (" . $sourcesobj . "), first);";
 	}
 	$funcscript[] = "}";
 
@@ -1668,15 +1668,15 @@ function qa_set_display_rules(&$qa_content, $effects)
 		"{$function}(true);",
 	);
 
-	$qa_content['script_lines'][] = $funcscript;
-	$qa_content['script_onloads'][] = $loadscript;
+	$ilya_content['script_lines'][] = $funcscript;
+	$ilya_content['script_onloads'][] = $loadscript;
 }
 
 
 /**
- * Set up $qa_content and $field (with HTML name $fieldname) for tag auto-completion, where
+ * Set up $ilya_content and $field (with HTML name $fieldname) for tag auto-completion, where
  * $exampletags are suggestions and $completetags are simply the most popular ones. Show up to $maxtags.
- * @param $qa_content
+ * @param $ilya_content
  * @param $field
  * @param $fieldname
  * @param $tags
@@ -1684,30 +1684,30 @@ function qa_set_display_rules(&$qa_content, $effects)
  * @param $completetags
  * @param $maxtags
  */
-function qa_set_up_tag_field(&$qa_content, &$field, $fieldname, $tags, $exampletags, $completetags, $maxtags)
+function ilya_set_up_tag_field(&$ilya_content, &$field, $fieldname, $tags, $exampletags, $completetags, $maxtags)
 {
-	$template = '<a href="#" class="ilya-tag-link" onclick="return qa_tag_click(this);">^</a>';
+	$template = '<a href="#" class="ilya-tag-link" onclick="return ilya_tag_click(this);">^</a>';
 
-	$qa_content['script_var']['qa_tag_template'] = $template;
-	$qa_content['script_var']['qa_tag_onlycomma'] = (int)qa_opt('tag_separator_comma');
-	$qa_content['script_var']['qa_tags_examples'] = qa_html(implode(',', $exampletags));
-	$qa_content['script_var']['qa_tags_complete'] = qa_html(implode(',', $completetags));
-	$qa_content['script_var']['qa_tags_max'] = (int)$maxtags;
+	$ilya_content['script_var']['ilya_tag_template'] = $template;
+	$ilya_content['script_var']['ilya_tag_onlycomma'] = (int)ilya_opt('tag_separator_comma');
+	$ilya_content['script_var']['ilya_tags_examples'] = ilya_html(implode(',', $exampletags));
+	$ilya_content['script_var']['ilya_tags_complete'] = ilya_html(implode(',', $completetags));
+	$ilya_content['script_var']['ilya_tags_max'] = (int)$maxtags;
 
-	$separatorcomma = qa_opt('tag_separator_comma');
+	$separatorcomma = ilya_opt('tag_separator_comma');
 
-	$field['label'] = qa_lang_html($separatorcomma ? 'question/q_tags_comma_label' : 'question/q_tags_label');
-	$field['value'] = qa_html(implode($separatorcomma ? ', ' : ' ', $tags));
-	$field['tags'] = 'name="' . $fieldname . '" id="tags" autocomplete="off" onkeyup="qa_tag_hints();" onmouseup="qa_tag_hints();"';
+	$field['label'] = ilya_lang_html($separatorcomma ? 'question/q_tags_comma_label' : 'question/q_tags_label');
+	$field['value'] = ilya_html(implode($separatorcomma ? ', ' : ' ', $tags));
+	$field['tags'] = 'name="' . $fieldname . '" id="tags" autocomplete="off" onkeyup="ilya_tag_hints();" onmouseup="ilya_tag_hints();"';
 
 	$sdn = ' style="display:none;"';
 
 	$field['note'] =
-		'<span id="tag_examples_title"' . (count($exampletags) ? '' : $sdn) . '>' . qa_lang_html('question/example_tags') . '</span>' .
-		'<span id="tag_complete_title"' . $sdn . '>' . qa_lang_html('question/matching_tags') . '</span><span id="tag_hints">';
+		'<span id="tag_examples_title"' . (count($exampletags) ? '' : $sdn) . '>' . ilya_lang_html('question/example_tags') . '</span>' .
+		'<span id="tag_complete_title"' . $sdn . '>' . ilya_lang_html('question/matching_tags') . '</span><span id="tag_hints">';
 
 	foreach ($exampletags as $tag)
-		$field['note'] .= str_replace('^', qa_html($tag), $template) . ' ';
+		$field['note'] .= str_replace('^', ilya_html($tag), $template) . ' ';
 
 	$field['note'] .= '</span>';
 	$field['note_force'] = true;
@@ -1715,30 +1715,30 @@ function qa_set_up_tag_field(&$qa_content, &$field, $fieldname, $tags, $examplet
 
 
 /**
- * Get a list of user-entered tags submitted from a field that was created with qa_set_up_tag_field(...)
+ * Get a list of user-entered tags submitted from a field that was created with ilya_set_up_tag_field(...)
  * @param $fieldname
  * @return array
  */
-function qa_get_tags_field_value($fieldname)
+function ilya_get_tags_field_value($fieldname)
 {
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
-	$text = qa_remove_utf8mb4(qa_post_text($fieldname));
+	$text = ilya_remove_utf8mb4(ilya_post_text($fieldname));
 
-	if (qa_opt('tag_separator_comma'))
-		return array_unique(preg_split('/\s*,\s*/', trim(qa_strtolower(strtr($text, '/', ' '))), -1, PREG_SPLIT_NO_EMPTY));
+	if (ilya_opt('tag_separator_comma'))
+		return array_unique(preg_split('/\s*,\s*/', trim(ilya_strtolower(strtr($text, '/', ' '))), -1, PREG_SPLIT_NO_EMPTY));
 	else
-		return array_unique(qa_string_to_words($text, true, false, false, false));
+		return array_unique(ilya_string_to_words($text, true, false, false, false));
 }
 
 
 /**
- * Set up $qa_content and $field (with HTML name $fieldname) for hierarchical category navigation, with the initial value
- * set to $categoryid (and $navcategories retrieved for $categoryid using qa_db_category_nav_selectspec(...)).
+ * Set up $ilya_content and $field (with HTML name $fieldname) for hierarchical category navigation, with the initial value
+ * set to $categoryid (and $navcategories retrieved for $categoryid using ilya_db_category_nav_selectspec(...)).
  * If $allownone is true, it will allow selection of no category. If $allownosub is true, it will allow a category to be
  * selected without selecting a subcategory within. Set $maxdepth to the maximum depth of category that can be selected
  * (or null for no maximum) and $excludecategoryid to a category that should not be included.
- * @param $qa_content
+ * @param $ilya_content
  * @param $field
  * @param $fieldname
  * @param $navcategories
@@ -1748,9 +1748,9 @@ function qa_get_tags_field_value($fieldname)
  * @param null $maxdepth
  * @param null $excludecategoryid
  */
-function qa_set_up_category_field(&$qa_content, &$field, $fieldname, $navcategories, $categoryid, $allownone, $allownosub, $maxdepth = null, $excludecategoryid = null)
+function ilya_set_up_category_field(&$ilya_content, &$field, $fieldname, $navcategories, $categoryid, $allownone, $allownosub, $maxdepth = null, $excludecategoryid = null)
 {
-	$pathcategories = qa_category_path($navcategories, $categoryid);
+	$pathcategories = ilya_category_path($navcategories, $categoryid);
 
 	$startpath = '';
 	foreach ($pathcategories as $category)
@@ -1761,21 +1761,21 @@ function qa_set_up_category_field(&$qa_content, &$field, $fieldname, $navcategor
 	else
 		$maxdepth = QA_CATEGORY_DEPTH;
 
-	$qa_content['script_onloads'][] = sprintf('qa_category_select(%s, %s);', qa_js($fieldname), qa_js($startpath));
+	$ilya_content['script_onloads'][] = sprintf('ilya_category_select(%s, %s);', ilya_js($fieldname), ilya_js($startpath));
 
-	$qa_content['script_var']['qa_cat_exclude'] = $excludecategoryid;
-	$qa_content['script_var']['qa_cat_allownone'] = (int)$allownone;
-	$qa_content['script_var']['qa_cat_allownosub'] = (int)$allownosub;
-	$qa_content['script_var']['qa_cat_maxdepth'] = $maxdepth;
+	$ilya_content['script_var']['ilya_cat_exclude'] = $excludecategoryid;
+	$ilya_content['script_var']['ilya_cat_allownone'] = (int)$allownone;
+	$ilya_content['script_var']['ilya_cat_allownosub'] = (int)$allownosub;
+	$ilya_content['script_var']['ilya_cat_maxdepth'] = $maxdepth;
 
 	$field['type'] = 'select';
-	$field['tags'] = sprintf('name="%s_0" id="%s_0" onchange="qa_category_select(%s);"', $fieldname, $fieldname, qa_js($fieldname));
+	$field['tags'] = sprintf('name="%s_0" id="%s_0" onchange="ilya_category_select(%s);"', $fieldname, $fieldname, ilya_js($fieldname));
 	$field['options'] = array();
 
 	// create the menu that will be shown if Javascript is disabled
 
 	if ($allownone)
-		$field['options'][''] = qa_lang_html('main/no_category'); // this is also copied to first menu created by Javascript
+		$field['options'][''] = ilya_lang_html('main/no_category'); // this is also copied to first menu created by Javascript
 
 	$keycategoryids = array();
 
@@ -1822,31 +1822,31 @@ function qa_set_up_category_field(&$qa_content, &$field, $fieldname, $navcategor
 
 	foreach ($keycategoryids as $keycategoryid => $dummy)
 		if (strcmp($keycategoryid, $excludecategoryid))
-			$field['options'][$keycategoryid] = qa_category_path_html($navcategories, $keycategoryid);
+			$field['options'][$keycategoryid] = ilya_category_path_html($navcategories, $keycategoryid);
 
 	$field['value'] = @$field['options'][$categoryid];
 	$field['note'] =
 		'<div id="' . $fieldname . '_note">' .
-		'<noscript style="color:red;">' . qa_lang_html('question/category_js_note') . '</noscript>' .
+		'<noscript style="color:red;">' . ilya_lang_html('question/category_js_note') . '</noscript>' .
 		'</div>';
 }
 
 
 /**
- * Get the user-entered category id submitted from a field that was created with qa_set_up_category_field(...)
+ * Get the user-entered category id submitted from a field that was created with ilya_set_up_category_field(...)
  * @param $fieldname
  * @return mixed|null
  */
-function qa_get_category_field_value($fieldname)
+function ilya_get_category_field_value($fieldname)
 {
 	for ($level = QA_CATEGORY_DEPTH; $level >= 1; $level--) {
-		$levelid = qa_post_text($fieldname . '_' . $level);
+		$levelid = ilya_post_text($fieldname . '_' . $level);
 		if (strlen($levelid))
 			return $levelid;
 	}
 
 	if (!isset($levelid)) { // no Javascript-generated menu was present so take original menu
-		$levelid = qa_post_text($fieldname . '_0');
+		$levelid = ilya_post_text($fieldname . '_0');
 		if (strlen($levelid))
 			return $levelid;
 	}
@@ -1856,29 +1856,29 @@ function qa_get_category_field_value($fieldname)
 
 
 /**
- * Set up $qa_content and add to $fields to allow the user to enter their name for a post if they are not logged in
+ * Set up $ilya_content and add to $fields to allow the user to enter their name for a post if they are not logged in
  * $inname is from previous submission/validation. Pass $fieldprefix to add a prefix to the form field name used.
- * @param $qa_content
+ * @param $ilya_content
  * @param $fields
  * @param $inname
  * @param string $fieldprefix
  */
-function qa_set_up_name_field(&$qa_content, &$fields, $inname, $fieldprefix = '')
+function ilya_set_up_name_field(&$ilya_content, &$fields, $inname, $fieldprefix = '')
 {
 	$fields['name'] = array(
-		'label' => qa_lang_html('question/anon_name_label'),
+		'label' => ilya_lang_html('question/anon_name_label'),
 		'tags' => 'name="' . $fieldprefix . 'name"',
-		'value' => qa_html($inname),
+		'value' => ilya_html($inname),
 	);
 }
 
 
 /**
- * Set up $qa_content and add to $fields to allow user to set if they want to be notified regarding their post.
+ * Set up $ilya_content and add to $fields to allow user to set if they want to be notified regarding their post.
  * $basetype is 'Q', 'A' or 'C' for question, answer or comment. $login_email is the email of logged in user,
  * or null if this is an anonymous post. $innotify, $inemail and $errors_email are from previous submission/validation.
  * Pass $fieldprefix to add a prefix to the form field names and IDs used.
- * @param $qa_content
+ * @param $ilya_content
  * @param $fields
  * @param $basetype
  * @param $login_email
@@ -1887,31 +1887,31 @@ function qa_set_up_name_field(&$qa_content, &$fields, $inname, $fieldprefix = ''
  * @param $errors_email
  * @param string $fieldprefix
  */
-function qa_set_up_notify_fields(&$qa_content, &$fields, $basetype, $login_email, $innotify, $inemail, $errors_email, $fieldprefix = '')
+function ilya_set_up_notify_fields(&$ilya_content, &$fields, $basetype, $login_email, $innotify, $inemail, $errors_email, $fieldprefix = '')
 {
 	$fields['notify'] = array(
 		'tags' => 'name="' . $fieldprefix . 'notify"',
 		'type' => 'checkbox',
-		'value' => qa_html($innotify),
+		'value' => ilya_html($innotify),
 	);
 
 	switch ($basetype) {
 		case 'Q':
-			$labelaskemail = qa_lang_html('question/q_notify_email');
-			$labelonly = qa_lang_html('question/q_notify_label');
-			$labelgotemail = qa_lang_html('question/q_notify_x_label');
+			$labelaskemail = ilya_lang_html('question/q_notify_email');
+			$labelonly = ilya_lang_html('question/q_notify_label');
+			$labelgotemail = ilya_lang_html('question/q_notify_x_label');
 			break;
 
 		case 'A':
-			$labelaskemail = qa_lang_html('question/a_notify_email');
-			$labelonly = qa_lang_html('question/a_notify_label');
-			$labelgotemail = qa_lang_html('question/a_notify_x_label');
+			$labelaskemail = ilya_lang_html('question/a_notify_email');
+			$labelonly = ilya_lang_html('question/a_notify_label');
+			$labelgotemail = ilya_lang_html('question/a_notify_x_label');
 			break;
 
 		case 'C':
-			$labelaskemail = qa_lang_html('question/c_notify_email');
-			$labelonly = qa_lang_html('question/c_notify_label');
-			$labelgotemail = qa_lang_html('question/c_notify_x_label');
+			$labelaskemail = ilya_lang_html('question/c_notify_email');
+			$labelonly = ilya_lang_html('question/c_notify_label');
+			$labelgotemail = ilya_lang_html('question/c_notify_x_label');
 			break;
 	}
 
@@ -1926,19 +1926,19 @@ function qa_set_up_notify_fields(&$qa_content, &$fields, $basetype, $login_email
 		$fields['email'] = array(
 			'id' => $fieldprefix . 'email_display',
 			'tags' => 'name="' . $fieldprefix . 'email" id="' . $fieldprefix . 'email"',
-			'value' => qa_html($inemail),
-			'note' => qa_lang_html('question/notify_email_note'),
-			'error' => qa_html($errors_email),
+			'value' => ilya_html($inemail),
+			'note' => ilya_lang_html('question/notify_email_note'),
+			'error' => ilya_html($errors_email),
 		);
 
-		qa_set_display_rules($qa_content, array(
+		ilya_set_display_rules($ilya_content, array(
 			$fieldprefix . 'email_display' => $fieldprefix . 'notify',
 			$fieldprefix . 'email_shown' => $fieldprefix . 'notify',
 			$fieldprefix . 'email_hidden' => '!' . $fieldprefix . 'notify',
 		));
 
 	} else {
-		$fields['notify']['label'] = str_replace('^', qa_html($login_email), $labelgotemail);
+		$fields['notify']['label'] = str_replace('^', ilya_html($login_email), $labelgotemail);
 	}
 }
 
@@ -1947,11 +1947,11 @@ function qa_set_up_notify_fields(&$qa_content, &$fields, $basetype, $login_email
  * Return the theme that should be used for displaying the page
  * @return string
  */
-function qa_get_site_theme()
+function ilya_get_site_theme()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return qa_opt(qa_is_mobile_probably() ? 'site_theme_mobile' : 'site_theme');
+	return ilya_opt(ilya_is_mobile_probably() ? 'site_theme_mobile' : 'site_theme');
 }
 
 
@@ -1962,39 +1962,39 @@ function qa_get_site_theme()
  * @param $template
  * @param $content
  * @param $request
- * @return qa_html_theme_base
+ * @return ilya_html_theme_base
  */
-function qa_load_theme_class($theme, $template, $content, $request)
+function ilya_load_theme_class($theme, $template, $content, $request)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_layers;
+	global $ilya_layers;
 
 	// First load the default class
 
 	require_once QA_INCLUDE_DIR . 'ilya-theme-base.php';
 
-	$classname = 'qa_html_theme_base';
+	$classname = 'ilya_html_theme_base';
 
 	// Then load the selected theme if valid, otherwise load the Classic theme
 
 	if (!file_exists(QA_THEME_DIR . $theme . '/ilya-styles.css'))
 		$theme = 'Classic';
 
-	$themeroothtml = qa_html(qa_path_to_root() . 'ilya-theme/' . $theme . '/');
+	$themeroothtml = ilya_html(ilya_path_to_root() . 'ilya-theme/' . $theme . '/');
 
 	if (file_exists(QA_THEME_DIR . $theme . '/ilya-theme.php')) {
 		require_once QA_THEME_DIR . $theme . '/ilya-theme.php';
 
-		if (class_exists('qa_html_theme'))
-			$classname = 'qa_html_theme';
+		if (class_exists('ilya_html_theme'))
+			$classname = 'ilya_html_theme';
 	}
 
 	// Create the list of layers to load
 
-	$loadlayers = $qa_layers;
+	$loadlayers = $ilya_layers;
 
-	if (!qa_user_maximum_permit_error('permit_view_voters_flaggers')) {
+	if (!ilya_user_maximum_permit_error('permit_view_voters_flaggers')) {
 		$loadlayers[] = array(
 			'directory' => QA_INCLUDE_DIR . 'plugins/',
 			'include' => 'ilya-layer-voters-flaggers.php',
@@ -2012,18 +2012,18 @@ function qa_load_theme_class($theme, $template, $content, $request)
 
 		if (strlen($layerphp)) {
 			// include file name in layer class name to make debugging easier if there is an error
-			$newclassname = 'qa_layer_' . (++$layerindex) . '_from_' . preg_replace('/[^A-Za-z0-9_]+/', '_', basename($layer['include']));
+			$newclassname = 'ilya_layer_' . (++$layerindex) . '_from_' . preg_replace('/[^A-Za-z0-9_]+/', '_', basename($layer['include']));
 
-			if (preg_match('/\s+class\s+qa_html_theme_layer\s+extends\s+qa_html_theme_base\s+/im', $layerphp) != 1)
-				qa_fatal_error('Class for layer must be declared as "class qa_html_theme_layer extends qa_html_theme_base" in ' . $layer['directory'] . $layer['include']);
+			if (preg_match('/\s+class\s+ilya_html_theme_layer\s+extends\s+ilya_html_theme_base\s+/im', $layerphp) != 1)
+				ilya_fatal_error('Class for layer must be declared as "class ilya_html_theme_layer extends ilya_html_theme_base" in ' . $layer['directory'] . $layer['include']);
 
 			$searchwordreplace = array(
-				'qa_html_theme_base::qa_html_theme_base' => $classname . '::__construct', // PHP5 constructor fix
-				'parent::qa_html_theme_base' => 'parent::__construct', // PHP5 constructor fix
-				'qa_html_theme_layer' => $newclassname,
-				'qa_html_theme_base' => $classname,
+				'ilya_html_theme_base::ilya_html_theme_base' => $classname . '::__construct', // PHP5 constructor fix
+				'parent::ilya_html_theme_base' => 'parent::__construct', // PHP5 constructor fix
+				'ilya_html_theme_layer' => $newclassname,
+				'ilya_html_theme_base' => $classname,
 				'QA_HTML_THEME_LAYER_DIRECTORY' => "'" . $layer['directory'] . "'",
-				'QA_HTML_THEME_LAYER_URLTOROOT' => "'" . qa_path_to_root() . $layer['urltoroot'] . "'",
+				'QA_HTML_THEME_LAYER_URLTOROOT' => "'" . ilya_path_to_root() . $layer['urltoroot'] . "'",
 			);
 
 			foreach ($searchwordreplace as $searchword => $replace) {
@@ -2037,7 +2037,7 @@ function qa_load_theme_class($theme, $template, $content, $request)
 
 			// echo '<pre style="text-align:left;">'.htmlspecialchars($layerphp).'</pre>'; // to debug munged code
 
-			qa_eval_from_file($layerphp, $filename);
+			ilya_eval_from_file($layerphp, $filename);
 
 			$classname = $newclassname;
 		}
@@ -2059,9 +2059,9 @@ function qa_load_theme_class($theme, $template, $content, $request)
  * @param $editorname string
  * @return object
  */
-function qa_load_editor($content, $format, &$editorname)
+function ilya_load_editor($content, $format, &$editorname)
 {
-	$maxeditor = qa_load_module('editor', $editorname); // take preferred one first
+	$maxeditor = ilya_load_module('editor', $editorname); // take preferred one first
 
 	if (isset($maxeditor) && method_exists($maxeditor, 'calc_quality')) {
 		$maxquality = $maxeditor->calc_quality($content, $format);
@@ -2071,7 +2071,7 @@ function qa_load_editor($content, $format, &$editorname)
 	} else
 		$maxquality = 0;
 
-	$editormodules = qa_load_modules_with('editor', 'calc_quality');
+	$editormodules = ilya_load_modules_with('editor', 'calc_quality');
 	foreach ($editormodules as $tryname => $tryeditor) {
 		$tryquality = $tryeditor->calc_quality($content, $format);
 
@@ -2087,12 +2087,12 @@ function qa_load_editor($content, $format, &$editorname)
 
 
 /**
- * Return a form field from the $editor module while making necessary modifications to $qa_content. The parameters
+ * Return a form field from the $editor module while making necessary modifications to $ilya_content. The parameters
  * $content, $format, $fieldname, $rows and $focusnow are passed through to the module's get_field() method. ($focusnow
  * is deprecated as a parameter to get_field() but it's still passed through for old editor modules.) Based on
- * $focusnow and $loadnow, also add the editor's load and/or focus scripts to $qa_content's onload handlers.
+ * $focusnow and $loadnow, also add the editor's load and/or focus scripts to $ilya_content's onload handlers.
  * @param $editor object
- * @param array $qa_content
+ * @param array $ilya_content
  * @param string $content
  * @param string $format
  * @param string $fieldname
@@ -2101,12 +2101,12 @@ function qa_load_editor($content, $format, &$editorname)
  * @param bool $loadnow
  * @return string|array
  */
-function qa_editor_load_field($editor, &$qa_content, $content, $format, $fieldname, $rows, $focusnow = false, $loadnow = true)
+function ilya_editor_load_field($editor, &$ilya_content, $content, $format, $fieldname, $rows, $focusnow = false, $loadnow = true)
 {
 	if (!isset($editor))
-		qa_fatal_error('No editor found for format: ' . $format);
+		ilya_fatal_error('No editor found for format: ' . $format);
 
-	$field = $editor->get_field($qa_content, $content, $format, $fieldname, $rows, $focusnow);
+	$field = $editor->get_field($ilya_content, $content, $format, $fieldname, $rows, $focusnow);
 
 	$onloads = array();
 
@@ -2117,7 +2117,7 @@ function qa_editor_load_field($editor, &$qa_content, $content, $format, $fieldna
 		$onloads[] = $editor->focus_script($fieldname);
 
 	if (count($onloads))
-		$qa_content['script_onloads'][] = $onloads;
+		$ilya_content['script_onloads'][] = $onloads;
 
 	return $field;
 }
@@ -2129,12 +2129,12 @@ function qa_editor_load_field($editor, &$qa_content, $content, $format, $fieldna
  * @param string $format
  * @return object
  */
-function qa_load_viewer($content, $format)
+function ilya_load_viewer($content, $format)
 {
 	$maxviewer = null;
 	$maxquality = 0;
 
-	$viewermodules = qa_load_modules_with('viewer', 'calc_quality');
+	$viewermodules = ilya_load_modules_with('viewer', 'calc_quality');
 
 	foreach ($viewermodules as $tryviewer) {
 		$tryquality = $tryviewer->calc_quality($content, $format);
@@ -2156,9 +2156,9 @@ function qa_load_viewer($content, $format)
  * @param array $options
  * @return string
  */
-function qa_viewer_text($content, $format, $options = array())
+function ilya_viewer_text($content, $format, $options = array())
 {
-	$viewer = qa_load_viewer($content, $format);
+	$viewer = ilya_load_viewer($content, $format);
 	return $viewer->get_text($content, $format, $options);
 }
 
@@ -2170,9 +2170,9 @@ function qa_viewer_text($content, $format, $options = array())
  * @param array $options
  * @return string
  */
-function qa_viewer_html($content, $format, $options = array())
+function ilya_viewer_html($content, $format, $options = array())
 {
-	$viewer = qa_load_viewer($content, $format);
+	$viewer = ilya_load_viewer($content, $format);
 	return $viewer->get_html($content, $format, $options);
 }
 
@@ -2181,11 +2181,11 @@ function qa_viewer_html($content, $format, $options = array())
  * @param string $fieldname
  * @return string
  */
-function qa_get_post_title($fieldname)
+function ilya_get_post_title($fieldname)
 {
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
-	return qa_remove_utf8mb4(qa_post_text($fieldname));
+	return ilya_remove_utf8mb4(ilya_post_text($fieldname));
 }
 
 /**
@@ -2198,18 +2198,18 @@ function qa_get_post_title($fieldname)
  * @param $informat
  * @param $intext
  */
-function qa_get_post_content($editorfield, $contentfield, &$ineditor, &$incontent, &$informat, &$intext)
+function ilya_get_post_content($editorfield, $contentfield, &$ineditor, &$incontent, &$informat, &$intext)
 {
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
-	$ineditor = qa_post_text($editorfield);
-	$editor = qa_load_module('editor', $ineditor);
+	$ineditor = ilya_post_text($editorfield);
+	$editor = ilya_load_module('editor', $ineditor);
 	$readdata = $editor->read_post($contentfield);
 
 	// sanitise 4-byte Unicode
-	$incontent = qa_remove_utf8mb4($readdata['content']);
+	$incontent = ilya_remove_utf8mb4($readdata['content']);
 	$informat = $readdata['format'];
-	$intext = qa_remove_utf8mb4(qa_viewer_text($incontent, $informat));
+	$intext = ilya_remove_utf8mb4(ilya_viewer_text($incontent, $informat));
 }
 
 
@@ -2219,13 +2219,13 @@ function qa_get_post_content($editorfield, $contentfield, &$ineditor, &$inconten
  * @param $fields
  * @param $oldfields
  */
-function qa_update_post_text(&$fields, $oldfields)
+function ilya_update_post_text(&$fields, $oldfields)
 {
 	if (strcmp($oldfields['content'], $fields['content']) ||
 		strcmp($oldfields['format'], $fields['format']) ||
 		strcmp($oldfields['text'], $fields['text'])
 	) {
-		$fields['text'] = qa_viewer_text($fields['content'], $fields['format']);
+		$fields['text'] = ilya_viewer_text($fields['content'], $fields['format']);
 	}
 }
 
@@ -2240,9 +2240,9 @@ function qa_update_post_text(&$fields, $oldfields)
  * @param bool $padding
  * @return null|string
  */
-function qa_get_avatar_blob_html($blobId, $width, $height, $size, $padding = false)
+function ilya_get_avatar_blob_html($blobId, $width, $height, $size, $padding = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'util/image.php';
 	require_once QA_INCLUDE_DIR . 'app/users.php';
@@ -2251,9 +2251,9 @@ function qa_get_avatar_blob_html($blobId, $width, $height, $size, $padding = fal
 		return null;
 	}
 
-	$avatarLink = qa_html(qa_get_avatar_blob_url($blobId, $size));
+	$avatarLink = ilya_html(ilya_get_avatar_blob_url($blobId, $size));
 
-	qa_image_constrain($width, $height, $size);
+	ilya_image_constrain($width, $height, $size);
 
 	$params = array(
 		$avatarLink,
@@ -2280,13 +2280,13 @@ function qa_get_avatar_blob_html($blobId, $width, $height, $size, $padding = fal
  * @param $size
  * @return mixed|null|string
  */
-function qa_get_gravatar_html($email, $size)
+function ilya_get_gravatar_html($email, $size)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 
-	$avatarLink = qa_html(qa_get_gravatar_url($email, $size));
+	$avatarLink = ilya_html(ilya_get_gravatar_url($email, $size));
 
 	$size = (int)$size;
 	if ($size > 0) {
@@ -2303,7 +2303,7 @@ function qa_get_gravatar_html($email, $size)
  * @param $pointstitle
  * @return null
  */
-function qa_get_points_title_html($userpoints, $pointstitle)
+function ilya_get_points_title_html($userpoints, $pointstitle)
 {
 	foreach ($pointstitle as $points => $title) {
 		if ($userpoints >= $points)
@@ -2315,30 +2315,30 @@ function qa_get_points_title_html($userpoints, $pointstitle)
 
 
 /**
- * Return an form to add to the $qa_content['notices'] array for displaying a user notice with id $noticeid
+ * Return an form to add to the $ilya_content['notices'] array for displaying a user notice with id $noticeid
  * and $content. Pass the raw database information for the notice in $rawnotice.
  * @param $noticeid
  * @param $content
  * @param null $rawnotice
  * @return array
  */
-function qa_notice_form($noticeid, $content, $rawnotice = null)
+function ilya_notice_form($noticeid, $content, $rawnotice = null)
 {
 	$elementid = 'notice_' . $noticeid;
 
 	return array(
-		'id' => qa_html($elementid),
+		'id' => ilya_html($elementid),
 		'raw' => $rawnotice,
-		'form_tags' => 'method="post" action="' . qa_self_html() . '"',
-		'form_hidden' => array('code' => qa_get_form_security_code('notice-' . $noticeid)),
-		'close_tags' => 'name="' . qa_html($elementid) . '" onclick="return qa_notice_click(this);"',
+		'form_tags' => 'method="post" action="' . ilya_self_html() . '"',
+		'form_hidden' => array('code' => ilya_get_form_security_code('notice-' . $noticeid)),
+		'close_tags' => 'name="' . ilya_html($elementid) . '" onclick="return ilya_notice_click(this);"',
 		'content' => $content,
 	);
 }
 
 
 /**
- * Return a form to set in $qa_content['favorite'] for the favoriting button for entity $entitytype with $entityid.
+ * Return a form to set in $ilya_content['favorite'] for the favoriting button for entity $entitytype with $entityid.
  * Set $favorite to whether the entity is currently a favorite and a description title for the button in $title.
  * @param $entitytype
  * @param $entityid
@@ -2346,14 +2346,14 @@ function qa_notice_form($noticeid, $content, $rawnotice = null)
  * @param $title
  * @return array
  */
-function qa_favorite_form($entitytype, $entityid, $favorite, $title)
+function ilya_favorite_form($entitytype, $entityid, $favorite, $title)
 {
 	return array(
-		'form_tags' => 'method="post" action="' . qa_self_html() . '"',
-		'form_hidden' => array('code' => qa_get_form_security_code('favorite-' . $entitytype . '-' . $entityid)),
+		'form_tags' => 'method="post" action="' . ilya_self_html() . '"',
+		'form_hidden' => array('code' => ilya_get_form_security_code('favorite-' . $entitytype . '-' . $entityid)),
 		'favorite_tags' => 'id="favoriting"',
 		($favorite ? 'favorite_remove_tags' : 'favorite_add_tags') =>
-			'title="' . qa_html($title) . '" name="' . qa_html('favorite_' . $entitytype . '_' . $entityid . '_' . (int)!$favorite) . '" onclick="return qa_favorite_click(this);"',
+			'title="' . ilya_html($title) . '" name="' . ilya_html('favorite_' . $entitytype . '_' . $entityid . '_' . (int)!$favorite) . '" onclick="return ilya_favorite_click(this);"',
 	);
 }
 
@@ -2367,21 +2367,21 @@ function qa_favorite_form($entitytype, $entityid, $favorite, $title)
  * @param bool $compact Whether the number can be shown as compact or not
  * @return string The formatted number as a string
  */
-function qa_format_number($number, $decimals = 0, $compact = false)
+function ilya_format_number($number, $decimals = 0, $compact = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$suffix = '';
 
-	if ($compact && qa_opt('show_compact_numbers')) {
+	if ($compact && ilya_opt('show_compact_numbers')) {
 		$decimals = 0;
 		// only the k/m cases are currently supported (i.e. no billions)
 		if ($number >= 1000000) {
 			$number /= 1000000;
-			$suffix = qa_lang_html('main/_millions_suffix');
+			$suffix = ilya_lang_html('main/_millions_suffix');
 		} elseif ($number >= 1000) {
 			$number /= 1000;
-			$suffix = qa_lang_html('main/_thousands_suffix');
+			$suffix = ilya_lang_html('main/_thousands_suffix');
 		}
 
 		// keep decimal part if not 0 and number is short (e.g. 9.1k)
@@ -2394,7 +2394,7 @@ function qa_format_number($number, $decimals = 0, $compact = false)
 	return number_format(
 		$number,
 		$decimals,
-		qa_lang_html('main/_decimal_point'),
-		qa_lang_html('main/_thousands_separator')
+		ilya_lang_html('main/_decimal_point'),
+		ilya_lang_html('main/_thousands_separator')
 	) . $suffix;
 }

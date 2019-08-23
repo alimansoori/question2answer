@@ -28,9 +28,9 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 /**
  * Returns an array of option names required to perform calculations in userpoints table
  */
-function qa_db_points_option_names()
+function ilya_db_points_option_names()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return array(
 		'points_post_q', 'points_select_a', 'points_per_q_voted_up', 'points_per_q_voted_down', 'points_q_voted_max_gain', 'points_q_voted_max_loss',
@@ -50,13 +50,13 @@ function qa_db_points_option_names()
  * where the ~ symbol within the fragment is substituted for a constraint on which users we are interested in.
  * The element 'multiple' specifies what to multiply each column by to create the final sum in the points column.
  */
-function qa_db_points_calculations()
+function ilya_db_points_calculations()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'app/options.php';
 
-	$options = qa_get_options(qa_db_points_option_names());
+	$options = ilya_get_options(ilya_db_points_option_names());
 
 	return array(
 		'qposts' => array(
@@ -162,15 +162,15 @@ function qa_db_points_calculations()
  * @param $columns
  * @return mixed
  */
-function qa_db_points_update_ifuser($userid, $columns)
+function ilya_db_points_update_ifuser($userid, $columns)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	if (qa_should_update_counts() && isset($userid)) {
+	if (ilya_should_update_counts() && isset($userid)) {
 		require_once QA_INCLUDE_DIR . 'app/options.php';
 		require_once QA_INCLUDE_DIR . 'app/cookies.php';
 
-		$calculations = qa_db_points_calculations();
+		$calculations = ilya_db_points_calculations();
 
 		if ($columns === true) {
 			$keycolumns = $calculations;
@@ -184,7 +184,7 @@ function qa_db_points_update_ifuser($userid, $columns)
 
 		$insertfields = 'userid, ';
 		$insertvalues = '$, ';
-		$insertpoints = (int)qa_opt('points_base');
+		$insertpoints = (int)ilya_opt('points_base');
 
 		$updates = '';
 		$updatepoints = $insertpoints;
@@ -206,10 +206,10 @@ function qa_db_points_update_ifuser($userid, $columns)
 			'ON DUPLICATE KEY UPDATE ' . $updates . 'points=' . $updatepoints . '+bonus';
 
 		// build like this so that a #, $ or ^ character in the $userid (if external integration) isn't substituted
-		qa_db_query_raw(str_replace('~', "='" . qa_db_escape_string($userid) . "'", qa_db_apply_sub($query, array($userid))));
+		ilya_db_query_raw(str_replace('~', "='" . ilya_db_escape_string($userid) . "'", ilya_db_apply_sub($query, array($userid))));
 
-		if (qa_db_insert_on_duplicate_inserted()) {
-			qa_db_userpointscount_update();
+		if (ilya_db_insert_on_duplicate_inserted()) {
+			ilya_db_userpointscount_update();
 		}
 	}
 }
@@ -220,9 +220,9 @@ function qa_db_points_update_ifuser($userid, $columns)
  * @param $userid
  * @param $bonus
  */
-function qa_db_points_set_bonus($userid, $bonus)
+function ilya_db_points_set_bonus($userid, $bonus)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		"INSERT INTO ^userpoints (userid, bonus) VALUES ($, #) ON DUPLICATE KEY UPDATE bonus=#",
 		$userid, $bonus, $bonus
 	);
@@ -232,10 +232,10 @@ function qa_db_points_set_bonus($userid, $bonus)
 /**
  * Update the cached count in the database of the number of rows in the userpoints table
  */
-function qa_db_userpointscount_update()
+function ilya_db_userpointscount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_userpointscount', COUNT(*) FROM ^userpoints " .
 			"ON DUPLICATE KEY UPDATE content = VALUES(content)"

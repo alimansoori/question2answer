@@ -42,7 +42,7 @@ elseif (isset($_GET['qa']) && $_GET['qa'] == 'blob') {
 
 else {
 	// Otherwise, load the Q2A base file which sets up a bunch of crucial stuff
-	$qa_autoconnect = false;
+	$ilya_autoconnect = false;
 	require 'ilya-base.php';
 
 	/**
@@ -52,16 +52,16 @@ else {
 	 *   Apache ilya-rewrite unescapes characters, converts `+` to ` `, cuts off at `#` or `&`
 	 *   Nginx ilya-rewrite unescapes characters, retains `+`, contains true path
 	 */
-	function qa_index_set_request()
+	function ilya_index_set_request()
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		$relativedepth = 0;
 
 		if (isset($_GET['ilya-rewrite'])) { // URLs rewritten by .htaccess or Nginx
 			$urlformat = QA_URL_FORMAT_NEAT;
-			$qa_rewrite = strtr(qa_gpc_to_string($_GET['ilya-rewrite']), '+', ' '); // strtr required by Nginx
-			$requestparts = explode('/', $qa_rewrite);
+			$ilya_rewrite = strtr(ilya_gpc_to_string($_GET['ilya-rewrite']), '+', ' '); // strtr required by Nginx
+			$requestparts = explode('/', $ilya_rewrite);
 			unset($_GET['ilya-rewrite']);
 
 			if (!empty($_SERVER['REQUEST_URI'])) { // workaround for the fact that Apache unescapes characters while rewriting
@@ -75,7 +75,7 @@ else {
 					foreach ($params as $param) {
 						if (preg_match('/^([^\=]*)(\=(.*))?$/', $param, $matches)) {
 							$argument = strtr(urldecode($matches[1]), '.', '_'); // simulate PHP's $_GET behavior
-							$_GET[$argument] = qa_string_to_gpc(urldecode(@$matches[3]));
+							$_GET[$argument] = ilya_string_to_gpc(urldecode(@$matches[3]));
 						}
 					}
 
@@ -86,7 +86,7 @@ else {
 				// a & or # somewhere in the middle of the path, due to Apache unescaping. So we make a special case for that.
 				// If 'REQUEST_URI' and 'ilya-rewrite' already match (as on Nginx), we can skip this.
 				$normalizedpath = urldecode($origpath);
-				if (substr($normalizedpath, -strlen($qa_rewrite)) !== $qa_rewrite) {
+				if (substr($normalizedpath, -strlen($ilya_rewrite)) !== $ilya_rewrite) {
 					$keepparts = count($requestparts);
 					$requestparts = explode('/', urldecode($origpath)); // new request calculated from $_SERVER['REQUEST_URI']
 
@@ -107,17 +107,17 @@ else {
 			if (strpos($_GET['qa'], '/') === false) {
 				$urlformat = (empty($_SERVER['REQUEST_URI']) || strpos($_SERVER['REQUEST_URI'], '/index.php') !== false)
 					? QA_URL_FORMAT_SAFEST : QA_URL_FORMAT_PARAMS;
-				$requestparts = array(qa_gpc_to_string($_GET['qa']));
+				$requestparts = array(ilya_gpc_to_string($_GET['qa']));
 
 				for ($part = 1; $part < 10; $part++) {
-					if (isset($_GET['qa_' . $part])) {
-						$requestparts[] = qa_gpc_to_string($_GET['qa_' . $part]);
-						unset($_GET['qa_' . $part]);
+					if (isset($_GET['ilya_' . $part])) {
+						$requestparts[] = ilya_gpc_to_string($_GET['ilya_' . $part]);
+						unset($_GET['ilya_' . $part]);
 					}
 				}
 			} else {
 				$urlformat = QA_URL_FORMAT_PARAM;
-				$requestparts = explode('/', qa_gpc_to_string($_GET['qa']));
+				$requestparts = explode('/', ilya_gpc_to_string($_GET['qa']));
 			}
 
 			unset($_GET['qa']);
@@ -156,23 +156,23 @@ else {
 		$key = key($requestparts);
 
 		$requestkey = isset($requestparts[$key]) ? $requestparts[$key] : '';
-		$replacement = array_search($requestkey, qa_get_request_map());
+		$replacement = array_search($requestkey, ilya_get_request_map());
 		if ($replacement !== false)
 			$requestparts[$key] = $replacement;
 
-		qa_set_request(
+		ilya_set_request(
 			implode('/', $requestparts),
 			($relativedepth > 1 ? str_repeat('../', $relativedepth - 1) : './'),
 			$urlformat
 		);
 	}
 
-	qa_index_set_request();
+	ilya_index_set_request();
 
 
 	// Branch off to appropriate file for further handling
 
-	$requestlower = strtolower(qa_request());
+	$requestlower = strtolower(ilya_request());
 
 	if ($requestlower == 'install') {
 		require QA_INCLUDE_DIR . 'ilya-install.php';
@@ -180,7 +180,7 @@ else {
 		require QA_INCLUDE_DIR . 'ilya-url-test.php';
 	} else {
 		// enable gzip compression for output (needs to come early)
-		qa_initialize_buffering($requestlower);
+		ilya_initialize_buffering($requestlower);
 
 		if (substr($requestlower, 0, 5) == 'feed/') {
 			require QA_INCLUDE_DIR . 'ilya-feed.php';
@@ -190,4 +190,4 @@ else {
 	}
 }
 
-qa_report_process_stage('shutdown');
+ilya_report_process_stage('shutdown');

@@ -27,30 +27,30 @@ require_once QA_INCLUDE_DIR . 'app/options.php';
 require_once QA_INCLUDE_DIR . 'db/selects.php';
 
 
-$postid = qa_post_text('postid');
-$vote = qa_post_text('vote');
-$code = qa_post_text('code');
+$postid = ilya_post_text('postid');
+$vote = ilya_post_text('vote');
+$code = ilya_post_text('code');
 
-$userid = qa_get_logged_in_userid();
-$cookieid = qa_cookie_get();
+$userid = ilya_get_logged_in_userid();
+$cookieid = ilya_cookie_get();
 
-if (!qa_check_form_security_code('vote', $code)) {
-	$voteerror = qa_lang_html('misc/form_security_reload');
+if (!ilya_check_form_security_code('vote', $code)) {
+	$voteerror = ilya_lang_html('misc/form_security_reload');
 } else {
-	$post = qa_db_select_with_pending(qa_db_full_post_selectspec($userid, $postid));
-	$voteerror = qa_vote_error_html($post, $vote, $userid, qa_request());
+	$post = ilya_db_select_with_pending(ilya_db_full_post_selectspec($userid, $postid));
+	$voteerror = ilya_vote_error_html($post, $vote, $userid, ilya_request());
 }
 
 if ($voteerror === false) {
-	qa_vote_set($post, $userid, qa_get_logged_in_handle(), $cookieid, $vote);
+	ilya_vote_set($post, $userid, ilya_get_logged_in_handle(), $cookieid, $vote);
 
-	$post = qa_db_select_with_pending(qa_db_full_post_selectspec($userid, $postid));
+	$post = ilya_db_select_with_pending(ilya_db_full_post_selectspec($userid, $postid));
 
-	$fields = qa_post_html_fields($post, $userid, $cookieid, array(), null, array(
-		'voteview' => qa_get_vote_view($post, true), // behave as if on question page since the vote succeeded
+	$fields = ilya_post_html_fields($post, $userid, $cookieid, array(), null, array(
+		'voteview' => ilya_get_vote_view($post, true), // behave as if on question page since the vote succeeded
 	));
 
-	$themeclass = qa_load_theme_class(qa_get_site_theme(), 'voting', null, null);
+	$themeclass = ilya_load_theme_class(ilya_get_site_theme(), 'voting', null, null);
 	$themeclass->initialize();
 
 	echo "QA_AJAX_RESPONSE\n1\n";

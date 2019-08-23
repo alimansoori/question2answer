@@ -31,11 +31,11 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param bool $absolute
  * @return mixed|string
  */
-function qa_get_blob_url($blobid, $absolute = false)
+function ilya_get_blob_url($blobid, $absolute = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return qa_path('blob', array('qa_blobid' => $blobid), $absolute ? qa_opt('site_url') : null, QA_URL_FORMAT_PARAMS);
+	return ilya_path('blob', array('ilya_blobid' => $blobid), $absolute ? ilya_opt('site_url') : null, QA_URL_FORMAT_PARAMS);
 }
 
 
@@ -44,9 +44,9 @@ function qa_get_blob_url($blobid, $absolute = false)
  * @param $blobid
  * @return mixed|string
  */
-function qa_get_blob_directory($blobid)
+function ilya_get_blob_directory($blobid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return rtrim(QA_BLOBS_DIRECTORY, '/') . '/' . substr(str_pad($blobid, 20, '0', STR_PAD_LEFT), 0, 3);
 }
@@ -58,11 +58,11 @@ function qa_get_blob_directory($blobid)
  * @param $format
  * @return mixed|string
  */
-function qa_get_blob_filename($blobid, $format)
+function ilya_get_blob_filename($blobid, $format)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return qa_get_blob_directory($blobid) . '/' . $blobid . '.' . preg_replace('/[^A-Za-z0-9]/', '', $format);
+	return ilya_get_blob_directory($blobid) . '/' . $blobid . '.' . preg_replace('/[^A-Za-z0-9]/', '', $format);
 }
 
 
@@ -77,18 +77,18 @@ function qa_get_blob_filename($blobid, $format)
  * @param $ip
  * @return mixed|null|string
  */
-function qa_create_blob($content, $format, $sourcefilename = null, $userid = null, $cookieid = null, $ip = null)
+function ilya_create_blob($content, $format, $sourcefilename = null, $userid = null, $cookieid = null, $ip = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/blobs.php';
 
-	$blobid = qa_db_blob_create(defined('QA_BLOBS_DIRECTORY') ? null : $content, $format, $sourcefilename, $userid, $cookieid, $ip);
+	$blobid = ilya_db_blob_create(defined('QA_BLOBS_DIRECTORY') ? null : $content, $format, $sourcefilename, $userid, $cookieid, $ip);
 
 	if (isset($blobid) && defined('QA_BLOBS_DIRECTORY')) {
 		// still write content to the database if writing to disk failed
-		if (!qa_write_blob_file($blobid, $content, $format))
-			qa_db_blob_set_content($blobid, $content);
+		if (!ilya_write_blob_file($blobid, $content, $format))
+			ilya_db_blob_set_content($blobid, $content);
 	}
 
 	return $blobid;
@@ -102,15 +102,15 @@ function qa_create_blob($content, $format, $sourcefilename = null, $userid = nul
  * @param $format
  * @return bool|mixed
  */
-function qa_write_blob_file($blobid, $content, $format)
+function ilya_write_blob_file($blobid, $content, $format)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$written = false;
 
-	$directory = qa_get_blob_directory($blobid);
+	$directory = ilya_get_blob_directory($blobid);
 	if (is_dir($directory) || mkdir($directory, fileperms(rtrim(QA_BLOBS_DIRECTORY, '/')) & 0777)) {
-		$filename = qa_get_blob_filename($blobid, $format);
+		$filename = ilya_get_blob_filename($blobid, $format);
 
 		$file = fopen($filename, 'xb');
 		if (is_resource($file)) {
@@ -133,16 +133,16 @@ function qa_write_blob_file($blobid, $content, $format)
  * @param $blobid
  * @return array|mixed|null
  */
-function qa_read_blob($blobid)
+function ilya_read_blob($blobid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/blobs.php';
 
-	$blob = qa_db_blob_read($blobid);
+	$blob = ilya_db_blob_read($blobid);
 
 	if (isset($blob) && defined('QA_BLOBS_DIRECTORY') && !isset($blob['content']))
-		$blob['content'] = qa_read_blob_file($blobid, $blob['format']);
+		$blob['content'] = ilya_read_blob_file($blobid, $blob['format']);
 
 	return $blob;
 }
@@ -154,11 +154,11 @@ function qa_read_blob($blobid)
  * @param $format
  * @return mixed|null|string
  */
-function qa_read_blob_file($blobid, $format)
+function ilya_read_blob_file($blobid, $format)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$filename = qa_get_blob_filename($blobid, $format);
+	$filename = ilya_get_blob_filename($blobid, $format);
 	if (is_readable($filename))
 		return file_get_contents($filename);
 	else
@@ -171,20 +171,20 @@ function qa_read_blob_file($blobid, $format)
  * @param $blobid
  * @return mixed
  */
-function qa_delete_blob($blobid)
+function ilya_delete_blob($blobid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/blobs.php';
 
 	if (defined('QA_BLOBS_DIRECTORY')) {
-		$blob = qa_db_blob_read($blobid);
+		$blob = ilya_db_blob_read($blobid);
 
 		if (isset($blob) && !isset($blob['content']))
-			unlink(qa_get_blob_filename($blobid, $blob['format']));
+			unlink(ilya_get_blob_filename($blobid, $blob['format']));
 	}
 
-	qa_db_blob_delete($blobid);
+	ilya_db_blob_delete($blobid);
 }
 
 
@@ -194,11 +194,11 @@ function qa_delete_blob($blobid)
  * @param $format
  * @return mixed
  */
-function qa_delete_blob_file($blobid, $format)
+function ilya_delete_blob_file($blobid, $format)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	unlink(qa_get_blob_filename($blobid, $format));
+	unlink(ilya_get_blob_filename($blobid, $format));
 }
 
 
@@ -207,11 +207,11 @@ function qa_delete_blob_file($blobid, $format)
  * @param $blobid
  * @return bool|mixed
  */
-function qa_blob_exists($blobid)
+function ilya_blob_exists($blobid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/blobs.php';
 
-	return qa_db_blob_exists($blobid);
+	return ilya_db_blob_exists($blobid);
 }

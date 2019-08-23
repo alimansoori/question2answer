@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_tag_cloud
+class ilya_tag_cloud
 {
 	public function option_default($option)
 	{
@@ -39,13 +39,13 @@ class qa_tag_cloud
 
 	public function admin_form()
 	{
-		$saved = qa_clicked('tag_cloud_save_button');
+		$saved = ilya_clicked('tag_cloud_save_button');
 
 		if ($saved) {
-			qa_opt('tag_cloud_count_tags', (int) qa_post_text('tag_cloud_count_tags_field'));
-			qa_opt('tag_cloud_font_size', (int) qa_post_text('tag_cloud_font_size_field'));
-			qa_opt('tag_cloud_minimal_font_size', (int) qa_post_text('tag_cloud_minimal_font_size_field'));
-			qa_opt('tag_cloud_size_popular', (int) qa_post_text('tag_cloud_size_popular_field'));
+			ilya_opt('tag_cloud_count_tags', (int) ilya_post_text('tag_cloud_count_tags_field'));
+			ilya_opt('tag_cloud_font_size', (int) ilya_post_text('tag_cloud_font_size_field'));
+			ilya_opt('tag_cloud_minimal_font_size', (int) ilya_post_text('tag_cloud_minimal_font_size_field'));
+			ilya_opt('tag_cloud_size_popular', (int) ilya_post_text('tag_cloud_size_popular_field'));
 		}
 
 		return array(
@@ -55,7 +55,7 @@ class qa_tag_cloud
 				array(
 					'label' => 'Maximum tags to show:',
 					'type' => 'number',
-					'value' => (int) qa_opt('tag_cloud_count_tags'),
+					'value' => (int) ilya_opt('tag_cloud_count_tags'),
 					'suffix' => 'tags',
 					'tags' => 'name="tag_cloud_count_tags_field"',
 				),
@@ -64,7 +64,7 @@ class qa_tag_cloud
 					'label' => 'Biggest font size:',
 					'suffix' => 'pixels',
 					'type' => 'number',
-					'value' => (int) qa_opt('tag_cloud_font_size'),
+					'value' => (int) ilya_opt('tag_cloud_font_size'),
 					'tags' => 'name="tag_cloud_font_size_field"',
 				),
 
@@ -72,14 +72,14 @@ class qa_tag_cloud
 					'label' => 'Smallest allowed font size:',
 					'suffix' => 'pixels',
 					'type' => 'number',
-					'value' => (int) qa_opt('tag_cloud_minimal_font_size'),
+					'value' => (int) ilya_opt('tag_cloud_minimal_font_size'),
 					'tags' => 'name="tag_cloud_minimal_font_size_field"',
 				),
 
 				array(
 					'label' => 'Font size represents tag popularity',
 					'type' => 'checkbox',
-					'value' => qa_opt('tag_cloud_size_popular'),
+					'value' => ilya_opt('tag_cloud_size_popular'),
 					'tags' => 'name="tag_cloud_size_popular_field"',
 				),
 			),
@@ -110,27 +110,27 @@ class qa_tag_cloud
 	}
 
 
-	public function output_widget($region, $place, $themeobject, $template, $request, $qa_content)
+	public function output_widget($region, $place, $themeobject, $template, $request, $ilya_content)
 	{
 		require_once QA_INCLUDE_DIR.'db/selects.php';
 
-		$populartags = qa_db_single_select(qa_db_popular_tags_selectspec(0, (int) qa_opt('tag_cloud_count_tags')));
+		$populartags = ilya_db_single_select(ilya_db_popular_tags_selectspec(0, (int) ilya_opt('tag_cloud_count_tags')));
 
 		$populartagslog = array_map(array($this, 'log_callback'), $populartags);
 
 		$maxcount = reset($populartagslog);
 
-		$themeobject->output(sprintf('<h2 style="margin-top: 0; padding-top: 0;">%s</h2>', qa_lang_html('main/popular_tags')));
+		$themeobject->output(sprintf('<h2 style="margin-top: 0; padding-top: 0;">%s</h2>', ilya_lang_html('main/popular_tags')));
 
 		$themeobject->output('<div style="font-size: 10px;">');
 
-		$maxsize = qa_opt('tag_cloud_font_size');
-		$minsize = qa_opt('tag_cloud_minimal_font_size');
-		$scale = qa_opt('tag_cloud_size_popular');
-		$blockwordspreg = qa_get_block_words_preg();
+		$maxsize = ilya_opt('tag_cloud_font_size');
+		$minsize = ilya_opt('tag_cloud_minimal_font_size');
+		$scale = ilya_opt('tag_cloud_size_popular');
+		$blockwordspreg = ilya_get_block_words_preg();
 
 		foreach ($populartagslog as $tag => $count) {
-			$matches = qa_block_words_match_all($tag, $blockwordspreg);
+			$matches = ilya_block_words_match_all($tag, $blockwordspreg);
 			if (!empty($matches)) {
 				continue;
 			}
@@ -144,7 +144,7 @@ class qa_tag_cloud
 				$size = $maxsize;
 			}
 
-			$themeobject->output(sprintf('<a href="%s" style="font-size: %dpx; vertical-align: baseline;">%s</a>', qa_path_html('tag/' . $tag), $size, qa_html($tag)));
+			$themeobject->output(sprintf('<a href="%s" style="font-size: %dpx; vertical-align: baseline;">%s</a>', ilya_path_html('tag/' . $tag), $size, ilya_html($tag)));
 		}
 
 		$themeobject->output('</div>');

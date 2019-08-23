@@ -29,13 +29,13 @@ require_once QA_INCLUDE_DIR . 'app/users.php';
 require_once QA_INCLUDE_DIR . 'app/format.php';
 require_once QA_INCLUDE_DIR . 'app/limits.php';
 
-$loginUserId = qa_get_logged_in_userid();
-$loginUserHandle = qa_get_logged_in_handle();
+$loginUserId = ilya_get_logged_in_userid();
+$loginUserHandle = ilya_get_logged_in_handle();
 
 
 // Check which box we're showing (inbox/sent), we're not using Q2A's single-sign on integration and that we're logged in
 
-$req = qa_request_part(1);
+$req = ilya_request_part(1);
 if ($req === null)
 	$showOutbox = false;
 elseif ($req === 'sent')
@@ -44,65 +44,65 @@ else
 	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 if (QA_FINAL_EXTERNAL_USERS)
-	qa_fatal_error('User accounts are handled by external code');
+	ilya_fatal_error('User accounts are handled by external code');
 
 if (!isset($loginUserId)) {
-	$qa_content = qa_content_prepare();
-	$qa_content['error'] = qa_insert_login_links(qa_lang_html('misc/message_must_login'), qa_request());
-	return $qa_content;
+	$ilya_content = ilya_content_prepare();
+	$ilya_content['error'] = ilya_insert_login_links(ilya_lang_html('misc/message_must_login'), ilya_request());
+	return $ilya_content;
 }
 
-if (!qa_opt('allow_private_messages') || !qa_opt('show_message_history'))
+if (!ilya_opt('allow_private_messages') || !ilya_opt('show_message_history'))
 	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 
 // Find the messages for this user
 
-$start = qa_get_start();
-$pagesize = qa_opt('page_size_pms');
+$start = ilya_get_start();
+$pagesize = ilya_opt('page_size_pms');
 
 // get number of messages then actual messages for this page
-$func = $showOutbox ? 'qa_db_messages_outbox_selectspec' : 'qa_db_messages_inbox_selectspec';
-$pmSpecCount = qa_db_selectspec_count($func('private', $loginUserId, true));
+$func = $showOutbox ? 'ilya_db_messages_outbox_selectspec' : 'ilya_db_messages_inbox_selectspec';
+$pmSpecCount = ilya_db_selectspec_count($func('private', $loginUserId, true));
 $pmSpec = $func('private', $loginUserId, true, $start, $pagesize);
 
-list($numMessages, $userMessages) = qa_db_select_with_pending($pmSpecCount, $pmSpec);
+list($numMessages, $userMessages) = ilya_db_select_with_pending($pmSpecCount, $pmSpec);
 $count = $numMessages['count'];
 
 
 // Prepare content for theme
 
-$qa_content = qa_content_prepare();
-$qa_content['title'] = qa_lang_html($showOutbox ? 'misc/pm_outbox_title' : 'misc/pm_inbox_title');
+$ilya_content = ilya_content_prepare();
+$ilya_content['title'] = ilya_lang_html($showOutbox ? 'misc/pm_outbox_title' : 'misc/pm_inbox_title');
 
-$qa_content['custom'] =
+$ilya_content['custom'] =
 	'<div style="text-align:center">' .
-		($showOutbox ? '<a href="' . qa_path_html('messages') . '">' . qa_lang_html('misc/inbox') . '</a>' : qa_lang_html('misc/inbox')) .
+		($showOutbox ? '<a href="' . ilya_path_html('messages') . '">' . ilya_lang_html('misc/inbox') . '</a>' : ilya_lang_html('misc/inbox')) .
 		' - ' .
-		($showOutbox ? qa_lang_html('misc/outbox') : '<a href="' . qa_path_html('messages/sent') . '">' . qa_lang_html('misc/outbox') . '</a>') .
+		($showOutbox ? ilya_lang_html('misc/outbox') : '<a href="' . ilya_path_html('messages/sent') . '">' . ilya_lang_html('misc/outbox') . '</a>') .
 	'</div>';
 
-$qa_content['message_list'] = array(
+$ilya_content['message_list'] = array(
 	'tags' => 'id="privatemessages"',
 	'messages' => array(),
 	'form' => array(
-		'tags' => 'name="pmessage" method="post" action="' . qa_self_html() . '"',
+		'tags' => 'name="pmessage" method="post" action="' . ilya_self_html() . '"',
 		'style' => 'tall',
 		'hidden' => array(
-			'qa_click' => '', // for simulating clicks in Javascript
-			'handle' => qa_html($loginUserHandle),
-			'start' => qa_html($start),
-			'code' => qa_get_form_security_code('pm-' . $loginUserHandle),
+			'ilya_click' => '', // for simulating clicks in Javascript
+			'handle' => ilya_html($loginUserHandle),
+			'start' => ilya_html($start),
+			'code' => ilya_get_form_security_code('pm-' . $loginUserHandle),
 		),
 	),
 );
 
-$htmlDefaults = qa_message_html_defaults();
+$htmlDefaults = ilya_message_html_defaults();
 if ($showOutbox)
 	$htmlDefaults['towhomview'] = true;
 
 foreach ($userMessages as $message) {
-	$msgFormat = qa_message_html_fields($message, $htmlDefaults);
+	$msgFormat = ilya_message_html_fields($message, $htmlDefaults);
 	$replyHandle = $showOutbox ? $message['tohandle'] : $message['fromhandle'];
 	$replyId = $showOutbox ? $message['touserid'] : $message['fromuserid'];
 
@@ -113,22 +113,22 @@ foreach ($userMessages as $message) {
 
 	if (!empty($replyHandle) && $replyId != $loginUserId) {
 		$msgFormat['form']['buttons']['reply'] = array(
-			'tags' => 'onclick="window.location.href=\'' . qa_path_html('message/' . $replyHandle) . '\';return false"',
-			'label' => qa_lang_html('question/reply_button'),
+			'tags' => 'onclick="window.location.href=\'' . ilya_path_html('message/' . $replyHandle) . '\';return false"',
+			'label' => ilya_lang_html('question/reply_button'),
 		);
 	}
 
 	$msgFormat['form']['buttons']['delete'] = array(
-		'tags' => 'name="m' . qa_html($message['messageid']) . '_dodelete" onclick="return qa_pm_click(' . qa_js($message['messageid']) . ', this, ' . qa_js($showOutbox ? 'outbox' : 'inbox') . ');"',
-		'label' => qa_lang_html('question/delete_button'),
-		'popup' => qa_lang_html('profile/delete_pm_popup'),
+		'tags' => 'name="m' . ilya_html($message['messageid']) . '_dodelete" onclick="return ilya_pm_click(' . ilya_js($message['messageid']) . ', this, ' . ilya_js($showOutbox ? 'outbox' : 'inbox') . ');"',
+		'label' => ilya_lang_html('question/delete_button'),
+		'popup' => ilya_lang_html('profile/delete_pm_popup'),
 	);
 
-	$qa_content['message_list']['messages'][] = $msgFormat;
+	$ilya_content['message_list']['messages'][] = $msgFormat;
 }
 
-$qa_content['page_links'] = qa_html_page_links(qa_request(), $start, $pagesize, $count, qa_opt('pages_prev_next'));
+$ilya_content['page_links'] = ilya_html_page_links(ilya_request(), $start, $pagesize, $count, ilya_opt('pages_prev_next'));
 
-$qa_content['navigation']['sub'] = qa_user_sub_navigation($loginUserHandle, 'messages', true);
+$ilya_content['navigation']['sub'] = ilya_user_sub_navigation($loginUserHandle, 'messages', true);
 
-return $qa_content;
+return $ilya_content;

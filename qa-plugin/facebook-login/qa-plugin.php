@@ -43,7 +43,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 // login modules don't work with external user integration
 if (!QA_FINAL_EXTERNAL_USERS) {
-	qa_register_plugin_module('login', 'ilya-facebook-login.php', 'qa_facebook_login', 'Facebook Login');
-	qa_register_plugin_module('page', 'ilya-facebook-login-page.php', 'qa_facebook_login_page', 'Facebook Login Page');
-	qa_register_plugin_layer('ilya-facebook-layer.php', 'Facebook Login Layer');
+	ilya_register_plugin_module('login', 'ilya-facebook-login.php', 'ilya_facebook_login', 'Facebook Login');
+	ilya_register_plugin_module('page', 'ilya-facebook-login-page.php', 'ilya_facebook_login_page', 'Facebook Login Page');
+	ilya_register_plugin_layer('ilya-facebook-layer.php', 'Facebook Login Layer');
 }

@@ -93,25 +93,25 @@ class AppVotesTest extends PHPUnit_Framework_TestCase
 	/**
 	 * Test voteview where upvotes/downvotes are combined
 	 */
-	public function test__qa_vote_error_html()
+	public function test__ilya_vote_error_html()
 	{
 		// set options/lang/user cache to bypass database
-		global $qa_options_cache, $qa_curr_ip_blocked, $qa_cached_logged_in_user, $qa_phrases_full;
-		$qa_options_cache = array_merge($qa_options_cache, $this->voteviewOpts);
-		$qa_curr_ip_blocked = false;
-		$qa_cached_logged_in_user = $this->mockUser;
+		global $ilya_options_cache, $ilya_curr_ip_blocked, $ilya_cached_logged_in_user, $ilya_phrases_full;
+		$ilya_options_cache = array_merge($ilya_options_cache, $this->voteviewOpts);
+		$ilya_curr_ip_blocked = false;
+		$ilya_cached_logged_in_user = $this->mockUser;
 
-		$qa_phrases_full['main']['vote_not_allowed'] = 'Voting on this is not allowed';
-		$qa_phrases_full['main']['vote_disabled_hidden'] = 'You cannot vote on hidden posts';
+		$ilya_phrases_full['main']['vote_not_allowed'] = 'Voting on this is not allowed';
+		$ilya_phrases_full['main']['vote_disabled_hidden'] = 'You cannot vote on hidden posts';
 
 		$topage = '123/to-be-or-not-to-be';
 
-		$this->assertSame($qa_phrases_full['main']['vote_not_allowed'], qa_vote_error_html($this->mockQuestion, 1, 1, $topage));
+		$this->assertSame($ilya_phrases_full['main']['vote_not_allowed'], ilya_vote_error_html($this->mockQuestion, 1, 1, $topage));
 
 		$hiddenQ = $this->mockQuestion;
 		$hiddenQ['hidden'] = 1;
-		$this->assertSame($qa_phrases_full['main']['vote_disabled_hidden'], qa_vote_error_html($hiddenQ, 1, 17, $topage));
+		$this->assertSame($ilya_phrases_full['main']['vote_disabled_hidden'], ilya_vote_error_html($hiddenQ, 1, 17, $topage));
 
-		// can't test more right now due to qa_user_limits_remaining() call from qa_user_permit_error()
+		// can't test more right now due to ilya_user_limits_remaining() call from ilya_user_permit_error()
 	}
 }

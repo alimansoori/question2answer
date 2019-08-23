@@ -30,13 +30,13 @@ require_once QA_INCLUDE_DIR . 'db/selects.php';
 
 // Get current list of widgets and determine the state of this admin page
 
-$widgetid = qa_post_text('edit');
+$widgetid = ilya_post_text('edit');
 if (!strlen($widgetid))
-	$widgetid = qa_get('edit');
+	$widgetid = ilya_get('edit');
 
-list($widgets, $pages) = qa_db_select_with_pending(
-	qa_db_widgets_selectspec(),
-	qa_db_pages_selectspec()
+list($widgets, $pages) = ilya_db_select_with_pending(
+	ilya_db_widgets_selectspec(),
+	ilya_db_pages_selectspec()
 );
 
 if (isset($widgetid)) {
@@ -47,20 +47,20 @@ if (isset($widgetid)) {
 	}
 
 } else {
-	$editwidget = array('title' => qa_post_text('title'));
+	$editwidget = array('title' => ilya_post_text('title'));
 	if (!isset($editwidget['title']))
-		$editwidget['title'] = qa_get('title');
+		$editwidget['title'] = ilya_get('title');
 }
 
-$module = qa_load_module('widget', @$editwidget['title']);
+$module = ilya_load_module('widget', @$editwidget['title']);
 
 $widgetfound = isset($module);
 
 
 // Check admin privileges (do late to allow one DB query)
 
-if (!qa_admin_check_privileges($qa_content))
-	return $qa_content;
+if (!ilya_admin_check_privileges($ilya_content))
+	return $ilya_content;
 
 
 // Define an array of relevant templates we can use
@@ -101,11 +101,11 @@ $templateoptions = array();
 if (isset($module) && method_exists($module, 'allow_template')) {
 	foreach ($templatelangkeys as $template => $langkey) {
 		if ($module->allow_template($template))
-			$templateoptions[$template] = qa_lang_html($langkey);
+			$templateoptions[$template] = ilya_lang_html($langkey);
 	}
 
 	if ($module->allow_template('custom')) {
-		$pagemodules = qa_load_modules_with('page', 'match_request');
+		$pagemodules = ilya_load_modules_with('page', 'match_request');
 		foreach ($pages as $page) {
 			// check if this is a page plugin by fetching all plugin classes and matching requests - currently quite convoluted!
 			$isPagePlugin = false;
@@ -116,7 +116,7 @@ if (isset($module) && method_exists($module, 'allow_template')) {
 			}
 
 			if ($isPagePlugin || !($page['flags'] & QA_PAGE_FLAGS_EXTERNAL))
-				$templateoptions['custom-' . $page['pageid']] = qa_html($page['title']);
+				$templateoptions['custom-' . $page['pageid']] = ilya_html($page['title']);
 		}
 
 	}
@@ -127,31 +127,31 @@ if (isset($module) && method_exists($module, 'allow_template')) {
 
 $securityexpired = false;
 
-if (qa_clicked('docancel'))
-	qa_redirect('admin/layout');
+if (ilya_clicked('docancel'))
+	ilya_redirect('admin/layout');
 
-elseif (qa_clicked('dosavewidget')) {
+elseif (ilya_clicked('dosavewidget')) {
 	require_once QA_INCLUDE_DIR . 'db/admin.php';
 
-	if (!qa_check_form_security_code('admin/widgets', qa_post_text('code')))
+	if (!ilya_check_form_security_code('admin/widgets', ilya_post_text('code')))
 		$securityexpired = true;
 
 	else {
-		if (qa_post_text('dodelete')) {
-			qa_db_widget_delete($editwidget['widgetid']);
-			qa_redirect('admin/layout');
+		if (ilya_post_text('dodelete')) {
+			ilya_db_widget_delete($editwidget['widgetid']);
+			ilya_redirect('admin/layout');
 
 		} else {
 			if ($widgetfound) {
-				$intitle = qa_post_text('title');
-				$inposition = qa_post_text('position');
+				$intitle = ilya_post_text('title');
+				$inposition = ilya_post_text('position');
 				$intemplates = array();
 
-				if (qa_post_text('template_all'))
+				if (ilya_post_text('template_all'))
 					$intemplates[] = 'all';
 
 				foreach (array_keys($templateoptions) as $template) {
-					if (qa_post_text('template_' . $template))
+					if (ilya_post_text('template_' . $template))
 						$intemplates[] = $template;
 				}
 
@@ -161,15 +161,15 @@ elseif (qa_clicked('dosavewidget')) {
 
 				if (isset($editwidget['widgetid'])) { // changing existing widget
 					$widgetid = $editwidget['widgetid'];
-					qa_db_widget_set_fields($widgetid, $intags);
+					ilya_db_widget_set_fields($widgetid, $intags);
 
 				} else
-					$widgetid = qa_db_widget_create($intitle, $intags);
+					$widgetid = ilya_db_widget_create($intitle, $intags);
 
-				qa_db_widget_move($widgetid, substr($inposition, 0, 2), substr($inposition, 2));
+				ilya_db_widget_move($widgetid, substr($inposition, 0, 2), substr($inposition, 2));
 			}
 
-			qa_redirect('admin/layout');
+			ilya_redirect('admin/layout');
 		}
 	}
 }
@@ -177,14 +177,14 @@ elseif (qa_clicked('dosavewidget')) {
 
 // Prepare content for theme
 
-$qa_content = qa_content_prepare();
+$ilya_content = ilya_content_prepare();
 
-$qa_content['title'] = qa_lang_html('admin/admin_title') . ' - ' . qa_lang_html('admin/layout_title');
-$qa_content['error'] = $securityexpired ? qa_lang_html('admin/form_security_expired') : qa_admin_page_error();
+$ilya_content['title'] = ilya_lang_html('admin/admin_title') . ' - ' . ilya_lang_html('admin/layout_title');
+$ilya_content['error'] = $securityexpired ? ilya_lang_html('admin/form_security_expired') : ilya_admin_page_error();
 
 $positionoptions = array();
 
-$placeoptionhtml = qa_admin_place_options();
+$placeoptionhtml = ilya_admin_place_options();
 
 $regioncodes = array(
 	'F' => 'full',
@@ -214,7 +214,7 @@ foreach ($placeoptionhtml as $place => $optionhtml) {
 				$positionhtml = $optionhtml;
 
 				if (isset($previous))
-					$positionhtml .= ' - ' . qa_lang_html_sub('admin/after_x', qa_html($passedself ? $widget['title'] : $previous['title']));
+					$positionhtml .= ' - ' . ilya_lang_html_sub('admin/after_x', ilya_html($passedself ? $widget['title'] : $previous['title']));
 
 				if ($widget['widgetid'] == @$editwidget['widgetid'])
 					$passedself = true;
@@ -230,7 +230,7 @@ foreach ($placeoptionhtml as $place => $optionhtml) {
 			$positionhtml = $optionhtml;
 
 			if (isset($previous))
-				$positionhtml .= ' - ' . qa_lang_html_sub('admin/after_x', $previous['title']);
+				$positionhtml .= ' - ' . ilya_lang_html_sub('admin/after_x', $previous['title']);
 
 			$positionoptions[$place . (isset($previous) ? (1 + $maxposition) : 1)] = $positionhtml;
 		}
@@ -239,14 +239,14 @@ foreach ($placeoptionhtml as $place => $optionhtml) {
 
 $positionvalue = @$positionoptions[$editwidget['place'] . $editwidget['position']];
 
-$qa_content['form'] = array(
-	'tags' => 'method="post" action="' . qa_path_html(qa_request()) . '"',
+$ilya_content['form'] = array(
+	'tags' => 'method="post" action="' . ilya_path_html(ilya_request()) . '"',
 
 	'style' => 'tall',
 
 	'fields' => array(
 		'title' => array(
-			'label' => qa_lang_html('admin/widget_name') . ' &nbsp; ' . qa_html($editwidget['title']),
+			'label' => ilya_lang_html('admin/widget_name') . ' &nbsp; ' . ilya_html($editwidget['title']),
 			'type' => 'static',
 			'tight' => true,
 		),
@@ -254,7 +254,7 @@ $qa_content['form'] = array(
 		'position' => array(
 			'id' => 'position_display',
 			'tags' => 'name="position"',
-			'label' => qa_lang_html('admin/position'),
+			'label' => ilya_lang_html('admin/position'),
 			'type' => 'select',
 			'options' => $positionoptions,
 			'value' => $positionvalue,
@@ -262,14 +262,14 @@ $qa_content['form'] = array(
 
 		'delete' => array(
 			'tags' => 'name="dodelete" id="dodelete"',
-			'label' => qa_lang_html('admin/delete_widget_position'),
+			'label' => ilya_lang_html('admin/delete_widget_position'),
 			'value' => 0,
 			'type' => 'checkbox',
 		),
 
 		'all' => array(
 			'id' => 'all_display',
-			'label' => qa_lang_html('admin/widget_all_pages'),
+			'label' => ilya_lang_html('admin/widget_all_pages'),
 			'type' => 'checkbox',
 			'tags' => 'name="template_all" id="template_all"',
 			'value' => is_numeric(strpos(',' . @$editwidget['tags'] . ',', ',all,')),
@@ -277,7 +277,7 @@ $qa_content['form'] = array(
 
 		'templates' => array(
 			'id' => 'templates_display',
-			'label' => qa_lang_html('admin/widget_pages_explanation'),
+			'label' => ilya_lang_html('admin/widget_pages_explanation'),
 			'type' => 'custom',
 			'html' => '',
 		),
@@ -285,12 +285,12 @@ $qa_content['form'] = array(
 
 	'buttons' => array(
 		'save' => array(
-			'label' => qa_lang_html(isset($editwidget['widgetid']) ? 'main/save_button' : ('admin/add_widget_button')),
+			'label' => ilya_lang_html(isset($editwidget['widgetid']) ? 'main/save_button' : ('admin/add_widget_button')),
 		),
 
 		'cancel' => array(
 			'tags' => 'name="docancel"',
-			'label' => qa_lang_html('main/cancel_button'),
+			'label' => ilya_lang_html('main/cancel_button'),
 		),
 	),
 
@@ -298,49 +298,49 @@ $qa_content['form'] = array(
 		'dosavewidget' => '1', // for IE
 		'edit' => @$editwidget['widgetid'],
 		'title' => @$editwidget['title'],
-		'code' => qa_get_form_security_code('admin/widgets'),
+		'code' => ilya_get_form_security_code('admin/widgets'),
 	),
 );
 
 foreach ($templateoptions as $template => $optionhtml) {
-	$qa_content['form']['fields']['templates']['html'] .=
-		'<input type="checkbox" name="template_' . qa_html($template) . '"' .
+	$ilya_content['form']['fields']['templates']['html'] .=
+		'<input type="checkbox" name="template_' . ilya_html($template) . '"' .
 		(is_numeric(strpos(',' . @$editwidget['tags'] . ',', ',' . $template . ',')) ? ' checked' : '') .
 		'/> ' . $optionhtml . '<br/>';
 }
 
 if (isset($editwidget['widgetid'])) {
-	qa_set_display_rules($qa_content, array(
+	ilya_set_display_rules($ilya_content, array(
 		'templates_display' => '!(dodelete||template_all)',
 		'all_display' => '!dodelete',
 	));
 
 } else {
-	unset($qa_content['form']['fields']['delete']);
-	qa_set_display_rules($qa_content, array(
+	unset($ilya_content['form']['fields']['delete']);
+	ilya_set_display_rules($ilya_content, array(
 		'templates_display' => '!template_all',
 	));
 }
 
 if (!$widgetfound) {
-	unset($qa_content['form']['fields']['title']['tight']);
-	$qa_content['form']['fields']['title']['error'] = qa_lang_html('admin/widget_not_available');
-	unset($qa_content['form']['fields']['position']);
-	unset($qa_content['form']['fields']['all']);
-	unset($qa_content['form']['fields']['templates']);
+	unset($ilya_content['form']['fields']['title']['tight']);
+	$ilya_content['form']['fields']['title']['error'] = ilya_lang_html('admin/widget_not_available');
+	unset($ilya_content['form']['fields']['position']);
+	unset($ilya_content['form']['fields']['all']);
+	unset($ilya_content['form']['fields']['templates']);
 	if (!isset($editwidget['widgetid']))
-		unset($qa_content['form']['buttons']['save']);
+		unset($ilya_content['form']['buttons']['save']);
 
 } elseif (!count($positionoptions)) {
-	unset($qa_content['form']['fields']['title']['tight']);
-	$qa_content['form']['fields']['title']['error'] = qa_lang_html('admin/widget_no_positions');
-	unset($qa_content['form']['fields']['position']);
-	unset($qa_content['form']['fields']['all']);
-	unset($qa_content['form']['fields']['templates']);
-	unset($qa_content['form']['buttons']['save']);
+	unset($ilya_content['form']['fields']['title']['tight']);
+	$ilya_content['form']['fields']['title']['error'] = ilya_lang_html('admin/widget_no_positions');
+	unset($ilya_content['form']['fields']['position']);
+	unset($ilya_content['form']['fields']['all']);
+	unset($ilya_content['form']['fields']['templates']);
+	unset($ilya_content['form']['buttons']['save']);
 }
 
-$qa_content['navigation']['sub'] = qa_admin_sub_navigation();
+$ilya_content['navigation']['sub'] = ilya_admin_sub_navigation();
 
 
-return $qa_content;
+return $ilya_content;

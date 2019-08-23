@@ -28,34 +28,34 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 /**
  * Return whether a captcha module has been selected and it indicates that it is fully set up to go.
  */
-function qa_captcha_available()
+function ilya_captcha_available()
 {
-	$module = qa_load_module('captcha', qa_opt('captcha_module'));
+	$module = ilya_load_module('captcha', ilya_opt('captcha_module'));
 
 	return isset($module) && (!method_exists($module, 'allow_captcha') || $module->allow_captcha());
 }
 
 
 /**
- * Return an HTML string explaining $captchareason (from qa_user_captcha_reason()) to the user about why they are seeing a captcha
+ * Return an HTML string explaining $captchareason (from ilya_user_captcha_reason()) to the user about why they are seeing a captcha
  * @param $captchareason
  * @return mixed|null|string
  */
-function qa_captcha_reason_note($captchareason)
+function ilya_captcha_reason_note($captchareason)
 {
 	$notehtml = null;
 
 	switch ($captchareason) {
 		case 'login':
-			$notehtml = qa_insert_login_links(qa_lang_html('misc/captcha_login_fix'));
+			$notehtml = ilya_insert_login_links(ilya_lang_html('misc/captcha_login_fix'));
 			break;
 
 		case 'confirm':
-			$notehtml = qa_insert_login_links(qa_lang_html('misc/captcha_confirm_fix'));
+			$notehtml = ilya_insert_login_links(ilya_lang_html('misc/captcha_confirm_fix'));
 			break;
 
 		case 'approve':
-			$notehtml = qa_lang_html('misc/captcha_approve_fix');
+			$notehtml = ilya_lang_html('misc/captcha_approve_fix');
 			break;
 	}
 
@@ -64,42 +64,42 @@ function qa_captcha_reason_note($captchareason)
 
 
 /**
- * Prepare $qa_content for showing a captcha, adding the element to $fields, given previous $errors, and a $note to display.
+ * Prepare $ilya_content for showing a captcha, adding the element to $fields, given previous $errors, and a $note to display.
  * Returns JavaScript required to load CAPTCHA when field is shown by user (e.g. clicking comment button).
- * @param $qa_content
+ * @param $ilya_content
  * @param $fields
  * @param $errors
  * @param $note
  * @return string
  */
-function qa_set_up_captcha_field(&$qa_content, &$fields, $errors, $note = null)
+function ilya_set_up_captcha_field(&$ilya_content, &$fields, $errors, $note = null)
 {
-	if (!qa_captcha_available())
+	if (!ilya_captcha_available())
 		return '';
 
-	$captcha = qa_load_module('captcha', qa_opt('captcha_module'));
+	$captcha = ilya_load_module('captcha', ilya_opt('captcha_module'));
 
 	// workaround for reCAPTCHA, to load multiple instances via JS
-	$count = @++$qa_content['qa_captcha_count'];
+	$count = @++$ilya_content['ilya_captcha_count'];
 
 	if ($count > 1) {
 		// use blank captcha in order to load via JS
 		$html = '';
 	} else {
 		// first captcha is always loaded explicitly
-		$qa_content['script_var']['qa_captcha_in'] = 'qa_captcha_div_1';
-		$html = $captcha->form_html($qa_content, @$errors['captcha']);
+		$ilya_content['script_var']['ilya_captcha_in'] = 'ilya_captcha_div_1';
+		$html = $captcha->form_html($ilya_content, @$errors['captcha']);
 	}
 
 	$fields['captcha'] = array(
 		'type' => 'custom',
-		'label' => qa_lang_html('misc/captcha_label'),
-		'html' => '<div id="qa_captcha_div_' . $count . '">' . $html . '</div>',
-		'error' => @array_key_exists('captcha', $errors) ? qa_lang_html('misc/captcha_error') : null,
+		'label' => ilya_lang_html('misc/captcha_label'),
+		'html' => '<div id="ilya_captcha_div_' . $count . '">' . $html . '</div>',
+		'error' => @array_key_exists('captcha', $errors) ? ilya_lang_html('misc/captcha_error') : null,
 		'note' => $note,
 	);
 
-	return "if (!document.getElementById('qa_captcha_div_" . $count . "').hasChildNodes()) { recaptcha_load('qa_captcha_div_" . $count . "'); }";
+	return "if (!document.getElementById('ilya_captcha_div_" . $count . "').hasChildNodes()) { recaptcha_load('ilya_captcha_div_" . $count . "'); }";
 }
 
 
@@ -108,10 +108,10 @@ function qa_set_up_captcha_field(&$qa_content, &$fields, $errors, $note = null)
  * @param $errors
  * @return bool
  */
-function qa_captcha_validate_post(&$errors)
+function ilya_captcha_validate_post(&$errors)
 {
-	if (qa_captcha_available()) {
-		$captcha = qa_load_module('captcha', qa_opt('captcha_module'));
+	if (ilya_captcha_available()) {
+		$captcha = ilya_load_module('captcha', ilya_opt('captcha_module'));
 
 		if (!$captcha->validate_post($error)) {
 			$errors['captcha'] = $error;

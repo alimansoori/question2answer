@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_ask_box
+class ilya_ask_box
 {
 	public function allow_template($template)
 	{
@@ -35,20 +35,20 @@ class qa_ask_box
 		return in_array($region, array('main', 'side', 'full'));
 	}
 
-	public function output_widget($region, $place, $themeobject, $template, $request, $qa_content)
+	public function output_widget($region, $place, $themeobject, $template, $request, $ilya_content)
 	{
-		if (isset($qa_content['categoryids']))
-			$params = array('cat' => end($qa_content['categoryids']));
+		if (isset($ilya_content['categoryids']))
+			$params = array('cat' => end($ilya_content['categoryids']));
 		else
 			$params = null;
 
 		?>
 <div class="ilya-ask-box">
-	<form method="post" action="<?php echo qa_path_html('ask', $params); ?>">
+	<form method="post" action="<?php echo ilya_path_html('ask', $params); ?>">
 		<table class="ilya-form-tall-table" style="width:100%">
 			<tr style="vertical-align:middle;">
 				<td class="ilya-form-tall-label" style="width: 1px; padding:8px; white-space:nowrap; <?php echo ($region=='side') ? 'padding-bottom:0;' : 'text-align:right;'?>">
-					<?php echo strtr(qa_lang_html('question/ask_title'), array(' ' => '&nbsp;'))?>:
+					<?php echo strtr(ilya_lang_html('question/ask_title'), array(' ' => '&nbsp;'))?>:
 				</td>
 		<?php if ($region=='side') : ?>
 			</tr>

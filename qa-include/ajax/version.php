@@ -22,29 +22,29 @@
 require_once QA_INCLUDE_DIR . 'app/admin.php';
 require_once QA_INCLUDE_DIR . 'app/users.php';
 
-if (qa_get_logged_in_level() < QA_USER_LEVEL_ADMIN) {
-	echo "QA_AJAX_RESPONSE\n0\n" . qa_lang_html('admin/no_privileges');
+if (ilya_get_logged_in_level() < QA_USER_LEVEL_ADMIN) {
+	echo "QA_AJAX_RESPONSE\n0\n" . ilya_lang_html('admin/no_privileges');
 	return;
 }
 
-$uri = qa_post_text('uri');
-$currentVersion = qa_post_text('version');
-$isCore = qa_post_text('isCore') === "true";
+$uri = ilya_post_text('uri');
+$currentVersion = ilya_post_text('version');
+$isCore = ilya_post_text('isCore') === "true";
 
 if ($isCore) {
-	$contents = qa_retrieve_url($uri);
+	$contents = ilya_retrieve_url($uri);
 
 	if (strlen($contents) > 0) {
-		if (qa_qa_version_below($contents)) {
+		if (ilya_ilya_version_below($contents)) {
 			$response =
 				'<a href="https://github.com/q2a/question2answer/releases" style="color:#d00;">' .
-				qa_lang_html_sub('admin/version_get_x', qa_html('v' . $contents)) .
+				ilya_lang_html_sub('admin/version_get_x', ilya_html('v' . $contents)) .
 				'</a>';
 		} else {
-			$response = qa_html($contents); // Output the current version number
+			$response = ilya_html($contents); // Output the current version number
 		}
 	} else {
-		$response = qa_lang_html('admin/version_latest_unknown');
+		$response = ilya_lang_html('admin/version_latest_unknown');
 	}
 } else {
 	$metadataUtil = new Q2A_Util_Metadata();
@@ -52,28 +52,28 @@ if ($isCore) {
 
 	if (strlen(@$metadata['version']) > 0) {
 		if (version_compare($currentVersion, $metadata['version']) < 0) {
-			if (qa_qa_version_below(@$metadata['min_q2a'])) {
-				$response = strtr(qa_lang_html('admin/version_requires_q2a'), array(
-					'^1' => qa_html('v' . $metadata['version']),
-					'^2' => qa_html($metadata['min_q2a']),
+			if (ilya_ilya_version_below(@$metadata['min_q2a'])) {
+				$response = strtr(ilya_lang_html('admin/version_requires_q2a'), array(
+					'^1' => ilya_html('v' . $metadata['version']),
+					'^2' => ilya_html($metadata['min_q2a']),
 				));
-			} elseif (qa_php_version_below(@$metadata['min_php'])) {
-				$response = strtr(qa_lang_html('admin/version_requires_php'), array(
-					'^1' => qa_html('v' . $metadata['version']),
-					'^2' => qa_html($metadata['min_php']),
+			} elseif (ilya_php_version_below(@$metadata['min_php'])) {
+				$response = strtr(ilya_lang_html('admin/version_requires_php'), array(
+					'^1' => ilya_html('v' . $metadata['version']),
+					'^2' => ilya_html($metadata['min_php']),
 				));
 			} else {
-				$response = qa_lang_html_sub('admin/version_get_x', qa_html('v' . $metadata['version']));
+				$response = ilya_lang_html_sub('admin/version_get_x', ilya_html('v' . $metadata['version']));
 
 				if (strlen(@$metadata['uri'])) {
-					$response = '<a href="' . qa_html($metadata['uri']) . '" style="color:#d00;">' . $response . '</a>';
+					$response = '<a href="' . ilya_html($metadata['uri']) . '" style="color:#d00;">' . $response . '</a>';
 				}
 			}
 		} else {
-			$response = qa_lang_html('admin/version_latest');
+			$response = ilya_lang_html('admin/version_latest');
 		}
 	} else {
-		$response = qa_lang_html('admin/version_latest_unknown');
+		$response = ilya_lang_html('admin/version_latest_unknown');
 	}
 }
 

@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('page', 'ilya-xml-sitemap.php', 'qa_xml_sitemap', 'XML Sitemap');
+ilya_register_plugin_module('page', 'ilya-xml-sitemap.php', 'ilya_xml_sitemap', 'XML Sitemap');

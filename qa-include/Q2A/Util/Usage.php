@@ -181,11 +181,11 @@ class Q2A_Util_Usage
 				<td class="debug-cell-files">
 					<textarea class="debug-output" cols="40" rows="20"><?php
 						foreach (get_included_files() as $file)
-							echo qa_html(implode('/', array_slice(explode('/', $file), -3)))."\n";
+							echo ilya_html(implode('/', array_slice(explode('/', $file), -3)))."\n";
 					?></textarea>
 				</td>
 				<td class="debug-cell-queries">
-					<textarea class="debug-output" cols="40" rows="20"><?php echo qa_html($this->databaseQueryLog)?></textarea>
+					<textarea class="debug-output" cols="40" rows="20"><?php echo ilya_html($this->databaseQueryLog)?></textarea>
 				</td>
 			</tr>
 		</tbody>

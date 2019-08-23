@@ -25,14 +25,14 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-function qa_get_mysql_user_column_type()
+function ilya_get_mysql_user_column_type()
 {
 	return "INT";
 }
 
-function qa_get_login_links($relative_url_prefix, $redirect_back_to_url)
+function ilya_get_login_links($relative_url_prefix, $redirect_back_to_url)
 {
-	$jhelper = new qa_joomla_helper();
+	$jhelper = new ilya_joomla_helper();
 	$config_urls = $jhelper->trigger_get_urls_event();
 
 	return array(
@@ -42,9 +42,9 @@ function qa_get_login_links($relative_url_prefix, $redirect_back_to_url)
 	);
 }
 
-function qa_get_logged_in_user()
+function ilya_get_logged_in_user()
 {
-	$jhelper = new qa_joomla_helper();
+	$jhelper = new ilya_joomla_helper();
 	$user = $jhelper->get_user();
 	$config_urls = $jhelper->trigger_get_urls_event();
 
@@ -70,7 +70,7 @@ function qa_get_logged_in_user()
 
 		$teamGroup = $jhelper->trigger_team_group_event($user);
 
-		$qa_user = array(
+		$ilya_user = array(
 			'userid' => $user->id,
 			'publicusername' => $user->username,
 			'email' => $user->email,
@@ -78,18 +78,18 @@ function qa_get_logged_in_user()
 		);
 
 		if ($user->block) {
-			$qa_user['blocked'] = true;
+			$ilya_user['blocked'] = true;
 		}
 
-		return $qa_user;
+		return $ilya_user;
 	}
 
 	return null;
 }
 
-function qa_get_user_email($userid)
+function ilya_get_user_email($userid)
 {
-	$jhelper = new qa_joomla_helper();
+	$jhelper = new ilya_joomla_helper();
 	$user = $jhelper->get_user($userid);
 
 	if ($user) {
@@ -99,11 +99,11 @@ function qa_get_user_email($userid)
 	return null;
 }
 
-function qa_get_userids_from_public($publicusernames)
+function ilya_get_userids_from_public($publicusernames)
 {
 	$output = array();
 	if (count($publicusernames)) {
-		$jhelper = new qa_joomla_helper();
+		$jhelper = new ilya_joomla_helper();
 		foreach ($publicusernames as $username) {
 			$output[$username] = $jhelper->get_userid($username);
 		}
@@ -111,11 +111,11 @@ function qa_get_userids_from_public($publicusernames)
 	return $output;
 }
 
-function qa_get_public_from_userids($userids)
+function ilya_get_public_from_userids($userids)
 {
 	$output = array();
 	if (count($userids)) {
-		$jhelper = new qa_joomla_helper();
+		$jhelper = new ilya_joomla_helper();
 		foreach ($userids as $userID) {
 			$user = $jhelper->get_user($userID);
 			$output[$userID] = $user->username;
@@ -124,15 +124,15 @@ function qa_get_public_from_userids($userids)
 	return $output;
 }
 
-function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
+function ilya_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 {
 	$publicusername = $logged_in_user['publicusername'];
-	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
+	return '<a href="' . ilya_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
 }
 
-function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
+function ilya_get_users_html($userids, $should_include_link, $relative_url_prefix)
 {
-	$useridtopublic = qa_get_public_from_userids($userids);
+	$useridtopublic = ilya_get_public_from_userids($userids);
 	$usershtml = array();
 
 	foreach ($userids as $userid) {
@@ -140,16 +140,16 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 		$usershtml[$userid] = htmlspecialchars($publicusername);
 
 		if ($should_include_link) {
-			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
+			$usershtml[$userid] = '<a href="' . ilya_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
 		}
 	}
 
 	return $usershtml;
 }
 
-function qa_avatar_html_from_userid($userid, $size, $padding)
+function ilya_avatar_html_from_userid($userid, $size, $padding)
 {
-	$jhelper = new qa_joomla_helper();
+	$jhelper = new ilya_joomla_helper();
 	$avatarURL = $jhelper->trigger_get_avatar_event($userid, $size);
 
 	$avatarHTML = $avatarURL ? "<img src='{$avatarURL}' class='ilya-avatar-image' alt=''/>" : '';
@@ -160,9 +160,9 @@ function qa_avatar_html_from_userid($userid, $size, $padding)
 	return $avatarHTML;
 }
 
-function qa_user_report_action($userid, $action)
+function ilya_user_report_action($userid, $action)
 {
-	$jhelper = new qa_joomla_helper();
+	$jhelper = new ilya_joomla_helper();
 	$jhelper->trigger_log_event($userid, $action);
 }
 
@@ -170,7 +170,7 @@ function qa_user_report_action($userid, $action)
 /**
  * Link to Joomla app.
  */
-class qa_joomla_helper
+class ilya_joomla_helper
 {
 	private $app;
 
@@ -258,7 +258,7 @@ class qa_joomla_helper
 
 	private function default_response($event, $args)
 	{
-		return array(qa_joomla_default_integration::$event($args));
+		return array(ilya_joomla_default_integration::$event($args));
 	}
 }
 
@@ -267,7 +267,7 @@ class qa_joomla_helper
  * This is intended as a set of default actions in case no Joomla plugin has been installed. It's
  * recommended to install the Joomla QAIntegration plugin for additional user-access control.
  */
-class qa_joomla_default_integration
+class ilya_joomla_default_integration
 {
 	/**
 	 * If you're relying on the defaults, you must make sure that your Joomla instance has the following pages configured.

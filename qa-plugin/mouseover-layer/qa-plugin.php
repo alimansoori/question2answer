@@ -40,5 +40,5 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_layer('ilya-mouseover-layer.php', 'Mouseover Layer');
-qa_register_plugin_module('module', 'ilya-mouseover-admin-form.php', 'qa_mouseover_admin_form', 'Mouseover Layer');
+ilya_register_plugin_layer('ilya-mouseover-layer.php', 'Mouseover Layer');
+ilya_register_plugin_module('module', 'ilya-mouseover-admin-form.php', 'ilya_mouseover_admin_form', 'Mouseover Layer');

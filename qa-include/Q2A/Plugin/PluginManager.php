@@ -45,15 +45,15 @@ class Q2A_Plugin_PluginManager
 			if (empty($metadata)) {
 				// limit plugin parsing to first 8kB
 				$contents = file_get_contents($pluginFile, false, null, 0, 8192);
-				$metadata = qa_addon_metadata($contents, 'Plugin', true);
+				$metadata = ilya_addon_metadata($contents, 'Plugin', true);
 			}
 
 			// skip plugin which requires a later version of Q2A
-			if (isset($metadata['min_q2a']) && qa_qa_version_below($metadata['min_q2a'])) {
+			if (isset($metadata['min_q2a']) && ilya_ilya_version_below($metadata['min_q2a'])) {
 				continue;
 			}
 			// skip plugin which requires a later version of PHP
-			if (isset($metadata['min_php']) && qa_php_version_below($metadata['min_php'])) {
+			if (isset($metadata['min_php']) && ilya_php_version_below($metadata['min_php'])) {
 				continue;
 			}
 
@@ -82,17 +82,17 @@ class Q2A_Plugin_PluginManager
 
 	private function loadPlugins($pluginInfos)
 	{
-		global $qa_plugin_directory, $qa_plugin_urltoroot;
+		global $ilya_plugin_directory, $ilya_plugin_urltoroot;
 
 		foreach ($pluginInfos as $pluginInfo) {
-			$qa_plugin_directory = $pluginInfo['directory'];
-			$qa_plugin_urltoroot = $pluginInfo['urltoroot'];
+			$ilya_plugin_directory = $pluginInfo['directory'];
+			$ilya_plugin_urltoroot = $pluginInfo['urltoroot'];
 
 			require_once $pluginInfo['pluginfile'];
 		}
 
-		$qa_plugin_directory = null;
-		$qa_plugin_urltoroot = null;
+		$ilya_plugin_directory = null;
+		$ilya_plugin_urltoroot = null;
 	}
 
 	public function loadPluginsBeforeDbInit()
@@ -163,12 +163,12 @@ class Q2A_Plugin_PluginManager
 
 	private function getEnabledPluginsOption()
 	{
-		return explode(self::PLUGIN_DELIMITER, qa_opt(self::OPT_ENABLED_PLUGINS));
+		return explode(self::PLUGIN_DELIMITER, ilya_opt(self::OPT_ENABLED_PLUGINS));
 	}
 
 	private function setEnabledPluginsOption($array)
 	{
-		qa_opt(self::OPT_ENABLED_PLUGINS, implode(self::PLUGIN_DELIMITER, $array));
+		ilya_opt(self::OPT_ENABLED_PLUGINS, implode(self::PLUGIN_DELIMITER, $array));
 	}
 
 	public function cleanRemovedPlugins()

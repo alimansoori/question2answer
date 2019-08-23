@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_recaptcha_captcha
+class ilya_recaptcha_captcha
 {
 	private $directory;
 	private $errorCodeMessages;
@@ -42,20 +42,20 @@ class qa_recaptcha_captcha
 	{
 		$saved = false;
 
-		if (qa_clicked('recaptcha_save_button')) {
-			qa_opt('recaptcha_public_key', qa_post_text('recaptcha_public_key_field'));
-			qa_opt('recaptcha_private_key', qa_post_text('recaptcha_private_key_field'));
+		if (ilya_clicked('recaptcha_save_button')) {
+			ilya_opt('recaptcha_public_key', ilya_post_text('recaptcha_public_key_field'));
+			ilya_opt('recaptcha_private_key', ilya_post_text('recaptcha_private_key_field'));
 
 			$saved = true;
 		}
 
-		$pub = trim(qa_opt('recaptcha_public_key'));
-		$pri = trim(qa_opt('recaptcha_private_key'));
+		$pub = trim(ilya_opt('recaptcha_public_key'));
+		$pri = trim(ilya_opt('recaptcha_private_key'));
 
 		$error = null;
 		if (!strlen($pub) || !strlen($pri)) {
 			require_once $this->directory.'recaptchalib.php';
-			$error = 'To use reCAPTCHA, you must <a href="'.qa_html(ReCaptcha::getSignupUrl()).'" target="_blank">sign up</a> to get these keys.';
+			$error = 'To use reCAPTCHA, you must <a href="'.ilya_html(ReCaptcha::getSignupUrl()).'" target="_blank">sign up</a> to get these keys.';
 		}
 
 		$form = array(
@@ -92,8 +92,8 @@ class qa_recaptcha_captcha
 	 */
 	public function allow_captcha()
 	{
-		$pub = trim(qa_opt('recaptcha_public_key'));
-		$pri = trim(qa_opt('recaptcha_private_key'));
+		$pub = trim(ilya_opt('recaptcha_public_key'));
+		$pri = trim(ilya_opt('recaptcha_private_key'));
 
 		return strlen($pub) && strlen($pri);
 	}
@@ -102,28 +102,28 @@ class qa_recaptcha_captcha
 	 * reCAPTCHA HTML - we actually return nothing because the new reCAPTCHA requires 'explicit rendering'
 	 * via JavaScript when we have multiple Captchas per page. It also auto-detects the user's language.
 	 */
-	public function form_html(&$qa_content, $error)
+	public function form_html(&$ilya_content, $error)
 	{
-		$pub = qa_opt('recaptcha_public_key');
+		$pub = ilya_opt('recaptcha_public_key');
 
 		// onload handler
-		$qa_content['script_lines'][] = array(
+		$ilya_content['script_lines'][] = array(
 			'function recaptcha_load(elemId) {',
 			'  if (grecaptcha) {',
 			'    grecaptcha.render(elemId, {',
-			'      "sitekey": ' . qa_js($pub),
+			'      "sitekey": ' . ilya_js($pub),
 			'    });',
 			'  }',
 			'}',
 			'function recaptcha_onload() {',
-			'  recaptcha_load("qa_captcha_div_1");',
+			'  recaptcha_load("ilya_captcha_div_1");',
 			'}',
 		);
 
-		$lang = urlencode(qa_opt('site_language'));
+		$lang = urlencode(ilya_opt('site_language'));
 		if (empty($lang))
 			$lang = 'en';
-		$qa_content['script_src'][] = 'https://www.google.com/recaptcha/api.js?onload=recaptcha_onload&render=explicit&hl='.$lang;
+		$ilya_content['script_src'][] = 'https://www.google.com/recaptcha/api.js?onload=recaptcha_onload&render=explicit&hl='.$lang;
 
 		return '';
 	}
@@ -137,12 +137,12 @@ class qa_recaptcha_captcha
 		require_once $this->directory.'recaptchalib.php';
 
 		if (ini_get('allow_url_fopen'))
-			$recaptcha = new ReCaptcha(qa_opt('recaptcha_private_key'));
+			$recaptcha = new ReCaptcha(ilya_opt('recaptcha_private_key'));
 		else
-			$recaptcha = new ReCaptcha(qa_opt('recaptcha_private_key'), new ReCaptchaSocketPostRequestMethod());
+			$recaptcha = new ReCaptcha(ilya_opt('recaptcha_private_key'), new ReCaptchaSocketPostRequestMethod());
 
-		$remoteIp = qa_remote_ip_address();
-		$userResponse = qa_post_text('g-recaptcha-response');
+		$remoteIp = ilya_remote_ip_address();
+		$userResponse = ilya_post_text('g-recaptcha-response');
 
 		$recResponse = $recaptcha->verifyResponse($remoteIp, $userResponse);
 

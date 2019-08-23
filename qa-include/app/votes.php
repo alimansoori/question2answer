@@ -34,33 +34,33 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $topage
  * @return bool|mixed|string
  */
-function qa_vote_error_html($post, $vote, $userid, $topage)
+function ilya_vote_error_html($post, $vote, $userid, $topage)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	// The 'login', 'confirm', 'limit', 'userblock' and 'ipblock' permission errors are reported to the user here.
-	// Others ('approve', 'level') prevent the buttons being clickable in the first place, in qa_get_vote_view(...)
+	// Others ('approve', 'level') prevent the buttons being clickable in the first place, in ilya_get_vote_view(...)
 
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 
 	if ($post['hidden']) {
-		return qa_lang_html('main/vote_disabled_hidden');
+		return ilya_lang_html('main/vote_disabled_hidden');
 	}
 	if ($post['queued']) {
-		return qa_lang_html('main/vote_disabled_queued');
+		return ilya_lang_html('main/vote_disabled_queued');
 	}
 
 	switch($post['basetype'])
 	{
 		case 'Q':
-			$allowVoting = qa_opt('voting_on_qs');
+			$allowVoting = ilya_opt('voting_on_qs');
 			break;
 		case 'A':
-			$allowVoting = qa_opt('voting_on_as');
+			$allowVoting = ilya_opt('voting_on_as');
 			break;
 		case 'C':
-			$allowVoting = qa_opt('voting_on_cs');
+			$allowVoting = ilya_opt('voting_on_cs');
 			break;
 		default:
 			$allowVoting = false;
@@ -69,14 +69,14 @@ function qa_vote_error_html($post, $vote, $userid, $topage)
 
 	if (!$allowVoting || (isset($post['userid']) && isset($userid) && $post['userid'] == $userid)) {
 		// voting option should not have been presented (but could happen due to options change)
-		return qa_lang_html('main/vote_not_allowed');
+		return ilya_lang_html('main/vote_not_allowed');
 	}
 
-	$permiterror = qa_user_post_permit_error(($post['basetype'] == 'Q') ? 'permit_vote_q' : 'permit_vote_a', $post, QA_LIMIT_VOTES);
+	$permiterror = ilya_user_post_permit_error(($post['basetype'] == 'Q') ? 'permit_vote_q' : 'permit_vote_a', $post, QA_LIMIT_VOTES);
 
 	$errordownonly = !$permiterror && $vote < 0;
 	if ($errordownonly) {
-		$permiterror = qa_user_post_permit_error('permit_vote_down', $post);
+		$permiterror = ilya_user_post_permit_error('permit_vote_down', $post);
 	}
 
 	switch ($permiterror) {
@@ -85,19 +85,19 @@ function qa_vote_error_html($post, $vote, $userid, $topage)
 			break;
 
 		case 'login':
-			return qa_insert_login_links(qa_lang_html('main/vote_must_login'), $topage);
+			return ilya_insert_login_links(ilya_lang_html('main/vote_must_login'), $topage);
 			break;
 
 		case 'confirm':
-			return qa_insert_login_links(qa_lang_html($errordownonly ? 'main/vote_down_must_confirm' : 'main/vote_must_confirm'), $topage);
+			return ilya_insert_login_links(ilya_lang_html($errordownonly ? 'main/vote_down_must_confirm' : 'main/vote_must_confirm'), $topage);
 			break;
 
 		case 'limit':
-			return qa_lang_html('main/vote_limit');
+			return ilya_lang_html('main/vote_limit');
 			break;
 
 		default:
-			return qa_lang_html('users/no_permission');
+			return ilya_lang_html('users/no_permission');
 			break;
 	}
 }
@@ -113,9 +113,9 @@ function qa_vote_error_html($post, $vote, $userid, $topage)
  * @param $vote
  * @return void
  */
-function qa_vote_set($post, $userid, $handle, $cookieid, $vote)
+function ilya_vote_set($post, $userid, $handle, $cookieid, $vote)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/points.php';
 	require_once QA_INCLUDE_DIR . 'db/hotness.php';
@@ -124,10 +124,10 @@ function qa_vote_set($post, $userid, $handle, $cookieid, $vote)
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 
 	$vote = (int)min(1, max(-1, $vote));
-	$oldvote = (int)qa_db_uservote_get($post['postid'], $userid);
+	$oldvote = (int)ilya_db_uservote_get($post['postid'], $userid);
 
-	qa_db_uservote_set($post['postid'], $userid, $vote);
-	qa_db_post_recount_votes($post['postid']);
+	ilya_db_uservote_set($post['postid'], $userid, $vote);
+	ilya_db_post_recount_votes($post['postid']);
 
 	if (!in_array($post['basetype'], array('Q', 'A', 'C'))) {
 		return;
@@ -136,8 +136,8 @@ function qa_vote_set($post, $userid, $handle, $cookieid, $vote)
 	$prefix = strtolower($post['basetype']);
 
 	if ($prefix === 'a') {
-		qa_db_post_acount_update($post['parentid']);
-		qa_db_unupaqcount_update();
+		ilya_db_post_acount_update($post['parentid']);
+		ilya_db_unupaqcount_update();
 	}
 
 	$columns = array();
@@ -150,12 +150,12 @@ function qa_vote_set($post, $userid, $handle, $cookieid, $vote)
 		$columns[] = $prefix . 'downvotes';
 	}
 
-	qa_db_points_update_ifuser($userid, $columns);
+	ilya_db_points_update_ifuser($userid, $columns);
 
-	qa_db_points_update_ifuser($post['userid'], array($prefix . 'voteds', 'upvoteds', 'downvoteds'));
+	ilya_db_points_update_ifuser($post['userid'], array($prefix . 'voteds', 'upvoteds', 'downvoteds'));
 
 	if ($prefix === 'q') {
-		qa_db_hotness_update($post['postid']);
+		ilya_db_hotness_update($post['postid']);
 	}
 
 	if ($vote < 0) {
@@ -166,7 +166,7 @@ function qa_vote_set($post, $userid, $handle, $cookieid, $vote)
 		$event = $prefix . '_vote_nil';
 	}
 
-	qa_report_event($event, $userid, $handle, $cookieid, array(
+	ilya_report_event($event, $userid, $handle, $cookieid, array(
 		'postid' => $post['postid'],
 		'userid' => $post['userid'],
 		'vote' => $vote,
@@ -183,43 +183,43 @@ function qa_vote_set($post, $userid, $handle, $cookieid, $vote)
  * @param $topage
  * @return bool|mixed|string
  */
-function qa_flag_error_html($post, $userid, $topage)
+function ilya_flag_error_html($post, $userid, $topage)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	// The 'login', 'confirm', 'limit', 'userblock' and 'ipblock' permission errors are reported to the user here.
-	// Others ('approve', 'level') prevent the flag button being shown, in qa_page_q_post_rules(...)
+	// Others ('approve', 'level') prevent the flag button being shown, in ilya_page_q_post_rules(...)
 
 	require_once QA_INCLUDE_DIR . 'db/selects.php';
 	require_once QA_INCLUDE_DIR . 'app/options.php';
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 
-	if (is_array($post) && qa_opt('flagging_of_posts') &&
+	if (is_array($post) && ilya_opt('flagging_of_posts') &&
 		(!isset($post['userid']) || !isset($userid) || $post['userid'] != $userid)
 	) {
-		switch (qa_user_post_permit_error('permit_flag', $post, QA_LIMIT_FLAGS)) {
+		switch (ilya_user_post_permit_error('permit_flag', $post, QA_LIMIT_FLAGS)) {
 			case 'login':
-				return qa_insert_login_links(qa_lang_html('question/flag_must_login'), $topage);
+				return ilya_insert_login_links(ilya_lang_html('question/flag_must_login'), $topage);
 				break;
 
 			case 'confirm':
-				return qa_insert_login_links(qa_lang_html('question/flag_must_confirm'), $topage);
+				return ilya_insert_login_links(ilya_lang_html('question/flag_must_confirm'), $topage);
 				break;
 
 			case 'limit':
-				return qa_lang_html('question/flag_limit');
+				return ilya_lang_html('question/flag_limit');
 				break;
 
 			default:
-				return qa_lang_html('users/no_permission');
+				return ilya_lang_html('users/no_permission');
 				break;
 
 			case false:
 				return false;
 		}
 	} else {
-		return qa_lang_html('question/flag_not_allowed'); // flagging option should not have been presented
+		return ilya_lang_html('question/flag_not_allowed'); // flagging option should not have been presented
 	}
 }
 
@@ -235,17 +235,17 @@ function qa_flag_error_html($post, $userid, $topage)
  * @param $question
  * @return bool
  */
-function qa_flag_set_tohide($oldpost, $userid, $handle, $cookieid, $question)
+function ilya_flag_set_tohide($oldpost, $userid, $handle, $cookieid, $question)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 	require_once QA_INCLUDE_DIR . 'db/post-update.php';
 
-	qa_db_userflag_set($oldpost['postid'], $userid, true);
-	qa_db_post_recount_flags($oldpost['postid']);
-	qa_db_flaggedcount_update();
+	ilya_db_userflag_set($oldpost['postid'], $userid, true);
+	ilya_db_post_recount_flags($oldpost['postid']);
+	ilya_db_flaggedcount_update();
 
 	switch ($oldpost['basetype']) {
 		case 'Q':
@@ -261,9 +261,9 @@ function qa_flag_set_tohide($oldpost, $userid, $handle, $cookieid, $question)
 			break;
 	}
 
-	$post = qa_db_select_with_pending(qa_db_full_post_selectspec(null, $oldpost['postid']));
+	$post = ilya_db_select_with_pending(ilya_db_full_post_selectspec(null, $oldpost['postid']));
 
-	qa_report_event($event, $userid, $handle, $cookieid, array(
+	ilya_report_event($event, $userid, $handle, $cookieid, array(
 		'postid' => $oldpost['postid'],
 		'oldpost' => $oldpost,
 		'flagcount' => $post['flagcount'],
@@ -271,7 +271,7 @@ function qa_flag_set_tohide($oldpost, $userid, $handle, $cookieid, $question)
 		'question' => $question,
 	));
 
-	return $post['flagcount'] >= qa_opt('flagging_hide_after') && !$post['hidden'];
+	return $post['flagcount'] >= ilya_opt('flagging_hide_after') && !$post['hidden'];
 }
 
 
@@ -284,17 +284,17 @@ function qa_flag_set_tohide($oldpost, $userid, $handle, $cookieid, $question)
  * @param $cookieid
  * @return mixed
  */
-function qa_flag_clear($oldpost, $userid, $handle, $cookieid)
+function ilya_flag_clear($oldpost, $userid, $handle, $cookieid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 	require_once QA_INCLUDE_DIR . 'db/post-update.php';
 
-	qa_db_userflag_set($oldpost['postid'], $userid, false);
-	qa_db_post_recount_flags($oldpost['postid']);
-	qa_db_flaggedcount_update();
+	ilya_db_userflag_set($oldpost['postid'], $userid, false);
+	ilya_db_post_recount_flags($oldpost['postid']);
+	ilya_db_flaggedcount_update();
 
 	switch ($oldpost['basetype']) {
 		case 'Q':
@@ -310,7 +310,7 @@ function qa_flag_clear($oldpost, $userid, $handle, $cookieid)
 			break;
 	}
 
-	qa_report_event($event, $userid, $handle, $cookieid, array(
+	ilya_report_event($event, $userid, $handle, $cookieid, array(
 		'postid' => $oldpost['postid'],
 		'oldpost' => $oldpost,
 	));
@@ -326,17 +326,17 @@ function qa_flag_clear($oldpost, $userid, $handle, $cookieid)
  * @param $cookieid
  * @return mixed
  */
-function qa_flags_clear_all($oldpost, $userid, $handle, $cookieid)
+function ilya_flags_clear_all($oldpost, $userid, $handle, $cookieid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 	require_once QA_INCLUDE_DIR . 'db/post-update.php';
 
-	qa_db_userflags_clear_all($oldpost['postid']);
-	qa_db_post_recount_flags($oldpost['postid']);
-	qa_db_flaggedcount_update();
+	ilya_db_userflags_clear_all($oldpost['postid']);
+	ilya_db_post_recount_flags($oldpost['postid']);
+	ilya_db_flaggedcount_update();
 
 	switch ($oldpost['basetype']) {
 		case 'Q':
@@ -352,7 +352,7 @@ function qa_flags_clear_all($oldpost, $userid, $handle, $cookieid)
 			break;
 	}
 
-	qa_report_event($event, $userid, $handle, $cookieid, array(
+	ilya_report_event($event, $userid, $handle, $cookieid, array(
 		'postid' => $oldpost['postid'],
 		'oldpost' => $oldpost,
 	));

@@ -29,37 +29,37 @@ require_once QA_INCLUDE_DIR . 'app/page.php';
 
 // Below are the steps that actually execute for this file - all the above are function definitions
 
-global $qa_usage;
+global $ilya_usage;
 
-qa_report_process_stage('init_page');
-qa_db_connect('qa_page_db_fail_handler');
-qa_initialize_postdb_plugins();
+ilya_report_process_stage('init_page');
+ilya_db_connect('ilya_page_db_fail_handler');
+ilya_initialize_postdb_plugins();
 
-qa_page_queue_pending();
-qa_load_state();
-qa_check_login_modules();
+ilya_page_queue_pending();
+ilya_load_state();
+ilya_check_login_modules();
 
 if (QA_DEBUG_PERFORMANCE)
-	$qa_usage->mark('setup');
+	$ilya_usage->mark('setup');
 
-qa_check_page_clicks();
+ilya_check_page_clicks();
 
-$qa_content = qa_get_request_content();
+$ilya_content = ilya_get_request_content();
 
-if (is_array($qa_content)) {
+if (is_array($ilya_content)) {
 	if (QA_DEBUG_PERFORMANCE)
-		$qa_usage->mark('view');
+		$ilya_usage->mark('view');
 
-	qa_output_content($qa_content);
-
-	if (QA_DEBUG_PERFORMANCE)
-		$qa_usage->mark('theme');
-
-	if (qa_do_content_stats($qa_content) && QA_DEBUG_PERFORMANCE)
-		$qa_usage->mark('stats');
+	ilya_output_content($ilya_content);
 
 	if (QA_DEBUG_PERFORMANCE)
-		$qa_usage->output();
+		$ilya_usage->mark('theme');
+
+	if (ilya_do_content_stats($ilya_content) && QA_DEBUG_PERFORMANCE)
+		$ilya_usage->mark('stats');
+
+	if (QA_DEBUG_PERFORMANCE)
+		$ilya_usage->output();
 }
 
-qa_db_disconnect();
+ilya_db_disconnect();

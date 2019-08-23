@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_basic_adsense
+class ilya_basic_adsense
 {
 	public function allow_template($template)
 	{
@@ -34,15 +34,15 @@ class qa_basic_adsense
 	}
 
 
-	public function admin_form(&$qa_content)
+	public function admin_form(&$ilya_content)
 	{
 		$saved = false;
 
-		if (qa_clicked('adsense_save_button')) {
+		if (ilya_clicked('adsense_save_button')) {
 			// prevent common errors by copying and pasting from Javascript
 			$trimchars = "=;\"\' \t\r\n";
-			qa_opt('adsense_publisher_id', trim(qa_post_text('adsense_publisher_id_field'), $trimchars));
-			qa_opt('adsense_adunit_id', trim(qa_post_text('adsense_adunit_id_field'), $trimchars));
+			ilya_opt('adsense_publisher_id', trim(ilya_post_text('adsense_publisher_id_field'), $trimchars));
+			ilya_opt('adsense_adunit_id', trim(ilya_post_text('adsense_adunit_id_field'), $trimchars));
 
 			$saved = true;
 		}
@@ -53,13 +53,13 @@ class qa_basic_adsense
 			'fields' => array(
 				array(
 					'label' => 'AdSense Publisher ID:',
-					'value' => qa_html(qa_opt('adsense_publisher_id')),
+					'value' => ilya_html(ilya_opt('adsense_publisher_id')),
 					'tags' => 'name="adsense_publisher_id_field"',
 					'note' => 'Example: <i>pub-1234567890123456</i>',
 				),
 				array(
 					'label' => 'AdSense Ad Unit ID:',
-					'value' => qa_html(qa_opt('adsense_adunit_id')),
+					'value' => ilya_html(ilya_opt('adsense_adunit_id')),
 					'tags' => 'name="adsense_adunit_id_field"',
 					'note' => 'Example: <i>8XXXXX1</i>',
 				),
@@ -75,7 +75,7 @@ class qa_basic_adsense
 	}
 
 
-	public function output_widget($region, $place, $themeobject, $template, $request, $qa_content)
+	public function output_widget($region, $place, $themeobject, $template, $request, $ilya_content)
 	{
 		$format = 'auto';
 
@@ -92,11 +92,11 @@ class qa_basic_adsense
 
 		?>
 		<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-		<ins class="adsbygoogle <?php echo qa_html($region) ?>"
+		<ins class="adsbygoogle <?php echo ilya_html($region) ?>"
 			style="display:block; margin:.5em auto"
-			data-ad-client="<?php echo qa_html(qa_opt('adsense_publisher_id')) ?>"
-			data-ad-slot="<?php echo qa_html(qa_opt('adsense_adunit_id')) ?>"
-			data-ad-format="<?php echo qa_html($format) ?>">
+			data-ad-client="<?php echo ilya_html(ilya_opt('adsense_publisher_id')) ?>"
+			data-ad-slot="<?php echo ilya_html(ilya_opt('adsense_adunit_id')) ?>"
+			data-ad-format="<?php echo ilya_html($format) ?>">
 		</ins>
 		<script>
 			(adsbygoogle = window.adsbygoogle || []).push({});

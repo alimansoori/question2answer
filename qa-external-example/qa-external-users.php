@@ -46,7 +46,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * SMALLINT, SMALLINT UNSIGNED, MEDIUMINT, MEDIUMINT UNSIGNED, INT, INT UNSIGNED,
  * BIGINT, BIGINT UNSIGNED or VARCHAR(x) where x is the maximum length.
  */
-function qa_get_mysql_user_column_type()
+function ilya_get_mysql_user_column_type()
 {
 	// Set this before anything else
 
@@ -99,7 +99,7 @@ function qa_get_mysql_user_column_type()
  * register and logout pages. Note that the URL you are given in $redirect_back_to_url is
  * relative to the root of the Q2A site, so you may need to add something.
  */
-function qa_get_login_links($relative_url_prefix, $redirect_back_to_url)
+function ilya_get_login_links($relative_url_prefix, $redirect_back_to_url)
 {
 	// Until you edit this function, don't show login, register or logout links
 
@@ -160,12 +160,12 @@ function qa_get_login_links($relative_url_prefix, $redirect_back_to_url)
  * YOU MUST MODIFY THIS FUNCTION, BUT CAN DO SO AFTER Q2A CREATES ITS DATABASE
  * ===========================================================================
  *
- * qa_get_logged_in_user()
+ * ilya_get_logged_in_user()
  *
  * You should check (using $_COOKIE, $_SESSION or whatever is appropriate) whether a user is
  * currently logged in. If not, return null. If so, return an array with the following elements:
  *
- * - userid: a user id appropriate for your response to qa_get_mysql_user_column_type()
+ * - userid: a user id appropriate for your response to ilya_get_mysql_user_column_type()
  * - publicusername: a user description you are willing to show publicly, e.g. the username
  * - email: the logged in user's email address
  * - passsalt: (optional) password salt specific to this user, used for form security codes
@@ -176,16 +176,16 @@ function qa_get_login_links($relative_url_prefix, $redirect_back_to_url)
  * To indicate that the user is blocked you can also add an element 'blocked' with the value true.
  * Blocked users are not allowed to perform any write actions such as voting or posting.
  *
- * The result of this function will be passed to your other function qa_get_logged_in_user_html()
+ * The result of this function will be passed to your other function ilya_get_logged_in_user_html()
  * so you may add any other elements to the returned array if they will be useful to you.
  *
- * Call qa_db_connection() to get the connection to the Q2A database. If your database is shared with
- * Q2A, you can also use the various qa_db_* functions to run queries.
+ * Call ilya_db_connection() to get the connection to the Q2A database. If your database is shared with
+ * Q2A, you can also use the various ilya_db_* functions to run queries.
  *
  * In order to access the admin interface of your Q2A site, ensure that the array element 'level'
  * contains QA_USER_LEVEL_ADMIN or QA_USER_LEVEL_SUPER when you are logged in.
  */
-function qa_get_logged_in_user()
+function ilya_get_logged_in_user()
 {
 	// Until you edit this function, nobody is ever logged in
 
@@ -205,7 +205,7 @@ function qa_get_logged_in_user()
 		if (isset($_SESSION['is_logged_in'])) {
 			$userid = $_SESSION['logged_in_userid'];
 
-			$result = qa_db_read_one_assoc(qa_db_query_sub(
+			$result = ilya_db_read_one_assoc(ilya_db_query_sub(
 				'SELECT email FROM users WHERE id=$',
 				$userid
 			));
@@ -233,7 +233,7 @@ function qa_get_logged_in_user()
 		* Your database has a users table that contains usernames, emails and a flag for admin privileges
 
 		if (isset($_COOKIE['sessionid'])) {
-			$result = qa_db_read_one_assoc(qa_db_query_sub(
+			$result = ilya_db_read_one_assoc(ilya_db_query_sub(
 				'SELECT userid, username, email, admin_flag FROM users WHERE userid=(SELECT userid FROM sessions WHERE sessionid=#)',
 				$_COOKIE['sessionid']
 			));
@@ -258,14 +258,14 @@ function qa_get_logged_in_user()
  * YOU MUST MODIFY THIS FUNCTION, BUT CAN DO SO AFTER Q2A CREATES ITS DATABASE
  * ===========================================================================
  *
- * qa_get_user_email($userid)
+ * ilya_get_user_email($userid)
  *
  * Return the email address for user $userid, or null if you don't know it.
  *
- * Call qa_db_connection() to get the connection to the Q2A database. If your database is shared with
- * Q2A, you can also use the various qa_db_* functions to run queries.
+ * Call ilya_db_connection() to get the connection to the Q2A database. If your database is shared with
+ * Q2A, you can also use the various ilya_db_* functions to run queries.
  */
-function qa_get_user_email($userid)
+function ilya_get_user_email($userid)
 {
 	// Until you edit this function, always return null
 
@@ -277,7 +277,7 @@ function qa_get_user_email($userid)
 		* Your database is shared with the Q2A site
 		* Your database has a users table that contains emails
 
-		$result = qa_db_read_one_assoc(qa_db_query_sub(
+		$result = ilya_db_read_one_assoc(ilya_db_query_sub(
 			'SELECT email FROM users WHERE userid=#',
 			$userid
 		));
@@ -295,18 +295,18 @@ function qa_get_user_email($userid)
  * YOU MUST MODIFY THIS FUNCTION, BUT CAN DO SO AFTER Q2A CREATES ITS DATABASE
  * ===========================================================================
  *
- * qa_get_userids_from_public($publicusernames)
+ * ilya_get_userids_from_public($publicusernames)
  *
  * You should take the array of public usernames in $publicusernames, and return an array which
  * maps valid usernames to internal user ids. For each element of this array, the username should be
  * in the key, with the corresponding user id in the value. If your usernames are case- or accent-
  * insensitive, keys should contain the usernames as stored, not necessarily as in $publicusernames.
  *
- * Call qa_db_connection() to get the connection to the Q2A database. If your database is shared with
- * Q2A, you can also use the various qa_db_* functions to run queries. If you access this database or
+ * Call ilya_db_connection() to get the connection to the Q2A database. If your database is shared with
+ * Q2A, you can also use the various ilya_db_* functions to run queries. If you access this database or
  * any other, try to use a single query instead of one per user.
  */
-function qa_get_userids_from_public($publicusernames)
+function ilya_get_userids_from_public($publicusernames)
 {
 	// Until you edit this function, always return null
 
@@ -337,9 +337,9 @@ function qa_get_userids_from_public($publicusernames)
 		if (count($publicusernames)) {
 			$escapedusernames = array();
 			foreach ($publicusernames as $publicusername)
-				$escapedusernames[] = "'" . qa_db_escape_string($publicusername) . "'";
+				$escapedusernames[] = "'" . ilya_db_escape_string($publicusername) . "'";
 
-			$results = qa_db_read_all_assoc(qa_db_query_raw(
+			$results = ilya_db_read_all_assoc(ilya_db_query_raw(
 				'SELECT username, userid FROM users WHERE username IN (' . implode(',', $escapedusernames) . ')'
 			));
 
@@ -357,19 +357,19 @@ function qa_get_userids_from_public($publicusernames)
  * YOU MUST MODIFY THIS FUNCTION, BUT CAN DO SO AFTER Q2A CREATES ITS DATABASE
  * ===========================================================================
  *
- * qa_get_public_from_userids($userids)
+ * ilya_get_public_from_userids($userids)
  *
- * This is exactly like qa_get_userids_from_public(), but works in the other direction.
+ * This is exactly like ilya_get_userids_from_public(), but works in the other direction.
  *
  * You should take the array of user identifiers in $userids, and return an array which maps valid
  * userids to public usernames. For each element of this array, the userid you were given should
  * be in the key, with the corresponding username in the value.
  *
- * Call qa_db_connection() to get the connection to the Q2A database. If your database is shared with
- * Q2A, you can also use the various qa_db_* functions to run queries. If you access this database or
+ * Call ilya_db_connection() to get the connection to the Q2A database. If your database is shared with
+ * Q2A, you can also use the various ilya_db_* functions to run queries. If you access this database or
  * any other, try to use a single query instead of one per user.
  */
-function qa_get_public_from_userids($userids)
+function ilya_get_public_from_userids($userids)
 {
 	// Until you edit this function, always return null
 
@@ -400,9 +400,9 @@ function qa_get_public_from_userids($userids)
 		if (count($userids)) {
 			$escapeduserids = array();
 			foreach ($userids as $userid)
-				$escapeduserids[] = "'" . qa_db_escape_string($userid) . "'";
+				$escapeduserids[] = "'" . ilya_db_escape_string($userid) . "'";
 
-			$results = qa_db_read_all_assoc(qa_db_query_raw(
+			$results = ilya_db_read_all_assoc(ilya_db_query_raw(
 				'SELECT username, userid FROM users WHERE userid IN (' . implode(',', $escapeduserids) . ')'
 			));
 
@@ -420,16 +420,16 @@ function qa_get_public_from_userids($userids)
  * YOU MAY MODIFY THIS FUNCTION, BUT THE DEFAULT BELOW WILL WORK OK
  * ==========================================================================
  *
- * qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
+ * ilya_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
  *
  * You should return HTML code which identifies the logged in user, to be displayed next to the
  * logout link on the Q2A pages. This HTML will only be shown to the logged in user themselves.
  * Note: the username MUST be escaped with htmlspecialchars() for general output, or urlencode()
  * for link URLs.
  *
- * $logged_in_user is the array that you returned from qa_get_logged_in_user(). Hopefully this
+ * $logged_in_user is the array that you returned from ilya_get_logged_in_user(). Hopefully this
  * contains enough information to generate the HTML without another database query, but if not,
- * call qa_db_connection() to get the connection to the Q2A database.
+ * call ilya_db_connection() to get the connection to the Q2A database.
  *
  * $relative_url_prefix is a relative URL to the root of the Q2A site, which may be useful if
  * you want to include a link that uses relative URLs. If the Q2A site is in a subdirectory of
@@ -438,13 +438,13 @@ function qa_get_public_from_userids($userids)
  * If you don't know what to display for a user, you can leave the default below. This will
  * show the public username, linked to the Q2A profile page for the user.
  */
-function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
+function ilya_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 {
 	// By default, show the public username linked to the Q2A profile page for the user
 
 	$publicusername = $logged_in_user['publicusername'];
 
-	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
+	return '<a href="' . ilya_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
 
 	/*
 		Example 1 - suitable if:
@@ -479,15 +479,15 @@ function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
  * YOU MAY MODIFY THIS FUNCTION, BUT THE DEFAULT BELOW WILL WORK OK
  * ==========================================================================
  *
- * qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
+ * ilya_get_users_html($userids, $should_include_link, $relative_url_prefix)
  *
  * You should return an array of HTML to display for each user in $userids. For each element of
  * this array, the userid should be in the key, with the corresponding HTML in the value.
  * Note: the username MUST be escaped with htmlspecialchars() for general output, or urlencode()
  * for link URLs.
  *
- * Call qa_db_connection() to get the connection to the Q2A database. If your database is shared with
- * Q2A, you can also use the various qa_db_* functions to run queries. If you access this database or
+ * Call ilya_db_connection() to get the connection to the Q2A database. If your database is shared with
+ * Q2A, you can also use the various ilya_db_* functions to run queries. If you access this database or
  * any other, try to use a single query instead of one per user.
  *
  * If $should_include_link is true, the HTML may include links to user profile pages.
@@ -500,11 +500,11 @@ function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
  * If you don't know what to display for a user, you can leave the default below. This will
  * show the public username, linked to the Q2A profile page for each user.
  */
-function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
+function ilya_get_users_html($userids, $should_include_link, $relative_url_prefix)
 {
 	// By default, show the public username linked to the Q2A profile page for each user
 
-	$useridtopublic = qa_get_public_from_userids($userids);
+	$useridtopublic = ilya_get_public_from_userids($userids);
 
 	$usershtml = array();
 
@@ -514,7 +514,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 		$usershtml[$userid] = htmlspecialchars($publicusername);
 
 		if ($should_include_link)
-			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
+			$usershtml[$userid] = '<a href="' . ilya_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
 	}
 
 	return $usershtml;
@@ -525,7 +525,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 		* Your Q2A site:       http://www.mysite.com/qa/
 		* Your user pages:     http://www.mysite.com/user/[username]
 
-		$useridtopublic = qa_get_public_from_userids($userids);
+		$useridtopublic = ilya_get_public_from_userids($userids);
 
 		foreach ($userids as $userid) {
 			$publicusername = $useridtopublic[$userid];
@@ -548,7 +548,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 		* Your user pages:     http://www.mysite.com/[username]/
 		* User photos (16x16): http://www.mysite.com/[username]/photo-small.jpg
 
-		$useridtopublic = qa_get_public_from_userids($userids);
+		$useridtopublic = ilya_get_public_from_userids($userids);
 
 		foreach ($userids as $userid) {
 			$publicusername = $useridtopublic[$userid];
@@ -572,7 +572,7 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
  * YOU MAY MODIFY THIS FUNCTION, BUT THE DEFAULT BELOW WILL WORK OK
  * ==========================================================================
  *
- * qa_avatar_html_from_userid($userid, $size, $padding)
+ * ilya_avatar_html_from_userid($userid, $size, $padding)
  *
  * You should return some HTML for displaying the avatar of $userid on the page.
  * If you do not wish to show an avatar for this user, return null.
@@ -581,16 +581,16 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
  *
  * If $padding is true, the HTML you return should render to a square of $size x $size pixels,
  * even if the avatar is not square. This can be achieved using CSS padding - see function
- * qa_get_avatar_blob_html(...) in ilya-app-format.php for an example. If $padding is false,
+ * ilya_get_avatar_blob_html(...) in ilya-app-format.php for an example. If $padding is false,
  * the HTML can render to anything which would fit inside a square of $size x $size pixels.
  *
  * Note that this function may be called many times to render an individual page, so it is not
  * a good idea to perform a database query each time it is called. Instead, you can use the fact
- * that before qa_avatar_html_from_userid(...) is called, qa_get_users_html(...) will have been
+ * that before ilya_avatar_html_from_userid(...) is called, ilya_get_users_html(...) will have been
  * called with all the relevant users in the array $userids. So you can pull out the information
- * you need in qa_get_users_html(...) and cache it in a global variable, for use in this function.
+ * you need in ilya_get_users_html(...) and cache it in a global variable, for use in this function.
  */
-function qa_avatar_html_from_userid($userid, $size, $padding)
+function ilya_avatar_html_from_userid($userid, $size, $padding)
 {
 	// Show no avatars by default
 
@@ -616,21 +616,21 @@ function qa_avatar_html_from_userid($userid, $size, $padding)
  * YOU MAY MODIFY THIS FUNCTION, BUT THE DEFAULT BELOW WILL WORK OK
  * ==========================================================================
  *
- * qa_user_report_action($userid, $action)
+ * ilya_user_report_action($userid, $action)
  *
  * Informs you about an action by user $userid that modified the database, such as posting,
  * voting, etc... If you wish, you may use this to log user activity or monitor for abuse.
  *
- * Call qa_db_connection() to get the connection to the Q2A database. If your database is shared with
- * Q2A, you can also use the various qa_db_* functions to run queries.
+ * Call ilya_db_connection() to get the connection to the Q2A database. If your database is shared with
+ * Q2A, you can also use the various ilya_db_* functions to run queries.
  *
  * $action will be a string (such as 'q_edit') describing the action. These strings will match the
  * first $event parameter passed to the process_event(...) function in event modules. In fact, you might
  * be better off just using a plugin with an event module instead, since you'll get more information.
  *
- * FYI, you can get the IP address of the user from qa_remote_ip_address().
+ * FYI, you can get the IP address of the user from ilya_remote_ip_address().
  */
-function qa_user_report_action($userid, $action)
+function ilya_user_report_action($userid, $action)
 {
 	// Do nothing by default
 }

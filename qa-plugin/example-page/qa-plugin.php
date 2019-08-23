@@ -40,5 +40,5 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('page', 'ilya-example-page.php', 'qa_example_page', 'Example Page');
-qa_register_plugin_phrases('ilya-example-lang-*.php', 'example_page');
+ilya_register_plugin_module('page', 'ilya-example-page.php', 'ilya_example_page', 'Example Page');
+ilya_register_plugin_phrases('ilya-example-lang-*.php', 'example_page');

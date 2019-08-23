@@ -1,6 +1,6 @@
 <?php
 
-class qa_html_theme extends qa_html_theme_base
+class ilya_html_theme extends ilya_html_theme_base
 {
 	// use new ranking layout
 	protected $ranking_block_layout = true;
@@ -9,17 +9,17 @@ class qa_html_theme extends qa_html_theme_base
 	// outputs login form if user not logged in
 	public function nav_user_search()
 	{
-		if (!qa_is_logged_in()) {
+		if (!ilya_is_logged_in()) {
 			if (isset($this->content['navigation']['user']['login']) && !QA_FINAL_EXTERNAL_USERS) {
 				$login = $this->content['navigation']['user']['login'];
 				$this->output(
 					'<form class="qam-login-form" action="'.$login['url'].'" method="post">',
-						'<input type="text" class="qam-login-text" name="emailhandle" dir="auto" placeholder="'.trim(qa_lang_html(qa_opt('allow_login_email_only') ? 'users/email_label' : 'users/email_handle_label'), ':').'"/>',
-						'<input type="password" class="qam-login-text" name="password" dir="auto" placeholder="'.trim(qa_lang_html('users/password_label'), ':').'"/>',
+						'<input type="text" class="qam-login-text" name="emailhandle" dir="auto" placeholder="'.trim(ilya_lang_html(ilya_opt('allow_login_email_only') ? 'users/email_label' : 'users/email_handle_label'), ':').'"/>',
+						'<input type="password" class="qam-login-text" name="password" dir="auto" placeholder="'.trim(ilya_lang_html('users/password_label'), ':').'"/>',
 						'<div class="qam-rememberbox"><input type="checkbox" name="remember" id="qam-rememberme" value="1"/>',
-						'<label for="qam-rememberme" class="qam-remember">'.qa_lang_html('users/remember').'</label></div>',
-						'<input type="hidden" name="code" value="'.qa_html(qa_get_form_security_code('login')).'"/>',
-						'<input type="submit" value="' . qa_lang_html('users/login_button') . '" class="ilya-form-tall-button ilya-form-tall-button-login" name="dologin"/>',
+						'<label for="qam-rememberme" class="qam-remember">'.ilya_lang_html('users/remember').'</label></div>',
+						'<input type="hidden" name="code" value="'.ilya_html(ilya_get_form_security_code('login')).'"/>',
+						'<input type="submit" value="' . ilya_lang_html('users/login_button') . '" class="ilya-form-tall-button ilya-form-tall-button-login" name="dologin"/>',
 					'</form>'
 				);
 
@@ -28,32 +28,32 @@ class qa_html_theme extends qa_html_theme_base
 			}
 		}
 
-		qa_html_theme_base::nav_user_search();
+		ilya_html_theme_base::nav_user_search();
 	}
 
 	public function logged_in()
 	{
 		require_once QA_INCLUDE_DIR . 'app/format.php';
 
-		if (qa_is_logged_in()) // output user avatar to login bar
+		if (ilya_is_logged_in()) // output user avatar to login bar
 			$this->output(
 				'<div class="ilya-logged-in-avatar">',
 				QA_FINAL_EXTERNAL_USERS
-				? qa_get_external_avatar_html(qa_get_logged_in_userid(), 24, true)
-				: qa_get_user_avatar_html(qa_get_logged_in_flags(), qa_get_logged_in_email(), qa_get_logged_in_handle(),
-					qa_get_logged_in_user_field('avatarblobid'), qa_get_logged_in_user_field('avatarwidth'), qa_get_logged_in_user_field('avatarheight'),
+				? ilya_get_external_avatar_html(ilya_get_logged_in_userid(), 24, true)
+				: ilya_get_user_avatar_html(ilya_get_logged_in_flags(), ilya_get_logged_in_email(), ilya_get_logged_in_handle(),
+					ilya_get_logged_in_user_field('avatarblobid'), ilya_get_logged_in_user_field('avatarwidth'), ilya_get_logged_in_user_field('avatarheight'),
 					24, true),
 				'</div>'
 			);
 
-		qa_html_theme_base::logged_in();
+		ilya_html_theme_base::logged_in();
 
-		if (qa_is_logged_in()) { // adds points count after logged in username
-			$userpoints=qa_get_logged_in_points();
+		if (ilya_is_logged_in()) { // adds points count after logged in username
+			$userpoints=ilya_get_logged_in_points();
 
 			$pointshtml=($userpoints==1)
-				? qa_lang_html_sub('main/1_point', '1', '1')
-				: qa_lang_html_sub('main/x_points', qa_html(qa_format_number($userpoints)));
+				? ilya_lang_html_sub('main/1_point', '1', '1')
+				: ilya_lang_html_sub('main/x_points', ilya_html(ilya_format_number($userpoints)));
 
 			$this->output(
 				'<span class="ilya-logged-in-points">',
@@ -101,7 +101,7 @@ class qa_html_theme extends qa_html_theme_base
 	public function sidepanel()
 	{
 		if ($this->template!='user')
-			qa_html_theme_base::sidepanel();
+			ilya_html_theme_base::sidepanel();
 	}
 
 	// prevent display of regular footer content (see body_suffix()) and replace with closing new <div>s
@@ -130,7 +130,7 @@ class qa_html_theme extends qa_html_theme_base
 
 		$this->voting($q_item);
 		$this->a_count($q_item);
-		qa_html_theme_base::view_count($q_item);
+		ilya_html_theme_base::view_count($q_item);
 
 		$this->output('</div>');
 	}
@@ -139,14 +139,14 @@ class qa_html_theme extends qa_html_theme_base
 	public function view_count($q_item)
 	{
 		if ($this->template=='question')
-			qa_html_theme_base::view_count($q_item);
+			ilya_html_theme_base::view_count($q_item);
 	}
 
 	// to replace standard Q2A footer
 	public function body_suffix()
 	{
 		$this->output('<div class="ilya-footer-bottom-group">');
-		qa_html_theme_base::footer();
+		ilya_html_theme_base::footer();
 		$this->output('</div> <!-- END footer-bottom-group -->', '');
 	}
 
@@ -158,6 +158,6 @@ class qa_html_theme extends qa_html_theme_base
 			'</div>'
 		);
 
-		qa_html_theme_base::attribution();
+		ilya_html_theme_base::attribution();
 	}
 }

@@ -34,20 +34,20 @@ require_once QA_INCLUDE_DIR . 'app/favorites.php';
 $favswitch = array(
 	'questions' => array(
 		'page_opt' => 'page_size_qs',
-		'fn_spec' => 'qa_db_user_favorite_qs_selectspec',
-		'fn_view' => 'qa_favorite_q_list_view',
+		'fn_spec' => 'ilya_db_user_favorite_qs_selectspec',
+		'fn_view' => 'ilya_favorite_q_list_view',
 		'key' => 'q_list',
 	),
 	'users' => array(
 		'page_opt' => 'page_size_users',
-		'fn_spec' => 'qa_db_user_favorite_users_selectspec',
-		'fn_view' => 'qa_favorite_users_view',
+		'fn_spec' => 'ilya_db_user_favorite_users_selectspec',
+		'fn_view' => 'ilya_favorite_users_view',
 		'key' => 'ranking_users',
 	),
 	'tags' => array(
 		'page_opt' => 'page_size_tags',
-		'fn_spec' => 'qa_db_user_favorite_tags_selectspec',
-		'fn_view' => 'qa_favorite_tags_view',
+		'fn_spec' => 'ilya_db_user_favorite_tags_selectspec',
+		'fn_view' => 'ilya_favorite_tags_view',
 		'key' => 'ranking_tags',
 	),
 );
@@ -55,48 +55,48 @@ $favswitch = array(
 
 // Check that we're logged in
 
-$userid = qa_get_logged_in_userid();
+$userid = ilya_get_logged_in_userid();
 
 if (!isset($userid))
-	qa_redirect('login');
+	ilya_redirect('login');
 
 
 // Get lists of favorites of this type
 
-$favtype = qa_request_part(1);
-$start = qa_get_start();
+$favtype = ilya_request_part(1);
+$start = ilya_get_start();
 
 if (!array_key_exists($favtype, $favswitch) || ($favtype === 'users' && QA_FINAL_EXTERNAL_USERS))
 	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 extract($favswitch[$favtype]); // get switch variables
 
-$pagesize = qa_opt($page_opt);
-list($totalItems, $items) = qa_db_select_with_pending(
-	qa_db_selectspec_count($fn_spec($userid)),
+$pagesize = ilya_opt($page_opt);
+list($totalItems, $items) = ilya_db_select_with_pending(
+	ilya_db_selectspec_count($fn_spec($userid)),
 	$fn_spec($userid, $pagesize, $start)
 );
 
 $count = $totalItems['count'];
-$usershtml = qa_userids_handles_html($items);
+$usershtml = ilya_userids_handles_html($items);
 
 
 // Prepare and return content for theme
 
-$qa_content = qa_content_prepare(true);
+$ilya_content = ilya_content_prepare(true);
 
-$qa_content['title'] = qa_lang_html('misc/my_favorites_title');
+$ilya_content['title'] = ilya_lang_html('misc/my_favorites_title');
 
-$qa_content[$key] = $fn_view($items, $usershtml);
+$ilya_content[$key] = $fn_view($items, $usershtml);
 
 
 // Sub navigation for account pages and suggestion
 
-$qa_content['suggest_next'] = qa_lang_html_sub('misc/suggest_favorites_add', '<span class="ilya-favorite-image">&nbsp;</span>');
+$ilya_content['suggest_next'] = ilya_lang_html_sub('misc/suggest_favorites_add', '<span class="ilya-favorite-image">&nbsp;</span>');
 
-$qa_content['page_links'] = qa_html_page_links(qa_request(), $start, $pagesize, $count, qa_opt('pages_prev_next'));
+$ilya_content['page_links'] = ilya_html_page_links(ilya_request(), $start, $pagesize, $count, ilya_opt('pages_prev_next'));
 
-$qa_content['navigation']['sub'] = qa_user_sub_navigation(qa_get_logged_in_handle(), 'favorites', true);
+$ilya_content['navigation']['sub'] = ilya_user_sub_navigation(ilya_get_logged_in_handle(), 'favorites', true);
 
 
-return $qa_content;
+return $ilya_content;

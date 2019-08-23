@@ -32,11 +32,11 @@ require_once QA_INCLUDE_DIR.'db/maxima.php';
  * performing all pending selects that have not yet been executed. If only one parameter is supplied, return its
  * result, otherwise return an array of results indexed as per the parameters.
  */
-function qa_db_select_with_pending() // any number of parameters read via func_get_args()
+function ilya_db_select_with_pending() // any number of parameters read via func_get_args()
 {
 	require_once QA_INCLUDE_DIR . 'app/options.php';
 
-	global $qa_db_pending_selectspecs, $qa_db_pending_results;
+	global $ilya_db_pending_selectspecs, $ilya_db_pending_results;
 
 	$selectspecs = func_get_args();
 	$singleresult = (count($selectspecs) == 1);
@@ -49,20 +49,20 @@ function qa_db_select_with_pending() // any number of parameters read via func_g
 		}
 	}
 
-	if (is_array($qa_db_pending_selectspecs)) {
-		foreach ($qa_db_pending_selectspecs as $pendingid => $selectspec) {
-			if (!isset($qa_db_pending_results[$pendingid])) {
+	if (is_array($ilya_db_pending_selectspecs)) {
+		foreach ($ilya_db_pending_selectspecs as $pendingid => $selectspec) {
+			if (!isset($ilya_db_pending_results[$pendingid])) {
 				$selectspecs['pending_' . $pendingid] = $selectspec;
 			}
 		}
 	}
 
-	$outresults = $outresults + qa_db_multi_select($selectspecs);
+	$outresults = $outresults + ilya_db_multi_select($selectspecs);
 
-	if (is_array($qa_db_pending_selectspecs)) {
-		foreach ($qa_db_pending_selectspecs as $pendingid => $selectspec) {
-			if (!isset($qa_db_pending_results[$pendingid])) {
-				$qa_db_pending_results[$pendingid] = $outresults['pending_' . $pendingid];
+	if (is_array($ilya_db_pending_selectspecs)) {
+		foreach ($ilya_db_pending_selectspecs as $pendingid => $selectspec) {
+			if (!isset($ilya_db_pending_results[$pendingid])) {
+				$ilya_db_pending_results[$pendingid] = $outresults['pending_' . $pendingid];
 				unset($outresults['pending_' . $pendingid]);
 			}
 		}
@@ -77,11 +77,11 @@ function qa_db_select_with_pending() // any number of parameters read via func_g
  * @param $pendingid
  * @param $selectspec
  */
-function qa_db_queue_pending_select($pendingid, $selectspec)
+function ilya_db_queue_pending_select($pendingid, $selectspec)
 {
-	global $qa_db_pending_selectspecs;
+	global $ilya_db_pending_selectspecs;
 
-	$qa_db_pending_selectspecs[$pendingid] = $selectspec;
+	$ilya_db_pending_selectspecs[$pendingid] = $selectspec;
 }
 
 
@@ -92,33 +92,33 @@ function qa_db_queue_pending_select($pendingid, $selectspec)
  * @param $selectspec
  * @return
  */
-function qa_db_get_pending_result($pendingid, $selectspec = null)
+function ilya_db_get_pending_result($pendingid, $selectspec = null)
 {
-	global $qa_db_pending_selectspecs, $qa_db_pending_results;
+	global $ilya_db_pending_selectspecs, $ilya_db_pending_results;
 
 	if (isset($selectspec)) {
-		qa_db_queue_pending_select($pendingid, $selectspec);
-	} elseif (!isset($qa_db_pending_selectspecs[$pendingid])) {
-		qa_fatal_error('Pending query was never set up: ' . $pendingid);
+		ilya_db_queue_pending_select($pendingid, $selectspec);
+	} elseif (!isset($ilya_db_pending_selectspecs[$pendingid])) {
+		ilya_fatal_error('Pending query was never set up: ' . $pendingid);
 	}
 
-	if (!isset($qa_db_pending_results[$pendingid])) {
-		qa_db_select_with_pending();
+	if (!isset($ilya_db_pending_results[$pendingid])) {
+		ilya_db_select_with_pending();
 	}
 
-	return $qa_db_pending_results[$pendingid];
+	return $ilya_db_pending_results[$pendingid];
 }
 
 
 /**
  * Remove the results of queued SELECT query identified by $pendingid if it has already been run. This means it will
- * run again if its results are requested via qa_db_get_pending_result()
+ * run again if its results are requested via ilya_db_get_pending_result()
  * @param $pendingid
  */
-function qa_db_flush_pending_result($pendingid)
+function ilya_db_flush_pending_result($pendingid)
 {
-	global $qa_db_pending_results;
-	unset($qa_db_pending_results[$pendingid]);
+	global $ilya_db_pending_results;
+	unset($ilya_db_pending_results[$pendingid]);
 }
 
 
@@ -128,7 +128,7 @@ function qa_db_flush_pending_result($pendingid)
  * @param $selectSpec
  * @return mixed
  */
-function qa_db_selectspec_count($selectSpec)
+function ilya_db_selectspec_count($selectSpec)
 {
 	$selectSpec['columns'] = array('count' => 'COUNT(*)');
 	$selectSpec['single'] = true;
@@ -148,9 +148,9 @@ function qa_db_selectspec_count($selectSpec)
  * @param bool $user
  * @return array
  */
-function qa_db_posts_basic_selectspec($voteuserid = null, $full = false, $user = true)
+function ilya_db_posts_basic_selectspec($voteuserid = null, $full = false, $user = true)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$selectspec = array(
 		'columns' => array(
@@ -220,7 +220,7 @@ function qa_db_posts_basic_selectspec($voteuserid = null, $full = false, $user =
 
 
 /**
- * Supplement a selectspec returned by qa_db_posts_basic_selectspec() to get information about another post (answer or
+ * Supplement a selectspec returned by ilya_db_posts_basic_selectspec() to get information about another post (answer or
  * comment) which is related to the main post (question) retrieved. Pass the name of table which will contain the other
  * post in $poststable. Set $fromupdated to true to get information about when this other post was edited, rather than
  * created. If $full is true, get full information on this other post.
@@ -229,7 +229,7 @@ function qa_db_posts_basic_selectspec($voteuserid = null, $full = false, $user =
  * @param bool $fromupdated
  * @param bool $full
  */
-function qa_db_add_selectspec_opost(&$selectspec, $poststable, $fromupdated = false, $full = false)
+function ilya_db_add_selectspec_opost(&$selectspec, $poststable, $fromupdated = false, $full = false)
 {
 	$selectspec['arraykey'] = 'opostid';
 
@@ -259,7 +259,7 @@ function qa_db_add_selectspec_opost(&$selectspec, $poststable, $fromupdated = fa
 
 
 /**
- * Supplement a selectspec returned by qa_db_posts_basic_selectspec() to get information about the author of another
+ * Supplement a selectspec returned by ilya_db_posts_basic_selectspec() to get information about the author of another
  * post (answer or comment) which is related to the main post (question) retrieved. Pass the name of table which will
  * contain the other user's details in $userstable and the name of the table which will contain the other user's points
  * in $pointstable.
@@ -267,7 +267,7 @@ function qa_db_add_selectspec_opost(&$selectspec, $poststable, $fromupdated = fa
  * @param $userstable
  * @param $pointstable
  */
-function qa_db_add_selectspec_ousers(&$selectspec, $userstable, $pointstable)
+function ilya_db_add_selectspec_ousers(&$selectspec, $userstable, $pointstable)
 {
 	if (!QA_FINAL_EXTERNAL_USERS) {
 		$selectspec['columns']['oflags'] = $userstable . '.flags';
@@ -288,7 +288,7 @@ function qa_db_add_selectspec_ousers(&$selectspec, $userstable, $pointstable)
  * @param $categoryslugs
  * @return string
  */
-function qa_db_slugs_to_backpath($categoryslugs)
+function ilya_db_slugs_to_backpath($categoryslugs)
 {
 	if (!is_array($categoryslugs)) {
 		// accept old-style string arguments for one category deep
@@ -305,7 +305,7 @@ function qa_db_slugs_to_backpath($categoryslugs)
  * @param $arguments
  * @return string
  */
-function qa_db_categoryslugs_sql_args($categoryslugs, &$arguments)
+function ilya_db_categoryslugs_sql_args($categoryslugs, &$arguments)
 {
 	if (!is_array($categoryslugs)) {
 		// accept old-style string arguments for one category deep
@@ -315,7 +315,7 @@ function qa_db_categoryslugs_sql_args($categoryslugs, &$arguments)
 	$levels = count($categoryslugs);
 
 	if ($levels > 0 && $levels <= QA_CATEGORY_DEPTH) {
-		$arguments[] = qa_db_slugs_to_backpath($categoryslugs);
+		$arguments[] = ilya_db_slugs_to_backpath($categoryslugs);
 		return (($levels == QA_CATEGORY_DEPTH) ? 'categoryid' : ('catidpath' . $levels)) . '=(SELECT categoryid FROM ^categories WHERE backpath=$ LIMIT 1) AND ';
 	}
 
@@ -338,7 +338,7 @@ function qa_db_categoryslugs_sql_args($categoryslugs, &$arguments)
  * @param $count
  * @return array
  */
-function qa_db_qs_selectspec($voteuserid, $sort, $start, $categoryslugs = null, $createip = null, $specialtype = false, $full = false, $count = null)
+function ilya_db_qs_selectspec($voteuserid, $sort, $start, $categoryslugs = null, $createip = null, $specialtype = false, $full = false, $count = null)
 {
 	if ($specialtype == 'Q' || $specialtype == 'Q_QUEUED') {
 		$type = $specialtype;
@@ -362,15 +362,15 @@ function qa_db_qs_selectspec($voteuserid, $sort, $start, $categoryslugs = null, 
 			break;
 
 		default:
-			qa_fatal_error('qa_db_qs_selectspec() called with illegal sort value');
+			ilya_fatal_error('ilya_db_qs_selectspec() called with illegal sort value');
 			break;
 	}
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, $full);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, $full);
 
 	$selectspec['source'] .=
 		" JOIN (SELECT postid FROM ^posts WHERE " .
-		qa_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
+		ilya_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
 		(isset($createip) ? "createip=UNHEX($) AND " : "") .
 		"type=$ " . $sortsql . " LIMIT #,#) y ON ^posts.postid=y.postid";
 
@@ -401,7 +401,7 @@ function qa_db_qs_selectspec($voteuserid, $sort, $start, $categoryslugs = null, 
  * @param $count
  * @return array
  */
-function qa_db_unanswered_qs_selectspec($voteuserid, $by, $start, $categoryslugs = null, $specialtype = false, $full = false, $count = null)
+function ilya_db_unanswered_qs_selectspec($voteuserid, $by, $start, $categoryslugs = null, $specialtype = false, $full = false, $count = null)
 {
 	if ($specialtype == 'Q' || $specialtype == 'Q_QUEUED') {
 		$type = $specialtype;
@@ -425,9 +425,9 @@ function qa_db_unanswered_qs_selectspec($voteuserid, $by, $start, $categoryslugs
 			break;
 	}
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, $full);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, $full);
 
-	$selectspec['source'] .= " JOIN (SELECT postid FROM ^posts WHERE " . qa_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) . "type=$ AND " . $bysql . " AND closedbyid IS NULL ORDER BY ^posts.created DESC LIMIT #,#) y ON ^posts.postid=y.postid";
+	$selectspec['source'] .= " JOIN (SELECT postid FROM ^posts WHERE " . ilya_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) . "type=$ AND " . $bysql . " AND closedbyid IS NULL ORDER BY ^posts.created DESC LIMIT #,#) y ON ^posts.postid=y.postid";
 
 	array_push($selectspec['arguments'], $type, $start, $count);
 
@@ -452,7 +452,7 @@ function qa_db_unanswered_qs_selectspec($voteuserid, $by, $start, $categoryslugs
  * @param $count
  * @return array
  */
-function qa_db_recent_a_qs_selectspec($voteuserid, $start, $categoryslugs = null, $createip = null, $specialtype = false, $fullanswers = false, $count = null)
+function ilya_db_recent_a_qs_selectspec($voteuserid, $start, $categoryslugs = null, $createip = null, $specialtype = false, $fullanswers = false, $count = null)
 {
 	if ($specialtype == 'A' || $specialtype == 'A_QUEUED') {
 		$type = $specialtype;
@@ -462,17 +462,17 @@ function qa_db_recent_a_qs_selectspec($voteuserid, $start, $categoryslugs = null
 
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
-	qa_db_add_selectspec_opost($selectspec, 'aposts', false, $fullanswers);
-	qa_db_add_selectspec_ousers($selectspec, 'ausers', 'auserpoints');
+	ilya_db_add_selectspec_opost($selectspec, 'aposts', false, $fullanswers);
+	ilya_db_add_selectspec_ousers($selectspec, 'ausers', 'auserpoints');
 
 	$selectspec['source'] .=
 		" JOIN ^posts AS aposts ON ^posts.postid=aposts.parentid" .
 		(QA_FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS ausers ON aposts.userid=ausers.userid") .
 		" LEFT JOIN ^userpoints AS auserpoints ON aposts.userid=auserpoints.userid" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
-		qa_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
+		ilya_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
 		(isset($createip) ? "createip=UNHEX($) AND " : "") .
 		"type=$ ORDER BY ^posts.created DESC LIMIT #,#) y ON aposts.postid=y.postid" .
 		($specialtype ? '' : " WHERE ^posts.type='Q'");
@@ -504,7 +504,7 @@ function qa_db_recent_a_qs_selectspec($voteuserid, $start, $categoryslugs = null
  * @param $count
  * @return array
  */
-function qa_db_recent_c_qs_selectspec($voteuserid, $start, $categoryslugs = null, $createip = null, $specialtype = false, $fullcomments = false, $count = null)
+function ilya_db_recent_c_qs_selectspec($voteuserid, $start, $categoryslugs = null, $createip = null, $specialtype = false, $fullcomments = false, $count = null)
 {
 	if ($specialtype == 'C' || $specialtype == 'C_QUEUED') {
 		$type = $specialtype;
@@ -514,10 +514,10 @@ function qa_db_recent_c_qs_selectspec($voteuserid, $start, $categoryslugs = null
 
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
-	qa_db_add_selectspec_opost($selectspec, 'cposts', false, $fullcomments);
-	qa_db_add_selectspec_ousers($selectspec, 'cusers', 'cuserpoints');
+	ilya_db_add_selectspec_opost($selectspec, 'cposts', false, $fullcomments);
+	ilya_db_add_selectspec_ousers($selectspec, 'cusers', 'cuserpoints');
 
 	$selectspec['source'] .=
 		" JOIN ^posts AS parentposts ON" .
@@ -526,7 +526,7 @@ function qa_db_recent_c_qs_selectspec($voteuserid, $start, $categoryslugs = null
 		(QA_FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS cusers ON cposts.userid=cusers.userid") .
 		" LEFT JOIN ^userpoints AS cuserpoints ON cposts.userid=cuserpoints.userid" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
-		qa_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
+		ilya_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
 		(isset($createip) ? "createip=UNHEX($) AND " : "") .
 		"type=$ ORDER BY ^posts.created DESC LIMIT #,#) y ON cposts.postid=y.postid" .
 		($specialtype ? '' : " WHERE ^posts.type='Q' AND ((parentposts.type='Q') OR (parentposts.type='A'))");
@@ -558,14 +558,14 @@ function qa_db_recent_c_qs_selectspec($voteuserid, $start, $categoryslugs = null
  * @param $count
  * @return array
  */
-function qa_db_recent_edit_qs_selectspec($voteuserid, $start, $categoryslugs = null, $lastip = null, $onlyvisible = true, $fulledited = false, $count = null)
+function ilya_db_recent_edit_qs_selectspec($voteuserid, $start, $categoryslugs = null, $lastip = null, $onlyvisible = true, $fulledited = false, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
-	qa_db_add_selectspec_opost($selectspec, 'editposts', true, $fulledited);
-	qa_db_add_selectspec_ousers($selectspec, 'editusers', 'edituserpoints');
+	ilya_db_add_selectspec_opost($selectspec, 'editposts', true, $fulledited);
+	ilya_db_add_selectspec_ousers($selectspec, 'editusers', 'edituserpoints');
 
 	$selectspec['source'] .=
 		" JOIN ^posts AS parentposts ON" .
@@ -574,7 +574,7 @@ function qa_db_recent_edit_qs_selectspec($voteuserid, $start, $categoryslugs = n
 		(QA_FINAL_EXTERNAL_USERS ? "" : " LEFT JOIN ^users AS editusers ON editposts.lastuserid=editusers.userid") .
 		" LEFT JOIN ^userpoints AS edituserpoints ON editposts.lastuserid=edituserpoints.userid" .
 		" JOIN (SELECT postid FROM ^posts WHERE " .
-		qa_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
+		ilya_db_categoryslugs_sql_args($categoryslugs, $selectspec['arguments']) .
 		(isset($lastip) ? "lastip=UNHEX($) AND " : "") .
 		($onlyvisible ? "type IN ('Q', 'A', 'C')" : "1") .
 		" ORDER BY ^posts.updated DESC LIMIT #,#) y ON editposts.postid=y.postid" .
@@ -603,14 +603,14 @@ function qa_db_recent_edit_qs_selectspec($voteuserid, $start, $categoryslugs = n
  * @param $count
  * @return array
  */
-function qa_db_flagged_post_qs_selectspec($voteuserid, $start, $fullflagged = false, $count = null)
+function ilya_db_flagged_post_qs_selectspec($voteuserid, $start, $fullflagged = false, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
-	qa_db_add_selectspec_opost($selectspec, 'flagposts', false, $fullflagged);
-	qa_db_add_selectspec_ousers($selectspec, 'flagusers', 'flaguserpoints');
+	ilya_db_add_selectspec_opost($selectspec, 'flagposts', false, $fullflagged);
+	ilya_db_add_selectspec_ousers($selectspec, 'flagusers', 'flaguserpoints');
 
 	$selectspec['source'] .=
 		" JOIN ^posts AS parentposts ON" .
@@ -637,9 +637,9 @@ function qa_db_flagged_post_qs_selectspec($voteuserid, $start, $fullflagged = fa
  * @param bool $full
  * @return array
  */
-function qa_db_posts_selectspec($voteuserid, $postids, $full = false)
+function ilya_db_posts_selectspec($voteuserid, $postids, $full = false)
 {
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, $full);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, $full);
 
 	$selectspec['source'] .= " WHERE ^posts.postid IN (#)";
 	$selectspec['arguments'][] = $postids;
@@ -653,7 +653,7 @@ function qa_db_posts_selectspec($voteuserid, $postids, $full = false)
  * @param $postids
  * @return array
  */
-function qa_db_posts_basetype_selectspec($postids)
+function ilya_db_posts_basetype_selectspec($postids)
 {
 	return array(
 		'columns' => array('postid', 'basetype' => 'LEFT(type, 1)'),
@@ -672,9 +672,9 @@ function qa_db_posts_basetype_selectspec($postids)
  * @param bool $full
  * @return array
  */
-function qa_db_posts_to_qs_selectspec($voteuserid, $postids, $full = false)
+function ilya_db_posts_to_qs_selectspec($voteuserid, $postids, $full = false)
 {
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, $full);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, $full);
 
 	$selectspec['columns']['obasetype'] = 'LEFT(childposts.type, 1)';
 	$selectspec['columns']['opostid'] = 'childposts.postid';
@@ -698,9 +698,9 @@ function qa_db_posts_to_qs_selectspec($voteuserid, $postids, $full = false)
  * @param $postid
  * @return array
  */
-function qa_db_full_post_selectspec($voteuserid, $postid)
+function ilya_db_full_post_selectspec($voteuserid, $postid)
 {
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, true);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, true);
 
 	$selectspec['source'] .= " WHERE ^posts.postid=#";
 	$selectspec['arguments'][] = $postid;
@@ -717,9 +717,9 @@ function qa_db_full_post_selectspec($voteuserid, $postid)
  * @param $parentid
  * @return array
  */
-function qa_db_full_child_posts_selectspec($voteuserid, $parentid)
+function ilya_db_full_child_posts_selectspec($voteuserid, $parentid)
 {
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, true);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, true);
 
 	$selectspec['source'] .= " WHERE ^posts.parentid=#";
 	$selectspec['arguments'][] = $parentid;
@@ -735,9 +735,9 @@ function qa_db_full_child_posts_selectspec($voteuserid, $parentid)
  * @param $questionid
  * @return array
  */
-function qa_db_full_a_child_posts_selectspec($voteuserid, $questionid)
+function ilya_db_full_a_child_posts_selectspec($voteuserid, $questionid)
 {
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, true);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, true);
 
 	$selectspec['source'] .= " JOIN ^posts AS parents ON ^posts.parentid=parents.postid WHERE parents.parentid=# AND LEFT(parents.type, 1)='A'";
 	$selectspec['arguments'][] = $questionid;
@@ -752,9 +752,9 @@ function qa_db_full_a_child_posts_selectspec($voteuserid, $questionid)
  * @param $postid
  * @return array
  */
-function qa_db_post_parent_q_selectspec($postid)
+function ilya_db_post_parent_q_selectspec($postid)
 {
-	$selectspec = qa_db_posts_basic_selectspec();
+	$selectspec = ilya_db_posts_basic_selectspec();
 
 	$selectspec['source'] .= " WHERE ^posts.postid=(SELECT IF(LEFT(parent.type, 1)='A', parent.parentid, parent.postid) FROM ^posts AS child LEFT JOIN ^posts AS parent ON parent.postid=child.parentid WHERE child.postid=# AND parent.type IN('Q','A'))";
 	$selectspec['arguments'] = array($postid);
@@ -769,9 +769,9 @@ function qa_db_post_parent_q_selectspec($postid)
  * @param $questionid
  * @return array
  */
-function qa_db_post_close_post_selectspec($questionid)
+function ilya_db_post_close_post_selectspec($questionid)
 {
-	$selectspec = qa_db_posts_basic_selectspec(null, true);
+	$selectspec = ilya_db_posts_basic_selectspec(null, true);
 
 	$selectspec['source'] .= " WHERE ^posts.postid=(SELECT closedbyid FROM ^posts WHERE postid=#)";
 	$selectspec['arguments'] = array($questionid);
@@ -786,9 +786,9 @@ function qa_db_post_close_post_selectspec($questionid)
  * @param $questionid int The canonical question.
  * @return array
  */
-function qa_db_post_duplicates_selectspec($questionid)
+function ilya_db_post_duplicates_selectspec($questionid)
 {
-	$selectspec = qa_db_posts_basic_selectspec(null, true);
+	$selectspec = ilya_db_posts_basic_selectspec(null, true);
 
 	$selectspec['source'] .= " WHERE ^posts.closedbyid=#";
 	$selectspec['arguments'] = array($questionid);
@@ -803,7 +803,7 @@ function qa_db_post_duplicates_selectspec($questionid)
  * @param $title
  * @return array
  */
-function qa_db_post_meta_selectspec($postid, $title)
+function ilya_db_post_meta_selectspec($postid, $title)
 {
 	$selectspec = array(
 		'columns' => array('title', 'content'),
@@ -831,11 +831,11 @@ function qa_db_post_meta_selectspec($postid, $title)
  * @param $count
  * @return array
  */
-function qa_db_related_qs_selectspec($voteuserid, $questionid, $count = null)
+function ilya_db_related_qs_selectspec($voteuserid, $questionid, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
 	$selectspec['columns'][] = 'score';
 
@@ -851,7 +851,7 @@ function qa_db_related_qs_selectspec($voteuserid, $questionid, $count = null)
 	if (!isset($voteuserid)) {
 		$selectspec['caching'] = array(
 			'key' => __FUNCTION__ . ":$questionid:$count",
-			'ttl' => qa_opt('caching_q_time'),
+			'ttl' => ilya_opt('caching_q_time'),
 		);
 	}
 
@@ -868,7 +868,7 @@ function qa_db_related_qs_selectspec($voteuserid, $questionid, $count = null)
  * include a 'score' column based on the matching strength and post hotness, and a 'matchparts' column that tells us
  * where the score came from (since a question could get weight from a match in the question itself, and/or weight from
  * a match in its answers, comments, or comments on answers). The 'matchparts' is a comma-separated list of tuples
- * matchtype:matchpostid:matchscore to be used with qa_search_set_max_match().
+ * matchtype:matchpostid:matchscore to be used with ilya_search_set_max_match().
  * @param $voteuserid
  * @param $titlewords
  * @param $contentwords
@@ -880,7 +880,7 @@ function qa_db_related_qs_selectspec($voteuserid, $questionid, $count = null)
  * @param $count
  * @return array
  */
-function qa_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, $tagwords, $handlewords, $handle, $start, $full = false, $count = null)
+function ilya_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, $tagwords, $handlewords, $handle, $start, $full = false, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
@@ -888,7 +888,7 @@ function qa_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, 
 	// The score also gives a bonus for hot questions, where the bonus scales linearly with hotness. The hottest
 	// question gets a bonus equivalent to a matching unique tag, and the least hot question gets zero bonus.
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, $full);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, $full);
 
 	$selectspec['columns'][] = 'score';
 	$selectspec['columns'][] = 'matchparts';
@@ -934,7 +934,7 @@ function qa_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, 
 		if (QA_FINAL_EXTERNAL_USERS) {
 			require_once QA_INCLUDE_DIR . 'app/users.php';
 
-			$userids = qa_get_userids_from_public($handlewords);
+			$userids = ilya_get_userids_from_public($handlewords);
 
 			if (count($userids)) {
 				$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
@@ -953,7 +953,7 @@ function qa_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, 
 
 	if (strlen($handle)) { // to allow searching for multi-word usernames (only works if search query contains full username and nothing else)
 		if (QA_FINAL_EXTERNAL_USERS) {
-			$userids = qa_get_userids_from_public(array($handle));
+			$userids = ilya_get_userids_from_public(array($handle));
 
 			if (count($userids)) {
 				$selectspec['source'] .= ($selectparts++ ? " UNION ALL " : "") .
@@ -983,14 +983,14 @@ function qa_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, 
 
 
 /**
- * Processes the matchparts column in $question which was returned from a search performed via qa_db_search_posts_selectspec()
+ * Processes the matchparts column in $question which was returned from a search performed via ilya_db_search_posts_selectspec()
  * Returns the id of the strongest matching answer or comment, or null if the question itself was the strongest match
  * @param $question
  * @param $type
  * @param $postid
  * @return null
  */
-function qa_search_set_max_match($question, &$type, &$postid)
+function ilya_search_set_max_match($question, &$type, &$postid)
 {
 	$type = 'Q';
 	$postid = $question['postid'];
@@ -1018,13 +1018,13 @@ function qa_search_set_max_match($question, &$type, &$postid)
  * @param $isid
  * @return array
  */
-function qa_db_full_category_selectspec($slugsorid, $isid)
+function ilya_db_full_category_selectspec($slugsorid, $isid)
 {
 	if ($isid) {
 		$identifiersql = 'categoryid=#';
 	} else {
 		$identifiersql = 'backpath=$';
-		$slugsorid = qa_db_slugs_to_backpath($slugsorid);
+		$slugsorid = ilya_db_slugs_to_backpath($slugsorid);
 	}
 
 	return array(
@@ -1048,7 +1048,7 @@ function qa_db_full_category_selectspec($slugsorid, $isid)
  * @param bool $full
  * @return array
  */
-function qa_db_category_nav_selectspec($slugsorid, $isid, $ispostid = false, $full = false)
+function ilya_db_category_nav_selectspec($slugsorid, $isid, $ispostid = false, $full = false)
 {
 	if ($isid) {
 		if ($ispostid) {
@@ -1058,7 +1058,7 @@ function qa_db_category_nav_selectspec($slugsorid, $isid, $ispostid = false, $fu
 		}
 	} else {
 		$identifiersql = 'backpath=$';
-		$slugsorid = qa_db_slugs_to_backpath($slugsorid);
+		$slugsorid = ilya_db_slugs_to_backpath($slugsorid);
 	}
 
 	$parentselects = array( // requires QA_CATEGORY_DEPTH=4
@@ -1109,7 +1109,7 @@ function qa_db_category_nav_selectspec($slugsorid, $isid, $ispostid = false, $fu
  * @param $categoryid
  * @return array
  */
-function qa_db_category_sub_selectspec($categoryid)
+function ilya_db_category_sub_selectspec($categoryid)
 {
 	return array(
 		'columns' => array('categoryid', 'title', 'tags', 'qcount', 'position'),
@@ -1126,12 +1126,12 @@ function qa_db_category_sub_selectspec($categoryid)
  * @param $slugs
  * @return array
  */
-function qa_db_slugs_to_category_id_selectspec($slugs)
+function ilya_db_slugs_to_category_id_selectspec($slugs)
 {
 	return array(
 		'columns' => array('categoryid'),
 		'source' => '^categories WHERE backpath=$',
-		'arguments' => array(qa_db_slugs_to_backpath($slugs)),
+		'arguments' => array(ilya_db_slugs_to_backpath($slugs)),
 		'arrayvalue' => 'categoryid',
 		'single' => true,
 	);
@@ -1144,7 +1144,7 @@ function qa_db_slugs_to_category_id_selectspec($slugs)
  * @param $onlypageids
  * @return array
  */
-function qa_db_pages_selectspec($onlynavin = null, $onlypageids = null)
+function ilya_db_pages_selectspec($onlynavin = null, $onlypageids = null)
 {
 	$selectspec = array(
 		// +0 required to work around MySQL bug where by permit value is mis-read as signed, e.g. -106 instead of 150
@@ -1170,7 +1170,7 @@ function qa_db_pages_selectspec($onlynavin = null, $onlypageids = null)
 /**
  * Return the selectspec to retrieve the list of widgets, ordered for display
  */
-function qa_db_widgets_selectspec()
+function ilya_db_widgets_selectspec()
 {
 	return array(
 		'columns' => array('widgetid', 'place', 'position', 'tags', 'title'),
@@ -1186,7 +1186,7 @@ function qa_db_widgets_selectspec()
  * @param $ispageid
  * @return array
  */
-function qa_db_page_full_selectspec($slugorpageid, $ispageid)
+function ilya_db_page_full_selectspec($slugorpageid, $ispageid)
 {
 	return array(
 		'columns' => array('pageid', 'title', 'flags', 'permit', 'nav', 'tags', 'position', 'heading', 'content'),
@@ -1208,17 +1208,17 @@ function qa_db_page_full_selectspec($slugorpageid, $ispageid)
  * @param $count
  * @return array
  */
-function qa_db_tag_recent_qs_selectspec($voteuserid, $tag, $start, $full = false, $count = null)
+function ilya_db_tag_recent_qs_selectspec($voteuserid, $tag, $start, $full = false, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid, $full);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid, $full);
 
 	// use two tests here - one which can use the index, and the other which narrows it down exactly - then limit to 1 just in case
 	$selectspec['source'] .= " JOIN (SELECT postid FROM ^posttags WHERE wordid=(SELECT wordid FROM ^words WHERE word=$ AND word=$ COLLATE utf8_bin LIMIT 1) ORDER BY postcreated DESC LIMIT #,#) y ON ^posts.postid=y.postid";
-	array_push($selectspec['arguments'], $tag, qa_strtolower($tag), $start, $count);
+	array_push($selectspec['arguments'], $tag, ilya_strtolower($tag), $start, $count);
 	$selectspec['sortdesc'] = 'created';
 
 	return $selectspec;
@@ -1230,12 +1230,12 @@ function qa_db_tag_recent_qs_selectspec($voteuserid, $tag, $start, $full = false
  * @param $tag
  * @return array
  */
-function qa_db_tag_word_selectspec($tag)
+function ilya_db_tag_word_selectspec($tag)
 {
 	return array(
 		'columns' => array('wordid', 'word', 'tagcount'),
 		'source' => '^words WHERE word=$ AND word=$ COLLATE utf8_bin',
-		'arguments' => array($tag, qa_strtolower($tag)),
+		'arguments' => array($tag, ilya_strtolower($tag)),
 		'single' => true,
 	);
 }
@@ -1252,11 +1252,11 @@ function qa_db_tag_word_selectspec($tag)
  * @param int $start
  * @return array
  */
-function qa_db_user_recent_qs_selectspec($voteuserid, $identifier, $count = null, $start = 0)
+function ilya_db_user_recent_qs_selectspec($voteuserid, $identifier, $count = null, $start = 0)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
 	$selectspec['source'] .= " WHERE ^posts.userid=" . (QA_FINAL_EXTERNAL_USERS ? "$" : "(SELECT userid FROM ^users WHERE handle=$ LIMIT 1)") . " AND type='Q' ORDER BY ^posts.created DESC LIMIT #,#";
 	array_push($selectspec['arguments'], $identifier, $start, $count);
@@ -1268,7 +1268,7 @@ function qa_db_user_recent_qs_selectspec($voteuserid, $identifier, $count = null
 
 /**
  * Return the selectspec to retrieve the antecedent questions for recent answers by the user identified by $identifier
- * (see qa_db_user_recent_qs_selectspec() comment), with the corresponding vote on those questions made by $voteuserid
+ * (see ilya_db_user_recent_qs_selectspec() comment), with the corresponding vote on those questions made by $voteuserid
  * (if not null). Return $count (if null, a default is used) questions. The selectspec will also retrieve some
  * information about the answers themselves, in columns named with the prefix 'o'.
  * @param $voteuserid
@@ -1277,13 +1277,13 @@ function qa_db_user_recent_qs_selectspec($voteuserid, $identifier, $count = null
  * @param int $start
  * @return array
  */
-function qa_db_user_recent_a_qs_selectspec($voteuserid, $identifier, $count = null, $start = 0)
+function ilya_db_user_recent_a_qs_selectspec($voteuserid, $identifier, $count = null, $start = 0)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
-	qa_db_add_selectspec_opost($selectspec, 'aposts');
+	ilya_db_add_selectspec_opost($selectspec, 'aposts');
 
 	$selectspec['columns']['oupvotes'] = 'aposts.upvotes';
 	$selectspec['columns']['odownvotes'] = 'aposts.downvotes';
@@ -1304,7 +1304,7 @@ function qa_db_user_recent_a_qs_selectspec($voteuserid, $identifier, $count = nu
 
 /**
  * Return the selectspec to retrieve the antecedent questions for recent comments by the user identified by $identifier
- * (see qa_db_user_recent_qs_selectspec() comment), with the corresponding vote on those questions made by $voteuserid
+ * (see ilya_db_user_recent_qs_selectspec() comment), with the corresponding vote on those questions made by $voteuserid
  * (if not null). Return $count (if null, a default is used) questions. The selectspec will also retrieve some
  * information about the comments themselves, in columns named with the prefix 'o'.
  * @param $voteuserid
@@ -1312,13 +1312,13 @@ function qa_db_user_recent_a_qs_selectspec($voteuserid, $identifier, $count = nu
  * @param $count
  * @return array
  */
-function qa_db_user_recent_c_qs_selectspec($voteuserid, $identifier, $count = null)
+function ilya_db_user_recent_c_qs_selectspec($voteuserid, $identifier, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
-	qa_db_add_selectspec_opost($selectspec, 'cposts');
+	ilya_db_add_selectspec_opost($selectspec, 'cposts');
 
 	$selectspec['source'] .=
 		" JOIN ^posts AS parentposts ON" .
@@ -1337,7 +1337,7 @@ function qa_db_user_recent_c_qs_selectspec($voteuserid, $identifier, $count = nu
 
 /**
  * Return the selectspec to retrieve the antecedent questions for recently edited posts by the user identified by
- * $identifier (see qa_db_user_recent_qs_selectspec() comment), with the corresponding vote on those questions made by
+ * $identifier (see ilya_db_user_recent_qs_selectspec() comment), with the corresponding vote on those questions made by
  * $voteuserid (if not null). Return $count (if null, a default is used) questions. The selectspec will also retrieve
  * some information about the edited posts themselves, in columns named with the prefix 'o'.
  * @param $voteuserid
@@ -1345,13 +1345,13 @@ function qa_db_user_recent_c_qs_selectspec($voteuserid, $identifier, $count = nu
  * @param $count
  * @return array
  */
-function qa_db_user_recent_edit_qs_selectspec($voteuserid, $identifier, $count = null)
+function ilya_db_user_recent_edit_qs_selectspec($voteuserid, $identifier, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
 
-	$selectspec = qa_db_posts_basic_selectspec($voteuserid);
+	$selectspec = ilya_db_posts_basic_selectspec($voteuserid);
 
-	qa_db_add_selectspec_opost($selectspec, 'editposts', true);
+	ilya_db_add_selectspec_opost($selectspec, 'editposts', true);
 
 	$selectspec['source'] .=
 		" JOIN ^posts AS parentposts ON" .
@@ -1376,7 +1376,7 @@ function qa_db_user_recent_edit_qs_selectspec($voteuserid, $identifier, $count =
  * @param $count
  * @return array
  */
-function qa_db_popular_tags_selectspec($start, $count = null)
+function ilya_db_popular_tags_selectspec($start, $count = null)
 {
 	$count = isset($count) ? $count : QA_DB_RETRIEVE_TAGS;
 
@@ -1394,7 +1394,7 @@ function qa_db_popular_tags_selectspec($start, $count = null)
 /**
  * Return the selectspec to retrieve the list of user profile fields, ordered for display
  */
-function qa_db_userfields_selectspec()
+function ilya_db_userfields_selectspec()
 {
 	return array(
 		'columns' => array('fieldid', 'title', 'content', 'flags', 'permit', 'position'),
@@ -1412,7 +1412,7 @@ function qa_db_userfields_selectspec()
  * @param $isuserid
  * @return array
  */
-function qa_db_user_account_selectspec($useridhandle, $isuserid)
+function ilya_db_user_account_selectspec($useridhandle, $isuserid)
 {
 	return array(
 		'columns' => array(
@@ -1432,12 +1432,12 @@ function qa_db_user_account_selectspec($useridhandle, $isuserid)
 
 /**
  * Return the selectspec to retrieve all user profile information of the user identified by
- * $useridhandle (see qa_db_user_account_selectspec() comment), as an array of [field] => [value]
+ * $useridhandle (see ilya_db_user_account_selectspec() comment), as an array of [field] => [value]
  * @param $useridhandle
  * @param $isuserid
  * @return array
  */
-function qa_db_user_profile_selectspec($useridhandle, $isuserid)
+function ilya_db_user_profile_selectspec($useridhandle, $isuserid)
 {
 	return array(
 		'columns' => array('title', 'content'),
@@ -1454,7 +1454,7 @@ function qa_db_user_profile_selectspec($useridhandle, $isuserid)
  * @param $userid
  * @return array
  */
-function qa_db_user_notices_selectspec($userid)
+function ilya_db_user_notices_selectspec($userid)
 {
 	return array(
 		'columns' => array('noticeid', 'content', 'format', 'tags', 'created' => 'UNIX_TIMESTAMP(created)'),
@@ -1467,12 +1467,12 @@ function qa_db_user_notices_selectspec($userid)
 
 /**
  * Return the selectspec to retrieve all columns from the userpoints table for the user identified by $identifier
- * (see qa_db_user_recent_qs_selectspec() comment), as a single array
+ * (see ilya_db_user_recent_qs_selectspec() comment), as a single array
  * @param $identifier
  * @param bool $isuserid
  * @return array
  */
-function qa_db_user_points_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS)
+function ilya_db_user_points_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS)
 {
 	return array(
 		'columns' => array('points', 'qposts', 'aposts', 'cposts', 'aselects', 'aselecteds', 'qupvotes', 'qdownvotes', 'aupvotes', 'adownvotes', 'qvoteds', 'avoteds', 'upvoteds', 'downvoteds', 'bonus'),
@@ -1485,12 +1485,12 @@ function qa_db_user_points_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL
 
 /**
  * Return the selectspec to calculate the rank in points of the user identified by $identifier
- * (see qa_db_user_recent_qs_selectspec() comment), as a single value
+ * (see ilya_db_user_recent_qs_selectspec() comment), as a single value
  * @param $identifier
  * @param bool $isuserid
  * @return array
  */
-function qa_db_user_rank_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS)
+function ilya_db_user_rank_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS)
 {
 	return array(
 		'columns' => array('rank' => '1+COUNT(*)'),
@@ -1509,7 +1509,7 @@ function qa_db_user_rank_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_U
  * @param $count
  * @return array
  */
-function qa_db_top_users_selectspec($start, $count = null)
+function ilya_db_top_users_selectspec($start, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_USERS) : QA_DB_RETRIEVE_USERS;
 
@@ -1525,7 +1525,7 @@ function qa_db_top_users_selectspec($start, $count = null)
 
 	// If the site is configured to share the ^users table then there might not be a record in the ^userpoints table
 	if (defined('QA_MYSQL_USERS_PREFIX')) {
-		$basePoints = (int)qa_opt('points_base');
+		$basePoints = (int)ilya_opt('points_base');
 		$source = '^users JOIN (SELECT ^users.userid, COALESCE(points,' . $basePoints . ') AS points FROM ^users LEFT JOIN ^userpoints ON ^users.userid=^userpoints.userid ORDER BY points DESC LIMIT #,#) y ON ^users.userid=y.userid';
 	} else {
 		$source = '^users JOIN (SELECT userid FROM ^userpoints ORDER BY points DESC LIMIT #,#) y ON ^users.userid=y.userid JOIN ^userpoints ON ^users.userid=^userpoints.userid';;
@@ -1548,7 +1548,7 @@ function qa_db_top_users_selectspec($start, $count = null)
  * @param $count
  * @return array
  */
-function qa_db_newest_users_selectspec($start, $count = null)
+function ilya_db_newest_users_selectspec($start, $count = null)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_USERS) : QA_DB_RETRIEVE_USERS;
 
@@ -1567,7 +1567,7 @@ function qa_db_newest_users_selectspec($start, $count = null)
  * @param $level
  * @return array
  */
-function qa_db_users_from_level_selectspec($level)
+function ilya_db_users_from_level_selectspec($level)
 {
 	return array(
 		'columns' => array('^users.userid', 'handle', 'level'),
@@ -1585,7 +1585,7 @@ function qa_db_users_from_level_selectspec($level)
  * @param $limit
  * @return array
  */
-function qa_db_users_with_flag_selectspec($flag, $start = 0, $limit = null)
+function ilya_db_users_with_flag_selectspec($flag, $start = 0, $limit = null)
 {
 	$source = '^users WHERE (flags & #)';
 	$arguments = array($flag);
@@ -1607,7 +1607,7 @@ function qa_db_users_with_flag_selectspec($flag, $start = 0, $limit = null)
 /**
  * Return columns for standard messages selectspec
  */
-function qa_db_messages_columns()
+function ilya_db_messages_columns()
 {
 	return array(
 		'messageid', 'fromuserid', 'touserid', 'content', 'format',
@@ -1629,7 +1629,7 @@ function qa_db_messages_columns()
 /**
  * If $fromidentifier is not null, return the selectspec to get recent private messages which have been sent from
  * the user identified by $fromidentifier+$fromisuserid to the user identified by $toidentifier+$toisuserid (see
- * qa_db_user_recent_qs_selectspec() comment). If $fromidentifier is null, then get recent wall posts
+ * ilya_db_user_recent_qs_selectspec() comment). If $fromidentifier is null, then get recent wall posts
  * for the user identified by $toidentifier+$toisuserid. Return $count (if null, a default is used) messages.
  * @param $fromidentifier
  * @param $fromisuserid
@@ -1639,7 +1639,7 @@ function qa_db_messages_columns()
  * @param int $start
  * @return array
  */
-function qa_db_recent_messages_selectspec($fromidentifier, $fromisuserid, $toidentifier, $toisuserid, $count = null, $start = 0)
+function ilya_db_recent_messages_selectspec($fromidentifier, $fromisuserid, $toidentifier, $toisuserid, $count = null, $start = 0)
 {
 	$count = isset($count) ? min($count, QA_DB_RETRIEVE_MESSAGES) : QA_DB_RETRIEVE_MESSAGES;
 
@@ -1656,7 +1656,7 @@ function qa_db_recent_messages_selectspec($fromidentifier, $fromisuserid, $toide
 	$arguments = isset($fromidentifier) ? array($fromidentifier, $toidentifier, $start, $count) : array($toidentifier, $start, $count);
 
 	return array(
-		'columns' => qa_db_messages_columns(),
+		'columns' => ilya_db_messages_columns(),
 		'source' => $source,
 		'arguments' => $arguments,
 		'arraykey' => 'messageid',
@@ -1668,7 +1668,7 @@ function qa_db_recent_messages_selectspec($fromidentifier, $fromisuserid, $toide
 /**
  * Get selectspec for messages *to* specified user. $type is either 'public' or 'private'.
  * $toidentifier is a handle or userid depending on the value of $toisuserid.
- * Returns $limit messages, or all of them if $limit is null (used in qa_db_selectspec_count).
+ * Returns $limit messages, or all of them if $limit is null (used in ilya_db_selectspec_count).
  * @param $type
  * @param $toidentifier
  * @param $toisuserid
@@ -1676,7 +1676,7 @@ function qa_db_recent_messages_selectspec($fromidentifier, $fromisuserid, $toide
  * @param $limit
  * @return array
  */
-function qa_db_messages_inbox_selectspec($type, $toidentifier, $toisuserid, $start = 0, $limit = null)
+function ilya_db_messages_inbox_selectspec($type, $toidentifier, $toisuserid, $start = 0, $limit = null)
 {
 	$type = strtoupper($type);
 
@@ -1692,7 +1692,7 @@ function qa_db_messages_inbox_selectspec($type, $toidentifier, $toisuserid, $sta
 	}
 
 	return array(
-		'columns' => qa_db_messages_columns(),
+		'columns' => ilya_db_messages_columns(),
 		'source' => $source,
 		'arguments' => $arguments,
 		'arraykey' => 'messageid',
@@ -1704,7 +1704,7 @@ function qa_db_messages_inbox_selectspec($type, $toidentifier, $toisuserid, $sta
 /**
  * Get selectspec for messages *from* specified user. $type is either 'public' or 'private'.
  * $fromidentifier is a handle or userid depending on the value of $fromisuserid.
- * Returns $limit messages, or all of them if $limit is null (used in qa_db_selectspec_count).
+ * Returns $limit messages, or all of them if $limit is null (used in ilya_db_selectspec_count).
  * @param $type
  * @param $fromidentifier
  * @param $fromisuserid
@@ -1712,7 +1712,7 @@ function qa_db_messages_inbox_selectspec($type, $toidentifier, $toisuserid, $sta
  * @param $limit
  * @return array
  */
-function qa_db_messages_outbox_selectspec($type, $fromidentifier, $fromisuserid, $start = 0, $limit = null)
+function ilya_db_messages_outbox_selectspec($type, $fromidentifier, $fromisuserid, $start = 0, $limit = null)
 {
 	$type = strtoupper($type);
 
@@ -1728,7 +1728,7 @@ function qa_db_messages_outbox_selectspec($type, $fromidentifier, $fromisuserid,
 	}
 
 	return array(
-		'columns' => qa_db_messages_columns(),
+		'columns' => ilya_db_messages_columns(),
 		'source' => $source,
 		'arguments' => $arguments,
 		'arraykey' => 'messageid',
@@ -1745,7 +1745,7 @@ function qa_db_messages_outbox_selectspec($type, $fromidentifier, $fromisuserid,
  * @param $identifier
  * @return array
  */
-function qa_db_is_favorite_selectspec($userid, $entitytype, $identifier)
+function ilya_db_is_favorite_selectspec($userid, $entitytype, $identifier)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
@@ -1767,7 +1767,7 @@ function qa_db_is_favorite_selectspec($userid, $entitytype, $identifier)
 
 		case QA_ENTITY_CATEGORY:
 			$selectspec['source'] .= ' AND entityid=(SELECT categoryid FROM ^categories WHERE backpath=$ LIMIT 1)';
-			$identifier = qa_db_slugs_to_backpath($identifier);
+			$identifier = ilya_db_slugs_to_backpath($identifier);
 			break;
 
 		default:
@@ -1783,17 +1783,17 @@ function qa_db_is_favorite_selectspec($userid, $entitytype, $identifier)
 
 /**
  * Return the selectspec to retrieve an array of $userid's favorited questions, with the usual information.
- * Returns $limit questions, or all of them if $limit is null (used in qa_db_selectspec_count).
+ * Returns $limit questions, or all of them if $limit is null (used in ilya_db_selectspec_count).
  * @param $userid
  * @param $limit
  * @param int $start
  * @return array
  */
-function qa_db_user_favorite_qs_selectspec($userid, $limit = null, $start = 0)
+function ilya_db_user_favorite_qs_selectspec($userid, $limit = null, $start = 0)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
-	$selectspec = qa_db_posts_basic_selectspec($userid);
+	$selectspec = ilya_db_posts_basic_selectspec($userid);
 
 	$selectspec['source'] .= ' JOIN ^userfavorites AS selectfave ON ^posts.postid=selectfave.entityid WHERE selectfave.userid=$ AND selectfave.entitytype=$ AND ^posts.type="Q" ORDER BY ^posts.created DESC';
 	$selectspec['arguments'][] = $userid;
@@ -1814,13 +1814,13 @@ function qa_db_user_favorite_qs_selectspec($userid, $limit = null, $start = 0)
 
 /**
  * Return the selectspec to retrieve an array of $userid's favorited users, with information about those users' accounts.
- * Returns $limit users, or all of them if $limit is null (used in qa_db_selectspec_count).
+ * Returns $limit users, or all of them if $limit is null (used in ilya_db_selectspec_count).
  * @param $userid
  * @param $limit
  * @param int $start
  * @return array
  */
-function qa_db_user_favorite_users_selectspec($userid, $limit = null, $start = 0)
+function ilya_db_user_favorite_users_selectspec($userid, $limit = null, $start = 0)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
@@ -1845,13 +1845,13 @@ function qa_db_user_favorite_users_selectspec($userid, $limit = null, $start = 0
 
 /**
  * Return the selectspec to retrieve an array of $userid's favorited tags, with information about those tags.
- * Returns $limit tags, or all of them if $limit is null (used in qa_db_selectspec_count).
+ * Returns $limit tags, or all of them if $limit is null (used in ilya_db_selectspec_count).
  * @param $userid
  * @param $limit
  * @param int $start
  * @return array
  */
-function qa_db_user_favorite_tags_selectspec($userid, $limit = null, $start = 0)
+function ilya_db_user_favorite_tags_selectspec($userid, $limit = null, $start = 0)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
@@ -1879,7 +1879,7 @@ function qa_db_user_favorite_tags_selectspec($userid, $limit = null, $start = 0)
  * @param $userid
  * @return array
  */
-function qa_db_user_favorite_categories_selectspec($userid)
+function ilya_db_user_favorite_categories_selectspec($userid)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
@@ -1898,7 +1898,7 @@ function qa_db_user_favorite_categories_selectspec($userid)
  * @param $userid
  * @return array
  */
-function qa_db_user_favorite_non_qs_selectspec($userid)
+function ilya_db_user_favorite_non_qs_selectspec($userid)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
@@ -1920,13 +1920,13 @@ function qa_db_user_favorite_non_qs_selectspec($userid)
  * @param bool $forcontent
  * @return array
  */
-function qa_db_user_updates_selectspec($userid, $forfavorites = true, $forcontent = true)
+function ilya_db_user_updates_selectspec($userid, $forfavorites = true, $forcontent = true)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
-	$selectspec = qa_db_posts_basic_selectspec($userid);
+	$selectspec = ilya_db_posts_basic_selectspec($userid);
 
-	$nonesql = qa_db_argument_to_mysql(QA_ENTITY_NONE, true);
+	$nonesql = ilya_db_argument_to_mysql(QA_ENTITY_NONE, true);
 
 	$selectspec['columns']['obasetype'] = 'LEFT(updateposts.type, 1)';
 	$selectspec['columns']['oupdatetype'] = 'fullevents.updatetype';
@@ -1937,7 +1937,7 @@ function qa_db_user_updates_selectspec($userid, $forfavorites = true, $forconten
 	$selectspec['columns']['opersonal'] = 'fullevents.entitytype=' . $nonesql;
 	$selectspec['columns']['oparentid'] = 'updateposts.parentid';
 
-	qa_db_add_selectspec_ousers($selectspec, 'eventusers', 'eventuserpoints');
+	ilya_db_add_selectspec_ousers($selectspec, 'eventusers', 'eventuserpoints');
 
 	if ($forfavorites) { // life is hard
 		$selectspec['source'] .= ' JOIN ' .
@@ -1973,7 +1973,7 @@ function qa_db_user_updates_selectspec($userid, $forfavorites = true, $forconten
  * @param $userid
  * @return array
  */
-function qa_db_user_limits_selectspec($userid)
+function ilya_db_user_limits_selectspec($userid)
 {
 	return array(
 		'columns' => array('action', 'period', 'count'),
@@ -1989,7 +1989,7 @@ function qa_db_user_limits_selectspec($userid)
  * @param $ip
  * @return array
  */
-function qa_db_ip_limits_selectspec($ip)
+function ilya_db_ip_limits_selectspec($ip)
 {
 	return array(
 		'columns' => array('action', 'period', 'count'),
@@ -2009,7 +2009,7 @@ function qa_db_ip_limits_selectspec($ip)
  * @param bool $full
  * @return array
  */
-function qa_db_user_levels_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS, $full = false)
+function ilya_db_user_levels_selectspec($identifier, $isuserid = QA_FINAL_EXTERNAL_USERS, $full = false)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 

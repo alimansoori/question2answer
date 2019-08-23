@@ -20,12 +20,12 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_event_logger
+class ilya_event_logger
 {
 	public function init_queries($table_list)
 	{
-		if (qa_opt('event_logger_to_database')) {
-			$tablename = qa_db_add_table_prefix('eventlog');
+		if (ilya_opt('event_logger_to_database')) {
+			$tablename = ilya_db_add_table_prefix('eventlog');
 
 			if (!in_array($tablename, $table_list)) {
 				// table does not exist, so create it
@@ -35,7 +35,7 @@ class qa_event_logger
 				return 'CREATE TABLE ^eventlog (' .
 					'datetime DATETIME NOT NULL,' .
 					'ipaddress VARCHAR (45) CHARACTER SET ascii,' .
-					'userid ' . qa_get_mysql_user_column_type() . ',' .
+					'userid ' . ilya_get_mysql_user_column_type() . ',' .
 					'handle VARCHAR(' . QA_DB_MAX_HANDLE_LENGTH . '),' .
 					'cookieid BIGINT UNSIGNED,' .
 					'event VARCHAR (20) CHARACTER SET ascii NOT NULL,' .
@@ -47,7 +47,7 @@ class qa_event_logger
 					') ENGINE=MyISAM DEFAULT CHARSET=utf8';
 			} else {
 				// table exists: check it has the correct schema
-				$column = qa_db_read_one_assoc(qa_db_query_sub('SHOW COLUMNS FROM ^eventlog WHERE Field="ipaddress"'));
+				$column = ilya_db_read_one_assoc(ilya_db_query_sub('SHOW COLUMNS FROM ^eventlog WHERE Field="ipaddress"'));
 				if (strtolower($column['Type']) !== 'varchar(45)') {
 					// upgrade to handle IPv6
 					return 'ALTER TABLE ^eventlog MODIFY ipaddress VARCHAR(45) CHARACTER SET ascii';
@@ -59,24 +59,24 @@ class qa_event_logger
 	}
 
 
-	public function admin_form(&$qa_content)
+	public function admin_form(&$ilya_content)
 	{
 		// Process form input
 
 		$saved = false;
 
-		if (qa_clicked('event_logger_save_button')) {
-			qa_opt('event_logger_to_database', (int)qa_post_text('event_logger_to_database_field'));
-			qa_opt('event_logger_to_files', qa_post_text('event_logger_to_files_field'));
-			qa_opt('event_logger_directory', qa_post_text('event_logger_directory_field'));
-			qa_opt('event_logger_hide_header', !qa_post_text('event_logger_hide_header_field'));
+		if (ilya_clicked('event_logger_save_button')) {
+			ilya_opt('event_logger_to_database', (int)ilya_post_text('event_logger_to_database_field'));
+			ilya_opt('event_logger_to_files', ilya_post_text('event_logger_to_files_field'));
+			ilya_opt('event_logger_directory', ilya_post_text('event_logger_directory_field'));
+			ilya_opt('event_logger_hide_header', !ilya_post_text('event_logger_hide_header_field'));
 
 			$saved = true;
 		}
 
 		// Check the validity of the currently entered directory (if any)
 
-		$directory = qa_opt('event_logger_directory');
+		$directory = ilya_opt('event_logger_directory');
 
 		$note = null;
 		$error = null;
@@ -92,7 +92,7 @@ class qa_event_logger
 
 		// Create the form for display
 
-		qa_set_display_rules($qa_content, array(
+		ilya_set_display_rules($ilya_content, array(
 			'event_logger_directory_display' => 'event_logger_to_files_field',
 			'event_logger_hide_header_display' => 'event_logger_to_files_field',
 		));
@@ -104,24 +104,24 @@ class qa_event_logger
 				array(
 					'label' => 'Log events to <code>' . QA_MYSQL_TABLE_PREFIX . 'eventlog</code> database table',
 					'tags' => 'name="event_logger_to_database_field"',
-					'value' => qa_opt('event_logger_to_database'),
+					'value' => ilya_opt('event_logger_to_database'),
 					'type' => 'checkbox',
 				),
 
 				array(
 					'label' => 'Log events to daily log files',
 					'tags' => 'name="event_logger_to_files_field" id="event_logger_to_files_field"',
-					'value' => qa_opt('event_logger_to_files'),
+					'value' => ilya_opt('event_logger_to_files'),
 					'type' => 'checkbox',
 				),
 
 				array(
 					'id' => 'event_logger_directory_display',
 					'label' => 'Directory for log files - enter full path:',
-					'value' => qa_html($directory),
+					'value' => ilya_html($directory),
 					'tags' => 'name="event_logger_directory_field"',
 					'note' => $note,
-					'error' => qa_html($error),
+					'error' => ilya_html($error),
 				),
 
 				array(
@@ -129,7 +129,7 @@ class qa_event_logger
 					'label' => 'Include header lines at top of each log file',
 					'type' => 'checkbox',
 					'tags' => 'name="event_logger_hide_header_field"',
-					'value' => !qa_opt('event_logger_hide_header'),
+					'value' => !ilya_opt('event_logger_hide_header'),
 				),
 			),
 
@@ -149,8 +149,8 @@ class qa_event_logger
 
 		if (is_array($value))
 			$text = 'array(' . count($value) . ')';
-		elseif (qa_strlen($value) > 40)
-			$text = qa_substr($value, 0, 38) . '...';
+		elseif (ilya_strlen($value) > 40)
+			$text = ilya_substr($value, 0, 38) . '...';
 		else
 			$text = $value;
 
@@ -160,21 +160,21 @@ class qa_event_logger
 
 	public function process_event($event, $userid, $handle, $cookieid, $params)
 	{
-		if (qa_opt('event_logger_to_database')) {
+		if (ilya_opt('event_logger_to_database')) {
 			$paramstring = '';
 
 			foreach ($params as $key => $value) {
 				$paramstring .= (strlen($paramstring) ? "\t" : '') . $key . '=' . $this->value_to_text($value);
 			}
 
-			qa_db_query_sub(
+			ilya_db_query_sub(
 				'INSERT INTO ^eventlog (datetime, ipaddress, userid, handle, cookieid, event, params) ' .
 				'VALUES (NOW(), $, $, $, #, $, $)',
-				qa_remote_ip_address(), $userid, $handle, $cookieid, $event, $paramstring
+				ilya_remote_ip_address(), $userid, $handle, $cookieid, $event, $paramstring
 			);
 		}
 
-		if (qa_opt('event_logger_to_files')) {
+		if (ilya_opt('event_logger_to_files')) {
 			// Substitute some placeholders if certain information is missing
 			if (!strlen($userid))
 				$userid = 'no_userid';
@@ -185,7 +185,7 @@ class qa_event_logger
 			if (!strlen($cookieid))
 				$cookieid = 'no_cookieid';
 
-			$ip = qa_remote_ip_address();
+			$ip = ilya_remote_ip_address();
 			if (!strlen($ip))
 				$ip = 'no_ipaddress';
 
@@ -211,7 +211,7 @@ class qa_event_logger
 
 			// Build the full path and file name
 
-			$directory = qa_opt('event_logger_directory');
+			$directory = ilya_opt('event_logger_directory');
 
 			if (substr($directory, -1) != '/')
 				$directory .= '/';
@@ -226,7 +226,7 @@ class qa_event_logger
 
 			if (is_resource($file)) {
 				if (flock($file, LOCK_EX)) {
-					if (!$exists && filesize($filename) === 0 && !qa_opt('event_logger_hide_header')) {
+					if (!$exists && filesize($filename) === 0 && !ilya_opt('event_logger_hide_header')) {
 						$string = "Question2Answer " . QA_VERSION . " log file generated by Event Logger plugin.\n" .
 							"This file is formatted as tab-delimited text with UTF-8 encoding.\n\n" .
 							implode("\t", array_keys($fixedfields)) . "\textras...\n\n" . $string;

@@ -19,10 +19,10 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_html_theme_layer extends qa_html_theme_base
+class ilya_html_theme_layer extends ilya_html_theme_base
 {
-	private $qa_voters_flaggers_queue = array();
-	private $qa_voters_flaggers_cache = array();
+	private $ilya_voters_flaggers_queue = array();
+	private $ilya_voters_flaggers_cache = array();
 
 
 	// Collect up all required postids for the entire page to save DB queries - common case where whole page output
@@ -91,7 +91,7 @@ class qa_html_theme_layer extends qa_html_theme_base
 
 			foreach ($votersflaggers as $voterflagger) {
 				if ($voterflagger['vote'] != 0) {
-					$newflagger = qa_html($voterflagger['handle']);
+					$newflagger = ilya_html($voterflagger['handle']);
 					if ($voterflagger['vote'] > 0)
 						$uphandles[] = $newflagger;
 					else  // if ($voterflagger['vote'] < 0)
@@ -125,7 +125,7 @@ class qa_html_theme_layer extends qa_html_theme_base
 			if (isset($votersflaggers)) {
 				foreach ($votersflaggers as $voterflagger) {
 					if ($voterflagger['flag'] > 0)
-						$flaggers[] = qa_html($voterflagger['handle']);
+						$flaggers[] = ilya_html($voterflagger['handle']);
 				}
 			}
 		}
@@ -144,11 +144,11 @@ class qa_html_theme_layer extends qa_html_theme_base
 
 	private function queue_post_voters_flaggers($post)
 	{
-		if (!qa_user_post_permit_error('permit_view_voters_flaggers', $post)) {
+		if (!ilya_user_post_permit_error('permit_view_voters_flaggers', $post)) {
 			$postkeys = array('postid', 'opostid');
 			foreach ($postkeys as $key) {
-				if (isset($post[$key]) && !isset($this->qa_voters_flaggers_cache[$post[$key]]))
-					$this->qa_voters_flaggers_queue[$post[$key]] = true;
+				if (isset($post[$key]) && !isset($this->ilya_voters_flaggers_cache[$post[$key]]))
+					$this->ilya_voters_flaggers_queue[$post[$key]] = true;
 			}
 		}
 	}
@@ -165,16 +165,16 @@ class qa_html_theme_layer extends qa_html_theme_base
 
 	private function retrieve_queued_voters_flaggers()
 	{
-		if (count($this->qa_voters_flaggers_queue)) {
+		if (count($this->ilya_voters_flaggers_queue)) {
 			require_once QA_INCLUDE_DIR . 'db/votes.php';
 
-			$postids = array_keys($this->qa_voters_flaggers_queue);
+			$postids = array_keys($this->ilya_voters_flaggers_queue);
 
 			foreach ($postids as $postid) {
-				$this->qa_voters_flaggers_cache[$postid] = array();
+				$this->ilya_voters_flaggers_cache[$postid] = array();
 			}
 
-			$newvotersflaggers = qa_db_uservoteflag_posts_get($postids);
+			$newvotersflaggers = ilya_db_uservoteflag_posts_get($postids);
 
 			if (QA_FINAL_EXTERNAL_USERS) {
 				$keyuserids = array();
@@ -182,17 +182,17 @@ class qa_html_theme_layer extends qa_html_theme_base
 					$keyuserids[$voterflagger['userid']] = true;
 				}
 
-				$useridhandles = qa_get_public_from_userids(array_keys($keyuserids));
+				$useridhandles = ilya_get_public_from_userids(array_keys($keyuserids));
 				foreach ($newvotersflaggers as $index => $voterflagger) {
 					$newvotersflaggers[$index]['handle'] = isset($useridhandles[$voterflagger['userid']]) ? $useridhandles[$voterflagger['userid']] : null;
 				}
 			}
 
 			foreach ($newvotersflaggers as $voterflagger) {
-				$this->qa_voters_flaggers_cache[$voterflagger['postid']][] = $voterflagger;
+				$this->ilya_voters_flaggers_cache[$voterflagger['postid']][] = $voterflagger;
 			}
 
-			$this->qa_voters_flaggers_queue = array();
+			$this->ilya_voters_flaggers_queue = array();
 		}
 	}
 
@@ -200,15 +200,15 @@ class qa_html_theme_layer extends qa_html_theme_base
 	{
 		require_once QA_INCLUDE_DIR . 'util/sort.php';
 
-		if (!isset($this->qa_voters_flaggers_cache[$postid])) {
+		if (!isset($this->ilya_voters_flaggers_cache[$postid])) {
 			$this->queue_post_voters_flaggers($post);
 			$this->retrieve_queued_voters_flaggers();
 		}
 
-		$votersflaggers = isset($this->qa_voters_flaggers_cache[$postid]) ? $this->qa_voters_flaggers_cache[$postid] : null;
+		$votersflaggers = isset($this->ilya_voters_flaggers_cache[$postid]) ? $this->ilya_voters_flaggers_cache[$postid] : null;
 
 		if (isset($votersflaggers))
-			qa_sort_by($votersflaggers, 'handle');
+			ilya_sort_by($votersflaggers, 'handle');
 
 		return $votersflaggers;
 	}

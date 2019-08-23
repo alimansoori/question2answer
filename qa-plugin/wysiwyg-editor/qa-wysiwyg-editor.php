@@ -21,7 +21,7 @@
 */
 
 
-class qa_wysiwyg_editor
+class ilya_wysiwyg_editor
 {
 	private $urltoroot;
 
@@ -35,24 +35,24 @@ class qa_wysiwyg_editor
 		if ($option == 'wysiwyg_editor_upload_max_size') {
 			require_once QA_INCLUDE_DIR.'app/upload.php';
 
-			return min(qa_get_max_upload_size(), 1048576);
+			return min(ilya_get_max_upload_size(), 1048576);
 		}
 	}
 
-	public function admin_form(&$qa_content)
+	public function admin_form(&$ilya_content)
 	{
 		require_once QA_INCLUDE_DIR.'app/upload.php';
 
 		$saved = false;
 
-		if (qa_clicked('wysiwyg_editor_save_button')) {
-			qa_opt('wysiwyg_editor_upload_images', (int)qa_post_text('wysiwyg_editor_upload_images_field'));
-			qa_opt('wysiwyg_editor_upload_all', (int)qa_post_text('wysiwyg_editor_upload_all_field'));
-			qa_opt('wysiwyg_editor_upload_max_size', min(qa_get_max_upload_size(), 1048576*(float)qa_post_text('wysiwyg_editor_upload_max_size_field')));
+		if (ilya_clicked('wysiwyg_editor_save_button')) {
+			ilya_opt('wysiwyg_editor_upload_images', (int)ilya_post_text('wysiwyg_editor_upload_images_field'));
+			ilya_opt('wysiwyg_editor_upload_all', (int)ilya_post_text('wysiwyg_editor_upload_all_field'));
+			ilya_opt('wysiwyg_editor_upload_max_size', min(ilya_get_max_upload_size(), 1048576*(float)ilya_post_text('wysiwyg_editor_upload_max_size_field')));
 			$saved = true;
 		}
 
-		qa_set_display_rules($qa_content, array(
+		ilya_set_display_rules($ilya_content, array(
 			'wysiwyg_editor_upload_all_display' => 'wysiwyg_editor_upload_images_field',
 			'wysiwyg_editor_upload_max_size_display' => 'wysiwyg_editor_upload_images_field',
 		));
@@ -61,7 +61,7 @@ class qa_wysiwyg_editor
 		$js = array(
 			'function wysiwyg_editor_ajax(totalEdited) {',
 			'	$.ajax({',
-			'		url: ' . qa_js(qa_path('wysiwyg-editor-ajax')) . ',',
+			'		url: ' . ilya_js(ilya_path('wysiwyg-editor-ajax')) . ',',
 			'		success: function(response) {',
 			'			var postsEdited = parseInt(response, 10);',
 			'			var $btn = $("#wysiwyg_editor_ajax");',
@@ -98,7 +98,7 @@ class qa_wysiwyg_editor
 				array(
 					'label' => 'Allow images to be uploaded',
 					'type' => 'checkbox',
-					'value' => (int)qa_opt('wysiwyg_editor_upload_images'),
+					'value' => (int)ilya_opt('wysiwyg_editor_upload_images'),
 					'tags' => 'name="wysiwyg_editor_upload_images_field" id="wysiwyg_editor_upload_images_field"',
 				),
 
@@ -106,16 +106,16 @@ class qa_wysiwyg_editor
 					'id' => 'wysiwyg_editor_upload_all_display',
 					'label' => 'Allow other content to be uploaded, e.g. Flash, PDF',
 					'type' => 'checkbox',
-					'value' => (int)qa_opt('wysiwyg_editor_upload_all'),
+					'value' => (int)ilya_opt('wysiwyg_editor_upload_all'),
 					'tags' => 'name="wysiwyg_editor_upload_all_field"',
 				),
 
 				array(
 					'id' => 'wysiwyg_editor_upload_max_size_display',
 					'label' => 'Maximum size of uploads:',
-					'suffix' => 'MB (max '.qa_html(number_format($this->bytes_to_mega(qa_get_max_upload_size()), 1)).')',
+					'suffix' => 'MB (max '.ilya_html(number_format($this->bytes_to_mega(ilya_get_max_upload_size()), 1)).')',
 					'type' => 'number',
-					'value' => qa_html(number_format($this->bytes_to_mega(qa_opt('wysiwyg_editor_upload_max_size')), 1)),
+					'value' => ilya_html(number_format($this->bytes_to_mega(ilya_opt('wysiwyg_editor_upload_max_size')), 1)),
 					'tags' => 'name="wysiwyg_editor_upload_max_size_field"',
 				),
 
@@ -144,28 +144,28 @@ class qa_wysiwyg_editor
 			return 0;
 	}
 
-	public function get_field(&$qa_content, $content, $format, $fieldname, $rows)
+	public function get_field(&$ilya_content, $content, $format, $fieldname, $rows)
 	{
 		$scriptsrc = $this->urltoroot.'ckeditor/ckeditor.js?'.QA_VERSION;
 		$alreadyadded = false;
 
-		if (isset($qa_content['script_src'])) {
-			foreach ($qa_content['script_src'] as $testscriptsrc) {
+		if (isset($ilya_content['script_src'])) {
+			foreach ($ilya_content['script_src'] as $testscriptsrc) {
 				if ($testscriptsrc == $scriptsrc)
 					$alreadyadded = true;
 			}
 		}
 
 		if (!$alreadyadded) {
-			$uploadimages = qa_opt('wysiwyg_editor_upload_images');
-			$uploadall = $uploadimages && qa_opt('wysiwyg_editor_upload_all');
-			$imageUploadUrl = qa_js( qa_path('wysiwyg-editor-upload', array('qa_only_image' => true)) );
-			$fileUploadUrl = qa_js( qa_path('wysiwyg-editor-upload') );
+			$uploadimages = ilya_opt('wysiwyg_editor_upload_images');
+			$uploadall = $uploadimages && ilya_opt('wysiwyg_editor_upload_all');
+			$imageUploadUrl = ilya_js( ilya_path('wysiwyg-editor-upload', array('ilya_only_image' => true)) );
+			$fileUploadUrl = ilya_js( ilya_path('wysiwyg-editor-upload') );
 
-			$qa_content['script_src'][] = $scriptsrc;
-			$qa_content['script_lines'][] = array(
+			$ilya_content['script_src'][] = $scriptsrc;
+			$ilya_content['script_lines'][] = array(
 				// Most CKeditor config occurs in ckeditor/config.js
-				"var qa_wysiwyg_editor_config = {",
+				"var ilya_wysiwyg_editor_config = {",
 
 				// File uploads
 				($uploadimages ? "	filebrowserImageUploadUrl: $imageUploadUrl," : ""),
@@ -174,7 +174,7 @@ class qa_wysiwyg_editor
 
 				// Set language to Q2A site language, falling back to English if not available.
 				"	defaultLanguage: 'en',",
-				"	language: " . qa_js(qa_opt('site_language')) . "",
+				"	language: " . ilya_js(ilya_opt('site_language')) . "",
 
 				"};",
 			);
@@ -186,56 +186,56 @@ class qa_wysiwyg_editor
 		}
 		else {
 			$text = $content;
-			$html = qa_html($content, true);
+			$html = ilya_html($content, true);
 		}
 
 		return array(
 			'tags' => 'name="'.$fieldname.'"',
-			'value' => qa_html($text),
+			'value' => ilya_html($text),
 			'rows' => $rows,
-			'html_prefix' => '<input name="'.$fieldname.'_ckeditor_ok" id="'.$fieldname.'_ckeditor_ok" type="hidden" value="0"><input name="'.$fieldname.'_ckeditor_data" id="'.$fieldname.'_ckeditor_data" type="hidden" value="'.qa_html($html).'">',
+			'html_prefix' => '<input name="'.$fieldname.'_ckeditor_ok" id="'.$fieldname.'_ckeditor_ok" type="hidden" value="0"><input name="'.$fieldname.'_ckeditor_data" id="'.$fieldname.'_ckeditor_data" type="hidden" value="'.ilya_html($html).'">',
 		);
 	}
 
 	public function load_script($fieldname)
 	{
 		return
-			"if (qa_ckeditor_".$fieldname." = CKEDITOR.replace(".qa_js($fieldname).", qa_wysiwyg_editor_config)) { " .
-				"qa_ckeditor_".$fieldname.".setData(document.getElementById(".qa_js($fieldname.'_ckeditor_data').").value); " .
-				"document.getElementById(".qa_js($fieldname.'_ckeditor_ok').").value = 1; " .
+			"if (ilya_ckeditor_".$fieldname." = CKEDITOR.replace(".ilya_js($fieldname).", ilya_wysiwyg_editor_config)) { " .
+				"ilya_ckeditor_".$fieldname.".setData(document.getElementById(".ilya_js($fieldname.'_ckeditor_data').").value); " .
+				"document.getElementById(".ilya_js($fieldname.'_ckeditor_ok').").value = 1; " .
 			"}";
 	}
 
 	public function focus_script($fieldname)
 	{
-		return "if (qa_ckeditor_".$fieldname.") qa_ckeditor_".$fieldname.".focus();";
+		return "if (ilya_ckeditor_".$fieldname.") ilya_ckeditor_".$fieldname.".focus();";
 	}
 
 	public function update_script($fieldname)
 	{
-		return "if (qa_ckeditor_".$fieldname.") qa_ckeditor_".$fieldname.".updateElement();";
+		return "if (ilya_ckeditor_".$fieldname.") ilya_ckeditor_".$fieldname.".updateElement();";
 	}
 
 	public function read_post($fieldname)
 	{
-		if (qa_post_text($fieldname.'_ckeditor_ok')) {
+		if (ilya_post_text($fieldname.'_ckeditor_ok')) {
 			// CKEditor was loaded successfully
-			$html = qa_post_text($fieldname);
+			$html = ilya_post_text($fieldname);
 
 			// remove <p>, <br>, etc... since those are OK in text
 			$htmlformatting = preg_replace('/<\s*\/?\s*(br|p)\s*\/?\s*>/i', '', $html);
 
 			if (preg_match('/<.+>/', $htmlformatting)) {
 				// if still some other tags, it's worth keeping in HTML
-				// qa_sanitize_html() is ESSENTIAL for security
+				// ilya_sanitize_html() is ESSENTIAL for security
 				return array(
 					'format' => 'html',
-					'content' => qa_sanitize_html($html, false, true),
+					'content' => ilya_sanitize_html($html, false, true),
 				);
 			}
 			else {
 				// convert to text
-				qa_load_module('viewer', '');
+				ilya_load_module('viewer', '');
 
 				return array(
 					'format' => '',
@@ -246,7 +246,7 @@ class qa_wysiwyg_editor
 			// CKEditor was not loaded so treat it as plain text
 			return array(
 				'format' => '',
-				'content' => qa_post_text($fieldname),
+				'content' => ilya_post_text($fieldname),
 			);
 		}
 	}
@@ -254,7 +254,7 @@ class qa_wysiwyg_editor
 
 	private function html_to_text($html)
 	{
-		$viewer = qa_load_module('viewer', '');
+		$viewer = ilya_load_module('viewer', '');
 		return $viewer->get_text($html, 'html', array());
 	}
 

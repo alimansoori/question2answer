@@ -47,12 +47,12 @@ class Q2A_Util_Metadata
 	 */
 	public function fetchFromUrl($url, $type = 'Plugin')
 	{
-		$contents = qa_retrieve_url($url);
+		$contents = ilya_retrieve_url($url);
 		$metadata = $this->getArrayFromJson($contents);
 
 		// fall back to old metadata format
 		if (empty($metadata)) {
-			$metadata = qa_addon_metadata($contents, $type);
+			$metadata = ilya_addon_metadata($contents, $type);
 		}
 
 		return $metadata;

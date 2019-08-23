@@ -31,34 +31,34 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $by1
  * @param null $by2
  */
-function qa_sort_by(&$array, $by1, $by2 = null)
+function ilya_sort_by(&$array, $by1, $by2 = null)
 {
-	global $qa_sort_by_1, $qa_sort_by_2;
+	global $ilya_sort_by_1, $ilya_sort_by_2;
 
-	$qa_sort_by_1 = $by1;
-	$qa_sort_by_2 = $by2;
+	$ilya_sort_by_1 = $by1;
+	$ilya_sort_by_2 = $by2;
 
-	uasort($array, 'qa_sort_by_fn');
+	uasort($array, 'ilya_sort_by_fn');
 }
 
 
 /**
- * Function used in uasort to implement qa_sort_by()
+ * Function used in uasort to implement ilya_sort_by()
  * @param $a
  * @param $b
  * @return int
  */
-function qa_sort_by_fn($a, $b)
+function ilya_sort_by_fn($a, $b)
 {
-	global $qa_sort_by_1, $qa_sort_by_2;
+	global $ilya_sort_by_1, $ilya_sort_by_2;
 
 	// if the first keys are equal we can sort by the second keys only
-	$sortkey = $qa_sort_by_1;
+	$sortkey = $ilya_sort_by_1;
 	if ($a[$sortkey] == $b[$sortkey]) {
-		if (!isset($qa_sort_by_2))
+		if (!isset($ilya_sort_by_2))
 			return 0;
 
-		$sortkey = $qa_sort_by_2;
+		$sortkey = $ilya_sort_by_2;
 	}
 
 	$av = $a[$sortkey];
@@ -77,7 +77,7 @@ function qa_sort_by_fn($a, $b)
  * @param $b
  * @return int
  */
-function qa_sort_cmp($a, $b)
+function ilya_sort_cmp($a, $b)
 {
 	if (is_numeric($a) && is_numeric($b)) // straight subtraction won't work for floating bits
 		return $a == $b ? 0 : ($a < $b ? -1 : 1);
@@ -93,7 +93,7 @@ function qa_sort_cmp($a, $b)
  * @param $beforekey
  * @param $addelements
  */
-function qa_array_insert(&$array, $beforekey, $addelements)
+function ilya_array_insert(&$array, $beforekey, $addelements)
 {
 	$newarray = array();
 	$beforefound = false;
@@ -118,7 +118,7 @@ function qa_array_insert(&$array, $beforekey, $addelements)
 }
 
 
-// Special values for the $beforekey parameter for qa_array_reorder() - use floats since these cannot be real keys
+// Special values for the $beforekey parameter for ilya_array_reorder() - use floats since these cannot be real keys
 
 define('QA_ARRAY_WITH_FIRST', null); // collect the elements together in the position of the first one found
 define('QA_ARRAY_WITH_LAST', 0.6); // collect the elements together in the position of the last one found
@@ -135,7 +135,7 @@ define('QA_ARRAY_AT_END', 0.9); // place all the elements at the end of the arra
  * @param mixed $beforekey
  * @param bool $reorderrelative
  */
-function qa_array_reorder(&$array, $keys, $beforekey = null, $reorderrelative = true)
+function ilya_array_reorder(&$array, $keys, $beforekey = null, $reorderrelative = true)
 {
 
 	// Make a map for checking each key in $array against $keys and which gives their ordering

@@ -20,12 +20,12 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_html_theme_layer extends qa_html_theme_base
+class ilya_html_theme_layer extends ilya_html_theme_base
 {
 	public function head_links()
 	{
-		qa_html_theme_base::head_links();
+		ilya_html_theme_base::head_links();
 
-		$this->output('<link rel="search" type="application/opensearchdescription+xml" title="' . qa_html(qa_opt('site_title')) . '" href="' . qa_path_html('opensearch.xml') . '"/>');
+		$this->output('<link rel="search" type="application/opensearchdescription+xml" title="' . ilya_html(ilya_opt('site_title')) . '" href="' . ilya_path_html('opensearch.xml') . '"/>');
 	}
 }

@@ -30,9 +30,9 @@ define('QA_DB_VERSION_CURRENT', 67);
 /**
  * Return the column type for user ids after verifying it is one of the legal options
  */
-function qa_db_user_column_type_verify()
+function ilya_db_user_column_type_verify()
 {
-	$coltype = strtoupper(qa_get_mysql_user_column_type());
+	$coltype = strtoupper(ilya_get_mysql_user_column_type());
 
 	switch ($coltype) {
 		case 'SMALLINT':
@@ -48,7 +48,7 @@ function qa_db_user_column_type_verify()
 
 		default:
 			if (!preg_match('/VARCHAR\([0-9]+\)/', $coltype))
-				qa_fatal_error('Specified user column type is not one of allowed values - please read documentation');
+				ilya_fatal_error('Specified user column type is not one of allowed values - please read documentation');
 			break;
 	}
 
@@ -60,9 +60,9 @@ function qa_db_user_column_type_verify()
  * Return an array of table definitions. For each element of the array, the key is the table name (without prefix)
  * and the value is an array of column definitions, [column name] => [definition]. The column name is omitted for indexes.
  */
-function qa_db_table_definitions()
+function ilya_db_table_definitions()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/maxima.php';
 	require_once QA_INCLUDE_DIR . 'app/users.php';
@@ -90,10 +90,10 @@ function qa_db_table_definitions()
 
 		* We name some columns here in a not entirely intuitive way. The reason is to match the names of columns in
 		  other tables which are of a similar nature. This will save time and space when combining several SELECT
-		  queries together via a UNION in qa_db_multi_select() - see comments in ilya-db.php for more information.
+		  queries together via a UNION in ilya_db_multi_select() - see comments in ilya-db.php for more information.
 	*/
 
-	$useridcoltype = qa_db_user_column_type_verify();
+	$useridcoltype = ilya_db_user_column_type_verify();
 
 	$tables = array(
 		'users' => array(
@@ -542,7 +542,7 @@ function qa_db_table_definitions()
  * @param $array
  * @return array
  */
-function qa_array_to_keys($array)
+function ilya_array_to_keys($array)
 {
 	return empty($array) ? array() : array_combine($array, array_fill(0, count($array), true));
 }
@@ -553,14 +553,14 @@ function qa_array_to_keys($array)
  * @param $definitions
  * @return array
  */
-function qa_db_missing_tables($definitions)
+function ilya_db_missing_tables($definitions)
 {
-	$keydbtables = qa_array_to_keys(qa_db_list_tables(true));
+	$keydbtables = ilya_array_to_keys(ilya_db_list_tables(true));
 
 	$missing = array();
 
 	foreach ($definitions as $rawname => $definition)
-		if (!isset($keydbtables[qa_db_add_table_prefix($rawname)]))
+		if (!isset($keydbtables[ilya_db_add_table_prefix($rawname)]))
 			$missing[$rawname] = $definition;
 
 	return $missing;
@@ -573,9 +573,9 @@ function qa_db_missing_tables($definitions)
  * @param $definition
  * @return array
  */
-function qa_db_missing_columns($table, $definition)
+function ilya_db_missing_columns($table, $definition)
 {
-	$keycolumns = qa_array_to_keys(qa_db_read_all_values(qa_db_query_sub('SHOW COLUMNS FROM ^' . $table)));
+	$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^' . $table)));
 
 	$missing = array();
 
@@ -590,12 +590,12 @@ function qa_db_missing_columns($table, $definition)
 /**
  * Return the current version of the Q2A database, to determine need for DB upgrades
  */
-function qa_db_get_db_version()
+function ilya_db_get_db_version()
 {
-	$definitions = qa_db_table_definitions();
+	$definitions = ilya_db_table_definitions();
 
-	if (count(qa_db_missing_columns('options', $definitions['options'])) == 0) {
-		$version = (int)qa_db_read_one_value(qa_db_query_sub("SELECT content FROM ^options WHERE title='db_version'"), true);
+	if (count(ilya_db_missing_columns('options', $definitions['options'])) == 0) {
+		$version = (int)ilya_db_read_one_value(ilya_db_query_sub("SELECT content FROM ^options WHERE title='db_version'"), true);
 
 		if ($version > 0)
 			return $version;
@@ -609,35 +609,35 @@ function qa_db_get_db_version()
  * Set the current version in the database
  * @param $version
  */
-function qa_db_set_db_version($version)
+function ilya_db_set_db_version($version)
 {
 	require_once QA_INCLUDE_DIR . 'db/options.php';
 
-	qa_db_set_option('db_version', $version);
+	ilya_db_set_option('db_version', $version);
 }
 
 
 /**
  * Return a string describing what is wrong with the database, or false if everything is just fine
  */
-function qa_db_check_tables()
+function ilya_db_check_tables()
 {
-	qa_db_query_raw('UNLOCK TABLES'); // we could be inside a lock tables block
+	ilya_db_query_raw('UNLOCK TABLES'); // we could be inside a lock tables block
 
-	$version = qa_db_read_one_value(qa_db_query_raw('SELECT VERSION()'));
+	$version = ilya_db_read_one_value(ilya_db_query_raw('SELECT VERSION()'));
 
 	if (((float)$version) < 4.1)
-		qa_fatal_error('MySQL version 4.1 or later is required - you appear to be running MySQL ' . $version);
+		ilya_fatal_error('MySQL version 4.1 or later is required - you appear to be running MySQL ' . $version);
 
-	$definitions = qa_db_table_definitions();
-	$missing = qa_db_missing_tables($definitions);
+	$definitions = ilya_db_table_definitions();
+	$missing = ilya_db_missing_tables($definitions);
 
 	if (count($missing) == count($definitions))
 		return 'none';
 
 	else {
 		if (!isset($missing['options'])) {
-			$version = qa_db_get_db_version();
+			$version = ilya_db_get_db_version();
 
 			if (isset($version) && ($version < QA_DB_VERSION_CURRENT))
 				return 'old-version';
@@ -649,7 +649,7 @@ function qa_db_check_tables()
 				$datamissing = 0;
 
 				foreach ($definitions as $rawname => $definition) {
-					if (qa_db_add_table_prefix($rawname) == (QA_MYSQL_TABLE_PREFIX . $rawname)) {
+					if (ilya_db_add_table_prefix($rawname) == (QA_MYSQL_TABLE_PREFIX . $rawname)) {
 						$datacount++;
 
 						if (isset($missing[$rawname]))
@@ -665,7 +665,7 @@ function qa_db_check_tables()
 
 		} else
 			foreach ($definitions as $table => $definition)
-				if (count(qa_db_missing_columns($table, $definition)))
+				if (count(ilya_db_missing_columns($table, $definition)))
 					return 'column-missing';
 	}
 
@@ -677,37 +677,37 @@ function qa_db_check_tables()
  * Install any missing database tables and/or columns and automatically set version as latest.
  * This is not suitable for use if the database needs upgrading.
  */
-function qa_db_install_tables()
+function ilya_db_install_tables()
 {
-	$definitions = qa_db_table_definitions();
+	$definitions = ilya_db_table_definitions();
 
-	$missingtables = qa_db_missing_tables($definitions);
+	$missingtables = ilya_db_missing_tables($definitions);
 
 	foreach ($missingtables as $rawname => $definition) {
-		qa_db_query_sub(qa_db_create_table_sql($rawname, $definition));
+		ilya_db_query_sub(ilya_db_create_table_sql($rawname, $definition));
 
 		if ($rawname == 'userfields')
-			qa_db_query_sub(qa_db_default_userfields_sql());
+			ilya_db_query_sub(ilya_db_default_userfields_sql());
 	}
 
 	foreach ($definitions as $table => $definition) {
-		$missingcolumns = qa_db_missing_columns($table, $definition);
+		$missingcolumns = ilya_db_missing_columns($table, $definition);
 
 		foreach ($missingcolumns as $colname => $coldefn)
-			qa_db_query_sub('ALTER TABLE ^' . $table . ' ADD COLUMN ' . $colname . ' ' . $coldefn);
+			ilya_db_query_sub('ALTER TABLE ^' . $table . ' ADD COLUMN ' . $colname . ' ' . $coldefn);
 	}
 
-	qa_db_set_db_version(QA_DB_VERSION_CURRENT);
+	ilya_db_set_db_version(QA_DB_VERSION_CURRENT);
 }
 
 
 /**
- * Return the SQL command to create a table with $rawname and $definition obtained from qa_db_table_definitions()
+ * Return the SQL command to create a table with $rawname and $definition obtained from ilya_db_table_definitions()
  * @param $rawname
  * @param $definition
  * @return string
  */
-function qa_db_create_table_sql($rawname, $definition)
+function ilya_db_create_table_sql($rawname, $definition)
 {
 	$querycols = '';
 	foreach ($definition as $colname => $coldef)
@@ -721,7 +721,7 @@ function qa_db_create_table_sql($rawname, $definition)
 /**
  * Return the SQL to create the default entries in the userfields table (before 1.3 these were hard-coded in PHP)
  */
-function qa_db_default_userfields_sql()
+function ilya_db_default_userfields_sql()
 {
 	require_once QA_INCLUDE_DIR . 'app/options.php';
 
@@ -755,7 +755,7 @@ function qa_db_default_userfields_sql()
 	$sql = 'INSERT INTO ^userfields (title, position, flags, permit) VALUES'; // content column will be NULL, meaning use default from lang files
 
 	foreach ($profileFields as $field) {
-		$sql .= sprintf('("%s", %d, %d, %d), ', qa_db_escape_string($field['title']), $field['position'], $field['flags'], $field['permit']);
+		$sql .= sprintf('("%s", %d, %d, %d), ', ilya_db_escape_string($field['title']), $field['position'], $field['flags'], $field['permit']);
 	}
 
 	$sql = substr($sql, 0, -2);
@@ -767,24 +767,24 @@ function qa_db_default_userfields_sql()
 /**
  * Upgrade the database schema to the latest version, outputting progress to the browser
  */
-function qa_db_upgrade_tables()
+function ilya_db_upgrade_tables()
 {
 	require_once QA_INCLUDE_DIR . 'app/recalc.php';
 
-	$definitions = qa_db_table_definitions();
+	$definitions = ilya_db_table_definitions();
 	$keyrecalc = array();
 
 	// Write-lock all Q2A tables before we start so no one can read or write anything
 
-	$keydbtables = qa_array_to_keys(qa_db_list_tables(true));
+	$keydbtables = ilya_array_to_keys(ilya_db_list_tables(true));
 
 	foreach ($definitions as $rawname => $definition)
-		if (isset($keydbtables[qa_db_add_table_prefix($rawname)]))
+		if (isset($keydbtables[ilya_db_add_table_prefix($rawname)]))
 			$locks[] = '^' . $rawname . ' WRITE';
 
 	$locktablesquery = 'LOCK TABLES ' . implode(', ', $locks);
 
-	qa_db_upgrade_query($locktablesquery);
+	ilya_db_upgrade_query($locktablesquery);
 
 	// Upgrade it step-by-step until it's up to date (do LOCK TABLES after ALTER TABLE because the lock can sometimes be lost)
 
@@ -792,62 +792,62 @@ function qa_db_upgrade_tables()
 	$skipMessage = 'Skipping upgrading %s table since it was already upgraded by another Q2A site sharing it.';
 
 	while (1) {
-		$version = qa_db_get_db_version();
+		$version = ilya_db_get_db_version();
 
 		if ($version >= QA_DB_VERSION_CURRENT)
 			break;
 
 		$newversion = $version + 1;
 
-		qa_db_upgrade_progress(QA_DB_VERSION_CURRENT - $version . ' upgrade step/s remaining...');
+		ilya_db_upgrade_progress(QA_DB_VERSION_CURRENT - $version . ' upgrade step/s remaining...');
 
 		switch ($newversion) {
 			// Up to here: Version 1.0 beta 1
 
 			case 2:
-				qa_db_upgrade_query('ALTER TABLE ^posts DROP COLUMN votes, ADD COLUMN upvotes ' . $definitions['posts']['upvotes'] .
+				ilya_db_upgrade_query('ALTER TABLE ^posts DROP COLUMN votes, ADD COLUMN upvotes ' . $definitions['posts']['upvotes'] .
 					' AFTER cookieid, ADD COLUMN downvotes ' . $definitions['posts']['downvotes'] . ' AFTER upvotes');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				$keyrecalc['dorecountposts'] = true;
 				break;
 
 			case 3:
-				qa_db_upgrade_query('ALTER TABLE ^userpoints ADD COLUMN upvoteds ' . $definitions['userpoints']['upvoteds'] .
+				ilya_db_upgrade_query('ALTER TABLE ^userpoints ADD COLUMN upvoteds ' . $definitions['userpoints']['upvoteds'] .
 					' AFTER avoteds, ADD COLUMN downvoteds ' . $definitions['userpoints']['downvoteds'] . ' AFTER upvoteds');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				$keyrecalc['dorecalcpoints'] = true;
 				break;
 
 			case 4:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN lastuserid ' . $definitions['posts']['lastuserid'] . ' AFTER cookieid, CHANGE COLUMN updated updated ' . $definitions['posts']['updated']);
-				qa_db_upgrade_query($locktablesquery);
-				qa_db_upgrade_query('UPDATE ^posts SET updated=NULL WHERE updated=0 OR updated=created');
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN lastuserid ' . $definitions['posts']['lastuserid'] . ' AFTER cookieid, CHANGE COLUMN updated updated ' . $definitions['posts']['updated']);
+				ilya_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('UPDATE ^posts SET updated=NULL WHERE updated=0 OR updated=created');
 				break;
 
 			case 5:
-				qa_db_upgrade_query('ALTER TABLE ^contentwords ADD COLUMN type ' . $definitions['contentwords']['type'] . ' AFTER count, ADD COLUMN questionid ' . $definitions['contentwords']['questionid'] . ' AFTER type');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^contentwords ADD COLUMN type ' . $definitions['contentwords']['type'] . ' AFTER count, ADD COLUMN questionid ' . $definitions['contentwords']['questionid'] . ' AFTER type');
+				ilya_db_upgrade_query($locktablesquery);
 				$keyrecalc['doreindexcontent'] = true;
 				break;
 
 			// Up to here: Version 1.0 beta 2
 
 			case 6:
-				qa_db_upgrade_query('ALTER TABLE ^userpoints ADD COLUMN cposts ' . $definitions['userpoints']['cposts'] . ' AFTER aposts');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^userpoints ADD COLUMN cposts ' . $definitions['userpoints']['cposts'] . ' AFTER aposts');
+				ilya_db_upgrade_query($locktablesquery);
 				$keyrecalc['dorecalcpoints'] = true;
 				break;
 
 			case 7:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					qa_db_upgrade_query('ALTER TABLE ^users ADD COLUMN sessioncode ' . $definitions['users']['sessioncode'] . ' AFTER writeip');
-					qa_db_upgrade_query($locktablesquery);
+					ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN sessioncode ' . $definitions['users']['sessioncode'] . ' AFTER writeip');
+					ilya_db_upgrade_query($locktablesquery);
 				}
 				break;
 
 			case 8:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD KEY (type, acount, created)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD KEY (type, acount, created)');
+				ilya_db_upgrade_query($locktablesquery);
 				$keyrecalc['dorecountposts'] = true; // for unanswered question count
 				break;
 
@@ -855,15 +855,15 @@ function qa_db_upgrade_tables()
 
 			case 9:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					qa_db_upgrade_query('ALTER TABLE ^users CHANGE COLUMN resetcode emailcode ' . $definitions['users']['emailcode'] . ', ADD COLUMN flags ' . $definitions['users']['flags'] . ' AFTER sessioncode');
-					qa_db_upgrade_query($locktablesquery);
-					qa_db_upgrade_query('UPDATE ^users SET flags=1');
+					ilya_db_upgrade_query('ALTER TABLE ^users CHANGE COLUMN resetcode emailcode ' . $definitions['users']['emailcode'] . ', ADD COLUMN flags ' . $definitions['users']['flags'] . ' AFTER sessioncode');
+					ilya_db_upgrade_query($locktablesquery);
+					ilya_db_upgrade_query('UPDATE ^users SET flags=1');
 				}
 				break;
 
 			case 10:
-				qa_db_upgrade_query('UNLOCK TABLES');
-				qa_db_upgrade_query(qa_db_create_table_sql('categories', array(
+				ilya_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query(ilya_db_create_table_sql('categories', array(
 					'categoryid' => $definitions['categories']['categoryid'],
 					'title' => $definitions['categories']['title'],
 					'tags' => $definitions['categories']['tags'],
@@ -875,18 +875,18 @@ function qa_db_upgrade_tables()
 				))); // hard-code list of columns and indexes to ensure we ignore any added at a later stage
 
 				$locktablesquery .= ', ^categories WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 11:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD CONSTRAINT ^posts_ibfk_2 FOREIGN KEY (parentid) REFERENCES ^posts(postid), ADD COLUMN categoryid ' . $definitions['posts']['categoryid'] . ' AFTER parentid, ADD KEY categoryid (categoryid, type, created), ADD CONSTRAINT ^posts_ibfk_3 FOREIGN KEY (categoryid) REFERENCES ^categories(categoryid) ON DELETE SET NULL');
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD CONSTRAINT ^posts_ibfk_2 FOREIGN KEY (parentid) REFERENCES ^posts(postid), ADD COLUMN categoryid ' . $definitions['posts']['categoryid'] . ' AFTER parentid, ADD KEY categoryid (categoryid, type, created), ADD CONSTRAINT ^posts_ibfk_3 FOREIGN KEY (categoryid) REFERENCES ^categories(categoryid) ON DELETE SET NULL');
 				// foreign key on parentid important now that deletion is possible
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 12:
-				qa_db_upgrade_query('UNLOCK TABLES');
-				qa_db_upgrade_query(qa_db_create_table_sql('pages', array(
+				ilya_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query(ilya_db_create_table_sql('pages', array(
 					'pageid' => $definitions['pages']['pageid'],
 					'title' => $definitions['pages']['title'],
 					'nav' => $definitions['pages']['nav'],
@@ -900,17 +900,17 @@ function qa_db_upgrade_tables()
 					'UNIQUE `position` (position)',
 				))); // hard-code list of columns and indexes to ensure we ignore any added at a later stage
 				$locktablesquery .= ', ^pages WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 13:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN createip ' . $definitions['posts']['createip'] . ' AFTER cookieid, ADD KEY createip (createip, created)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN createip ' . $definitions['posts']['createip'] . ' AFTER cookieid, ADD KEY createip (createip, created)');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 14:
-				qa_db_upgrade_query('ALTER TABLE ^userpoints DROP COLUMN qvotes, DROP COLUMN avotes, ADD COLUMN qupvotes ' . $definitions['userpoints']['qupvotes'] . ' AFTER aselecteds, ADD COLUMN qdownvotes ' . $definitions['userpoints']['qdownvotes'] . ' AFTER qupvotes, ADD COLUMN aupvotes ' . $definitions['userpoints']['aupvotes'] . ' AFTER qdownvotes, ADD COLUMN adownvotes ' . $definitions['userpoints']['adownvotes'] . ' AFTER aupvotes');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^userpoints DROP COLUMN qvotes, DROP COLUMN avotes, ADD COLUMN qupvotes ' . $definitions['userpoints']['qupvotes'] . ' AFTER aselecteds, ADD COLUMN qdownvotes ' . $definitions['userpoints']['qdownvotes'] . ' AFTER qupvotes, ADD COLUMN aupvotes ' . $definitions['userpoints']['aupvotes'] . ' AFTER qdownvotes, ADD COLUMN adownvotes ' . $definitions['userpoints']['adownvotes'] . ' AFTER aupvotes');
+				ilya_db_upgrade_query($locktablesquery);
 				$keyrecalc['dorecalcpoints'] = true;
 				break;
 
@@ -918,50 +918,50 @@ function qa_db_upgrade_tables()
 
 			case 15:
 				if (!QA_FINAL_EXTERNAL_USERS)
-					qa_db_upgrade_table_columns($definitions, 'users', array('emailcode', 'sessioncode', 'flags'));
+					ilya_db_upgrade_table_columns($definitions, 'users', array('emailcode', 'sessioncode', 'flags'));
 
-				qa_db_upgrade_table_columns($definitions, 'posts', array('acount', 'upvotes', 'downvotes', 'format'));
-				qa_db_upgrade_table_columns($definitions, 'categories', array('qcount'));
-				qa_db_upgrade_table_columns($definitions, 'words', array('titlecount', 'contentcount', 'tagcount'));
-				qa_db_upgrade_table_columns($definitions, 'userpoints', array('points', 'qposts', 'aposts', 'cposts',
+				ilya_db_upgrade_table_columns($definitions, 'posts', array('acount', 'upvotes', 'downvotes', 'format'));
+				ilya_db_upgrade_table_columns($definitions, 'categories', array('qcount'));
+				ilya_db_upgrade_table_columns($definitions, 'words', array('titlecount', 'contentcount', 'tagcount'));
+				ilya_db_upgrade_table_columns($definitions, 'userpoints', array('points', 'qposts', 'aposts', 'cposts',
 					'aselects', 'aselecteds', 'qupvotes', 'qdownvotes', 'aupvotes', 'adownvotes', 'qvoteds', 'avoteds', 'upvoteds', 'downvoteds'));
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			// Up to here: Version 1.2 (release)
 
 			case 16:
-				qa_db_upgrade_table_columns($definitions, 'posts', array('format'));
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_table_columns($definitions, 'posts', array('format'));
+				ilya_db_upgrade_query($locktablesquery);
 				$keyrecalc['doreindexcontent'] = true; // because of new treatment of apostrophes in words
 				break;
 
 			case 17:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD KEY updated (updated, type), ADD KEY categoryid_2 (categoryid, updated, type)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD KEY updated (updated, type), ADD KEY categoryid_2 (categoryid, updated, type)');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 18:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN lastip ' . $definitions['posts']['lastip'] . ' AFTER lastuserid, ADD KEY lastip (lastip, updated, type)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN lastip ' . $definitions['posts']['lastip'] . ' AFTER lastuserid, ADD KEY lastip (lastip, updated, type)');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 19:
 				if (!QA_FINAL_EXTERNAL_USERS)
-					qa_db_upgrade_query('ALTER TABLE ^users ADD COLUMN avatarblobid ' . $definitions['users']['avatarblobid'] . ' AFTER handle, ADD COLUMN avatarwidth ' . $definitions['users']['avatarwidth'] . ' AFTER avatarblobid, ADD COLUMN avatarheight ' . $definitions['users']['avatarheight'] . ' AFTER avatarwidth');
+					ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN avatarblobid ' . $definitions['users']['avatarblobid'] . ' AFTER handle, ADD COLUMN avatarwidth ' . $definitions['users']['avatarwidth'] . ' AFTER avatarblobid, ADD COLUMN avatarheight ' . $definitions['users']['avatarheight'] . ' AFTER avatarwidth');
 
 				// hard-code list of columns and indexes to ensure we ignore any added at a later stage
 
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('blobs', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('blobs', array(
 					'blobid' => $definitions['blobs']['blobid'],
 					'format' => $definitions['blobs']['format'],
 					'content' => $definitions['blobs']['content'],
 					'PRIMARY KEY (blobid)',
 				)));
 
-				qa_db_upgrade_query(qa_db_create_table_sql('cache', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('cache', array(
 					'type' => $definitions['cache']['type'],
 					'cacheid' => $definitions['cache']['cacheid'],
 					'content' => $definitions['cache']['content'],
@@ -972,14 +972,14 @@ function qa_db_upgrade_tables()
 				))); // hard-code list of columns and indexes to ensure we ignore any added at a later stage
 
 				$locktablesquery .= ', ^blobs WRITE, ^cache WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 20:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					qa_db_upgrade_query('UNLOCK TABLES');
+					ilya_db_upgrade_query('UNLOCK TABLES');
 
-					qa_db_upgrade_query(qa_db_create_table_sql('userlogins', array(
+					ilya_db_upgrade_query(ilya_db_create_table_sql('userlogins', array(
 						'userid' => $definitions['userlogins']['userid'],
 						'source' => $definitions['userlogins']['source'],
 						'identifier' => $definitions['userlogins']['identifier'],
@@ -989,18 +989,18 @@ function qa_db_upgrade_tables()
 						'CONSTRAINT ^userlogins_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
 					)));
 
-					qa_db_upgrade_query('ALTER TABLE ^users CHANGE COLUMN passsalt passsalt ' . $definitions['users']['passsalt'] . ', CHANGE COLUMN passcheck passcheck ' . $definitions['users']['passcheck']);
+					ilya_db_upgrade_query('ALTER TABLE ^users CHANGE COLUMN passsalt passsalt ' . $definitions['users']['passsalt'] . ', CHANGE COLUMN passcheck passcheck ' . $definitions['users']['passcheck']);
 
 					$locktablesquery .= ', ^userlogins WRITE';
-					qa_db_upgrade_query($locktablesquery);
+					ilya_db_upgrade_query($locktablesquery);
 				}
 				break;
 
 			case 21:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					qa_db_upgrade_query('UNLOCK TABLES');
+					ilya_db_upgrade_query('UNLOCK TABLES');
 
-					qa_db_upgrade_query(qa_db_create_table_sql('userfields', array(
+					ilya_db_upgrade_query(ilya_db_create_table_sql('userfields', array(
 						'fieldid' => $definitions['userfields']['fieldid'],
 						'title' => $definitions['userfields']['title'],
 						'content' => $definitions['userfields']['content'],
@@ -1010,9 +1010,9 @@ function qa_db_upgrade_tables()
 					)));
 
 					$locktablesquery .= ', ^userfields WRITE';
-					qa_db_upgrade_query($locktablesquery);
+					ilya_db_upgrade_query($locktablesquery);
 
-					qa_db_upgrade_query(qa_db_default_userfields_sql());
+					ilya_db_upgrade_query(ilya_db_default_userfields_sql());
 				}
 				break;
 
@@ -1020,17 +1020,17 @@ function qa_db_upgrade_tables()
 
 			case 22:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					qa_db_upgrade_query('ALTER TABLE ^users ADD COLUMN sessionsource ' . $definitions['users']['sessionsource'] . ' AFTER sessioncode');
-					qa_db_upgrade_query($locktablesquery);
+					ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN sessionsource ' . $definitions['users']['sessionsource'] . ' AFTER sessioncode');
+					ilya_db_upgrade_query($locktablesquery);
 				}
 				break;
 
 			// Up to here: Version 1.3 beta 2 and release
 
 			case 23:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('widgets', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('widgets', array(
 					'widgetid' => $definitions['widgets']['widgetid'],
 					'place' => $definitions['widgets']['place'],
 					'position' => $definitions['widgets']['position'],
@@ -1041,13 +1041,13 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^widgets WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 24:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('tagwords', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('tagwords', array(
 					'postid' => $definitions['tagwords']['postid'],
 					'wordid' => $definitions['tagwords']['wordid'],
 					'KEY postid (postid)',
@@ -1058,8 +1058,8 @@ function qa_db_upgrade_tables()
 
 				$locktablesquery .= ', ^tagwords WRITE';
 
-				qa_db_upgrade_query('ALTER TABLE ^words ADD COLUMN tagwordcount ' . $definitions['words']['tagwordcount'] . ' AFTER contentcount');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^words ADD COLUMN tagwordcount ' . $definitions['words']['tagwordcount'] . ' AFTER contentcount');
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['doreindexcontent'] = true;
 				break;
@@ -1067,65 +1067,65 @@ function qa_db_upgrade_tables()
 			// Up to here: Version 1.4 developer preview
 
 			case 25:
-				$keycolumns = qa_array_to_keys(qa_db_read_all_values(qa_db_query_sub('SHOW COLUMNS FROM ^blobs')));
+				$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^blobs')));
 				// might be using blobs table shared with another installation, so check if we need to upgrade
 
 				if (isset($keycolumns['filename']))
-					qa_db_upgrade_progress('Skipping upgrading blobs table since it was already upgraded by another Q2A site sharing it.');
+					ilya_db_upgrade_progress('Skipping upgrading blobs table since it was already upgraded by another Q2A site sharing it.');
 
 				else {
-					qa_db_upgrade_query('ALTER TABLE ^blobs ADD COLUMN filename ' . $definitions['blobs']['filename'] . ' AFTER content, ADD COLUMN userid ' . $definitions['blobs']['userid'] . ' AFTER filename, ADD COLUMN cookieid ' . $definitions['blobs']['cookieid'] . ' AFTER userid, ADD COLUMN createip ' . $definitions['blobs']['createip'] . ' AFTER cookieid, ADD COLUMN created ' . $definitions['blobs']['created'] . ' AFTER createip');
-					qa_db_upgrade_query($locktablesquery);
+					ilya_db_upgrade_query('ALTER TABLE ^blobs ADD COLUMN filename ' . $definitions['blobs']['filename'] . ' AFTER content, ADD COLUMN userid ' . $definitions['blobs']['userid'] . ' AFTER filename, ADD COLUMN cookieid ' . $definitions['blobs']['cookieid'] . ' AFTER userid, ADD COLUMN createip ' . $definitions['blobs']['createip'] . ' AFTER cookieid, ADD COLUMN created ' . $definitions['blobs']['created'] . ' AFTER createip');
+					ilya_db_upgrade_query($locktablesquery);
 				}
 				break;
 
 			case 26:
-				qa_db_upgrade_query('ALTER TABLE ^uservotes ADD COLUMN flag ' . $definitions['uservotes']['flag'] . ' AFTER vote');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^uservotes ADD COLUMN flag ' . $definitions['uservotes']['flag'] . ' AFTER vote');
+				ilya_db_upgrade_query($locktablesquery);
 
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN flagcount ' . $definitions['posts']['flagcount'] . ' AFTER downvotes, ADD KEY type_3 (type, flagcount, created)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN flagcount ' . $definitions['posts']['flagcount'] . ' AFTER downvotes, ADD KEY type_3 (type, flagcount, created)');
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['dorecountposts'] = true;
 				break;
 
 			case 27:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN netvotes ' . $definitions['posts']['netvotes'] . ' AFTER downvotes, ADD KEY type_4 (type, netvotes, created)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN netvotes ' . $definitions['posts']['netvotes'] . ' AFTER downvotes, ADD KEY type_4 (type, netvotes, created)');
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['dorecountposts'] = true;
 				break;
 
 			case 28:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN views ' . $definitions['posts']['views'] . ' AFTER netvotes, ADD COLUMN hotness ' . $definitions['posts']['hotness'] . ' AFTER views, ADD KEY type_5 (type, views, created), ADD KEY type_6 (type, hotness)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN views ' . $definitions['posts']['views'] . ' AFTER netvotes, ADD COLUMN hotness ' . $definitions['posts']['hotness'] . ' AFTER views, ADD KEY type_5 (type, views, created), ADD KEY type_6 (type, hotness)');
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['dorecountposts'] = true;
 				break;
 
 			case 29:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN lastviewip ' . $definitions['posts']['lastviewip'] . ' AFTER netvotes');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN lastviewip ' . $definitions['posts']['lastviewip'] . ' AFTER netvotes');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 30:
-				qa_db_upgrade_query('ALTER TABLE ^posts DROP FOREIGN KEY ^posts_ibfk_3'); // to allow category column types to be changed
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts DROP FOREIGN KEY ^posts_ibfk_3'); // to allow category column types to be changed
+				ilya_db_upgrade_query($locktablesquery);
 
-				qa_db_upgrade_query('ALTER TABLE ^posts DROP KEY categoryid, DROP KEY categoryid_2');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts DROP KEY categoryid, DROP KEY categoryid_2');
+				ilya_db_upgrade_query($locktablesquery);
 
-				qa_db_upgrade_query('ALTER TABLE ^categories CHANGE COLUMN categoryid categoryid ' . $definitions['categories']['categoryid'] . ', ADD COLUMN parentid ' . $definitions['categories']['parentid'] . ' AFTER categoryid, ADD COLUMN backpath ' . $definitions['categories']['backpath'] . ' AFTER position, ADD COLUMN content ' . $definitions['categories']['content'] . ' AFTER tags, DROP INDEX tags, DROP INDEX position, ADD UNIQUE parentid (parentid, tags), ADD UNIQUE parentid_2 (parentid, position), ADD KEY backpath (backpath(' . QA_DB_MAX_CAT_PAGE_TAGS_LENGTH . '))');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^categories CHANGE COLUMN categoryid categoryid ' . $definitions['categories']['categoryid'] . ', ADD COLUMN parentid ' . $definitions['categories']['parentid'] . ' AFTER categoryid, ADD COLUMN backpath ' . $definitions['categories']['backpath'] . ' AFTER position, ADD COLUMN content ' . $definitions['categories']['content'] . ' AFTER tags, DROP INDEX tags, DROP INDEX position, ADD UNIQUE parentid (parentid, tags), ADD UNIQUE parentid_2 (parentid, position), ADD KEY backpath (backpath(' . QA_DB_MAX_CAT_PAGE_TAGS_LENGTH . '))');
+				ilya_db_upgrade_query($locktablesquery);
 
-				qa_db_upgrade_query('ALTER TABLE ^posts CHANGE COLUMN categoryid categoryid ' . $definitions['posts']['categoryid'] . ', ADD COLUMN catidpath1 ' . $definitions['posts']['catidpath1'] . ' AFTER categoryid, ADD COLUMN catidpath2 ' . $definitions['posts']['catidpath2'] . ' AFTER catidpath1, ADD COLUMN catidpath3 ' . $definitions['posts']['catidpath3'] . ' AFTER catidpath2'); // QA_CATEGORY_DEPTH=4
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts CHANGE COLUMN categoryid categoryid ' . $definitions['posts']['categoryid'] . ', ADD COLUMN catidpath1 ' . $definitions['posts']['catidpath1'] . ' AFTER categoryid, ADD COLUMN catidpath2 ' . $definitions['posts']['catidpath2'] . ' AFTER catidpath1, ADD COLUMN catidpath3 ' . $definitions['posts']['catidpath3'] . ' AFTER catidpath2'); // QA_CATEGORY_DEPTH=4
+				ilya_db_upgrade_query($locktablesquery);
 
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD KEY catidpath1 (catidpath1, type, created), ADD KEY catidpath2 (catidpath2, type, created), ADD KEY catidpath3 (catidpath3, type, created), ADD KEY categoryid (categoryid, type, created), ADD KEY catidpath1_2 (catidpath1, updated, type), ADD KEY catidpath2_2 (catidpath2, updated, type), ADD KEY catidpath3_2 (catidpath3, updated, type), ADD KEY categoryid_2 (categoryid, updated, type)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD KEY catidpath1 (catidpath1, type, created), ADD KEY catidpath2 (catidpath2, type, created), ADD KEY catidpath3 (catidpath3, type, created), ADD KEY categoryid (categoryid, type, created), ADD KEY catidpath1_2 (catidpath1, updated, type), ADD KEY catidpath2_2 (catidpath2, updated, type), ADD KEY catidpath3_2 (catidpath3, updated, type), ADD KEY categoryid_2 (categoryid, updated, type)');
+				ilya_db_upgrade_query($locktablesquery);
 
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD CONSTRAINT ^posts_ibfk_3 FOREIGN KEY (categoryid) REFERENCES ^categories(categoryid) ON DELETE SET NULL');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD CONSTRAINT ^posts_ibfk_3 FOREIGN KEY (categoryid) REFERENCES ^categories(categoryid) ON DELETE SET NULL');
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['dorecalccategories'] = true;
 				break;
@@ -1133,31 +1133,31 @@ function qa_db_upgrade_tables()
 			// Up to here: Version 1.4 betas and release
 
 			case 31:
-				qa_db_upgrade_query('ALTER TABLE ^posts CHANGE COLUMN type type ' . $definitions['posts']['type'] . ', ADD COLUMN updatetype ' . $definitions['posts']['updatetype'] . ' AFTER updated, ADD COLUMN closedbyid ' . $definitions['posts']['closedbyid'] . ' AFTER selchildid, ADD KEY closedbyid (closedbyid), ADD CONSTRAINT ^posts_ibfk_4 FOREIGN KEY (closedbyid) REFERENCES ^posts(postid)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts CHANGE COLUMN type type ' . $definitions['posts']['type'] . ', ADD COLUMN updatetype ' . $definitions['posts']['updatetype'] . ' AFTER updated, ADD COLUMN closedbyid ' . $definitions['posts']['closedbyid'] . ' AFTER selchildid, ADD KEY closedbyid (closedbyid), ADD CONSTRAINT ^posts_ibfk_4 FOREIGN KEY (closedbyid) REFERENCES ^posts(postid)');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 32:
-				qa_db_upgrade_query("UPDATE ^posts SET updatetype=IF(INSTR(type, '_HIDDEN')>0, 'H', 'E') WHERE updated IS NOT NULL");
+				ilya_db_upgrade_query("UPDATE ^posts SET updatetype=IF(INSTR(type, '_HIDDEN')>0, 'H', 'E') WHERE updated IS NOT NULL");
 				break;
 
 			case 33:
-				qa_db_upgrade_query('ALTER TABLE ^contentwords CHANGE COLUMN type type ' . $definitions['contentwords']['type']);
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^contentwords CHANGE COLUMN type type ' . $definitions['contentwords']['type']);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 34:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					$keytables = qa_array_to_keys(qa_db_read_all_values(qa_db_query_sub('SHOW TABLES')));
+					$keytables = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW TABLES')));
 					// might be using messages table shared with another installation, so check if we need to upgrade
 
-					if (isset($keytables[qa_db_add_table_prefix('messages')]))
-						qa_db_upgrade_progress('Skipping messages table since it was already added by another Q2A site sharing these users.');
+					if (isset($keytables[ilya_db_add_table_prefix('messages')]))
+						ilya_db_upgrade_progress('Skipping messages table since it was already added by another Q2A site sharing these users.');
 
 					else {
-						qa_db_upgrade_query('UNLOCK TABLES');
+						ilya_db_upgrade_query('UNLOCK TABLES');
 
-						qa_db_upgrade_query(qa_db_create_table_sql('messages', array(
+						ilya_db_upgrade_query(ilya_db_create_table_sql('messages', array(
 							'messageid' => $definitions['messages']['messageid'],
 							'fromuserid' => $definitions['messages']['fromuserid'],
 							'touserid' => $definitions['messages']['touserid'],
@@ -1169,15 +1169,15 @@ function qa_db_upgrade_tables()
 						)));
 
 						$locktablesquery .= ', ^messages WRITE';
-						qa_db_upgrade_query($locktablesquery);
+						ilya_db_upgrade_query($locktablesquery);
 					}
 				}
 				break;
 
 			case 35:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('userfavorites', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('userfavorites', array(
 					'userid' => $definitions['userfavorites']['userid'],
 					'entitytype' => $definitions['userfavorites']['entitytype'],
 					'entityid' => $definitions['userfavorites']['entityid'],
@@ -1189,13 +1189,13 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^userfavorites WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 36:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('userevents', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('userevents', array(
 					'userid' => $definitions['userevents']['userid'],
 					'entitytype' => $definitions['userevents']['entitytype'],
 					'entityid' => $definitions['userevents']['entityid'],
@@ -1210,15 +1210,15 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^userevents WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['dorefillevents'] = true;
 				break;
 
 			case 37:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('sharedevents', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('sharedevents', array(
 					'entitytype' => $definitions['sharedevents']['entitytype'],
 					'entityid' => $definitions['sharedevents']['entityid'],
 					'questionid' => $definitions['sharedevents']['questionid'],
@@ -1231,35 +1231,35 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^sharedevents WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['dorefillevents'] = true;
 				break;
 
 			case 38:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD KEY lastuserid (lastuserid, updated, type)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD KEY lastuserid (lastuserid, updated, type)');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 39:
-				qa_db_upgrade_query('ALTER TABLE ^posts DROP KEY type_3, ADD KEY flagcount (flagcount, created, type)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts DROP KEY type_3, ADD KEY flagcount (flagcount, created, type)');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 40:
-				qa_db_upgrade_query('ALTER TABLE ^userpoints ADD COLUMN bonus ' . $definitions['userpoints']['bonus'] . ' AFTER downvoteds');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^userpoints ADD COLUMN bonus ' . $definitions['userpoints']['bonus'] . ' AFTER downvoteds');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 41:
-				qa_db_upgrade_query('ALTER TABLE ^pages ADD COLUMN permit ' . $definitions['pages']['permit'] . ' AFTER flags');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^pages ADD COLUMN permit ' . $definitions['pages']['permit'] . ' AFTER flags');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 42:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('usermetas', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('usermetas', array(
 					'userid' => $definitions['usermetas']['userid'],
 					'title' => $definitions['usermetas']['title'],
 					'content' => $definitions['usermetas']['content'],
@@ -1268,13 +1268,13 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^usermetas WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 43:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('postmetas', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('postmetas', array(
 					'postid' => $definitions['postmetas']['postid'],
 					'title' => $definitions['postmetas']['title'],
 					'content' => $definitions['postmetas']['content'],
@@ -1283,13 +1283,13 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^postmetas WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 44:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('categorymetas', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('categorymetas', array(
 					'categoryid' => $definitions['categorymetas']['categoryid'],
 					'title' => $definitions['categorymetas']['title'],
 					'content' => $definitions['categorymetas']['content'],
@@ -1298,13 +1298,13 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^categorymetas WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 45:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('tagmetas', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('tagmetas', array(
 					'tag' => $definitions['tagmetas']['tag'],
 					'title' => $definitions['tagmetas']['title'],
 					'content' => $definitions['tagmetas']['content'],
@@ -1312,20 +1312,20 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^tagmetas WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 46:
-				qa_db_upgrade_query('ALTER TABLE ^posts DROP KEY selchildid, ADD KEY selchildid (selchildid, type, created), ADD COLUMN amaxvote SMALLINT UNSIGNED NOT NULL DEFAULT 0 AFTER acount, ADD KEY type_7 (type, amaxvote, created)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts DROP KEY selchildid, ADD KEY selchildid (selchildid, type, created), ADD COLUMN amaxvote SMALLINT UNSIGNED NOT NULL DEFAULT 0 AFTER acount, ADD KEY type_7 (type, amaxvote, created)');
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['dorecountposts'] = true;
 				break;
 
 			case 47:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query(qa_db_create_table_sql('usernotices', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('usernotices', array(
 					'noticeid' => $definitions['usernotices']['noticeid'],
 					'userid' => $definitions['usernotices']['userid'],
 					'content' => $definitions['usernotices']['content'],
@@ -1338,78 +1338,78 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^usernotices WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			// Up to here: Version 1.5.x
 
 			case 48:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					$keycolumns = qa_array_to_keys(qa_db_read_all_values(qa_db_query_sub('SHOW COLUMNS FROM ^messages')));
+					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^messages')));
 					// might be using messages table shared with another installation, so check if we need to upgrade
 
 					if (isset($keycolumns['type']))
-						qa_db_upgrade_progress('Skipping upgrading messages table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading messages table since it was already upgraded by another Q2A site sharing it.');
 
 					else {
-						qa_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN type ' . $definitions['messages']['type'] . ' AFTER messageid, DROP KEY fromuserid, ADD key type (type, fromuserid, touserid, created), ADD KEY touserid (touserid, type, created)');
-						qa_db_upgrade_query($locktablesquery);
+						ilya_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN type ' . $definitions['messages']['type'] . ' AFTER messageid, DROP KEY fromuserid, ADD key type (type, fromuserid, touserid, created), ADD KEY touserid (touserid, type, created)');
+						ilya_db_upgrade_query($locktablesquery);
 					}
 				}
 				break;
 
 			case 49:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					qa_db_upgrade_query('ALTER TABLE ^users CHANGE COLUMN flags flags ' . $definitions['users']['flags']);
-					qa_db_upgrade_query($locktablesquery);
+					ilya_db_upgrade_query('ALTER TABLE ^users CHANGE COLUMN flags flags ' . $definitions['users']['flags']);
+					ilya_db_upgrade_query($locktablesquery);
 				}
 				break;
 
 			case 50:
-				qa_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN name ' . $definitions['posts']['name'] . ' AFTER tags');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^posts ADD COLUMN name ' . $definitions['posts']['name'] . ' AFTER tags');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 51:
 				if (!QA_FINAL_EXTERNAL_USERS) {
 					// might be using userfields table shared with another installation, so check if we need to upgrade
-					$keycolumns = qa_array_to_keys(qa_db_read_all_values(qa_db_query_sub('SHOW COLUMNS FROM ^userfields')));
+					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^userfields')));
 
 					if (isset($keycolumns['permit']))
-						qa_db_upgrade_progress('Skipping upgrading userfields table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading userfields table since it was already upgraded by another Q2A site sharing it.');
 
 					else {
-						qa_db_upgrade_query('ALTER TABLE ^userfields ADD COLUMN permit ' . $definitions['userfields']['permit'] . ' AFTER flags');
-						qa_db_upgrade_query($locktablesquery);
+						ilya_db_upgrade_query('ALTER TABLE ^userfields ADD COLUMN permit ' . $definitions['userfields']['permit'] . ' AFTER flags');
+						ilya_db_upgrade_query($locktablesquery);
 					}
 				}
 				break;
 
 			case 52:
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					$keyindexes = qa_array_to_keys(qa_db_read_all_assoc(qa_db_query_sub('SHOW INDEX FROM ^users'), null, 'Key_name'));
+					$keyindexes = ilya_array_to_keys(ilya_db_read_all_assoc(ilya_db_query_sub('SHOW INDEX FROM ^users'), null, 'Key_name'));
 
 					if (isset($keyindexes['created']))
-						qa_db_upgrade_progress('Skipping upgrading users table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading users table since it was already upgraded by another Q2A site sharing it.');
 
 					else {
-						qa_db_upgrade_query('ALTER TABLE ^users ADD KEY created (created, level, flags)');
-						qa_db_upgrade_query($locktablesquery);
+						ilya_db_upgrade_query('ALTER TABLE ^users ADD KEY created (created, level, flags)');
+						ilya_db_upgrade_query($locktablesquery);
 					}
 				}
 				break;
 
 			case 53:
-				qa_db_upgrade_query('ALTER TABLE ^blobs CHANGE COLUMN content content ' . $definitions['blobs']['content']);
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^blobs CHANGE COLUMN content content ' . $definitions['blobs']['content']);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 54:
-				qa_db_upgrade_query('UNLOCK TABLES');
+				ilya_db_upgrade_query('UNLOCK TABLES');
 
-				qa_db_upgrade_query('SET FOREIGN_KEY_CHECKS=0'); // in case InnoDB not available
+				ilya_db_upgrade_query('SET FOREIGN_KEY_CHECKS=0'); // in case InnoDB not available
 
-				qa_db_upgrade_query(qa_db_create_table_sql('userlevels', array(
+				ilya_db_upgrade_query(ilya_db_create_table_sql('userlevels', array(
 					'userid' => $definitions['userlevels']['userid'],
 					'entitytype' => $definitions['userlevels']['entitytype'],
 					'entityid' => $definitions['userlevels']['entityid'],
@@ -1420,7 +1420,7 @@ function qa_db_upgrade_tables()
 				)));
 
 				$locktablesquery .= ', ^userlevels WRITE';
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			// Up to here: Version 1.6 beta 1
@@ -1428,14 +1428,14 @@ function qa_db_upgrade_tables()
 			case 55:
 				if (!QA_FINAL_EXTERNAL_USERS) {
 					// might be using users table shared with another installation, so check if we need to upgrade
-					$keycolumns = qa_array_to_keys(qa_db_read_all_values(qa_db_query_sub('SHOW COLUMNS FROM ^users')));
+					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^users')));
 
 					if (isset($keycolumns['wallposts']))
-						qa_db_upgrade_progress('Skipping upgrading users table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading users table since it was already upgraded by another Q2A site sharing it.');
 
 					else {
-						qa_db_upgrade_query('ALTER TABLE ^users ADD COLUMN wallposts ' . $definitions['users']['wallposts'] . ' AFTER flags');
-						qa_db_upgrade_query($locktablesquery);
+						ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN wallposts ' . $definitions['users']['wallposts'] . ' AFTER flags');
+						ilya_db_upgrade_query($locktablesquery);
 					}
 				}
 				break;
@@ -1443,8 +1443,8 @@ function qa_db_upgrade_tables()
 			// Up to here: Version 1.6 beta 2
 
 			case 56:
-				qa_db_upgrade_query('ALTER TABLE ^pages DROP INDEX tags, ADD KEY tags (tags)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^pages DROP INDEX tags, ADD KEY tags (tags)');
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			// Up to here: Version 1.6 (release)
@@ -1452,25 +1452,25 @@ function qa_db_upgrade_tables()
 			case 57:
 				if (!QA_FINAL_EXTERNAL_USERS) {
 					// might be using messages table shared with another installation, so check if we need to upgrade
-					$keycolumns = qa_array_to_keys(qa_db_read_all_values(qa_db_query_sub('SHOW COLUMNS FROM ^messages')));
+					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^messages')));
 
 					if (isset($keycolumns['fromhidden']))
-						qa_db_upgrade_progress('Skipping upgrading messages table since it was already upgraded by another Q2A site sharing it.');
+						ilya_db_upgrade_progress('Skipping upgrading messages table since it was already upgraded by another Q2A site sharing it.');
 					else {
-						qa_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN fromhidden ' . $definitions['messages']['fromhidden'] . ' AFTER touserid');
-						qa_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN tohidden ' . $definitions['messages']['tohidden'] . ' AFTER fromhidden');
-						qa_db_upgrade_query('ALTER TABLE ^messages ADD KEY fromhidden (fromhidden), ADD KEY tohidden (tohidden)');
+						ilya_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN fromhidden ' . $definitions['messages']['fromhidden'] . ' AFTER touserid');
+						ilya_db_upgrade_query('ALTER TABLE ^messages ADD COLUMN tohidden ' . $definitions['messages']['tohidden'] . ' AFTER fromhidden');
+						ilya_db_upgrade_query('ALTER TABLE ^messages ADD KEY fromhidden (fromhidden), ADD KEY tohidden (tohidden)');
 
-						qa_db_upgrade_query($locktablesquery);
+						ilya_db_upgrade_query($locktablesquery);
 					}
 				}
 				break;
 
 			case 58:
 				// note: need to use full table names here as aliases trigger error "Table 'x' was not locked with LOCK TABLES"
-				qa_db_upgrade_query('DELETE FROM ^userfavorites WHERE entitytype="U" AND userid=entityid');
-				qa_db_upgrade_query('DELETE ^uservotes FROM ^uservotes JOIN ^posts ON ^uservotes.postid=^posts.postid AND ^uservotes.userid=^posts.userid');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('DELETE FROM ^userfavorites WHERE entitytype="U" AND userid=entityid');
+				ilya_db_upgrade_query('DELETE ^uservotes FROM ^uservotes JOIN ^posts ON ^uservotes.postid=^posts.postid AND ^uservotes.userid=^posts.userid');
+				ilya_db_upgrade_query($locktablesquery);
 
 				$keyrecalc['dorecountposts'] = true;
 				$keyrecalc['dorecalcpoints'] = true;
@@ -1485,22 +1485,22 @@ function qa_db_upgrade_tables()
 			// Up to here: Version 1.7.1
 
 			case 60:
-				// add new category widget - note title must match that from qa_register_core_modules()
-				if (qa_using_categories()) {
-					$widgetid = qa_db_widget_create('Categories', 'all');
-					qa_db_widget_move($widgetid, 'SL', 1);
+				// add new category widget - note title must match that from ilya_register_core_modules()
+				if (ilya_using_categories()) {
+					$widgetid = ilya_db_widget_create('Categories', 'all');
+					ilya_db_widget_move($widgetid, 'SL', 1);
 				}
 				break;
 
 			case 61:
-				// upgrade length of qa_posts.content field to 12000
+				// upgrade length of ilya_posts.content field to 12000
 				$newlength = QA_DB_MAX_CONTENT_LENGTH;
 				$query = 'SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS WHERE table_schema=$ AND table_name=$ AND column_name="content"';
-				$tablename = qa_db_add_table_prefix('posts');
-				$oldlength = qa_db_read_one_value(qa_db_query_sub($query, QA_FINAL_MYSQL_DATABASE, $tablename));
+				$tablename = ilya_db_add_table_prefix('posts');
+				$oldlength = ilya_db_read_one_value(ilya_db_query_sub($query, QA_FINAL_MYSQL_DATABASE, $tablename));
 
 				if ($oldlength < $newlength) {
-					qa_db_upgrade_query('ALTER TABLE ^posts MODIFY content ' . $definitions['posts']['content']);
+					ilya_db_upgrade_query('ALTER TABLE ^posts MODIFY content ' . $definitions['posts']['content']);
 				}
 
 				break;
@@ -1508,55 +1508,55 @@ function qa_db_upgrade_tables()
 			case 62:
 				if (!QA_FINAL_EXTERNAL_USERS) {
 					// might be using users table shared with another installation, so check if we need to upgrade
-					$keycolumns = qa_array_to_keys(qa_db_read_all_values(qa_db_query_sub('SHOW COLUMNS FROM ^users')));
+					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^users')));
 
 					if (isset($keycolumns['passhash']))
-						qa_db_upgrade_progress(sprintf($skipMessage, 'users'));
+						ilya_db_upgrade_progress(sprintf($skipMessage, 'users'));
 					else {
-						// add column to qa_users to handle new bcrypt passwords
-						qa_db_upgrade_query('ALTER TABLE ^users ADD COLUMN passhash ' . $definitions['users']['passhash'] . ' AFTER passcheck');
-						qa_db_upgrade_query($locktablesquery);
+						// add column to ilya_users to handle new bcrypt passwords
+						ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN passhash ' . $definitions['users']['passhash'] . ' AFTER passcheck');
+						ilya_db_upgrade_query($locktablesquery);
 					}
 				}
 				break;
 
 			case 63:
 				// check for shared cookies table
-				$fieldDef = qa_db_read_one_assoc(qa_db_query_sub('SHOW COLUMNS FROM ^cookies WHERE Field="createip"'));
+				$fieldDef = ilya_db_read_one_assoc(ilya_db_query_sub('SHOW COLUMNS FROM ^cookies WHERE Field="createip"'));
 				if (strtolower($fieldDef['Type']) === 'varbinary(16)')
-					qa_db_upgrade_progress(sprintf($skipMessage, 'cookies'));
+					ilya_db_upgrade_progress(sprintf($skipMessage, 'cookies'));
 				else {
-					qa_db_upgrade_query('ALTER TABLE ^cookies MODIFY writeip ' . $definitions['cookies']['writeip'] . ', MODIFY createip ' . $definitions['cookies']['createip']);
-					qa_db_upgrade_query('UPDATE ^cookies SET writeip = UNHEX(HEX(CAST(writeip AS UNSIGNED))), createip = UNHEX(HEX(CAST(createip AS UNSIGNED)))');
+					ilya_db_upgrade_query('ALTER TABLE ^cookies MODIFY writeip ' . $definitions['cookies']['writeip'] . ', MODIFY createip ' . $definitions['cookies']['createip']);
+					ilya_db_upgrade_query('UPDATE ^cookies SET writeip = UNHEX(HEX(CAST(writeip AS UNSIGNED))), createip = UNHEX(HEX(CAST(createip AS UNSIGNED)))');
 				}
 
-				qa_db_upgrade_query('ALTER TABLE ^iplimits MODIFY ip ' . $definitions['iplimits']['ip']);
-				qa_db_upgrade_query('UPDATE ^iplimits SET ip = UNHEX(HEX(CAST(ip AS UNSIGNED)))');
+				ilya_db_upgrade_query('ALTER TABLE ^iplimits MODIFY ip ' . $definitions['iplimits']['ip']);
+				ilya_db_upgrade_query('UPDATE ^iplimits SET ip = UNHEX(HEX(CAST(ip AS UNSIGNED)))');
 
 				// check for shared blobs table
-				$fieldDef = qa_db_read_one_assoc(qa_db_query_sub('SHOW COLUMNS FROM ^blobs WHERE Field="createip"'));
+				$fieldDef = ilya_db_read_one_assoc(ilya_db_query_sub('SHOW COLUMNS FROM ^blobs WHERE Field="createip"'));
 				if (strtolower($fieldDef['Type']) === 'varbinary(16)')
-					qa_db_upgrade_progress(sprintf($skipMessage, 'blobs'));
+					ilya_db_upgrade_progress(sprintf($skipMessage, 'blobs'));
 				else {
-					qa_db_upgrade_query('ALTER TABLE ^blobs MODIFY createip ' . $definitions['blobs']['createip']);
-					qa_db_upgrade_query('UPDATE ^blobs SET createip = UNHEX(HEX(CAST(createip AS UNSIGNED)))');
+					ilya_db_upgrade_query('ALTER TABLE ^blobs MODIFY createip ' . $definitions['blobs']['createip']);
+					ilya_db_upgrade_query('UPDATE ^blobs SET createip = UNHEX(HEX(CAST(createip AS UNSIGNED)))');
 				}
 
-				qa_db_upgrade_query('ALTER TABLE ^posts MODIFY lastviewip ' . $definitions['posts']['lastviewip'] . ', MODIFY lastip ' . $definitions['posts']['lastip'] . ', MODIFY createip ' . $definitions['posts']['createip']);
-				qa_db_upgrade_query('UPDATE ^posts SET lastviewip = UNHEX(HEX(CAST(lastviewip AS UNSIGNED))), lastip = UNHEX(HEX(CAST(lastip AS UNSIGNED))), createip = UNHEX(HEX(CAST(createip AS UNSIGNED)))');
+				ilya_db_upgrade_query('ALTER TABLE ^posts MODIFY lastviewip ' . $definitions['posts']['lastviewip'] . ', MODIFY lastip ' . $definitions['posts']['lastip'] . ', MODIFY createip ' . $definitions['posts']['createip']);
+				ilya_db_upgrade_query('UPDATE ^posts SET lastviewip = UNHEX(HEX(CAST(lastviewip AS UNSIGNED))), lastip = UNHEX(HEX(CAST(lastip AS UNSIGNED))), createip = UNHEX(HEX(CAST(createip AS UNSIGNED)))');
 
 				if (!QA_FINAL_EXTERNAL_USERS) {
 					// check for shared users table
-					$fieldDef = qa_db_read_one_assoc(qa_db_query_sub('SHOW COLUMNS FROM ^users WHERE Field="createip"'));
+					$fieldDef = ilya_db_read_one_assoc(ilya_db_query_sub('SHOW COLUMNS FROM ^users WHERE Field="createip"'));
 					if (strtolower($fieldDef['Type']) === 'varbinary(16)')
-						qa_db_upgrade_progress(sprintf($skipMessage, 'users'));
+						ilya_db_upgrade_progress(sprintf($skipMessage, 'users'));
 					else {
-						qa_db_upgrade_query('ALTER TABLE ^users MODIFY createip ' . $definitions['users']['createip'] . ', MODIFY loginip ' . $definitions['users']['loginip'] . ', MODIFY writeip ' . $definitions['users']['writeip']);
-						qa_db_upgrade_query('UPDATE ^users SET createip = UNHEX(HEX(CAST(createip AS UNSIGNED))), loginip = UNHEX(HEX(CAST(loginip AS UNSIGNED))), writeip = UNHEX(HEX(CAST(writeip AS UNSIGNED)))');
+						ilya_db_upgrade_query('ALTER TABLE ^users MODIFY createip ' . $definitions['users']['createip'] . ', MODIFY loginip ' . $definitions['users']['loginip'] . ', MODIFY writeip ' . $definitions['users']['writeip']);
+						ilya_db_upgrade_query('UPDATE ^users SET createip = UNHEX(HEX(CAST(createip AS UNSIGNED))), loginip = UNHEX(HEX(CAST(loginip AS UNSIGNED))), writeip = UNHEX(HEX(CAST(writeip AS UNSIGNED)))');
 					}
 				}
 
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 64:
@@ -1566,13 +1566,13 @@ function qa_db_upgrade_tables()
 				break;
 
 			case 65:
-				qa_db_upgrade_query('ALTER TABLE ^uservotes ADD COLUMN votecreated ' . $definitions['uservotes']['votecreated'] . ' AFTER flag');
-				qa_db_upgrade_query('ALTER TABLE ^uservotes ADD COLUMN voteupdated ' . $definitions['uservotes']['voteupdated'] . ' AFTER votecreated');
-				qa_db_upgrade_query('ALTER TABLE ^uservotes ADD KEY voted (votecreated, voteupdated)');
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^uservotes ADD COLUMN votecreated ' . $definitions['uservotes']['votecreated'] . ' AFTER flag');
+				ilya_db_upgrade_query('ALTER TABLE ^uservotes ADD COLUMN voteupdated ' . $definitions['uservotes']['voteupdated'] . ' AFTER votecreated');
+				ilya_db_upgrade_query('ALTER TABLE ^uservotes ADD KEY voted (votecreated, voteupdated)');
+				ilya_db_upgrade_query($locktablesquery);
 
 				// for old votes, set a default date of when that post was made
-				qa_db_upgrade_query('UPDATE ^uservotes, ^posts SET ^uservotes.votecreated=^posts.created WHERE ^uservotes.postid=^posts.postid AND (^uservotes.vote != 0 OR ^uservotes.flag=0)');
+				ilya_db_upgrade_query('UPDATE ^uservotes, ^posts SET ^uservotes.votecreated=^posts.created WHERE ^uservotes.postid=^posts.postid AND (^uservotes.vote != 0 OR ^uservotes.flag=0)');
 				break;
 
 			case 66:
@@ -1581,35 +1581,35 @@ function qa_db_upgrade_tables()
 					'ADD COLUMN cdownvotes ' . $definitions['userpoints']['cdownvotes'] . ' AFTER cupvotes',
 					'ADD COLUMN cvoteds ' . $definitions['userpoints']['cvoteds'] . ' AFTER avoteds',
 				);
-				qa_db_upgrade_query('ALTER TABLE ^userpoints ' . implode(', ', $newColumns));
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query('ALTER TABLE ^userpoints ' . implode(', ', $newColumns));
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			case 67:
 				// ensure we don't have old userids lying around
 				if (!QA_FINAL_EXTERNAL_USERS) {
-					qa_db_upgrade_query('ALTER TABLE ^messages MODIFY fromuserid ' . $definitions['messages']['fromuserid']);
-					qa_db_upgrade_query('ALTER TABLE ^messages MODIFY touserid ' . $definitions['messages']['touserid']);
-					qa_db_upgrade_query('UPDATE ^messages SET fromuserid=NULL WHERE fromuserid NOT IN (SELECT userid FROM ^users)');
-					qa_db_upgrade_query('UPDATE ^messages SET touserid=NULL WHERE touserid NOT IN (SELECT userid FROM ^users)');
+					ilya_db_upgrade_query('ALTER TABLE ^messages MODIFY fromuserid ' . $definitions['messages']['fromuserid']);
+					ilya_db_upgrade_query('ALTER TABLE ^messages MODIFY touserid ' . $definitions['messages']['touserid']);
+					ilya_db_upgrade_query('UPDATE ^messages SET fromuserid=NULL WHERE fromuserid NOT IN (SELECT userid FROM ^users)');
+					ilya_db_upgrade_query('UPDATE ^messages SET touserid=NULL WHERE touserid NOT IN (SELECT userid FROM ^users)');
 					// set up foreign key on messages table
-					qa_db_upgrade_query('ALTER TABLE ^messages ADD CONSTRAINT ^messages_ibfk_1 FOREIGN KEY (fromuserid) REFERENCES ^users(userid) ON DELETE SET NULL');
-					qa_db_upgrade_query('ALTER TABLE ^messages ADD CONSTRAINT ^messages_ibfk_2 FOREIGN KEY (touserid) REFERENCES ^users(userid) ON DELETE SET NULL');
+					ilya_db_upgrade_query('ALTER TABLE ^messages ADD CONSTRAINT ^messages_ibfk_1 FOREIGN KEY (fromuserid) REFERENCES ^users(userid) ON DELETE SET NULL');
+					ilya_db_upgrade_query('ALTER TABLE ^messages ADD CONSTRAINT ^messages_ibfk_2 FOREIGN KEY (touserid) REFERENCES ^users(userid) ON DELETE SET NULL');
 				}
 
-				qa_db_upgrade_query($locktablesquery);
+				ilya_db_upgrade_query($locktablesquery);
 				break;
 
 			// Up to here: Version 1.8
 		}
 
-		qa_db_set_db_version($newversion);
+		ilya_db_set_db_version($newversion);
 
-		if (qa_db_get_db_version() != $newversion)
-			qa_fatal_error('Could not increment database version');
+		if (ilya_db_get_db_version() != $newversion)
+			ilya_fatal_error('Could not increment database version');
 	}
 
-	qa_db_upgrade_query('UNLOCK TABLES');
+	ilya_db_upgrade_query('UNLOCK TABLES');
 
 	// Perform any necessary recalculations, as determined by upgrade steps
 
@@ -1619,10 +1619,10 @@ function qa_db_upgrade_tables()
 
 			$stoptime = time() + 2;
 
-			while (qa_recalc_perform_step($state) && (time() < $stoptime))
+			while (ilya_recalc_perform_step($state) && (time() < $stoptime))
 				;
 
-			qa_db_upgrade_progress(qa_recalc_get_message($state));
+			ilya_db_upgrade_progress(ilya_recalc_get_message($state));
 		}
 	}
 }
@@ -1634,14 +1634,14 @@ function qa_db_upgrade_tables()
  * @param $table
  * @param $columns
  */
-function qa_db_upgrade_table_columns($definitions, $table, $columns)
+function ilya_db_upgrade_table_columns($definitions, $table, $columns)
 {
 	$sqlchanges = array();
 
 	foreach ($columns as $column)
 		$sqlchanges[] = 'CHANGE COLUMN ' . $column . ' ' . $column . ' ' . $definitions[$table][$column];
 
-	qa_db_upgrade_query('ALTER TABLE ^' . $table . ' ' . implode(', ', $sqlchanges));
+	ilya_db_upgrade_query('ALTER TABLE ^' . $table . ' ' . implode(', ', $sqlchanges));
 }
 
 
@@ -1649,10 +1649,10 @@ function qa_db_upgrade_table_columns($definitions, $table, $columns)
  * Perform upgrade $query and output progress to the browser
  * @param $query
  */
-function qa_db_upgrade_query($query)
+function ilya_db_upgrade_query($query)
 {
-	qa_db_upgrade_progress('Running query: ' . qa_db_apply_sub($query, array()) . ' ...');
-	qa_db_query_sub($query);
+	ilya_db_upgrade_progress('Running query: ' . ilya_db_apply_sub($query, array()) . ' ...');
+	ilya_db_query_sub($query);
 }
 
 
@@ -1660,8 +1660,8 @@ function qa_db_upgrade_query($query)
  * Output $text to the browser (after converting to HTML) and do all we can to get it displayed
  * @param $text
  */
-function qa_db_upgrade_progress($text)
+function ilya_db_upgrade_progress($text)
 {
-	echo qa_html($text) . str_repeat('    ', 1024) . "<br><br>\n";
+	echo ilya_html($text) . str_repeat('    ', 1024) . "<br><br>\n";
 	flush();
 }

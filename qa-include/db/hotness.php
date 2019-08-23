@@ -30,14 +30,14 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param  int $postid The ID of the post
  * @return bool Whether views were actually incremented.
  */
-function qa_db_increment_views($postid)
+function ilya_db_increment_views($postid)
 {
 	$query = 'UPDATE ^posts SET views=views+1, lastviewip=UNHEX($) WHERE postid=# AND (lastviewip IS NULL OR lastviewip!=UNHEX($))';
-	$ipHex = bin2hex(@inet_pton(qa_remote_ip_address()));
+	$ipHex = bin2hex(@inet_pton(ilya_remote_ip_address()));
 
-	qa_db_query_sub($query, $ipHex, $postid, $ipHex);
+	ilya_db_query_sub($query, $ipHex, $postid, $ipHex);
 
-	return qa_db_affected_rows() > 0;
+	return ilya_db_affected_rows() > 0;
 }
 
 
@@ -50,11 +50,11 @@ function qa_db_increment_views($postid)
  *   views and include that in the hotness calculation.
  * @return void
  */
-function qa_db_hotness_update($firstpostid, $lastpostid = null, $viewincrement = false)
+function ilya_db_hotness_update($firstpostid, $lastpostid = null, $viewincrement = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	if (!qa_should_update_counts()) {
+	if (!ilya_should_update_counts()) {
 		return;
 	}
 
@@ -74,12 +74,12 @@ function qa_db_hotness_update($firstpostid, $lastpostid = null, $viewincrement =
 	$arguments = array(
 		$firstpostid,
 		$lastpostid,
-		qa_opt('hot_weight_q_age'),
-		qa_opt('hot_weight_a_age'),
-		qa_opt('hot_weight_answers') * 160000,
-		qa_opt('hot_weight_votes') * 160000,
-		qa_opt('hot_weight_views') * 4000,
+		ilya_opt('hot_weight_q_age'),
+		ilya_opt('hot_weight_a_age'),
+		ilya_opt('hot_weight_answers') * 160000,
+		ilya_opt('hot_weight_votes') * 160000,
+		ilya_opt('hot_weight_views') * 4000,
 	);
 
-	qa_db_query_raw(qa_db_apply_sub($query, $arguments));
+	ilya_db_query_raw(ilya_db_apply_sub($query, $arguments));
 }

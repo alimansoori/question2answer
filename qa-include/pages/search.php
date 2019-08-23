@@ -31,23 +31,23 @@ require_once QA_INCLUDE_DIR . 'app/search.php';
 
 // Perform the search if appropriate
 
-if (strlen(qa_get('q'))) {
+if (strlen(ilya_get('q'))) {
 	// Pull in input parameters
-	$inquery = trim(qa_get('q'));
-	$userid = qa_get_logged_in_userid();
-	$start = qa_get_start();
+	$inquery = trim(ilya_get('q'));
+	$userid = ilya_get_logged_in_userid();
+	$start = ilya_get_start();
 
-	$display = qa_opt_if_loaded('page_size_search');
+	$display = ilya_opt_if_loaded('page_size_search');
 	$count = 2 * (isset($display) ? $display : QA_DB_RETRIEVE_QS_AS) + 1;
 	// get enough results to be able to give some idea of how many pages of search results there are
 
 	// Perform the search using appropriate module
 
-	$results = qa_get_search_results($inquery, $start, $count, $userid, false, false);
+	$results = ilya_get_search_results($inquery, $start, $count, $userid, false, false);
 
 	// Count and truncate results
 
-	$pagesize = qa_opt('page_size_search');
+	$pagesize = ilya_opt('page_size_search');
 	$gotcount = count($results);
 	$results = array_slice($results, 0, $pagesize);
 
@@ -60,11 +60,11 @@ if (strlen(qa_get('q'))) {
 			$fullquestions[] = $result['question'];
 	}
 
-	$usershtml = qa_userids_handles_html($fullquestions);
+	$usershtml = ilya_userids_handles_html($fullquestions);
 
 	// Report the search event
 
-	qa_report_event('search', $userid, qa_get_logged_in_handle(), qa_cookie_get(), array(
+	ilya_report_event('search', $userid, ilya_get_logged_in_handle(), ilya_cookie_get(), array(
 		'query' => $inquery,
 		'start' => $start,
 	));
@@ -73,27 +73,27 @@ if (strlen(qa_get('q'))) {
 
 // Prepare content for theme
 
-$qa_content = qa_content_prepare(true);
+$ilya_content = ilya_content_prepare(true);
 
-if (strlen(qa_get('q'))) {
-	$qa_content['search']['value'] = qa_html($inquery);
+if (strlen(ilya_get('q'))) {
+	$ilya_content['search']['value'] = ilya_html($inquery);
 
 	if (count($results))
-		$qa_content['title'] = qa_lang_html_sub('main/results_for_x', qa_html($inquery));
+		$ilya_content['title'] = ilya_lang_html_sub('main/results_for_x', ilya_html($inquery));
 	else
-		$qa_content['title'] = qa_lang_html_sub('main/no_results_for_x', qa_html($inquery));
+		$ilya_content['title'] = ilya_lang_html_sub('main/no_results_for_x', ilya_html($inquery));
 
-	$qa_content['q_list']['form'] = array(
-		'tags' => 'method="post" action="' . qa_self_html() . '"',
+	$ilya_content['q_list']['form'] = array(
+		'tags' => 'method="post" action="' . ilya_self_html() . '"',
 
 		'hidden' => array(
-			'code' => qa_get_form_security_code('vote'),
+			'code' => ilya_get_form_security_code('vote'),
 		),
 	);
 
-	$qa_content['q_list']['qs'] = array();
+	$ilya_content['q_list']['qs'] = array();
 
-	$qdefaults = qa_post_html_defaults('Q');
+	$qdefaults = ilya_post_html_defaults('Q');
 
 	foreach ($results as $result) {
 		if (!isset($result['question'])) { // if we have any non-question results, display with less statistics
@@ -106,41 +106,41 @@ if (strlen(qa_get('q'))) {
 
 	foreach ($results as $result) {
 		if (isset($result['question'])) {
-			$fields = qa_post_html_fields($result['question'], $userid, qa_cookie_get(),
-				$usershtml, null, qa_post_html_options($result['question'], $qdefaults));
+			$fields = ilya_post_html_fields($result['question'], $userid, ilya_cookie_get(),
+				$usershtml, null, ilya_post_html_options($result['question'], $qdefaults));
 		} elseif (isset($result['url'])) {
 			$fields = array(
-				'what' => qa_html($result['url']),
-				'meta_order' => qa_lang_html('main/meta_order'),
+				'what' => ilya_html($result['url']),
+				'meta_order' => ilya_lang_html('main/meta_order'),
 			);
 		} else {
 			continue; // nothing to show here
 		}
 
 		if (isset($qdefaults['blockwordspreg']))
-			$result['title'] = qa_block_words_replace($result['title'], $qdefaults['blockwordspreg']);
+			$result['title'] = ilya_block_words_replace($result['title'], $qdefaults['blockwordspreg']);
 
-		$fields['title'] = qa_html($result['title']);
-		$fields['url'] = qa_html($result['url']);
+		$fields['title'] = ilya_html($result['title']);
+		$fields['url'] = ilya_html($result['url']);
 
-		$qa_content['q_list']['qs'][] = $fields;
+		$ilya_content['q_list']['qs'][] = $fields;
 	}
 
-	$qa_content['page_links'] = qa_html_page_links(qa_request(), $start, $pagesize, $start + $gotcount,
-		qa_opt('pages_prev_next'), array('q' => $inquery), $gotcount >= $count);
+	$ilya_content['page_links'] = ilya_html_page_links(ilya_request(), $start, $pagesize, $start + $gotcount,
+		ilya_opt('pages_prev_next'), array('q' => $inquery), $gotcount >= $count);
 
-	if (qa_opt('feed_for_search')) {
-		$qa_content['feed'] = array(
-			'url' => qa_path_html(qa_feed_request('search/' . $inquery)),
-			'label' => qa_lang_html_sub('main/results_for_x', qa_html($inquery)),
+	if (ilya_opt('feed_for_search')) {
+		$ilya_content['feed'] = array(
+			'url' => ilya_path_html(ilya_feed_request('search/' . $inquery)),
+			'label' => ilya_lang_html_sub('main/results_for_x', ilya_html($inquery)),
 		);
 	}
 
-	if (empty($qa_content['page_links']))
-		$qa_content['suggest_next'] = qa_html_suggest_qs_tags(qa_using_tags());
+	if (empty($ilya_content['page_links']))
+		$ilya_content['suggest_next'] = ilya_html_suggest_qs_tags(ilya_using_tags());
 
 } else
-	$qa_content['error'] = qa_lang_html('main/search_explanation');
+	$ilya_content['error'] = ilya_lang_html('main/search_explanation');
 
 
-return $qa_content;
+return $ilya_content;

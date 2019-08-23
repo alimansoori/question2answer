@@ -22,18 +22,18 @@
 require_once QA_INCLUDE_DIR . 'db/selects.php';
 
 
-$categoryid = qa_post_text('categoryid');
+$categoryid = ilya_post_text('categoryid');
 if (!strlen($categoryid))
 	$categoryid = null;
 
-list($fullcategory, $categories) = qa_db_select_with_pending(
-	qa_db_full_category_selectspec($categoryid, true),
-	qa_db_category_sub_selectspec($categoryid)
+list($fullcategory, $categories) = ilya_db_select_with_pending(
+	ilya_db_full_category_selectspec($categoryid, true),
+	ilya_db_category_sub_selectspec($categoryid)
 );
 
 echo "QA_AJAX_RESPONSE\n1\n";
 
-echo qa_html(strtr(@$fullcategory['content'], "\r\n", '  ')); // category description
+echo ilya_html(strtr(@$fullcategory['content'], "\r\n", '  ')); // category description
 
 foreach ($categories as $category) {
 	// subcategory information

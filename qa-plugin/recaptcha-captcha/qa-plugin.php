@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('captcha', 'ilya-recaptcha-captcha.php', 'qa_recaptcha_captcha', 'reCAPTCHA');
+ilya_register_plugin_module('captcha', 'ilya-recaptcha-captcha.php', 'ilya_recaptcha_captcha', 'reCAPTCHA');

@@ -30,9 +30,9 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $name
  * @param $value
  */
-function qa_db_set_option($name, $value)
+function ilya_db_set_option($name, $value)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT INTO ^options (title, content) VALUES ($, $) ' .
 		'ON DUPLICATE KEY UPDATE content = VALUES(content)',
 		$name, $value

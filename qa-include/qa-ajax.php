@@ -31,25 +31,25 @@ header('Content-Type: text/plain; charset=utf-8');
 
 // Load the Q2A base file which sets up a bunch of crucial functions
 
-$qa_autoconnect = false;
+$ilya_autoconnect = false;
 require 'ilya-base.php';
 
-qa_report_process_stage('init_ajax');
+ilya_report_process_stage('init_ajax');
 
 
 // Get general Ajax parameters from the POST payload, and clear $_GET
 
-qa_set_request(qa_post_text('qa_request'), qa_post_text('qa_root'));
+ilya_set_request(ilya_post_text('ilya_request'), ilya_post_text('ilya_root'));
 
-$_GET = array(); // for qa_self_html()
+$_GET = array(); // for ilya_self_html()
 
 
 // Database failure handler
 
-function qa_ajax_db_fail_handler()
+function ilya_ajax_db_fail_handler()
 {
 	echo "QA_AJAX_RESPONSE\n0\nA database error occurred.";
-	qa_exit('error');
+	ilya_exit('error');
 }
 
 
@@ -75,14 +75,14 @@ $routing = array(
 	'click_pm' => 'click-pm.php',
 );
 
-$operation = qa_post_text('qa_operation');
+$operation = ilya_post_text('ilya_operation');
 
 if (isset($routing[$operation])) {
-	qa_db_connect('qa_ajax_db_fail_handler');
-	qa_initialize_postdb_plugins();
+	ilya_db_connect('ilya_ajax_db_fail_handler');
+	ilya_initialize_postdb_plugins();
 
-	qa_initialize_buffering();
+	ilya_initialize_buffering();
 	require QA_INCLUDE_DIR . 'ajax/' . $routing[$operation];
 
-	qa_db_disconnect();
+	ilya_db_disconnect();
 }

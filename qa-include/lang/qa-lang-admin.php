@@ -150,7 +150,7 @@ return array(
 	'most_flagged_title' => 'Flagged content',
 	'mysql_version' => 'MySQL version:',
 	'nav_links_explanation' => 'Show navigation links:',
-	'nav_qa_is_home' => 'Q&A (links to home page)',
+	'nav_ilya_is_home' => 'Q&A (links to home page)',
 	'neat_urls_note' => ' (requires ^1htaccess^2 file)',
 	'no_approve_found' => 'No content is waiting for approval',
 	'no_classification' => 'None',

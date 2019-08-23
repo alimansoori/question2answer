@@ -59,9 +59,9 @@ define('QA_POST_STATUS_QUEUED', 2);
  * @param bool $remoderate
  * @param bool $silent
  */
-function qa_question_set_content($oldquestion, $title, $content, $format, $text, $tagstring, $notify, $userid, $handle, $cookieid, $extravalue = null, $name = null, $remoderate = false, $silent = false)
+function ilya_question_set_content($oldquestion, $title, $content, $format, $text, $tagstring, $notify, $userid, $handle, $cookieid, $extravalue = null, $name = null, $remoderate = false, $silent = false)
 {
-	qa_post_unindex($oldquestion['postid']);
+	ilya_post_unindex($oldquestion['postid']);
 
 	$wasqueued = ($oldquestion['type'] == 'Q_QUEUED');
 	$titlechanged = strcmp($oldquestion['title'], $title) !== 0;
@@ -69,45 +69,45 @@ function qa_question_set_content($oldquestion, $title, $content, $format, $text,
 	$tagschanged = strcmp($oldquestion['tags'], $tagstring) !== 0;
 	$setupdated = ($titlechanged || $contentchanged || $tagschanged) && (!$wasqueued) && !$silent;
 
-	qa_db_post_set_content($oldquestion['postid'], $title, $content, $format, $tagstring, $notify,
-		$setupdated ? $userid : null, $setupdated ? qa_remote_ip_address() : null,
+	ilya_db_post_set_content($oldquestion['postid'], $title, $content, $format, $tagstring, $notify,
+		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null,
 		($titlechanged || $contentchanged) ? QA_UPDATE_CONTENT : QA_UPDATE_TAGS, $name);
 
 	if (isset($extravalue)) {
 		require_once QA_INCLUDE_DIR . 'db/metas.php';
-		qa_db_postmeta_set($oldquestion['postid'], 'qa_q_extra', $extravalue);
+		ilya_db_postmeta_set($oldquestion['postid'], 'ilya_q_extra', $extravalue);
 	}
 
 	if ($setupdated && $remoderate) {
 		require_once QA_INCLUDE_DIR . 'app/posts.php';
 
-		$answers = qa_post_get_question_answers($oldquestion['postid']);
-		$commentsfollows = qa_post_get_question_commentsfollows($oldquestion['postid']);
-		$closepost = qa_post_get_question_closepost($oldquestion['postid']);
+		$answers = ilya_post_get_question_answers($oldquestion['postid']);
+		$commentsfollows = ilya_post_get_question_commentsfollows($oldquestion['postid']);
+		$closepost = ilya_post_get_question_closepost($oldquestion['postid']);
 
 		foreach ($answers as $answer)
-			qa_post_unindex($answer['postid']);
+			ilya_post_unindex($answer['postid']);
 
 		foreach ($commentsfollows as $comment) {
 			if ($comment['basetype'] == 'C')
-				qa_post_unindex($comment['postid']);
+				ilya_post_unindex($comment['postid']);
 		}
 
 		if (@$closepost['parentid'] == $oldquestion['postid'])
-			qa_post_unindex($closepost['postid']);
+			ilya_post_unindex($closepost['postid']);
 
-		qa_db_post_set_type($oldquestion['postid'], 'Q_QUEUED');
-		qa_update_counts_for_q($oldquestion['postid']);
-		qa_db_queuedcount_update();
-		qa_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects'));
+		ilya_db_post_set_type($oldquestion['postid'], 'Q_QUEUED');
+		ilya_update_counts_for_q($oldquestion['postid']);
+		ilya_db_queuedcount_update();
+		ilya_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects'));
 
 		if ($oldquestion['flagcount'])
-			qa_db_flaggedcount_update();
+			ilya_db_flaggedcount_update();
 
 	} elseif ($oldquestion['type'] == 'Q') { // not hidden or queued
-		qa_post_index($oldquestion['postid'], 'Q', $oldquestion['postid'], $oldquestion['parentid'], $title, $content, $format, $text, $tagstring, $oldquestion['categoryid']);
+		ilya_post_index($oldquestion['postid'], 'Q', $oldquestion['postid'], $oldquestion['parentid'], $title, $content, $format, $text, $tagstring, $oldquestion['categoryid']);
 		if ($tagschanged) {
-			qa_db_tagcount_update();
+			ilya_db_tagcount_update();
 		}
 	}
 
@@ -123,7 +123,7 @@ function qa_question_set_content($oldquestion, $title, $content, $format, $text,
 		'oldquestion' => $oldquestion,
 	);
 
-	qa_report_event('q_edit', $userid, $handle, $cookieid, $eventparams + array(
+	ilya_report_event('q_edit', $userid, $handle, $cookieid, $eventparams + array(
 		'silent' => $silent,
 		'oldtitle' => $oldquestion['title'],
 		'oldcontent' => $oldquestion['content'],
@@ -135,7 +135,7 @@ function qa_question_set_content($oldquestion, $title, $content, $format, $text,
 	));
 
 	if ($setupdated && $remoderate)
-		qa_report_event('q_requeue', $userid, $handle, $cookieid, $eventparams);
+		ilya_report_event('q_requeue', $userid, $handle, $cookieid, $eventparams);
 }
 
 
@@ -151,20 +151,20 @@ function qa_question_set_content($oldquestion, $title, $content, $format, $text,
  * @param $selchildid
  * @param $answers
  */
-function qa_question_set_selchildid($userid, $handle, $cookieid, $oldquestion, $selchildid, $answers)
+function ilya_question_set_selchildid($userid, $handle, $cookieid, $oldquestion, $selchildid, $answers)
 {
 	$oldselchildid = $oldquestion['selchildid'];
 
-	$lastip = qa_remote_ip_address();
+	$lastip = ilya_remote_ip_address();
 
-	qa_db_post_set_selchildid($oldquestion['postid'], isset($selchildid) ? $selchildid : null, $userid, $lastip);
-	qa_db_points_update_ifuser($oldquestion['userid'], 'aselects');
-	qa_db_unselqcount_update();
+	ilya_db_post_set_selchildid($oldquestion['postid'], isset($selchildid) ? $selchildid : null, $userid, $lastip);
+	ilya_db_points_update_ifuser($oldquestion['userid'], 'aselects');
+	ilya_db_unselqcount_update();
 
 	if (isset($oldselchildid) && isset($answers[$oldselchildid])) {
-		qa_db_points_update_ifuser($answers[$oldselchildid]['userid'], 'aselecteds');
+		ilya_db_points_update_ifuser($answers[$oldselchildid]['userid'], 'aselecteds');
 
-		qa_report_event('a_unselect', $userid, $handle, $cookieid, array(
+		ilya_report_event('a_unselect', $userid, $handle, $cookieid, array(
 			'parentid' => $oldquestion['postid'],
 			'parent' => $oldquestion,
 			'postid' => $oldselchildid,
@@ -172,9 +172,9 @@ function qa_question_set_selchildid($userid, $handle, $cookieid, $oldquestion, $
 		));
 
 		if (!empty($oldquestion['closed']) && empty($oldquestion['closedbyid'])) {
-			qa_db_post_set_closed($oldquestion['postid'], null, $userid, $lastip);
+			ilya_db_post_set_closed($oldquestion['postid'], null, $userid, $lastip);
 
-			qa_report_event('q_reopen', $userid, $handle, $cookieid, array(
+			ilya_report_event('q_reopen', $userid, $handle, $cookieid, array(
 				'postid' => $oldquestion['postid'],
 				'oldquestion' => $oldquestion,
 			));
@@ -182,19 +182,19 @@ function qa_question_set_selchildid($userid, $handle, $cookieid, $oldquestion, $
 	}
 
 	if (isset($selchildid)) {
-		qa_db_points_update_ifuser($answers[$selchildid]['userid'], 'aselecteds');
+		ilya_db_points_update_ifuser($answers[$selchildid]['userid'], 'aselecteds');
 
-		qa_report_event('a_select', $userid, $handle, $cookieid, array(
+		ilya_report_event('a_select', $userid, $handle, $cookieid, array(
 			'parentid' => $oldquestion['postid'],
 			'parent' => $oldquestion,
 			'postid' => $selchildid,
 			'answer' => $answers[$selchildid],
 		));
 
-		if (empty($oldquestion['closed']) && qa_opt('do_close_on_select')) {
-			qa_db_post_set_closed($oldquestion['postid'], null, $userid, $lastip);
+		if (empty($oldquestion['closed']) && ilya_opt('do_close_on_select')) {
+			ilya_db_post_set_closed($oldquestion['postid'], null, $userid, $lastip);
 
-			qa_report_event('q_close', $userid, $handle, $cookieid, array(
+			ilya_report_event('q_close', $userid, $handle, $cookieid, array(
 				'postid' => $oldquestion['postid'],
 				'oldquestion' => $oldquestion,
 				'reason' => 'answer-selected',
@@ -215,17 +215,17 @@ function qa_question_set_selchildid($userid, $handle, $cookieid, $oldquestion, $
  * @param $handle
  * @param $cookieid
  */
-function qa_question_close_clear($oldquestion, $oldclosepost, $userid, $handle, $cookieid)
+function ilya_question_close_clear($oldquestion, $oldclosepost, $userid, $handle, $cookieid)
 {
 	if (isset($oldquestion['closedbyid'])) {
-		qa_db_post_set_closed($oldquestion['postid'], null, $userid, qa_remote_ip_address());
+		ilya_db_post_set_closed($oldquestion['postid'], null, $userid, ilya_remote_ip_address());
 
 		if (isset($oldclosepost) && ($oldclosepost['parentid'] == $oldquestion['postid'])) {
-			qa_post_unindex($oldclosepost['postid']);
-			qa_db_post_delete($oldclosepost['postid']);
+			ilya_post_unindex($oldclosepost['postid']);
+			ilya_db_post_delete($oldclosepost['postid']);
 		}
 
-		qa_report_event('q_reopen', $userid, $handle, $cookieid, array(
+		ilya_report_event('q_reopen', $userid, $handle, $cookieid, array(
 			'postid' => $oldquestion['postid'],
 			'oldquestion' => $oldquestion,
 		));
@@ -244,13 +244,13 @@ function qa_question_close_clear($oldquestion, $oldclosepost, $userid, $handle, 
  * @param $handle
  * @param $cookieid
  */
-function qa_question_close_duplicate($oldquestion, $oldclosepost, $originalpostid, $userid, $handle, $cookieid)
+function ilya_question_close_duplicate($oldquestion, $oldclosepost, $originalpostid, $userid, $handle, $cookieid)
 {
-	qa_question_close_clear($oldquestion, $oldclosepost, $userid, $handle, $cookieid);
+	ilya_question_close_clear($oldquestion, $oldclosepost, $userid, $handle, $cookieid);
 
-	qa_db_post_set_closed($oldquestion['postid'], $originalpostid, $userid, qa_remote_ip_address());
+	ilya_db_post_set_closed($oldquestion['postid'], $originalpostid, $userid, ilya_remote_ip_address());
 
-	qa_report_event('q_close', $userid, $handle, $cookieid, array(
+	ilya_report_event('q_close', $userid, $handle, $cookieid, array(
 		'postid' => $oldquestion['postid'],
 		'oldquestion' => $oldquestion,
 		'reason' => 'duplicate',
@@ -270,21 +270,21 @@ function qa_question_close_duplicate($oldquestion, $oldclosepost, $originalposti
  * @param $handle
  * @param $cookieid
  */
-function qa_question_close_other($oldquestion, $oldclosepost, $note, $userid, $handle, $cookieid)
+function ilya_question_close_other($oldquestion, $oldclosepost, $note, $userid, $handle, $cookieid)
 {
-	qa_question_close_clear($oldquestion, $oldclosepost, $userid, $handle, $cookieid);
+	ilya_question_close_clear($oldquestion, $oldclosepost, $userid, $handle, $cookieid);
 
-	$postid = qa_db_post_create('NOTE', $oldquestion['postid'], $userid, isset($userid) ? null : $cookieid,
-		qa_remote_ip_address(), null, $note, '', null, null, $oldquestion['categoryid']);
+	$postid = ilya_db_post_create('NOTE', $oldquestion['postid'], $userid, isset($userid) ? null : $cookieid,
+		ilya_remote_ip_address(), null, $note, '', null, null, $oldquestion['categoryid']);
 
-	qa_db_posts_calc_category_path($postid);
+	ilya_db_posts_calc_category_path($postid);
 
 	if ($oldquestion['type'] == 'Q')
-		qa_post_index($postid, 'NOTE', $oldquestion['postid'], $oldquestion['postid'], null, $note, '', $note, null, $oldquestion['categoryid']);
+		ilya_post_index($postid, 'NOTE', $oldquestion['postid'], $oldquestion['postid'], null, $note, '', $note, null, $oldquestion['categoryid']);
 
-	qa_db_post_set_closed($oldquestion['postid'], $postid, $userid, qa_remote_ip_address());
+	ilya_db_post_set_closed($oldquestion['postid'], $postid, $userid, ilya_remote_ip_address());
 
-	qa_report_event('q_close', $userid, $handle, $cookieid, array(
+	ilya_report_event('q_close', $userid, $handle, $cookieid, array(
 		'postid' => $oldquestion['postid'],
 		'oldquestion' => $oldquestion,
 		'reason' => 'other',
@@ -294,8 +294,8 @@ function qa_question_close_other($oldquestion, $oldclosepost, $note, $userid, $h
 
 
 /**
- * Set $oldquestion to hidden if $hidden is true, visible/normal if otherwise. All other parameters are as for qa_question_set_status(...)
- * @deprecated Replaced by qa_question_set_status.
+ * Set $oldquestion to hidden if $hidden is true, visible/normal if otherwise. All other parameters are as for ilya_question_set_status(...)
+ * @deprecated Replaced by ilya_question_set_status.
  * @param $oldquestion
  * @param $hidden
  * @param $userid
@@ -305,9 +305,9 @@ function qa_question_close_other($oldquestion, $oldclosepost, $note, $userid, $h
  * @param $commentsfollows
  * @param $closepost
  */
-function qa_question_set_hidden($oldquestion, $hidden, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost = null)
+function ilya_question_set_hidden($oldquestion, $hidden, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost = null)
 {
-	qa_question_set_status($oldquestion, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
+	ilya_question_set_status($oldquestion, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
 }
 
 
@@ -327,7 +327,7 @@ function qa_question_set_hidden($oldquestion, $hidden, $userid, $handle, $cookie
  * @param $commentsfollows
  * @param $closepost
  */
-function qa_question_set_status($oldquestion, $status, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost = null)
+function ilya_question_set_status($oldquestion, $status, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost = null)
 {
 	require_once QA_INCLUDE_DIR . 'app/format.php';
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
@@ -336,19 +336,19 @@ function qa_question_set_status($oldquestion, $status, $userid, $handle, $cookie
 	$wasqueued = ($oldquestion['type'] == 'Q_QUEUED');
 	$wasrequeued = $wasqueued && isset($oldquestion['updated']);
 
-	qa_post_unindex($oldquestion['postid']);
+	ilya_post_unindex($oldquestion['postid']);
 
 	foreach ($answers as $answer) {
-		qa_post_unindex($answer['postid']);
+		ilya_post_unindex($answer['postid']);
 	}
 
 	foreach ($commentsfollows as $comment) {
 		if ($comment['basetype'] == 'C')
-			qa_post_unindex($comment['postid']);
+			ilya_post_unindex($comment['postid']);
 	}
 
 	if (@$closepost['parentid'] == $oldquestion['postid'])
-		qa_post_unindex($closepost['postid']);
+		ilya_post_unindex($closepost['postid']);
 
 	$setupdated = false;
 	$event = null;
@@ -376,37 +376,37 @@ function qa_question_set_status($oldquestion, $status, $userid, $handle, $cookie
 		}
 
 	} else
-		qa_fatal_error('Unknown status in qa_question_set_status(): ' . $status);
+		ilya_fatal_error('Unknown status in ilya_question_set_status(): ' . $status);
 
-	qa_db_post_set_type($oldquestion['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? qa_remote_ip_address() : null, QA_UPDATE_VISIBLE);
+	ilya_db_post_set_type($oldquestion['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, QA_UPDATE_VISIBLE);
 
-	if ($wasqueued && $status == QA_POST_STATUS_NORMAL && qa_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
+	if ($wasqueued && $status == QA_POST_STATUS_NORMAL && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
 		if ($wasrequeued) // reset edit time to now if there was one, since we're approving the edit...
-			qa_db_post_set_updated($oldquestion['postid'], null);
+			ilya_db_post_set_updated($oldquestion['postid'], null);
 
 		else { // ... otherwise we're approving original created post
-			qa_db_post_set_created($oldquestion['postid'], null);
-			qa_db_hotness_update($oldquestion['postid']);
+			ilya_db_post_set_created($oldquestion['postid'], null);
+			ilya_db_hotness_update($oldquestion['postid']);
 		}
 	}
 
-	qa_update_counts_for_q($oldquestion['postid']);
-	qa_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects'));
+	ilya_update_counts_for_q($oldquestion['postid']);
+	ilya_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects'));
 
 	if ($wasqueued || ($status == QA_POST_STATUS_QUEUED))
-		qa_db_queuedcount_update();
+		ilya_db_queuedcount_update();
 
 	if ($oldquestion['flagcount'])
-		qa_db_flaggedcount_update();
+		ilya_db_flaggedcount_update();
 
 	if ($status == QA_POST_STATUS_NORMAL) {
-		qa_post_index($oldquestion['postid'], 'Q', $oldquestion['postid'], $oldquestion['parentid'], $oldquestion['title'], $oldquestion['content'],
-			$oldquestion['format'], qa_viewer_text($oldquestion['content'], $oldquestion['format']), $oldquestion['tags'], $oldquestion['categoryid']);
+		ilya_post_index($oldquestion['postid'], 'Q', $oldquestion['postid'], $oldquestion['parentid'], $oldquestion['title'], $oldquestion['content'],
+			$oldquestion['format'], ilya_viewer_text($oldquestion['content'], $oldquestion['format']), $oldquestion['tags'], $oldquestion['categoryid']);
 
 		foreach ($answers as $answer) {
 			if ($answer['type'] == 'A') { // even if question visible, don't index hidden or queued answers
-				qa_post_index($answer['postid'], $answer['type'], $oldquestion['postid'], $answer['parentid'], null,
-					$answer['content'], $answer['format'], qa_viewer_text($answer['content'], $answer['format']), null, $answer['categoryid']);
+				ilya_post_index($answer['postid'], $answer['type'], $oldquestion['postid'], $answer['parentid'], null,
+					$answer['content'], $answer['format'], ilya_viewer_text($answer['content'], $answer['format']), null, $answer['categoryid']);
 			}
 		}
 
@@ -415,35 +415,35 @@ function qa_question_set_status($oldquestion, $status, $userid, $handle, $cookie
 				$answer = @$answers[$comment['parentid']];
 
 				if (!isset($answer) || $answer['type'] == 'A') { // don't index comment if it or its parent is hidden
-					qa_post_index($comment['postid'], $comment['type'], $oldquestion['postid'], $comment['parentid'], null,
-						$comment['content'], $comment['format'], qa_viewer_text($comment['content'], $comment['format']), null, $comment['categoryid']);
+					ilya_post_index($comment['postid'], $comment['type'], $oldquestion['postid'], $comment['parentid'], null,
+						$comment['content'], $comment['format'], ilya_viewer_text($comment['content'], $comment['format']), null, $comment['categoryid']);
 				}
 			}
 		}
 
 		if ($closepost['parentid'] == $oldquestion['postid']) {
-			qa_post_index($closepost['postid'], $closepost['type'], $oldquestion['postid'], $closepost['parentid'], null,
-				$closepost['content'], $closepost['format'], qa_viewer_text($closepost['content'], $closepost['format']), null, $closepost['categoryid']);
+			ilya_post_index($closepost['postid'], $closepost['type'], $oldquestion['postid'], $closepost['parentid'], null,
+				$closepost['content'], $closepost['format'], ilya_viewer_text($closepost['content'], $closepost['format']), null, $closepost['categoryid']);
 		}
 	}
 
-	qa_question_uncache($oldquestion['postid']); // remove hidden posts immediately
+	ilya_question_uncache($oldquestion['postid']); // remove hidden posts immediately
 
 	$eventparams = array(
 		'postid' => $oldquestion['postid'],
 		'parentid' => $oldquestion['parentid'],
-		'parent' => isset($oldquestion['parentid']) ? qa_db_single_select(qa_db_full_post_selectspec(null, $oldquestion['parentid'])) : null,
+		'parent' => isset($oldquestion['parentid']) ? ilya_db_single_select(ilya_db_full_post_selectspec(null, $oldquestion['parentid'])) : null,
 		'title' => $oldquestion['title'],
 		'content' => $oldquestion['content'],
 		'format' => $oldquestion['format'],
-		'text' => qa_viewer_text($oldquestion['content'], $oldquestion['format']),
+		'text' => ilya_viewer_text($oldquestion['content'], $oldquestion['format']),
 		'tags' => $oldquestion['tags'],
 		'categoryid' => $oldquestion['categoryid'],
 		'name' => $oldquestion['name'],
 	);
 
 	if (isset($event)) {
-		qa_report_event($event, $userid, $handle, $cookieid, $eventparams + array(
+		ilya_report_event($event, $userid, $handle, $cookieid, $eventparams + array(
 				'oldquestion' => $oldquestion,
 			));
 	}
@@ -452,9 +452,9 @@ function qa_question_set_status($oldquestion, $status, $userid, $handle, $cookie
 		require_once QA_INCLUDE_DIR . 'db/selects.php';
 		require_once QA_INCLUDE_DIR . 'util/string.php';
 
-		qa_report_event('q_post', $oldquestion['userid'], $oldquestion['handle'], $oldquestion['cookieid'], $eventparams + array(
+		ilya_report_event('q_post', $oldquestion['userid'], $oldquestion['handle'], $oldquestion['cookieid'], $eventparams + array(
 			'notify' => isset($oldquestion['notify']),
-			'email' => qa_email_validate($oldquestion['notify']) ? $oldquestion['notify'] : null,
+			'email' => ilya_email_validate($oldquestion['notify']) ? $oldquestion['notify'] : null,
 			'delayed' => $oldquestion['created'],
 		));
 	}
@@ -478,17 +478,17 @@ function qa_question_set_status($oldquestion, $status, $userid, $handle, $cookie
  * @param $closepost
  * @param bool $silent
  */
-function qa_question_set_category($oldquestion, $categoryid, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost = null, $silent = false)
+function ilya_question_set_category($oldquestion, $categoryid, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost = null, $silent = false)
 {
-	$oldpath = qa_db_post_get_category_path($oldquestion['postid']);
+	$oldpath = ilya_db_post_get_category_path($oldquestion['postid']);
 
-	qa_db_post_set_category($oldquestion['postid'], $categoryid, $silent ? null : $userid, $silent ? null : qa_remote_ip_address());
-	qa_db_posts_calc_category_path($oldquestion['postid']);
+	ilya_db_post_set_category($oldquestion['postid'], $categoryid, $silent ? null : $userid, $silent ? null : ilya_remote_ip_address());
+	ilya_db_posts_calc_category_path($oldquestion['postid']);
 
-	$newpath = qa_db_post_get_category_path($oldquestion['postid']);
+	$newpath = ilya_db_post_get_category_path($oldquestion['postid']);
 
-	qa_db_category_path_qcount_update($oldpath);
-	qa_db_category_path_qcount_update($newpath);
+	ilya_db_category_path_qcount_update($oldpath);
+	ilya_db_category_path_qcount_update($newpath);
 
 	$otherpostids = array();
 	foreach ($answers as $answer) {
@@ -503,9 +503,9 @@ function qa_question_set_category($oldquestion, $categoryid, $userid, $handle, $
 	if (@$closepost['parentid'] == $oldquestion['postid'])
 		$otherpostids[] = $closepost['postid'];
 
-	qa_db_posts_set_category_path($otherpostids, $newpath);
+	ilya_db_posts_set_category_path($otherpostids, $newpath);
 
-	$searchmodules = qa_load_modules_with('search', 'move_post');
+	$searchmodules = ilya_load_modules_with('search', 'move_post');
 	foreach ($searchmodules as $searchmodule) {
 		$searchmodule->move_post($oldquestion['postid'], $categoryid);
 		foreach ($otherpostids as $otherpostid) {
@@ -513,7 +513,7 @@ function qa_question_set_category($oldquestion, $categoryid, $userid, $handle, $
 		}
 	}
 
-	qa_report_event('q_move', $userid, $handle, $cookieid, array(
+	ilya_report_event('q_move', $userid, $handle, $cookieid, array(
 		'postid' => $oldquestion['postid'],
 		'oldquestion' => $oldquestion,
 		'categoryid' => $categoryid,
@@ -533,41 +533,41 @@ function qa_question_set_category($oldquestion, $categoryid, $userid, $handle, $
  * @param $cookieid
  * @param $oldclosepost
  */
-function qa_question_delete($oldquestion, $userid, $handle, $cookieid, $oldclosepost = null)
+function ilya_question_delete($oldquestion, $userid, $handle, $cookieid, $oldclosepost = null)
 {
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 
 	if ($oldquestion['type'] != 'Q_HIDDEN')
-		qa_fatal_error('Tried to delete a non-hidden question');
+		ilya_fatal_error('Tried to delete a non-hidden question');
 
 	$params = array(
 		'postid' => $oldquestion['postid'],
 		'oldquestion' => $oldquestion,
 	);
 
-	qa_report_event('q_delete_before', $userid, $handle, $cookieid, $params);
+	ilya_report_event('q_delete_before', $userid, $handle, $cookieid, $params);
 
 	if (isset($oldclosepost) && ($oldclosepost['parentid'] == $oldquestion['postid'])) {
-		qa_db_post_set_closed($oldquestion['postid'], null); // for foreign key constraint
-		qa_post_unindex($oldclosepost['postid']);
-		qa_db_post_delete($oldclosepost['postid']);
+		ilya_db_post_set_closed($oldquestion['postid'], null); // for foreign key constraint
+		ilya_post_unindex($oldclosepost['postid']);
+		ilya_db_post_delete($oldclosepost['postid']);
 	}
 
-	$useridvotes = qa_db_uservote_post_get($oldquestion['postid']);
-	$oldpath = qa_db_post_get_category_path($oldquestion['postid']);
+	$useridvotes = ilya_db_uservote_post_get($oldquestion['postid']);
+	$oldpath = ilya_db_post_get_category_path($oldquestion['postid']);
 
-	qa_post_unindex($oldquestion['postid']);
-	qa_db_post_delete($oldquestion['postid']); // also deletes any related voteds due to foreign key cascading
-	qa_update_counts_for_q(null);
-	qa_db_category_path_qcount_update($oldpath); // don't do inside qa_update_counts_for_q() since post no longer exists
-	qa_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects', 'qvoteds', 'upvoteds', 'downvoteds'));
+	ilya_post_unindex($oldquestion['postid']);
+	ilya_db_post_delete($oldquestion['postid']); // also deletes any related voteds due to foreign key cascading
+	ilya_update_counts_for_q(null);
+	ilya_db_category_path_qcount_update($oldpath); // don't do inside ilya_update_counts_for_q() since post no longer exists
+	ilya_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects', 'qvoteds', 'upvoteds', 'downvoteds'));
 
 	foreach ($useridvotes as $voteruserid => $vote) {
-		// could do this in one query like in qa_db_users_recalc_points() but this will do for now - unlikely to be many votes
-		qa_db_points_update_ifuser($voteruserid, ($vote > 0) ? 'qupvotes' : 'qdownvotes');
+		// could do this in one query like in ilya_db_users_recalc_points() but this will do for now - unlikely to be many votes
+		ilya_db_points_update_ifuser($voteruserid, ($vote > 0) ? 'qupvotes' : 'qdownvotes');
 	}
 
-	qa_report_event('q_delete', $userid, $handle, $cookieid, $params);
+	ilya_report_event('q_delete', $userid, $handle, $cookieid, $params);
 }
 
 
@@ -579,20 +579,20 @@ function qa_question_delete($oldquestion, $userid, $handle, $cookieid, $oldclose
  * @param $handle
  * @param $cookieid
  */
-function qa_question_set_userid($oldquestion, $userid, $handle, $cookieid)
+function ilya_question_set_userid($oldquestion, $userid, $handle, $cookieid)
 {
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 
 	$postid = $oldquestion['postid'];
 
-	qa_db_post_set_userid($postid, $userid);
-	qa_db_uservote_remove_own($postid);
-	qa_db_post_recount_votes($postid);
+	ilya_db_post_set_userid($postid, $userid);
+	ilya_db_uservote_remove_own($postid);
+	ilya_db_post_recount_votes($postid);
 
-	qa_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects', 'qvoteds', 'upvoteds', 'downvoteds'));
-	qa_db_points_update_ifuser($userid, array('qposts', 'aselects', 'qvoteds', 'qupvotes', 'qdownvotes', 'upvoteds', 'downvoteds'));
+	ilya_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects', 'qvoteds', 'upvoteds', 'downvoteds'));
+	ilya_db_points_update_ifuser($userid, array('qposts', 'aselects', 'qvoteds', 'qupvotes', 'qdownvotes', 'upvoteds', 'downvoteds'));
 
-	qa_report_event('q_claim', $userid, $handle, $cookieid, array(
+	ilya_report_event('q_claim', $userid, $handle, $cookieid, array(
 		'postid' => $postid,
 		'oldquestion' => $oldquestion,
 	));
@@ -603,16 +603,16 @@ function qa_question_set_userid($oldquestion, $userid, $handle, $cookieid)
  * Remove post $postid from our index and update appropriate word counts. Calls through to all search modules.
  * @param $postid
  */
-function qa_post_unindex($postid)
+function ilya_post_unindex($postid)
 {
-	global $qa_post_indexing_suspended;
+	global $ilya_post_indexing_suspended;
 
-	if ($qa_post_indexing_suspended > 0)
+	if ($ilya_post_indexing_suspended > 0)
 		return;
 
 	// Send through to any search modules for unindexing
 
-	$searchmodules = qa_load_modules_with('search', 'unindex_post');
+	$searchmodules = ilya_load_modules_with('search', 'unindex_post');
 	foreach ($searchmodules as $searchmodule) {
 		$searchmodule->unindex_post($postid);
 	}
@@ -624,7 +624,7 @@ function qa_post_unindex($postid)
  * @param int $questionId Post ID to delete.
  * @return bool
  */
-function qa_question_uncache($questionId)
+function ilya_question_uncache($questionId)
 {
 	$cacheDriver = Q2A_Storage_CacheFactory::getCacheDriver();
 	return $cacheDriver->delete("question:$questionId");
@@ -651,37 +651,37 @@ function qa_question_uncache($questionId)
  * @param bool $remoderate
  * @param bool $silent
  */
-function qa_answer_set_content($oldanswer, $content, $format, $text, $notify, $userid, $handle, $cookieid, $question, $name = null, $remoderate = false, $silent = false)
+function ilya_answer_set_content($oldanswer, $content, $format, $text, $notify, $userid, $handle, $cookieid, $question, $name = null, $remoderate = false, $silent = false)
 {
-	qa_post_unindex($oldanswer['postid']);
+	ilya_post_unindex($oldanswer['postid']);
 
 	$wasqueued = ($oldanswer['type'] == 'A_QUEUED');
 	$contentchanged = strcmp($oldanswer['content'], $content) || strcmp($oldanswer['format'], $format);
 	$setupdated = $contentchanged && (!$wasqueued) && !$silent;
 
-	qa_db_post_set_content($oldanswer['postid'], $oldanswer['title'], $content, $format, $oldanswer['tags'], $notify,
-		$setupdated ? $userid : null, $setupdated ? qa_remote_ip_address() : null, QA_UPDATE_CONTENT, $name);
+	ilya_db_post_set_content($oldanswer['postid'], $oldanswer['title'], $content, $format, $oldanswer['tags'], $notify,
+		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, QA_UPDATE_CONTENT, $name);
 
 	if ($setupdated && $remoderate) {
 		require_once QA_INCLUDE_DIR . 'app/posts.php';
 
-		$commentsfollows = qa_post_get_answer_commentsfollows($oldanswer['postid']);
+		$commentsfollows = ilya_post_get_answer_commentsfollows($oldanswer['postid']);
 
 		foreach ($commentsfollows as $comment) {
 			if ($comment['basetype'] == 'C' && $comment['parentid'] == $oldanswer['postid'])
-				qa_post_unindex($comment['postid']);
+				ilya_post_unindex($comment['postid']);
 		}
 
-		qa_db_post_set_type($oldanswer['postid'], 'A_QUEUED');
-		qa_update_q_counts_for_a($question['postid']);
-		qa_db_queuedcount_update();
-		qa_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds'));
+		ilya_db_post_set_type($oldanswer['postid'], 'A_QUEUED');
+		ilya_update_q_counts_for_a($question['postid']);
+		ilya_db_queuedcount_update();
+		ilya_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds'));
 
 		if ($oldanswer['flagcount'])
-			qa_db_flaggedcount_update();
+			ilya_db_flaggedcount_update();
 
 	} elseif ($oldanswer['type'] == 'A' && $question['type'] == 'Q') { // don't index if question or answer are hidden/queued
-		qa_post_index($oldanswer['postid'], 'A', $question['postid'], $oldanswer['parentid'], null, $content, $format, $text, null, $oldanswer['categoryid']);
+		ilya_post_index($oldanswer['postid'], 'A', $question['postid'], $oldanswer['parentid'], null, $content, $format, $text, null, $oldanswer['categoryid']);
 	}
 
 	$eventparams = array(
@@ -695,7 +695,7 @@ function qa_answer_set_content($oldanswer, $content, $format, $text, $notify, $u
 		'oldanswer' => $oldanswer,
 	);
 
-	qa_report_event('a_edit', $userid, $handle, $cookieid, $eventparams + array(
+	ilya_report_event('a_edit', $userid, $handle, $cookieid, $eventparams + array(
 		'silent' => $silent,
 		'oldcontent' => $oldanswer['content'],
 		'oldformat' => $oldanswer['format'],
@@ -703,13 +703,13 @@ function qa_answer_set_content($oldanswer, $content, $format, $text, $notify, $u
 	));
 
 	if ($setupdated && $remoderate)
-		qa_report_event('a_requeue', $userid, $handle, $cookieid, $eventparams);
+		ilya_report_event('a_requeue', $userid, $handle, $cookieid, $eventparams);
 }
 
 
 /**
- * Set $oldanswer to hidden if $hidden is true, visible/normal if otherwise. All other parameters are as for qa_answer_set_status(...)
- * @deprecated Replaced by qa_answer_set_status.
+ * Set $oldanswer to hidden if $hidden is true, visible/normal if otherwise. All other parameters are as for ilya_answer_set_status(...)
+ * @deprecated Replaced by ilya_answer_set_status.
  * @param $oldanswer
  * @param $hidden
  * @param $userid
@@ -718,9 +718,9 @@ function qa_answer_set_content($oldanswer, $content, $format, $text, $notify, $u
  * @param $question
  * @param $commentsfollows
  */
-function qa_answer_set_hidden($oldanswer, $hidden, $userid, $handle, $cookieid, $question, $commentsfollows)
+function ilya_answer_set_hidden($oldanswer, $hidden, $userid, $handle, $cookieid, $question, $commentsfollows)
 {
-	qa_answer_set_status($oldanswer, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $question, $commentsfollows);
+	ilya_answer_set_status($oldanswer, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $question, $commentsfollows);
 }
 
 
@@ -738,7 +738,7 @@ function qa_answer_set_hidden($oldanswer, $hidden, $userid, $handle, $cookieid, 
  * @param $question
  * @param $commentsfollows
  */
-function qa_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, $question, $commentsfollows)
+function ilya_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, $question, $commentsfollows)
 {
 	require_once QA_INCLUDE_DIR . 'app/format.php';
 
@@ -746,11 +746,11 @@ function qa_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, 
 	$wasqueued = ($oldanswer['type'] == 'A_QUEUED');
 	$wasrequeued = $wasqueued && isset($oldanswer['updated']);
 
-	qa_post_unindex($oldanswer['postid']);
+	ilya_post_unindex($oldanswer['postid']);
 
 	foreach ($commentsfollows as $comment) {
 		if ($comment['basetype'] == 'C' && $comment['parentid'] == $oldanswer['postid'])
-			qa_post_unindex($comment['postid']);
+			ilya_post_unindex($comment['postid']);
 	}
 
 	$setupdated = false;
@@ -770,7 +770,7 @@ function qa_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, 
 		}
 
 		if ($question['selchildid'] == $oldanswer['postid']) { // remove selected answer
-			qa_question_set_selchildid(null, null, null, $question, null, array($oldanswer['postid'] => $oldanswer));
+			ilya_question_set_selchildid(null, null, null, $question, null, array($oldanswer['postid'] => $oldanswer));
 		}
 
 	} elseif ($status == QA_POST_STATUS_NORMAL) {
@@ -783,39 +783,39 @@ function qa_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, 
 		}
 
 	} else
-		qa_fatal_error('Unknown status in qa_answer_set_status(): ' . $status);
+		ilya_fatal_error('Unknown status in ilya_answer_set_status(): ' . $status);
 
-	qa_db_post_set_type($oldanswer['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? qa_remote_ip_address() : null, QA_UPDATE_VISIBLE);
+	ilya_db_post_set_type($oldanswer['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, QA_UPDATE_VISIBLE);
 
-	if ($wasqueued && ($status == QA_POST_STATUS_NORMAL) && qa_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
+	if ($wasqueued && ($status == QA_POST_STATUS_NORMAL) && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
 		if ($wasrequeued)
-			qa_db_post_set_updated($oldanswer['postid'], null);
+			ilya_db_post_set_updated($oldanswer['postid'], null);
 		else
-			qa_db_post_set_created($oldanswer['postid'], null);
+			ilya_db_post_set_created($oldanswer['postid'], null);
 	}
 
-	qa_update_q_counts_for_a($question['postid']);
-	qa_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds'));
+	ilya_update_q_counts_for_a($question['postid']);
+	ilya_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds'));
 
 	if ($wasqueued || $status == QA_POST_STATUS_QUEUED)
-		qa_db_queuedcount_update();
+		ilya_db_queuedcount_update();
 
 	if ($oldanswer['flagcount'])
-		qa_db_flaggedcount_update();
+		ilya_db_flaggedcount_update();
 
 	if ($question['type'] == 'Q' && $status == QA_POST_STATUS_NORMAL) { // even if answer visible, don't index if question is hidden or queued
-		qa_post_index($oldanswer['postid'], 'A', $question['postid'], $oldanswer['parentid'], null, $oldanswer['content'],
-			$oldanswer['format'], qa_viewer_text($oldanswer['content'], $oldanswer['format']), null, $oldanswer['categoryid']);
+		ilya_post_index($oldanswer['postid'], 'A', $question['postid'], $oldanswer['parentid'], null, $oldanswer['content'],
+			$oldanswer['format'], ilya_viewer_text($oldanswer['content'], $oldanswer['format']), null, $oldanswer['categoryid']);
 
 		foreach ($commentsfollows as $comment) {
 			if ($comment['type'] == 'C' && $comment['parentid'] == $oldanswer['postid']) { // and don't index hidden/queued comments
-				qa_post_index($comment['postid'], $comment['type'], $question['postid'], $comment['parentid'], null, $comment['content'],
-					$comment['format'], qa_viewer_text($comment['content'], $comment['format']), null, $comment['categoryid']);
+				ilya_post_index($comment['postid'], $comment['type'], $question['postid'], $comment['parentid'], null, $comment['content'],
+					$comment['format'], ilya_viewer_text($comment['content'], $comment['format']), null, $comment['categoryid']);
 			}
 		}
 	}
 
-	qa_question_uncache($question['postid']); // remove hidden posts immediately
+	ilya_question_uncache($question['postid']); // remove hidden posts immediately
 
 	$eventparams = array(
 		'postid' => $oldanswer['postid'],
@@ -823,13 +823,13 @@ function qa_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, 
 		'parent' => $question,
 		'content' => $oldanswer['content'],
 		'format' => $oldanswer['format'],
-		'text' => qa_viewer_text($oldanswer['content'], $oldanswer['format']),
+		'text' => ilya_viewer_text($oldanswer['content'], $oldanswer['format']),
 		'categoryid' => $oldanswer['categoryid'],
 		'name' => $oldanswer['name'],
 	);
 
 	if (isset($event)) {
-		qa_report_event($event, $userid, $handle, $cookieid, $eventparams + array(
+		ilya_report_event($event, $userid, $handle, $cookieid, $eventparams + array(
 				'oldanswer' => $oldanswer,
 			));
 	}
@@ -837,9 +837,9 @@ function qa_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, 
 	if ($wasqueued && ($status == QA_POST_STATUS_NORMAL) && !$wasrequeued) {
 		require_once QA_INCLUDE_DIR . 'util/string.php';
 
-		qa_report_event('a_post', $oldanswer['userid'], $oldanswer['handle'], $oldanswer['cookieid'], $eventparams + array(
+		ilya_report_event('a_post', $oldanswer['userid'], $oldanswer['handle'], $oldanswer['cookieid'], $eventparams + array(
 			'notify' => isset($oldanswer['notify']),
-			'email' => qa_email_validate($oldanswer['notify']) ? $oldanswer['notify'] : null,
+			'email' => ilya_email_validate($oldanswer['notify']) ? $oldanswer['notify'] : null,
 			'delayed' => $oldanswer['created'],
 		));
 	}
@@ -857,14 +857,14 @@ function qa_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, 
  * @param $handle
  * @param $cookieid
  */
-function qa_answer_delete($oldanswer, $question, $userid, $handle, $cookieid)
+function ilya_answer_delete($oldanswer, $question, $userid, $handle, $cookieid)
 {
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 
 	if ($oldanswer['type'] != 'A_HIDDEN')
-		qa_fatal_error('Tried to delete a non-hidden answer');
+		ilya_fatal_error('Tried to delete a non-hidden answer');
 
-	$useridvotes = qa_db_uservote_post_get($oldanswer['postid']);
+	$useridvotes = ilya_db_uservote_post_get($oldanswer['postid']);
 
 	$params = array(
 		'postid' => $oldanswer['postid'],
@@ -872,26 +872,26 @@ function qa_answer_delete($oldanswer, $question, $userid, $handle, $cookieid)
 		'oldanswer' => $oldanswer,
 	);
 
-	qa_report_event('a_delete_before', $userid, $handle, $cookieid, $params);
+	ilya_report_event('a_delete_before', $userid, $handle, $cookieid, $params);
 
-	qa_post_unindex($oldanswer['postid']);
-	qa_db_post_delete($oldanswer['postid']); // also deletes any related voteds due to cascading
+	ilya_post_unindex($oldanswer['postid']);
+	ilya_db_post_delete($oldanswer['postid']); // also deletes any related voteds due to cascading
 
 	if ($question['selchildid'] == $oldanswer['postid']) {
-		qa_db_post_set_selchildid($question['postid'], null);
-		qa_db_points_update_ifuser($question['userid'], 'aselects');
-		qa_db_unselqcount_update();
+		ilya_db_post_set_selchildid($question['postid'], null);
+		ilya_db_points_update_ifuser($question['userid'], 'aselects');
+		ilya_db_unselqcount_update();
 	}
 
-	qa_update_q_counts_for_a($question['postid']);
-	qa_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds', 'avoteds', 'upvoteds', 'downvoteds'));
+	ilya_update_q_counts_for_a($question['postid']);
+	ilya_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds', 'avoteds', 'upvoteds', 'downvoteds'));
 
 	foreach ($useridvotes as $voteruserid => $vote) {
-		// could do this in one query like in qa_db_users_recalc_points() but this will do for now - unlikely to be many votes
-		qa_db_points_update_ifuser($voteruserid, ($vote > 0) ? 'aupvotes' : 'adownvotes');
+		// could do this in one query like in ilya_db_users_recalc_points() but this will do for now - unlikely to be many votes
+		ilya_db_points_update_ifuser($voteruserid, ($vote > 0) ? 'aupvotes' : 'adownvotes');
 	}
 
-	qa_report_event('a_delete', $userid, $handle, $cookieid, $params);
+	ilya_report_event('a_delete', $userid, $handle, $cookieid, $params);
 }
 
 
@@ -903,20 +903,20 @@ function qa_answer_delete($oldanswer, $question, $userid, $handle, $cookieid)
  * @param $handle
  * @param $cookieid
  */
-function qa_answer_set_userid($oldanswer, $userid, $handle, $cookieid)
+function ilya_answer_set_userid($oldanswer, $userid, $handle, $cookieid)
 {
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 
 	$postid = $oldanswer['postid'];
 
-	qa_db_post_set_userid($postid, $userid);
-	qa_db_uservote_remove_own($postid);
-	qa_db_post_recount_votes($postid);
+	ilya_db_post_set_userid($postid, $userid);
+	ilya_db_uservote_remove_own($postid);
+	ilya_db_post_recount_votes($postid);
 
-	qa_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds', 'avoteds', 'upvoteds', 'downvoteds'));
-	qa_db_points_update_ifuser($userid, array('aposts', 'aselecteds', 'avoteds', 'aupvotes', 'adownvotes', 'upvoteds', 'downvoteds'));
+	ilya_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds', 'avoteds', 'upvoteds', 'downvoteds'));
+	ilya_db_points_update_ifuser($userid, array('aposts', 'aselecteds', 'avoteds', 'aupvotes', 'adownvotes', 'upvoteds', 'downvoteds'));
 
-	qa_report_event('a_claim', $userid, $handle, $cookieid, array(
+	ilya_report_event('a_claim', $userid, $handle, $cookieid, array(
 		'postid' => $postid,
 		'parentid' => $oldanswer['parentid'],
 		'oldanswer' => $oldanswer,
@@ -946,31 +946,31 @@ function qa_answer_set_userid($oldanswer, $userid, $handle, $cookieid)
  * @param bool $remoderate
  * @param bool $silent
  */
-function qa_comment_set_content($oldcomment, $content, $format, $text, $notify, $userid, $handle, $cookieid, $question, $parent, $name = null, $remoderate = false, $silent = false)
+function ilya_comment_set_content($oldcomment, $content, $format, $text, $notify, $userid, $handle, $cookieid, $question, $parent, $name = null, $remoderate = false, $silent = false)
 {
 	if (!isset($parent))
 		$parent = $question; // for backwards compatibility with old answer parameter
 
-	qa_post_unindex($oldcomment['postid']);
+	ilya_post_unindex($oldcomment['postid']);
 
 	$wasqueued = ($oldcomment['type'] == 'C_QUEUED');
 	$contentchanged = strcmp($oldcomment['content'], $content) || strcmp($oldcomment['format'], $format);
 	$setupdated = $contentchanged && (!$wasqueued) && !$silent;
 
-	qa_db_post_set_content($oldcomment['postid'], $oldcomment['title'], $content, $format, $oldcomment['tags'], $notify,
-		$setupdated ? $userid : null, $setupdated ? qa_remote_ip_address() : null, QA_UPDATE_CONTENT, $name);
+	ilya_db_post_set_content($oldcomment['postid'], $oldcomment['title'], $content, $format, $oldcomment['tags'], $notify,
+		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, QA_UPDATE_CONTENT, $name);
 
 	if ($setupdated && $remoderate) {
-		qa_db_post_set_type($oldcomment['postid'], 'C_QUEUED');
-		qa_db_ccount_update();
-		qa_db_queuedcount_update();
-		qa_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
+		ilya_db_post_set_type($oldcomment['postid'], 'C_QUEUED');
+		ilya_db_ccount_update();
+		ilya_db_queuedcount_update();
+		ilya_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
 
 		if ($oldcomment['flagcount'])
-			qa_db_flaggedcount_update();
+			ilya_db_flaggedcount_update();
 
 	} elseif ($oldcomment['type'] == 'C' && $question['type'] == 'Q' && ($parent['type'] == 'Q' || $parent['type'] == 'A')) { // all must be visible
-		qa_post_index($oldcomment['postid'], 'C', $question['postid'], $oldcomment['parentid'], null, $content, $format, $text, null, $oldcomment['categoryid']);
+		ilya_post_index($oldcomment['postid'], 'C', $question['postid'], $oldcomment['parentid'], null, $content, $format, $text, null, $oldcomment['categoryid']);
 	}
 
 	$eventparams = array(
@@ -987,7 +987,7 @@ function qa_comment_set_content($oldcomment, $content, $format, $text, $notify, 
 		'oldcomment' => $oldcomment,
 	);
 
-	qa_report_event('c_edit', $userid, $handle, $cookieid, $eventparams + array(
+	ilya_report_event('c_edit', $userid, $handle, $cookieid, $eventparams + array(
 		'silent' => $silent,
 		'oldcontent' => $oldcomment['content'],
 		'oldformat' => $oldcomment['format'],
@@ -995,7 +995,7 @@ function qa_comment_set_content($oldcomment, $content, $format, $text, $notify, 
 	));
 
 	if ($setupdated && $remoderate)
-		qa_report_event('c_requeue', $userid, $handle, $cookieid, $eventparams);
+		ilya_report_event('c_requeue', $userid, $handle, $cookieid, $eventparams);
 }
 
 
@@ -1024,13 +1024,13 @@ function qa_comment_set_content($oldcomment, $content, $format, $text, $notify, 
  * @param bool $remoderate
  * @param bool $silent
  */
-function qa_answer_to_comment($oldanswer, $parentid, $content, $format, $text, $notify, $userid, $handle, $cookieid, $question, $answers, $commentsfollows, $name = null, $remoderate = false, $silent = false)
+function ilya_answer_to_comment($oldanswer, $parentid, $content, $format, $text, $notify, $userid, $handle, $cookieid, $question, $answers, $commentsfollows, $name = null, $remoderate = false, $silent = false)
 {
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 
 	$parent = isset($answers[$parentid]) ? $answers[$parentid] : $question;
 
-	qa_post_unindex($oldanswer['postid']);
+	ilya_post_unindex($oldanswer['postid']);
 
 	$wasqueued = ($oldanswer['type'] == 'A_QUEUED');
 	$contentchanged = strcmp($oldanswer['content'], $content) || strcmp($oldanswer['format'], $format);
@@ -1041,38 +1041,38 @@ function qa_answer_to_comment($oldanswer, $parentid, $content, $format, $text, $
 	else
 		$newtype = substr_replace($oldanswer['type'], 'C', 0, 1);
 
-	qa_db_post_set_type($oldanswer['postid'], $newtype, ($wasqueued || $silent) ? null : $userid,
-		($wasqueued || $silent) ? null : qa_remote_ip_address(), QA_UPDATE_TYPE);
-	qa_db_post_set_parent($oldanswer['postid'], $parentid);
-	qa_db_post_set_content($oldanswer['postid'], $oldanswer['title'], $content, $format, $oldanswer['tags'], $notify,
-		$setupdated ? $userid : null, $setupdated ? qa_remote_ip_address() : null, QA_UPDATE_CONTENT, $name);
+	ilya_db_post_set_type($oldanswer['postid'], $newtype, ($wasqueued || $silent) ? null : $userid,
+		($wasqueued || $silent) ? null : ilya_remote_ip_address(), QA_UPDATE_TYPE);
+	ilya_db_post_set_parent($oldanswer['postid'], $parentid);
+	ilya_db_post_set_content($oldanswer['postid'], $oldanswer['title'], $content, $format, $oldanswer['tags'], $notify,
+		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, QA_UPDATE_CONTENT, $name);
 
 	foreach ($commentsfollows as $commentfollow) {
 		if ($commentfollow['parentid'] == $oldanswer['postid']) // do same thing for comments and follows
-			qa_db_post_set_parent($commentfollow['postid'], $parentid);
+			ilya_db_post_set_parent($commentfollow['postid'], $parentid);
 	}
 
-	qa_update_q_counts_for_a($question['postid']);
-	qa_db_ccount_update();
-	qa_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds', 'cposts', 'avoteds', 'cvoteds'));
+	ilya_update_q_counts_for_a($question['postid']);
+	ilya_db_ccount_update();
+	ilya_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds', 'cposts', 'avoteds', 'cvoteds'));
 
-	$useridvotes = qa_db_uservote_post_get($oldanswer['postid']);
+	$useridvotes = ilya_db_uservote_post_get($oldanswer['postid']);
 	foreach ($useridvotes as $voteruserid => $vote) {
-		// could do this in one query like in qa_db_users_recalc_points() but this will do for now - unlikely to be many votes
-		qa_db_points_update_ifuser($voteruserid, ($vote > 0) ? 'aupvotes' : 'adownvotes');
+		// could do this in one query like in ilya_db_users_recalc_points() but this will do for now - unlikely to be many votes
+		ilya_db_points_update_ifuser($voteruserid, ($vote > 0) ? 'aupvotes' : 'adownvotes');
 	}
 
 	if ($setupdated && $remoderate) {
-		qa_db_queuedcount_update();
+		ilya_db_queuedcount_update();
 
 		if ($oldanswer['flagcount'])
-			qa_db_flaggedcount_update();
+			ilya_db_flaggedcount_update();
 
 	} elseif ($oldanswer['type'] == 'A' && $question['type'] == 'Q' && ($parent['type'] == 'Q' || $parent['type'] == 'A')) // only if all fully visible
-		qa_post_index($oldanswer['postid'], 'C', $question['postid'], $parentid, null, $content, $format, $text, null, $oldanswer['categoryid']);
+		ilya_post_index($oldanswer['postid'], 'C', $question['postid'], $parentid, null, $content, $format, $text, null, $oldanswer['categoryid']);
 
 	if ($question['selchildid'] == $oldanswer['postid']) { // remove selected answer
-		qa_question_set_selchildid(null, null, null, $question, null, array($oldanswer['postid'] => $oldanswer));
+		ilya_question_set_selchildid(null, null, null, $question, null, array($oldanswer['postid'] => $oldanswer));
 	}
 
 	$eventparams = array(
@@ -1089,7 +1089,7 @@ function qa_answer_to_comment($oldanswer, $parentid, $content, $format, $text, $
 		'oldanswer' => $oldanswer,
 	);
 
-	qa_report_event('a_to_c', $userid, $handle, $cookieid, $eventparams + array(
+	ilya_report_event('a_to_c', $userid, $handle, $cookieid, $eventparams + array(
 		'silent' => $silent,
 		'oldcontent' => $oldanswer['content'],
 		'oldformat' => $oldanswer['format'],
@@ -1098,14 +1098,14 @@ function qa_answer_to_comment($oldanswer, $parentid, $content, $format, $text, $
 
 	if ($setupdated && $remoderate) {
 		// a-to-c conversion can be detected by presence of $event['oldanswer'] instead of $event['oldcomment']
-		qa_report_event('c_requeue', $userid, $handle, $cookieid, $eventparams);
+		ilya_report_event('c_requeue', $userid, $handle, $cookieid, $eventparams);
 	}
 }
 
 
 /**
- * Set $oldcomment to hidden if $hidden is true, visible/normal if otherwise. All other parameters are as for qa_comment_set_status(...)
- * @deprecated Replaced by qa_comment_set_status.
+ * Set $oldcomment to hidden if $hidden is true, visible/normal if otherwise. All other parameters are as for ilya_comment_set_status(...)
+ * @deprecated Replaced by ilya_comment_set_status.
  * @param $oldcomment
  * @param $hidden
  * @param $userid
@@ -1114,9 +1114,9 @@ function qa_answer_to_comment($oldanswer, $parentid, $content, $format, $text, $
  * @param $question
  * @param $parent
  */
-function qa_comment_set_hidden($oldcomment, $hidden, $userid, $handle, $cookieid, $question, $parent)
+function ilya_comment_set_hidden($oldcomment, $hidden, $userid, $handle, $cookieid, $question, $parent)
 {
-	qa_comment_set_status($oldcomment, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $question, $parent);
+	ilya_comment_set_status($oldcomment, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $question, $parent);
 }
 
 
@@ -1133,7 +1133,7 @@ function qa_comment_set_hidden($oldcomment, $hidden, $userid, $handle, $cookieid
  * @param $question
  * @param $parent
  */
-function qa_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid, $question, $parent)
+function ilya_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid, $question, $parent)
 {
 	require_once QA_INCLUDE_DIR . 'app/format.php';
 
@@ -1144,7 +1144,7 @@ function qa_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid
 	$wasqueued = ($oldcomment['type'] == 'C_QUEUED');
 	$wasrequeued = $wasqueued && isset($oldcomment['updated']);
 
-	qa_post_unindex($oldcomment['postid']);
+	ilya_post_unindex($oldcomment['postid']);
 
 	$setupdated = false;
 	$event = null;
@@ -1172,33 +1172,33 @@ function qa_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid
 		}
 
 	} else
-		qa_fatal_error('Unknown status in qa_comment_set_status(): ' . $status);
+		ilya_fatal_error('Unknown status in ilya_comment_set_status(): ' . $status);
 
-	qa_db_post_set_type($oldcomment['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? qa_remote_ip_address() : null, QA_UPDATE_VISIBLE);
+	ilya_db_post_set_type($oldcomment['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, QA_UPDATE_VISIBLE);
 
-	if ($wasqueued && ($status == QA_POST_STATUS_NORMAL) && qa_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
+	if ($wasqueued && ($status == QA_POST_STATUS_NORMAL) && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
 		if ($wasrequeued)
-			qa_db_post_set_updated($oldcomment['postid'], null);
+			ilya_db_post_set_updated($oldcomment['postid'], null);
 		else
-			qa_db_post_set_created($oldcomment['postid'], null);
+			ilya_db_post_set_created($oldcomment['postid'], null);
 	}
 
-	qa_db_ccount_update();
-	qa_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
+	ilya_db_ccount_update();
+	ilya_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
 
 	if ($wasqueued || $status == QA_POST_STATUS_QUEUED)
-		qa_db_queuedcount_update();
+		ilya_db_queuedcount_update();
 
 	if ($oldcomment['flagcount'])
-		qa_db_flaggedcount_update();
+		ilya_db_flaggedcount_update();
 
 	if ($question['type'] == 'Q' && ($parent['type'] == 'Q' || $parent['type'] == 'A') && $status == QA_POST_STATUS_NORMAL) {
 		// only index if none of the things it depends on are hidden or queued
-		qa_post_index($oldcomment['postid'], 'C', $question['postid'], $oldcomment['parentid'], null, $oldcomment['content'],
-			$oldcomment['format'], qa_viewer_text($oldcomment['content'], $oldcomment['format']), null, $oldcomment['categoryid']);
+		ilya_post_index($oldcomment['postid'], 'C', $question['postid'], $oldcomment['parentid'], null, $oldcomment['content'],
+			$oldcomment['format'], ilya_viewer_text($oldcomment['content'], $oldcomment['format']), null, $oldcomment['categoryid']);
 	}
 
-	qa_question_uncache($question['postid']); // remove hidden posts immediately
+	ilya_question_uncache($question['postid']); // remove hidden posts immediately
 
 	$eventparams = array(
 		'postid' => $oldcomment['postid'],
@@ -1209,13 +1209,13 @@ function qa_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid
 		'question' => $question,
 		'content' => $oldcomment['content'],
 		'format' => $oldcomment['format'],
-		'text' => qa_viewer_text($oldcomment['content'], $oldcomment['format']),
+		'text' => ilya_viewer_text($oldcomment['content'], $oldcomment['format']),
 		'categoryid' => $oldcomment['categoryid'],
 		'name' => $oldcomment['name'],
 	);
 
 	if (isset($event)) {
-		qa_report_event($event, $userid, $handle, $cookieid, $eventparams + array(
+		ilya_report_event($event, $userid, $handle, $cookieid, $eventparams + array(
 			'oldcomment' => $oldcomment,
 		));
 	}
@@ -1224,7 +1224,7 @@ function qa_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid
 		require_once QA_INCLUDE_DIR . 'db/selects.php';
 		require_once QA_INCLUDE_DIR . 'util/string.php';
 
-		$commentsfollows = qa_db_single_select(qa_db_full_child_posts_selectspec(null, $oldcomment['parentid']));
+		$commentsfollows = ilya_db_single_select(ilya_db_full_child_posts_selectspec(null, $oldcomment['parentid']));
 		$thread = array();
 
 		foreach ($commentsfollows as $comment) {
@@ -1232,10 +1232,10 @@ function qa_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid
 				$thread[] = $comment;
 		}
 
-		qa_report_event('c_post', $oldcomment['userid'], $oldcomment['handle'], $oldcomment['cookieid'], $eventparams + array(
+		ilya_report_event('c_post', $oldcomment['userid'], $oldcomment['handle'], $oldcomment['cookieid'], $eventparams + array(
 			'thread' => $thread,
 			'notify' => isset($oldcomment['notify']),
-			'email' => qa_email_validate($oldcomment['notify']) ? $oldcomment['notify'] : null,
+			'email' => ilya_email_validate($oldcomment['notify']) ? $oldcomment['notify'] : null,
 			'delayed' => $oldcomment['created'],
 		));
 	}
@@ -1254,13 +1254,13 @@ function qa_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid
  * @param $handle
  * @param $cookieid
  */
-function qa_comment_delete($oldcomment, $question, $parent, $userid, $handle, $cookieid)
+function ilya_comment_delete($oldcomment, $question, $parent, $userid, $handle, $cookieid)
 {
 	if (!isset($parent))
 		$parent = $question; // for backwards compatibility with old answer parameter
 
 	if ($oldcomment['type'] != 'C_HIDDEN')
-		qa_fatal_error('Tried to delete a non-hidden comment');
+		ilya_fatal_error('Tried to delete a non-hidden comment');
 
 	$params = array(
 		'postid' => $oldcomment['postid'],
@@ -1270,14 +1270,14 @@ function qa_comment_delete($oldcomment, $question, $parent, $userid, $handle, $c
 		'questionid' => $question['postid'],
 	);
 
-	qa_report_event('c_delete_before', $userid, $handle, $cookieid, $params);
+	ilya_report_event('c_delete_before', $userid, $handle, $cookieid, $params);
 
-	qa_post_unindex($oldcomment['postid']);
-	qa_db_post_delete($oldcomment['postid']);
-	qa_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
-	qa_db_ccount_update();
+	ilya_post_unindex($oldcomment['postid']);
+	ilya_db_post_delete($oldcomment['postid']);
+	ilya_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
+	ilya_db_ccount_update();
 
-	qa_report_event('c_delete', $userid, $handle, $cookieid, $params);
+	ilya_report_event('c_delete', $userid, $handle, $cookieid, $params);
 }
 
 
@@ -1289,20 +1289,20 @@ function qa_comment_delete($oldcomment, $question, $parent, $userid, $handle, $c
  * @param $handle
  * @param $cookieid
  */
-function qa_comment_set_userid($oldcomment, $userid, $handle, $cookieid)
+function ilya_comment_set_userid($oldcomment, $userid, $handle, $cookieid)
 {
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 
 	$postid = $oldcomment['postid'];
 
-	qa_db_post_set_userid($postid, $userid);
-	qa_db_uservote_remove_own($postid);
-	qa_db_post_recount_votes($postid);
+	ilya_db_post_set_userid($postid, $userid);
+	ilya_db_uservote_remove_own($postid);
+	ilya_db_post_recount_votes($postid);
 
-	qa_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
-	qa_db_points_update_ifuser($userid, array('cposts'));
+	ilya_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
+	ilya_db_points_update_ifuser($userid, array('cposts'));
 
-	qa_report_event('c_claim', $userid, $handle, $cookieid, array(
+	ilya_report_event('c_claim', $userid, $handle, $cookieid, array(
 		'postid' => $postid,
 		'parentid' => $oldcomment['parentid'],
 		'oldcomment' => $oldcomment,

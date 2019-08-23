@@ -19,7 +19,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_editor_basic
+class ilya_editor_basic
 {
 	public function load_module($localdir, $htmldir)
 	{
@@ -36,12 +36,12 @@ class qa_editor_basic
 		return 0;
 	}
 
-	public function get_field(&$qa_content, $content, $format, $fieldname, $rows /* $autofocus parameter deprecated */)
+	public function get_field(&$ilya_content, $content, $format, $fieldname, $rows /* $autofocus parameter deprecated */)
 	{
 		return array(
 			'type' => 'textarea',
 			'tags' => 'name="' . $fieldname . '" id="' . $fieldname . '"',
-			'value' => qa_html($content),
+			'value' => ilya_html($content),
 			'rows' => $rows,
 		);
 	}
@@ -55,7 +55,7 @@ class qa_editor_basic
 	{
 		return array(
 			'format' => '',
-			'content' => qa_post_text($fieldname),
+			'content' => ilya_post_text($fieldname),
 		);
 	}
 }

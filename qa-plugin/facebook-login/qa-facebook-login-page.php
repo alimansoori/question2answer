@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_facebook_login_page
+class ilya_facebook_login_page
 {
 	private $directory;
 
@@ -37,11 +37,11 @@ class qa_facebook_login_page
 	public function process_request($request)
 	{
 		if ($request == 'facebook-login') {
-			$app_id = qa_opt('facebook_app_id');
-			$app_secret = qa_opt('facebook_app_secret');
-			$tourl = qa_get('to');
+			$app_id = ilya_opt('facebook_app_id');
+			$app_secret = ilya_opt('facebook_app_secret');
+			$tourl = ilya_get('to');
 			if (!strlen($tourl))
-				$tourl = qa_path_absolute('');
+				$tourl = ilya_path_absolute('');
 
 			if (strlen($app_id) && strlen($app_secret)) {
 				require_once $this->directory . 'facebook.php';
@@ -59,7 +59,7 @@ class qa_facebook_login_page
 						$user = $facebook->api('/me?fields=email,name,verified,location,website,about,picture.width(250)');
 
 						if (is_array($user))
-							qa_log_in_external_user('facebook', $fb_userid, array(
+							ilya_log_in_external_user('facebook', $fb_userid, array(
 								'email' => @$user['email'],
 								'handle' => @$user['name'],
 								'confirmed' => @$user['verified'],
@@ -67,18 +67,18 @@ class qa_facebook_login_page
 								'location' => @$user['location']['name'],
 								'website' => @$user['website'],
 								'about' => @$user['bio'],
-								'avatar' => strlen(@$user['picture']['data']['url']) ? qa_retrieve_url($user['picture']['data']['url']) : null,
+								'avatar' => strlen(@$user['picture']['data']['url']) ? ilya_retrieve_url($user['picture']['data']['url']) : null,
 							));
 
 					} catch (FacebookApiException $e) {
 					}
 
 				} else {
-					qa_redirect_raw($facebook->getLoginUrl(array('redirect_uri' => $tourl)));
+					ilya_redirect_raw($facebook->getLoginUrl(array('redirect_uri' => $tourl)));
 				}
 			}
 
-			qa_redirect_raw($tourl);
+			ilya_redirect_raw($tourl);
 		}
 	}
 }

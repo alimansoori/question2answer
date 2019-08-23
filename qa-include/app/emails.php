@@ -28,15 +28,15 @@ require_once QA_INCLUDE_DIR . 'app/options.php';
 
 
 /**
- * Suspend the sending of all email notifications via qa_send_notification(...) if $suspend is true, otherwise
+ * Suspend the sending of all email notifications via ilya_send_notification(...) if $suspend is true, otherwise
  * reinstate it. A counter is kept to allow multiple calls.
  * @param bool $suspend
  */
-function qa_suspend_notifications($suspend = true)
+function ilya_suspend_notifications($suspend = true)
 {
-	global $qa_notifications_suspended;
+	global $ilya_notifications_suspended;
 
-	$qa_notifications_suspended += ($suspend ? 1 : -1);
+	$ilya_notifications_suspended += ($suspend ? 1 : -1);
 }
 
 
@@ -53,34 +53,34 @@ function qa_suspend_notifications($suspend = true)
  * @param bool $html
  * @return bool
  */
-function qa_send_notification($userid, $email, $handle, $subject, $body, $subs, $html = false)
+function ilya_send_notification($userid, $email, $handle, $subject, $body, $subs, $html = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_notifications_suspended;
+	global $ilya_notifications_suspended;
 
-	if ($qa_notifications_suspended > 0)
+	if ($ilya_notifications_suspended > 0)
 		return false;
 
 	require_once QA_INCLUDE_DIR . 'db/selects.php';
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
 	if (isset($userid)) {
-		$needemail = !qa_email_validate(@$email); // take from user if invalid, e.g. @ used in practice
+		$needemail = !ilya_email_validate(@$email); // take from user if invalid, e.g. @ used in practice
 		$needhandle = empty($handle);
 
 		if ($needemail || $needhandle) {
 			if (QA_FINAL_EXTERNAL_USERS) {
 				if ($needhandle) {
-					$handles = qa_get_public_from_userids(array($userid));
+					$handles = ilya_get_public_from_userids(array($userid));
 					$handle = @$handles[$userid];
 				}
 
 				if ($needemail)
-					$email = qa_get_user_email($userid);
+					$email = ilya_get_user_email($userid);
 
 			} else {
-				$useraccount = qa_db_select_with_pending(
+				$useraccount = ilya_db_select_with_pending(
 					array(
 						'columns' => array('email', 'handle'),
 						'source' => '^users WHERE userid = #',
@@ -98,21 +98,21 @@ function qa_send_notification($userid, $email, $handle, $subject, $body, $subs, 
 		}
 	}
 
-	if (isset($email) && qa_email_validate($email)) {
-		$subs['^site_title'] = qa_opt('site_title');
-		$subs['^site_url'] = qa_opt('site_url');
+	if (isset($email) && ilya_email_validate($email)) {
+		$subs['^site_title'] = ilya_opt('site_title');
+		$subs['^site_url'] = ilya_opt('site_url');
 		$subs['^handle'] = $handle;
 		$subs['^email'] = $email;
 		$subs['^open'] = "\n";
 		$subs['^close'] = "\n";
 
-		return qa_send_email(array(
-			'fromemail' => qa_opt('from_email'),
-			'fromname' => qa_opt('site_title'),
+		return ilya_send_email(array(
+			'fromemail' => ilya_opt('from_email'),
+			'fromname' => ilya_opt('site_title'),
 			'toemail' => $email,
 			'toname' => $handle,
 			'subject' => strtr($subject, $subs),
-			'body' => (empty($handle) ? '' : qa_lang_sub('emails/to_handle_prefix', $handle)) . strtr($body, $subs),
+			'body' => (empty($handle) ? '' : ilya_lang_sub('emails/to_handle_prefix', $handle)) . strtr($body, $subs),
 			'html' => $html,
 		));
 	}
@@ -127,9 +127,9 @@ function qa_send_notification($userid, $email, $handle, $subject, $body, $subs, 
  * @param $params
  * @return bool
  */
-function qa_send_email($params)
+function ilya_send_email($params)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	// @error_log(print_r($params, true));
 
@@ -151,13 +151,13 @@ function qa_send_email($params)
 	if ($params['html'])
 		$mailer->isHTML(true);
 
-	if (qa_opt('smtp_active')) {
+	if (ilya_opt('smtp_active')) {
 		$mailer->isSMTP();
-		$mailer->Host = qa_opt('smtp_address');
-		$mailer->Port = qa_opt('smtp_port');
+		$mailer->Host = ilya_opt('smtp_address');
+		$mailer->Port = ilya_opt('smtp_port');
 
-		if (qa_opt('smtp_secure')) {
-			$mailer->SMTPSecure = qa_opt('smtp_secure');
+		if (ilya_opt('smtp_secure')) {
+			$mailer->SMTPSecure = ilya_opt('smtp_secure');
 		} else {
 			$mailer->SMTPOptions = array(
 				'ssl' => array(
@@ -168,10 +168,10 @@ function qa_send_email($params)
 			);
 		}
 
-		if (qa_opt('smtp_authenticate')) {
+		if (ilya_opt('smtp_authenticate')) {
 			$mailer->SMTPAuth = true;
-			$mailer->Username = qa_opt('smtp_username');
-			$mailer->Password = qa_opt('smtp_password');
+			$mailer->Username = ilya_opt('smtp_username');
+			$mailer->Password = ilya_opt('smtp_password');
 		}
 	}
 

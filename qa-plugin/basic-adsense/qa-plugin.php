@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('widget', 'ilya-basic-adsense.php', 'qa_basic_adsense', 'Basic AdSense');
+ilya_register_plugin_module('widget', 'ilya-basic-adsense.php', 'ilya_basic_adsense', 'Basic AdSense');

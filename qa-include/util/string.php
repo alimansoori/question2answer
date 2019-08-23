@@ -31,14 +31,14 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 /**
  * Set up some global tables to be used by other functions in this file
  */
-function qa_string_initialize()
+function ilya_string_initialize()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_utf8punctuation, $qa_utf8removeaccents;
+	global $ilya_utf8punctuation, $ilya_utf8removeaccents;
 
 	// converts UTF-8 punctuation characters to spaces (or in some cases, hyphens)
-	$qa_utf8punctuation = array(
+	$ilya_utf8punctuation = array(
 		"\xC2\xA1" => ' ', // INVERTED EXCLAMATION MARK
 		"\xC2\xA6" => ' ', // BROKEN BAR
 		"\xC2\xAB" => ' ', // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
@@ -99,7 +99,7 @@ function qa_string_initialize()
 	);
 
 	// convert UTF-8 accented characters to basic Roman characters
-	$qa_utf8removeaccents = array(
+	$ilya_utf8removeaccents = array(
 		"\xC3\x80" => 'A', // LATIN CAPITAL LETTER A WITH GRAVE
 		"\xC3\x81" => 'A', // LATIN CAPITAL LETTER A WITH ACUTE
 		"\xC3\x82" => 'A', // LATIN CAPITAL LETTER A WITH CIRCUMFLEX
@@ -428,16 +428,16 @@ function qa_string_initialize()
  * @param bool $splithyphens
  * @return array
  */
-function qa_string_to_words($string, $tolowercase = true, $delimiters = false, $splitideographs = true, $splithyphens = true)
+function ilya_string_to_words($string, $tolowercase = true, $delimiters = false, $splitideographs = true, $splithyphens = true)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_utf8punctuation;
+	global $ilya_utf8punctuation;
 
 	if ($tolowercase)
-		$string = qa_strtolower($string);
+		$string = ilya_strtolower($string);
 
-	$string = strtr($string, $qa_utf8punctuation);
+	$string = strtr($string, $ilya_utf8punctuation);
 
 	$separator = QA_PREG_INDEX_WORD_SEPARATOR;
 	if ($splithyphens)
@@ -463,13 +463,13 @@ function qa_string_to_words($string, $tolowercase = true, $delimiters = false, $
  * @param string $string Input string.
  * @return string
  */
-function qa_string_remove_accents($string)
+function ilya_string_remove_accents($string)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_utf8removeaccents;
+	global $ilya_utf8removeaccents;
 
-	return strtr($string, $qa_utf8removeaccents);
+	return strtr($string, $ilya_utf8removeaccents);
 }
 
 
@@ -480,16 +480,16 @@ function qa_string_remove_accents($string)
  * @param int|null $maxLength Maximum length the segment should be, or null for no limit.
  * @return string
  */
-function qa_slugify($string, $asciiOnly = true, $maxLength = null)
+function ilya_slugify($string, $asciiOnly = true, $maxLength = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$words = qa_string_to_words($string, true, false, false);
+	$words = ilya_string_to_words($string, true, false, false);
 
 	if ($maxLength !== null) {
 		$wordlength = array();
 		foreach ($words as $index => $word) {
-			$wordlength[$index] = qa_strlen($word);
+			$wordlength[$index] = ilya_strlen($word);
 		}
 
 		$remaining = $maxLength;
@@ -510,7 +510,7 @@ function qa_slugify($string, $asciiOnly = true, $maxLength = null)
 
 	if ($asciiOnly) {
 		// convert accents to ASCII, then remove all remaining non-ASCII characters
-		$string = qa_string_remove_accents($string);
+		$string = ilya_string_remove_accents($string);
 		$string = preg_replace('/[^ a-zA-Z0-9-]/', '', $string);
 		$string = preg_replace('/-{2,}/', '-', trim($string, '-'));
 	}
@@ -524,9 +524,9 @@ function qa_slugify($string, $asciiOnly = true, $maxLength = null)
  * @param $tags
  * @return mixed|string
  */
-function qa_tags_to_tagstring($tags)
+function ilya_tags_to_tagstring($tags)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return implode(',', $tags);
 }
@@ -537,9 +537,9 @@ function qa_tags_to_tagstring($tags)
  * @param $tagstring
  * @return array|mixed
  */
-function qa_tagstring_to_tags($tagstring)
+function ilya_tagstring_to_tags($tagstring)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return empty($tagstring) ? array() : explode(',', $tagstring);
 }
@@ -555,16 +555,16 @@ function qa_tagstring_to_tags($tagstring)
  * @param string $ellipsis Text used to replace the removed words from the original text
  * @return string The string turned into a single line and cut to fit the given length
  */
-function qa_shorten_string_line($string, $length, $ellipsis = ' ... ')
+function ilya_shorten_string_line($string, $length, $ellipsis = ' ... ')
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$string = strtr($string, "\r\n\t", '   ');
 
-	if (qa_strlen($string) > $length) {
-		$remaining = $length - qa_strlen($ellipsis);
+	if (ilya_strlen($string) > $length) {
+		$remaining = $length - ilya_strlen($ellipsis);
 
-		$words = qa_string_to_words($string, false, true);
+		$words = ilya_string_to_words($string, false, true);
 		$countwords = count($words);
 
 		$prefix = '';
@@ -575,7 +575,7 @@ function qa_shorten_string_line($string, $length, $ellipsis = ' ... ')
 
 			$word = $tosuffix ? array_pop($words) : array_shift($words);
 
-			$wordLength = qa_strlen($word);
+			$wordLength = ilya_strlen($word);
 
 			if ($wordLength > $remaining)
 				break;
@@ -599,7 +599,7 @@ function qa_shorten_string_line($string, $length, $ellipsis = ' ... ')
  * @param  string $string
  * @return string
  */
-function qa_remove_utf8mb4($string)
+function ilya_remove_utf8mb4($string)
 {
 	return preg_replace('%(?:
 		  \xF0[\x90-\xBF][\x80-\xBF]{2}  # planes 1-3
@@ -614,9 +614,9 @@ function qa_remove_utf8mb4($string)
  * @param $wordstring
  * @return array|mixed
  */
-function qa_block_words_explode($wordstring)
+function ilya_block_words_explode($wordstring)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return preg_split('/' . QA_PREG_BLOCK_WORD_SEPARATOR . '+/', $wordstring, -1, PREG_SPLIT_NO_EMPTY);
 }
@@ -627,15 +627,15 @@ function qa_block_words_explode($wordstring)
  * @param $wordsstring
  * @return mixed|string
  */
-function qa_block_words_to_preg($wordsstring)
+function ilya_block_words_to_preg($wordsstring)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$blockwords = qa_block_words_explode($wordsstring);
+	$blockwords = ilya_block_words_explode($wordsstring);
 	$patterns = array();
 
 	foreach ($blockwords as $blockword) { // * in rule maps to [^ ]* in regular expression
-		$pattern = str_replace('\\*', '[^ ]*', preg_quote(qa_strtolower($blockword), '/'));
+		$pattern = str_replace('\\*', '[^ ]*', preg_quote(ilya_strtolower($blockword), '/'));
 
 		if (!preg_match('/^(' . QA_PREG_CJK_IDEOGRAPHS_UTF8 . ')/', $blockword))
 			$pattern = '(?<= )' . $pattern; // assert leading word delimiter if pattern does not start with CJK
@@ -656,23 +656,23 @@ function qa_block_words_to_preg($wordsstring)
  * @param $wordspreg
  * @return array
  */
-function qa_block_words_match_all($string, $wordspreg)
+function ilya_block_words_match_all($string, $wordspreg)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_utf8punctuation, $qa_utf8punctuation_keeplength;
+	global $ilya_utf8punctuation, $ilya_utf8punctuation_keeplength;
 
 	if (strlen($wordspreg)) {
 		// replace all word separators with spaces of same length
 
-		if (!is_array($qa_utf8punctuation_keeplength)) {
-			$qa_utf8punctuation_keeplength = array();
-			foreach ($qa_utf8punctuation as $key => $value)
-				$qa_utf8punctuation_keeplength[$key] = str_repeat(' ', strlen($key));
+		if (!is_array($ilya_utf8punctuation_keeplength)) {
+			$ilya_utf8punctuation_keeplength = array();
+			foreach ($ilya_utf8punctuation as $key => $value)
+				$ilya_utf8punctuation_keeplength[$key] = str_repeat(' ', strlen($key));
 		}
 
-		// assumes UTF-8 case conversion in qa_strtolower does not change byte length
-		$string = strtr(qa_strtolower($string), $qa_utf8punctuation_keeplength);
+		// assumes UTF-8 case conversion in ilya_strtolower does not change byte length
+		$string = strtr(ilya_strtolower($string), $ilya_utf8punctuation_keeplength);
 		$string = preg_replace('/' . QA_PREG_BLOCK_WORD_SEPARATOR . '/', ' ', $string);
 
 		preg_match_all('/' . $wordspreg . '/', ' ' . $string . ' ', $pregmatches, PREG_OFFSET_CAPTURE);
@@ -695,16 +695,16 @@ function qa_block_words_match_all($string, $wordspreg)
  * @param string $character
  * @return mixed
  */
-function qa_block_words_replace($string, $wordspreg, $character = '*')
+function ilya_block_words_replace($string, $wordspreg, $character = '*')
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (strlen($wordspreg)) {
-		$matches = qa_block_words_match_all($string, $wordspreg);
+		$matches = ilya_block_words_match_all($string, $wordspreg);
 		krsort($matches, SORT_NUMERIC);
 
 		foreach ($matches as $start => $length) // get length again below to deal with multi-byte characters
-			$string = substr_replace($string, str_repeat($character, qa_strlen(substr($string, $start, $length))), $start, $length);
+			$string = substr_replace($string, str_repeat($character, ilya_strlen(substr($string, $start, $length))), $start, $length);
 	}
 
 	return $string;
@@ -716,7 +716,7 @@ function qa_block_words_replace($string, $wordspreg, $character = '*')
  * @param $length
  * @return string
  */
-function qa_random_alphanum($length)
+function ilya_random_alphanum($length)
 {
 	$string = '';
 
@@ -732,9 +732,9 @@ function qa_random_alphanum($length)
  * @param $email
  * @return bool|mixed
  */
-function qa_email_validate($email)
+function ilya_email_validate($email)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return preg_match("/^[\-\!\#\$\%\&\'\*\+\/\=\?\_\`\{\|\}\~a-zA-Z0-9\.\^]+\@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\.\-]+$/", $email) === 1;
 }
@@ -745,9 +745,9 @@ function qa_email_validate($email)
  * @param $string
  * @return int|mixed
  */
-function qa_strlen($string)
+function ilya_strlen($string)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return function_exists('mb_strlen') ? mb_strlen($string, 'UTF-8') : strlen($string);
 }
@@ -758,9 +758,9 @@ function qa_strlen($string)
  * @param $string
  * @return mixed|string
  */
-function qa_strtolower($string)
+function ilya_strtolower($string)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return function_exists('mb_strtolower') ? mb_strtolower($string, 'UTF-8') : strtolower($string);
 }
@@ -773,9 +773,9 @@ function qa_strtolower($string)
  * @param int $length
  * @return mixed|string
  */
-function qa_substr($string, $start, $length = 2147483647)
+function ilya_substr($string, $start, $length = 2147483647)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return function_exists('mb_substr') ? mb_substr($string, $start, $length, 'UTF-8') : substr($string, $start, $length);
 }
@@ -784,7 +784,7 @@ function qa_substr($string, $start, $length = 2147483647)
 /**
  * Return whether this version of PHP has been compiled with multibyte string support
  */
-function qa_has_multibyte()
+function ilya_has_multibyte()
 {
 	return function_exists('mb_strlen') && function_exists('mb_strtolower');
 }
@@ -796,7 +796,7 @@ function qa_has_multibyte()
  * @param $matches
  * @return bool
  */
-function qa_string_matches_one($string, $matches)
+function ilya_string_matches_one($string, $matches)
 {
 	if (strlen($string)) {
 		foreach ($matches as $match) {
@@ -826,4 +826,4 @@ if (!defined('QA_PREG_CJK_IDEOGRAPHS_UTF8')) {
 	define('QA_PREG_CJK_IDEOGRAPHS_UTF8', '\xE0[\xB8-\xB9][\x80-\xBF]|\xE2[\xBA-\xBF][\x80-\xBF]|\xE3[\x80\x88-\xBF][\x80-\xBF]|[\xE4-\xE9][\x80-\xBF][\x80-\xBF]|\xEF[\xA4-\xAB][\x80-\xBF]|\xF0[\xA0-\xAF][\x80-\xBF][\x80-\xBF]');
 }
 
-qa_string_initialize();
+ilya_string_initialize();

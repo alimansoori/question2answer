@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_facebook_login
+class ilya_facebook_login
 {
 	public function match_source($source)
 	{
@@ -30,18 +30,18 @@ class qa_facebook_login
 
 	public function login_html($tourl, $context)
 	{
-		$app_id = qa_opt('facebook_app_id');
+		$app_id = ilya_opt('facebook_app_id');
 
 		if (!strlen($app_id))
 			return;
 
-		$this->facebook_html(qa_path_absolute('facebook-login', array('to' => $tourl)), false, $context);
+		$this->facebook_html(ilya_path_absolute('facebook-login', array('to' => $tourl)), false, $context);
 	}
 
 
 	public function logout_html($tourl)
 	{
-		$app_id = qa_opt('facebook_app_id');
+		$app_id = ilya_opt('facebook_app_id');
 
 		if (!strlen($app_id))
 			return;
@@ -62,7 +62,7 @@ class qa_facebook_login
 	<script>
 	window.fbAsyncInit = function() {
 		FB.init({
-			appId  : <?php echo qa_js(qa_opt('facebook_app_id'), true)?>,
+			appId  : <?php echo ilya_js(ilya_opt('facebook_app_id'), true)?>,
 			status : true,
 			cookie : true,
 			xfbml  : true,
@@ -70,7 +70,7 @@ class qa_facebook_login
 		});
 
 		FB.Event.subscribe('<?php echo $logout ? 'auth.logout' : 'auth.login'?>', function(response) {
-			setTimeout("window.location=<?php echo qa_js($tourl)?>", 100);
+			setTimeout("window.location=<?php echo ilya_js($tourl)?>", 100);
 		});
 	};
 	(function(d){
@@ -90,13 +90,13 @@ class qa_facebook_login
 	{
 		$saved = false;
 
-		if (qa_clicked('facebook_save_button')) {
-			qa_opt('facebook_app_id', qa_post_text('facebook_app_id_field'));
-			qa_opt('facebook_app_secret', qa_post_text('facebook_app_secret_field'));
+		if (ilya_clicked('facebook_save_button')) {
+			ilya_opt('facebook_app_id', ilya_post_text('facebook_app_id_field'));
+			ilya_opt('facebook_app_secret', ilya_post_text('facebook_app_secret_field'));
 			$saved = true;
 		}
 
-		$ready = strlen(qa_opt('facebook_app_id')) && strlen(qa_opt('facebook_app_secret'));
+		$ready = strlen(ilya_opt('facebook_app_id')) && strlen(ilya_opt('facebook_app_secret'));
 
 		return array(
 			'ok' => $saved ? 'Facebook application details saved' : null,
@@ -104,13 +104,13 @@ class qa_facebook_login
 			'fields' => array(
 				array(
 					'label' => 'Facebook App ID:',
-					'value' => qa_html(qa_opt('facebook_app_id')),
+					'value' => ilya_html(ilya_opt('facebook_app_id')),
 					'tags' => 'name="facebook_app_id_field"',
 				),
 
 				array(
 					'label' => 'Facebook App Secret:',
-					'value' => qa_html(qa_opt('facebook_app_secret')),
+					'value' => ilya_html(ilya_opt('facebook_app_secret')),
 					'tags' => 'name="facebook_app_secret_field"',
 					'error' => $ready ? null : 'To use Facebook Login, please <a href="http://developers.facebook.com/setup/" target="_blank">set up a Facebook application</a>.',
 				),

@@ -49,10 +49,10 @@ class Q2A_Storage_FileCacheDriver implements Q2A_Storage_CacheDriver
 		if (isset($config['dir'])) {
 			$this->cacheDir = realpath($config['dir']);
 			if (!is_writable($this->cacheDir)) {
-				$this->error = qa_lang_html_sub('admin/caching_dir_error', $config['dir']);
+				$this->error = ilya_lang_html_sub('admin/caching_dir_error', $config['dir']);
 			}
 		} else {
-			$this->error = qa_lang_html('admin/caching_dir_missing');
+			$this->error = ilya_lang_html('admin/caching_dir_missing');
 		}
 
 		$this->enabled = empty($this->error);

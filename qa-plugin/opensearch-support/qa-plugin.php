@@ -40,5 +40,5 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_layer('ilya-opensearch-layer.php', 'OpenSearch Layer');
-qa_register_plugin_module('page', 'ilya-opensearch-page.php', 'qa_opensearch_xml', 'OpenSearch XML');
+ilya_register_plugin_layer('ilya-opensearch-layer.php', 'OpenSearch Layer');
+ilya_register_plugin_module('page', 'ilya-opensearch-page.php', 'ilya_opensearch_xml', 'OpenSearch XML');

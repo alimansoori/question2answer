@@ -26,7 +26,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 
 /*
-	Why do we have two types of event streams, shared (in qa_sharedevents) and user-specific (in qa_userevents)?
+	Why do we have two types of event streams, shared (in ilya_sharedevents) and user-specific (in ilya_userevents)?
 
 	An event stream is defined as the set of events which are thrown off ("published") by a particular entity. For
 	example, it could include the activity on a particular question, or the activity by a particular user.
@@ -50,16 +50,16 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 	as possible since it complicates setup. It also means there can be delays in updating users' news feeds.
 
 	So instead we adopt a hybrid approach. For each event created in an entity's stream, we record a single copy of that
-	event in the entity's stream in the qa_sharedevents table. In addition, by default, we place a copy of that event into
-	the list of news updates for each user subscribed to the stream, via the qa_userevents table.
+	event in the entity's stream in the ilya_sharedevents table. In addition, by default, we place a copy of that event into
+	the list of news updates for each user subscribed to the stream, via the ilya_userevents table.
 
 	However, if there are more than a certain number of subscribers to the stream, we skip this second step, i.e. we
-	only record one copy in the qa_sharedevents table. This limits the cost of publishing an event.
+	only record one copy in the ilya_sharedevents table. This limits the cost of publishing an event.
 
 	When we generate a user's list of recent updates, we of course retrieve the list of news updates for that user from
-	qa_userevents. However we also check to see whether that user is subscribed to any event streams for which updates
+	ilya_userevents. However we also check to see whether that user is subscribed to any event streams for which updates
 	are no longer posted into the user's own list, because the stream has too many subscribers. For each of these
-	popular streams, we also retrieve the stream's events from qa_sharedevents. Since users are only likely to be
+	popular streams, we also retrieve the stream's events from ilya_sharedevents. Since users are only likely to be
 	subscribed to a small number of popular streams, this limits the cost of retrieving the news updates.
 
 	(Having a shared event stream helps us another way. When a user subscribes to a stream, they can immediately have
@@ -110,20 +110,20 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $entitytype
  * @param $entityid
  */
-function qa_db_favorite_create($userid, $entitytype, $entityid)
+function ilya_db_favorite_create($userid, $entitytype, $entityid)
 {
-	$threshold = qa_opt('max_copy_user_updates'); // if this many users subscribe to it, create a shared stream
+	$threshold = ilya_opt('max_copy_user_updates'); // if this many users subscribe to it, create a shared stream
 
 	// Add in the favorite for this user, unshared events at first (will be switched later if appropriate)
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT IGNORE INTO ^userfavorites (userid, entitytype, entityid, nouserevents) VALUES ($, $, #, 0)',
 		$userid, $entitytype, $entityid
 	);
 
 	// See whether this entity already has another favoriter who uses its shared event stream
 
-	$useshared = qa_db_read_one_value(qa_db_query_sub(
+	$useshared = ilya_db_read_one_value(ilya_db_query_sub(
 		'SELECT COUNT(*) FROM ^userfavorites WHERE entitytype=$ AND entityid=# AND nouserevents>0 LIMIT 1',
 		$entitytype, $entityid
 	));
@@ -131,7 +131,7 @@ function qa_db_favorite_create($userid, $entitytype, $entityid)
 	// If not, check whether it's time to switch it over to a shared stream
 
 	if (!$useshared) {
-		$favoriters = qa_db_read_one_value(qa_db_query_sub(
+		$favoriters = ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT COUNT(*) FROM ^userfavorites WHERE entitytype=$ AND entityid=# LIMIT #',
 			$entitytype, $entityid, $threshold
 		));
@@ -144,7 +144,7 @@ function qa_db_favorite_create($userid, $entitytype, $entityid)
 	if ($useshared) {
 		// ... for all the people for whom we're switching this to a shared stream, find the highest number of other shared streams they have
 
-		$maxshared = qa_db_read_one_value(qa_db_query_sub(
+		$maxshared = ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT MAX(c) FROM (SELECT COUNT(*) AS c FROM ^userfavorites AS shared JOIN ^userfavorites AS unshared ' .
 			'WHERE shared.userid=unshared.userid AND shared.nouserevents>0 AND unshared.entitytype=$ AND unshared.entityid=# AND unshared.nouserevents=0 GROUP BY shared.userid) y',
 			$entitytype, $entityid
@@ -153,11 +153,11 @@ function qa_db_favorite_create($userid, $entitytype, $entityid)
 		// ... if this number is greater than our current 'max_copy_user_updates' threshold, increase that threshold (see long comment above)
 
 		if (($maxshared + 1) > $threshold)
-			qa_opt('max_copy_user_updates', $maxshared + 1);
+			ilya_opt('max_copy_user_updates', $maxshared + 1);
 
 		// ... now switch all unshared favoriters (including this new one) over to be shared
 
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^userfavorites SET nouserevents=1 WHERE entitytype=$ AND entityid=# AND nouserevents=0',
 			$entitytype, $entityid
 		);
@@ -169,7 +169,7 @@ function qa_db_favorite_create($userid, $entitytype, $entityid)
 
 		// ... copy across recent events from the shared stream
 
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT INTO ^userevents (userid, entitytype, entityid, questionid, lastpostid, updatetype, lastuserid, updated) ' .
 			'SELECT #, entitytype, entityid, questionid, lastpostid, updatetype, lastuserid, updated FROM ' .
 			'^sharedevents WHERE entitytype=$ AND entityid=#',
@@ -178,7 +178,7 @@ function qa_db_favorite_create($userid, $entitytype, $entityid)
 
 		// ... and truncate the user's stream as appropriate
 
-		qa_db_user_events_truncate($userid);
+		ilya_db_user_events_truncate($userid);
 	}
 }
 
@@ -190,14 +190,14 @@ function qa_db_favorite_create($userid, $entitytype, $entityid)
  * @param $entitytype
  * @param $entityid
  */
-function qa_db_favorite_delete($userid, $entitytype, $entityid)
+function ilya_db_favorite_delete($userid, $entitytype, $entityid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^userfavorites WHERE userid=$ AND entitytype=$ AND entityid=#',
 		$userid, $entitytype, $entityid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^userevents WHERE userid=$ AND entitytype=$ AND entityid=#',
 		$userid, $entitytype, $entityid
 	);

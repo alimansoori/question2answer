@@ -30,54 +30,54 @@ require_once QA_INCLUDE_DIR . 'db/selects.php';
 
 // Get current list of user titles and determine the state of this admin page
 
-$oldpoints = qa_post_text('edit');
+$oldpoints = ilya_post_text('edit');
 if (!isset($oldpoints))
-	$oldpoints = qa_get('edit');
+	$oldpoints = ilya_get('edit');
 
-$pointstitle = qa_get_points_to_titles();
+$pointstitle = ilya_get_points_to_titles();
 
 
 // Check admin privileges (do late to allow one DB query)
 
-if (!qa_admin_check_privileges($qa_content))
-	return $qa_content;
+if (!ilya_admin_check_privileges($ilya_content))
+	return $ilya_content;
 
 
 // Process saving an old or new user title
 
 $securityexpired = false;
 
-if (qa_clicked('docancel'))
-	qa_redirect('admin/users');
+if (ilya_clicked('docancel'))
+	ilya_redirect('admin/users');
 
-elseif (qa_clicked('dosavetitle')) {
+elseif (ilya_clicked('dosavetitle')) {
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
-	if (!qa_check_form_security_code('admin/usertitles', qa_post_text('code')))
+	if (!ilya_check_form_security_code('admin/usertitles', ilya_post_text('code')))
 		$securityexpired = true;
 
 	else {
-		if (qa_post_text('dodelete')) {
+		if (ilya_post_text('dodelete')) {
 			unset($pointstitle[$oldpoints]);
 
 		} else {
-			$intitle = qa_post_text('title');
-			$inpoints = qa_post_text('points');
+			$intitle = ilya_post_text('title');
+			$inpoints = ilya_post_text('points');
 
 			$errors = array();
 
 			// Verify the title and points are legitimate
 
 			if (!strlen($intitle))
-				$errors['title'] = qa_lang('main/field_required');
+				$errors['title'] = ilya_lang('main/field_required');
 
 			if (!is_numeric($inpoints))
-				$errors['points'] = qa_lang('main/field_required');
+				$errors['points'] = ilya_lang('main/field_required');
 			else {
 				$inpoints = (int)$inpoints;
 
 				if (isset($pointstitle[$inpoints]) && ((!strlen(@$oldpoints)) || ($inpoints != $oldpoints)))
-					$errors['points'] = qa_lang('admin/title_already_used');
+					$errors['points'] = ilya_lang('admin/title_already_used');
 			}
 
 			// Perform appropriate action
@@ -101,37 +101,37 @@ elseif (qa_clicked('dosavetitle')) {
 		foreach ($pointstitle as $points => $title)
 			$option .= (strlen($option) ? ',' : '') . $points . ' ' . $title;
 
-		qa_set_option('points_to_titles', $option);
+		ilya_set_option('points_to_titles', $option);
 
 		if (empty($errors))
-			qa_redirect('admin/users');
+			ilya_redirect('admin/users');
 	}
 }
 
 
 // Prepare content for theme
 
-$qa_content = qa_content_prepare();
+$ilya_content = ilya_content_prepare();
 
-$qa_content['title'] = qa_lang_html('admin/admin_title') . ' - ' . qa_lang_html('admin/users_title');
-$qa_content['error'] = $securityexpired ? qa_lang_html('admin/form_security_expired') : qa_admin_page_error();
+$ilya_content['title'] = ilya_lang_html('admin/admin_title') . ' - ' . ilya_lang_html('admin/users_title');
+$ilya_content['error'] = $securityexpired ? ilya_lang_html('admin/form_security_expired') : ilya_admin_page_error();
 
-$qa_content['form'] = array(
-	'tags' => 'method="post" action="' . qa_path_html(qa_request()) . '"',
+$ilya_content['form'] = array(
+	'tags' => 'method="post" action="' . ilya_path_html(ilya_request()) . '"',
 
 	'style' => 'tall',
 
 	'fields' => array(
 		'title' => array(
 			'tags' => 'name="title" id="title"',
-			'label' => qa_lang_html('admin/user_title'),
-			'value' => qa_html(isset($intitle) ? $intitle : @$pointstitle[$oldpoints]),
-			'error' => qa_html(@$errors['title']),
+			'label' => ilya_lang_html('admin/user_title'),
+			'value' => ilya_html(isset($intitle) ? $intitle : @$pointstitle[$oldpoints]),
+			'error' => ilya_html(@$errors['title']),
 		),
 
 		'delete' => array(
 			'tags' => 'name="dodelete" id="dodelete"',
-			'label' => qa_lang_html('admin/delete_title'),
+			'label' => ilya_lang_html('admin/delete_title'),
 			'value' => 0,
 			'type' => 'checkbox',
 		),
@@ -139,42 +139,42 @@ $qa_content['form'] = array(
 		'points' => array(
 			'id' => 'points_display',
 			'tags' => 'name="points"',
-			'label' => qa_lang_html('admin/points_required'),
+			'label' => ilya_lang_html('admin/points_required'),
 			'type' => 'number',
-			'value' => qa_html(isset($inpoints) ? $inpoints : @$oldpoints),
-			'error' => qa_html(@$errors['points']),
+			'value' => ilya_html(isset($inpoints) ? $inpoints : @$oldpoints),
+			'error' => ilya_html(@$errors['points']),
 		),
 	),
 
 	'buttons' => array(
 		'save' => array(
-			'label' => qa_lang_html(isset($pointstitle[$oldpoints]) ? 'main/save_button' : ('admin/add_title_button')),
+			'label' => ilya_lang_html(isset($pointstitle[$oldpoints]) ? 'main/save_button' : ('admin/add_title_button')),
 		),
 
 		'cancel' => array(
 			'tags' => 'name="docancel"',
-			'label' => qa_lang_html('main/cancel_button'),
+			'label' => ilya_lang_html('main/cancel_button'),
 		),
 	),
 
 	'hidden' => array(
 		'dosavetitle' => '1', // for IE
 		'edit' => @$oldpoints,
-		'code' => qa_get_form_security_code('admin/usertitles'),
+		'code' => ilya_get_form_security_code('admin/usertitles'),
 	),
 );
 
 if (isset($pointstitle[$oldpoints])) {
-	qa_set_display_rules($qa_content, array(
+	ilya_set_display_rules($ilya_content, array(
 		'points_display' => '!dodelete',
 	));
 } else {
-	unset($qa_content['form']['fields']['delete']);
+	unset($ilya_content['form']['fields']['delete']);
 }
 
-$qa_content['focusid'] = 'title';
+$ilya_content['focusid'] = 'title';
 
-$qa_content['navigation']['sub'] = qa_admin_sub_navigation();
+$ilya_content['navigation']['sub'] = ilya_admin_sub_navigation();
 
 
-return $qa_content;
+return $ilya_content;

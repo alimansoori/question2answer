@@ -30,15 +30,15 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $ipaddress
  * @return null|string
  */
-function qa_db_cookie_create($ipaddress)
+function ilya_db_cookie_create($ipaddress)
 {
 	for ($attempt = 0; $attempt < 10; $attempt++) {
-		$cookieid = qa_db_random_bigint();
+		$cookieid = ilya_db_random_bigint();
 
-		if (qa_db_cookie_exists($cookieid))
+		if (ilya_db_cookie_exists($cookieid))
 			continue;
 
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT INTO ^cookies (cookieid, created, createip) ' .
 			'VALUES (#, NOW(), UNHEX($))',
 			$cookieid, bin2hex(@inet_pton($ipaddress))
@@ -56,9 +56,9 @@ function qa_db_cookie_create($ipaddress)
  * @param $cookieid
  * @param $ipaddress
  */
-function qa_db_cookie_written($cookieid, $ipaddress)
+function ilya_db_cookie_written($cookieid, $ipaddress)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^cookies SET written=NOW(), writeip=UNHEX($) WHERE cookieid=#',
 		bin2hex(@inet_pton($ipaddress)), $cookieid
 	);
@@ -70,9 +70,9 @@ function qa_db_cookie_written($cookieid, $ipaddress)
  * @param $cookieid
  * @return bool
  */
-function qa_db_cookie_exists($cookieid)
+function ilya_db_cookie_exists($cookieid)
 {
-	$cookie = qa_db_read_one_value(qa_db_query_sub(
+	$cookie = ilya_db_read_one_value(ilya_db_query_sub(
 		'SELECT COUNT(*) FROM ^cookies WHERE cookieid=#',
 		$cookieid
 	));

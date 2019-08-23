@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_xml_sitemap
+class ilya_xml_sitemap
 {
 	public function option_default($option)
 	{
@@ -41,18 +41,18 @@ class qa_xml_sitemap
 
 		$saved = false;
 
-		if (qa_clicked('xml_sitemap_save_button')) {
-			qa_opt('xml_sitemap_show_questions', (int)qa_post_text('xml_sitemap_show_questions_field'));
+		if (ilya_clicked('xml_sitemap_save_button')) {
+			ilya_opt('xml_sitemap_show_questions', (int)ilya_post_text('xml_sitemap_show_questions_field'));
 
 			if (!QA_FINAL_EXTERNAL_USERS)
-				qa_opt('xml_sitemap_show_users', (int)qa_post_text('xml_sitemap_show_users_field'));
+				ilya_opt('xml_sitemap_show_users', (int)ilya_post_text('xml_sitemap_show_users_field'));
 
-			if (qa_using_tags())
-				qa_opt('xml_sitemap_show_tag_qs', (int)qa_post_text('xml_sitemap_show_tag_qs_field'));
+			if (ilya_using_tags())
+				ilya_opt('xml_sitemap_show_tag_qs', (int)ilya_post_text('xml_sitemap_show_tag_qs_field'));
 
-			if (qa_using_categories()) {
-				qa_opt('xml_sitemap_show_category_qs', (int)qa_post_text('xml_sitemap_show_category_qs_field'));
-				qa_opt('xml_sitemap_show_categories', (int)qa_post_text('xml_sitemap_show_categories_field'));
+			if (ilya_using_categories()) {
+				ilya_opt('xml_sitemap_show_category_qs', (int)ilya_post_text('xml_sitemap_show_category_qs_field'));
+				ilya_opt('xml_sitemap_show_categories', (int)ilya_post_text('xml_sitemap_show_categories_field'));
 			}
 
 			$saved = true;
@@ -65,7 +65,7 @@ class qa_xml_sitemap
 				'questions' => array(
 					'label' => 'Include question pages',
 					'type' => 'checkbox',
-					'value' => (int)qa_opt('xml_sitemap_show_questions'),
+					'value' => (int)ilya_opt('xml_sitemap_show_questions'),
 					'tags' => 'name="xml_sitemap_show_questions_field"',
 				),
 			),
@@ -82,32 +82,32 @@ class qa_xml_sitemap
 			$form['fields']['users'] = array(
 				'label' => 'Include user pages',
 				'type' => 'checkbox',
-				'value' => (int)qa_opt('xml_sitemap_show_users'),
+				'value' => (int)ilya_opt('xml_sitemap_show_users'),
 				'tags' => 'name="xml_sitemap_show_users_field"',
 			);
 		}
 
-		if (qa_using_tags()) {
+		if (ilya_using_tags()) {
 			$form['fields']['tagqs'] = array(
 				'label' => 'Include question list for each tag',
 				'type' => 'checkbox',
-				'value' => (int)qa_opt('xml_sitemap_show_tag_qs'),
+				'value' => (int)ilya_opt('xml_sitemap_show_tag_qs'),
 				'tags' => 'name="xml_sitemap_show_tag_qs_field"',
 			);
 		}
 
-		if (qa_using_categories()) {
+		if (ilya_using_categories()) {
 			$form['fields']['categoryqs'] = array(
 				'label' => 'Include question list for each category',
 				'type' => 'checkbox',
-				'value' => (int)qa_opt('xml_sitemap_show_category_qs'),
+				'value' => (int)ilya_opt('xml_sitemap_show_category_qs'),
 				'tags' => 'name="xml_sitemap_show_category_qs_field"',
 			);
 
 			$form['fields']['categories'] = array(
 				'label' => 'Include category browser',
 				'type' => 'checkbox',
-				'value' => (int)qa_opt('xml_sitemap_show_categories'),
+				'value' => (int)ilya_opt('xml_sitemap_show_categories'),
 				'tags' => 'name="xml_sitemap_show_categories_field"',
 			);
 		}
@@ -146,15 +146,15 @@ class qa_xml_sitemap
 
 		// Question pages
 
-		if (qa_opt('xml_sitemap_show_questions')) {
-			$hotstats = qa_db_read_one_assoc(qa_db_query_sub(
+		if (ilya_opt('xml_sitemap_show_questions')) {
+			$hotstats = ilya_db_read_one_assoc(ilya_db_query_sub(
 				"SELECT MIN(hotness) AS base, MAX(hotness)-MIN(hotness) AS spread FROM ^posts WHERE type='Q'"
 			));
 
 			$nextpostid = 0;
 
 			while (1) {
-				$questions = qa_db_read_all_assoc(qa_db_query_sub(
+				$questions = ilya_db_read_all_assoc(ilya_db_query_sub(
 					"SELECT postid, title, hotness FROM ^posts WHERE postid>=# AND type='Q' ORDER BY postid LIMIT 100",
 					$nextpostid
 				));
@@ -163,7 +163,7 @@ class qa_xml_sitemap
 					break;
 
 				foreach ($questions as $question) {
-					$this->sitemap_output(qa_q_request($question['postid'], $question['title']),
+					$this->sitemap_output(ilya_q_request($question['postid'], $question['title']),
 						0.1 + 0.9 * ($question['hotness'] - $hotstats['base']) / (1 + $hotstats['spread']));
 					$nextpostid = max($nextpostid, $question['postid'] + 1);
 				}
@@ -173,11 +173,11 @@ class qa_xml_sitemap
 
 		// User pages
 
-		if (!QA_FINAL_EXTERNAL_USERS && qa_opt('xml_sitemap_show_users')) {
+		if (!QA_FINAL_EXTERNAL_USERS && ilya_opt('xml_sitemap_show_users')) {
 			$nextuserid = 0;
 
 			while (1) {
-				$users = qa_db_read_all_assoc(qa_db_query_sub(
+				$users = ilya_db_read_all_assoc(ilya_db_query_sub(
 					"SELECT userid, handle FROM ^users WHERE userid>=# ORDER BY userid LIMIT 100",
 					$nextuserid
 				));
@@ -195,11 +195,11 @@ class qa_xml_sitemap
 
 		// Tag pages
 
-		if (qa_using_tags() && qa_opt('xml_sitemap_show_tag_qs')) {
+		if (ilya_using_tags() && ilya_opt('xml_sitemap_show_tag_qs')) {
 			$nextwordid = 0;
 
 			while (1) {
-				$tagwords = qa_db_read_all_assoc(qa_db_query_sub(
+				$tagwords = ilya_db_read_all_assoc(ilya_db_query_sub(
 					"SELECT wordid, word, tagcount FROM ^words WHERE wordid>=# AND tagcount>0 ORDER BY wordid LIMIT 100",
 					$nextwordid
 				));
@@ -217,11 +217,11 @@ class qa_xml_sitemap
 
 		// Question list for each category
 
-		if (qa_using_categories() && qa_opt('xml_sitemap_show_category_qs')) {
+		if (ilya_using_categories() && ilya_opt('xml_sitemap_show_category_qs')) {
 			$nextcategoryid = 0;
 
 			while (1) {
-				$categories = qa_db_read_all_assoc(qa_db_query_sub(
+				$categories = ilya_db_read_all_assoc(ilya_db_query_sub(
 					"SELECT categoryid, backpath FROM ^categories WHERE categoryid>=# AND qcount>0 ORDER BY categoryid LIMIT 2",
 					$nextcategoryid
 				));
@@ -239,13 +239,13 @@ class qa_xml_sitemap
 
 		// Pages in category browser
 
-		if (qa_using_categories() && qa_opt('xml_sitemap_show_categories')) {
+		if (ilya_using_categories() && ilya_opt('xml_sitemap_show_categories')) {
 			$this->sitemap_output('categories', 0.5);
 
 			$nextcategoryid = 0;
 
 			while (1) { // only find categories with a child
-				$categories = qa_db_read_all_assoc(qa_db_query_sub(
+				$categories = ilya_db_read_all_assoc(ilya_db_query_sub(
 					"SELECT parent.categoryid, parent.backpath FROM ^categories AS parent " .
 					"JOIN ^categories AS child ON child.parentid=parent.categoryid WHERE parent.categoryid>=# GROUP BY parent.categoryid LIMIT 100",
 					$nextcategoryid
@@ -270,7 +270,7 @@ class qa_xml_sitemap
 	private function sitemap_output($request, $priority)
 	{
 		echo "\t<url>\n" .
-			"\t\t<loc>" . qa_xml(qa_path($request, null, qa_opt('site_url'))) . "</loc>\n" .
+			"\t\t<loc>" . ilya_xml(ilya_path($request, null, ilya_opt('site_url'))) . "</loc>\n" .
 			"\t\t<priority>" . max(0, min(1.0, $priority)) . "</priority>\n" .
 			"\t</url>\n";
 	}

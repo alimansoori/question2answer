@@ -63,37 +63,37 @@ require_once QA_INCLUDE_DIR . 'util/string.php';
  * @param $name
  * @return mixed
  */
-function qa_post_create($type, $parentid, $title, $content, $format = '', $categoryid = null, $tags = null, $userid = null,
+function ilya_post_create($type, $parentid, $title, $content, $format = '', $categoryid = null, $tags = null, $userid = null,
 	$notify = null, $email = null, $extravalue = null, $name = null)
 {
-	$handle = qa_userid_to_handle($userid);
-	$text = qa_post_content_to_text($content, $format);
+	$handle = ilya_userid_to_handle($userid);
+	$text = ilya_post_content_to_text($content, $format);
 
 	switch ($type) {
 		case 'Q':
 		case 'Q_QUEUED':
-			$followanswer = isset($parentid) ? qa_post_get_full($parentid, 'A') : null;
-			$tagstring = qa_post_tags_to_tagstring($tags);
-			$postid = qa_question_create($followanswer, $userid, $handle, null, $title, $content, $format, $text, $tagstring,
+			$followanswer = isset($parentid) ? ilya_post_get_full($parentid, 'A') : null;
+			$tagstring = ilya_post_tags_to_tagstring($tags);
+			$postid = ilya_question_create($followanswer, $userid, $handle, null, $title, $content, $format, $text, $tagstring,
 				$notify, $email, $categoryid, $extravalue, $type == 'Q_QUEUED', $name);
 			break;
 
 		case 'A':
 		case 'A_QUEUED':
-			$question = qa_post_get_full($parentid, 'Q');
-			$postid = qa_answer_create($userid, $handle, null, $content, $format, $text, $notify, $email, $question, $type == 'A_QUEUED', $name);
+			$question = ilya_post_get_full($parentid, 'Q');
+			$postid = ilya_answer_create($userid, $handle, null, $content, $format, $text, $notify, $email, $question, $type == 'A_QUEUED', $name);
 			break;
 
 		case 'C':
 		case 'C_QUEUED':
-			$parent = qa_post_get_full($parentid, 'QA');
-			$commentsfollows = qa_db_single_select(qa_db_full_child_posts_selectspec(null, $parentid));
-			$question = qa_post_parent_to_question($parent);
-			$postid = qa_comment_create($userid, $handle, null, $content, $format, $text, $notify, $email, $question, $parent, $commentsfollows, $type == 'C_QUEUED', $name);
+			$parent = ilya_post_get_full($parentid, 'QA');
+			$commentsfollows = ilya_db_single_select(ilya_db_full_child_posts_selectspec(null, $parentid));
+			$question = ilya_post_parent_to_question($parent);
+			$postid = ilya_comment_create($userid, $handle, null, $content, $format, $text, $notify, $email, $question, $parent, $commentsfollows, $type == 'C_QUEUED', $name);
 			break;
 
 		default:
-			qa_fatal_error('Post type not recognized: ' . $type);
+			ilya_fatal_error('Post type not recognized: ' . $type);
 			break;
 	}
 
@@ -104,7 +104,7 @@ function qa_post_create($type, $parentid, $title, $content, $format = '', $categ
 /**
  * Change the data stored for post $postid based on any of the $title, $content, $format, $tags, $notify, $email,
  * $extravalue and $name parameters passed which are not null. The meaning of these parameters is the same as for
- * qa_post_create() above. Pass the identify of the user making this change in $byuserid (or null for silent).
+ * ilya_post_create() above. Pass the identify of the user making this change in $byuserid (or null for silent).
  * @param $postid
  * @param $title
  * @param $content
@@ -116,9 +116,9 @@ function qa_post_create($type, $parentid, $title, $content, $format = '', $categ
  * @param $extravalue
  * @param $name
  */
-function qa_post_set_content($postid, $title, $content, $format = null, $tags = null, $notify = null, $email = null, $byuserid = null, $extravalue = null, $name = null)
+function ilya_post_set_content($postid, $title, $content, $format = null, $tags = null, $notify = null, $email = null, $byuserid = null, $extravalue = null, $name = null)
 {
-	$oldpost = qa_post_get_full($postid, 'QAC');
+	$oldpost = ilya_post_get_full($postid, 'QAC');
 
 	if (!isset($title))
 		$title = $oldpost['title'];
@@ -130,33 +130,33 @@ function qa_post_set_content($postid, $title, $content, $format = null, $tags = 
 		$format = $oldpost['format'];
 
 	if (!isset($tags))
-		$tags = qa_tagstring_to_tags($oldpost['tags']);
+		$tags = ilya_tagstring_to_tags($oldpost['tags']);
 
 	if (isset($notify) || isset($email))
-		$setnotify = qa_combine_notify_email($oldpost['userid'], isset($notify) ? $notify : isset($oldpost['notify']),
+		$setnotify = ilya_combine_notify_email($oldpost['userid'], isset($notify) ? $notify : isset($oldpost['notify']),
 			isset($email) ? $email : $oldpost['notify']);
 	else
 		$setnotify = $oldpost['notify'];
 
-	$byhandle = qa_userid_to_handle($byuserid);
+	$byhandle = ilya_userid_to_handle($byuserid);
 
-	$text = qa_post_content_to_text($content, $format);
+	$text = ilya_post_content_to_text($content, $format);
 
 	switch ($oldpost['basetype']) {
 		case 'Q':
-			$tagstring = qa_post_tags_to_tagstring($tags);
-			qa_question_set_content($oldpost, $title, $content, $format, $text, $tagstring, $setnotify, $byuserid, $byhandle, null, $extravalue, $name);
+			$tagstring = ilya_post_tags_to_tagstring($tags);
+			ilya_question_set_content($oldpost, $title, $content, $format, $text, $tagstring, $setnotify, $byuserid, $byhandle, null, $extravalue, $name);
 			break;
 
 		case 'A':
-			$question = qa_post_get_full($oldpost['parentid'], 'Q');
-			qa_answer_set_content($oldpost, $content, $format, $text, $setnotify, $byuserid, $byhandle, null, $question, $name);
+			$question = ilya_post_get_full($oldpost['parentid'], 'Q');
+			ilya_answer_set_content($oldpost, $content, $format, $text, $setnotify, $byuserid, $byhandle, null, $question, $name);
 			break;
 
 		case 'C':
-			$parent = qa_post_get_full($oldpost['parentid'], 'QA');
-			$question = qa_post_parent_to_question($parent);
-			qa_comment_set_content($oldpost, $content, $format, $text, $setnotify, $byuserid, $byhandle, null, $question, $parent, $name);
+			$parent = ilya_post_get_full($oldpost['parentid'], 'QA');
+			$question = ilya_post_parent_to_question($parent);
+			ilya_comment_set_content($oldpost, $content, $format, $text, $setnotify, $byuserid, $byhandle, null, $question, $parent, $name);
 			break;
 	}
 }
@@ -170,19 +170,19 @@ function qa_post_set_content($postid, $title, $content, $format = null, $tags = 
  * @param $categoryid
  * @param $byuserid
  */
-function qa_post_set_category($postid, $categoryid, $byuserid = null)
+function ilya_post_set_category($postid, $categoryid, $byuserid = null)
 {
-	$oldpost = qa_post_get_full($postid, 'QAC');
+	$oldpost = ilya_post_get_full($postid, 'QAC');
 
 	if ($oldpost['basetype'] == 'Q') {
-		$byhandle = qa_userid_to_handle($byuserid);
-		$answers = qa_post_get_question_answers($postid);
-		$commentsfollows = qa_post_get_question_commentsfollows($postid);
-		$closepost = qa_post_get_question_closepost($postid);
-		qa_question_set_category($oldpost, $categoryid, $byuserid, $byhandle, null, $answers, $commentsfollows, $closepost);
+		$byhandle = ilya_userid_to_handle($byuserid);
+		$answers = ilya_post_get_question_answers($postid);
+		$commentsfollows = ilya_post_get_question_commentsfollows($postid);
+		$closepost = ilya_post_get_question_closepost($postid);
+		ilya_question_set_category($oldpost, $categoryid, $byuserid, $byhandle, null, $answers, $commentsfollows, $closepost);
 
 	} else
-		qa_post_set_category($oldpost['parentid'], $categoryid, $byuserid); // keep looking until we find the parent question
+		ilya_post_set_category($oldpost['parentid'], $categoryid, $byuserid); // keep looking until we find the parent question
 }
 
 
@@ -193,16 +193,16 @@ function qa_post_set_category($postid, $categoryid, $byuserid = null)
  * @param $answerid
  * @param $byuserid
  */
-function qa_post_set_selchildid($questionid, $answerid, $byuserid = null)
+function ilya_post_set_selchildid($questionid, $answerid, $byuserid = null)
 {
-	$oldquestion = qa_post_get_full($questionid, 'Q');
-	$byhandle = qa_userid_to_handle($byuserid);
-	$answers = qa_post_get_question_answers($questionid);
+	$oldquestion = ilya_post_get_full($questionid, 'Q');
+	$byhandle = ilya_userid_to_handle($byuserid);
+	$answers = ilya_post_get_question_answers($questionid);
 
 	if (isset($answerid) && !isset($answers[$answerid]))
-		qa_fatal_error('Answer ID could not be found: ' . $answerid);
+		ilya_fatal_error('Answer ID could not be found: ' . $answerid);
 
-	qa_question_set_selchildid($byuserid, $byhandle, null, $oldquestion, $answerid, $answers);
+	ilya_question_set_selchildid($byuserid, $byhandle, null, $oldquestion, $answerid, $answers);
 }
 
 
@@ -216,22 +216,22 @@ function qa_post_set_selchildid($questionid, $answerid, $byuserid = null)
  * @param $note
  * @param $byuserid
  */
-function qa_post_set_closed($questionid, $closed = true, $originalpostid = null, $note = null, $byuserid = null)
+function ilya_post_set_closed($questionid, $closed = true, $originalpostid = null, $note = null, $byuserid = null)
 {
-	$oldquestion = qa_post_get_full($questionid, 'Q');
-	$oldclosepost = qa_post_get_question_closepost($questionid);
-	$byhandle = qa_userid_to_handle($byuserid);
+	$oldquestion = ilya_post_get_full($questionid, 'Q');
+	$oldclosepost = ilya_post_get_question_closepost($questionid);
+	$byhandle = ilya_userid_to_handle($byuserid);
 
 	if ($closed) {
 		if (isset($originalpostid))
-			qa_question_close_duplicate($oldquestion, $oldclosepost, $originalpostid, $byuserid, $byhandle, null);
+			ilya_question_close_duplicate($oldquestion, $oldclosepost, $originalpostid, $byuserid, $byhandle, null);
 		elseif (isset($note))
-			qa_question_close_other($oldquestion, $oldclosepost, $note, $byuserid, $byhandle, null);
+			ilya_question_close_other($oldquestion, $oldclosepost, $note, $byuserid, $byhandle, null);
 		else
-			qa_fatal_error('Question must be closed as a duplicate or with a note');
+			ilya_fatal_error('Question must be closed as a duplicate or with a note');
 
 	} else
-		qa_question_close_clear($oldquestion, $oldclosepost, $byuserid, $byhandle, null);
+		ilya_question_close_clear($oldquestion, $oldclosepost, $byuserid, $byhandle, null);
 }
 
 /**
@@ -241,23 +241,23 @@ function qa_post_set_closed($questionid, $closed = true, $originalpostid = null,
  * @param array $question
  * @return bool
  */
-function qa_post_is_closed(array $question)
+function ilya_post_is_closed(array $question)
 {
-	return isset($question['closedbyid']) || (isset($question['selchildid']) && qa_opt('do_close_on_select'));
+	return isset($question['closedbyid']) || (isset($question['selchildid']) && ilya_opt('do_close_on_select'));
 }
 
 
 /**
  * Hide $postid if $hidden is true, otherwise show the post. Pass the identify of the user making this change in
  * $byuserid (or null for a silent change).
- * @deprecated Replaced by qa_post_set_status.
+ * @deprecated Replaced by ilya_post_set_status.
  * @param $postid
  * @param bool $hidden
  * @param $byuserid
  */
-function qa_post_set_hidden($postid, $hidden = true, $byuserid = null)
+function ilya_post_set_hidden($postid, $hidden = true, $byuserid = null)
 {
-	qa_post_set_status($postid, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $byuserid);
+	ilya_post_set_status($postid, $hidden ? QA_POST_STATUS_HIDDEN : QA_POST_STATUS_NORMAL, $byuserid);
 }
 
 
@@ -268,29 +268,29 @@ function qa_post_set_hidden($postid, $hidden = true, $byuserid = null)
  * @param $status
  * @param $byuserid
  */
-function qa_post_set_status($postid, $status, $byuserid = null)
+function ilya_post_set_status($postid, $status, $byuserid = null)
 {
-	$oldpost = qa_post_get_full($postid, 'QAC');
-	$byhandle = qa_userid_to_handle($byuserid);
+	$oldpost = ilya_post_get_full($postid, 'QAC');
+	$byhandle = ilya_userid_to_handle($byuserid);
 
 	switch ($oldpost['basetype']) {
 		case 'Q':
-			$answers = qa_post_get_question_answers($postid);
-			$commentsfollows = qa_post_get_question_commentsfollows($postid);
-			$closepost = qa_post_get_question_closepost($postid);
-			qa_question_set_status($oldpost, $status, $byuserid, $byhandle, null, $answers, $commentsfollows, $closepost);
+			$answers = ilya_post_get_question_answers($postid);
+			$commentsfollows = ilya_post_get_question_commentsfollows($postid);
+			$closepost = ilya_post_get_question_closepost($postid);
+			ilya_question_set_status($oldpost, $status, $byuserid, $byhandle, null, $answers, $commentsfollows, $closepost);
 			break;
 
 		case 'A':
-			$question = qa_post_get_full($oldpost['parentid'], 'Q');
-			$commentsfollows = qa_post_get_answer_commentsfollows($postid);
-			qa_answer_set_status($oldpost, $status, $byuserid, $byhandle, null, $question, $commentsfollows);
+			$question = ilya_post_get_full($oldpost['parentid'], 'Q');
+			$commentsfollows = ilya_post_get_answer_commentsfollows($postid);
+			ilya_answer_set_status($oldpost, $status, $byuserid, $byhandle, null, $question, $commentsfollows);
 			break;
 
 		case 'C':
-			$parent = qa_post_get_full($oldpost['parentid'], 'QA');
-			$question = qa_post_parent_to_question($parent);
-			qa_comment_set_status($oldpost, $status, $byuserid, $byhandle, null, $question, $parent);
+			$parent = ilya_post_get_full($oldpost['parentid'], 'QA');
+			$question = ilya_post_parent_to_question($parent);
+			ilya_comment_set_status($oldpost, $status, $byuserid, $byhandle, null, $question, $parent);
 			break;
 	}
 }
@@ -301,19 +301,19 @@ function qa_post_set_status($postid, $status, $byuserid = null)
  * @param $postid
  * @param $created
  */
-function qa_post_set_created($postid, $created)
+function ilya_post_set_created($postid, $created)
 {
-	$oldpost = qa_post_get_full($postid);
+	$oldpost = ilya_post_get_full($postid);
 
-	qa_db_post_set_created($postid, $created);
+	ilya_db_post_set_created($postid, $created);
 
 	switch ($oldpost['basetype']) {
 		case 'Q':
-			qa_db_hotness_update($postid);
+			ilya_db_hotness_update($postid);
 			break;
 
 		case 'A':
-			qa_db_hotness_update($oldpost['parentid']);
+			ilya_db_hotness_update($oldpost['parentid']);
 			break;
 	}
 }
@@ -323,41 +323,41 @@ function qa_post_set_created($postid, $created)
  * Delete $postid from the database, hiding it first if appropriate.
  * @param $postid
  */
-function qa_post_delete($postid)
+function ilya_post_delete($postid)
 {
-	$oldpost = qa_post_get_full($postid, 'QAC');
+	$oldpost = ilya_post_get_full($postid, 'QAC');
 
 	if (!$oldpost['hidden']) {
-		qa_post_set_status($postid, QA_POST_STATUS_HIDDEN, null);
-		$oldpost = qa_post_get_full($postid, 'QAC');
+		ilya_post_set_status($postid, QA_POST_STATUS_HIDDEN, null);
+		$oldpost = ilya_post_get_full($postid, 'QAC');
 	}
 
 	switch ($oldpost['basetype']) {
 		case 'Q':
-			$answers = qa_post_get_question_answers($postid);
-			$commentsfollows = qa_post_get_question_commentsfollows($postid);
-			$closepost = qa_post_get_question_closepost($postid);
+			$answers = ilya_post_get_question_answers($postid);
+			$commentsfollows = ilya_post_get_question_commentsfollows($postid);
+			$closepost = ilya_post_get_question_closepost($postid);
 
 			if (count($answers) || count($commentsfollows))
-				qa_fatal_error('Could not delete question ID due to dependents: ' . $postid);
+				ilya_fatal_error('Could not delete question ID due to dependents: ' . $postid);
 
-			qa_question_delete($oldpost, null, null, null, $closepost);
+			ilya_question_delete($oldpost, null, null, null, $closepost);
 			break;
 
 		case 'A':
-			$question = qa_post_get_full($oldpost['parentid'], 'Q');
-			$commentsfollows = qa_post_get_answer_commentsfollows($postid);
+			$question = ilya_post_get_full($oldpost['parentid'], 'Q');
+			$commentsfollows = ilya_post_get_answer_commentsfollows($postid);
 
 			if (count($commentsfollows))
-				qa_fatal_error('Could not delete answer ID due to dependents: ' . $postid);
+				ilya_fatal_error('Could not delete answer ID due to dependents: ' . $postid);
 
-			qa_answer_delete($oldpost, $question, null, null, null);
+			ilya_answer_delete($oldpost, $question, null, null, null);
 			break;
 
 		case 'C':
-			$parent = qa_post_get_full($oldpost['parentid'], 'QA');
-			$question = qa_post_parent_to_question($parent);
-			qa_comment_delete($oldpost, $question, $parent, null, null, null);
+			$parent = ilya_post_get_full($oldpost['parentid'], 'QA');
+			$question = ilya_post_parent_to_question($parent);
+			ilya_comment_delete($oldpost, $question, $parent, null, null, null);
 			break;
 	}
 }
@@ -369,15 +369,15 @@ function qa_post_delete($postid)
  * @param $requiredbasetypes
  * @return array|mixed
  */
-function qa_post_get_full($postid, $requiredbasetypes = null)
+function ilya_post_get_full($postid, $requiredbasetypes = null)
 {
-	$post = qa_db_single_select(qa_db_full_post_selectspec(null, $postid));
+	$post = ilya_db_single_select(ilya_db_full_post_selectspec(null, $postid));
 
 	if (!is_array($post))
-		qa_fatal_error('Post ID could not be found: ' . $postid);
+		ilya_fatal_error('Post ID could not be found: ' . $postid);
 
 	if (isset($requiredbasetypes) && !is_numeric(strpos($requiredbasetypes, $post['basetype'])))
-		qa_fatal_error('Post of wrong type: ' . $post['basetype']);
+		ilya_fatal_error('Post of wrong type: ' . $post['basetype']);
 
 	return $post;
 }
@@ -386,13 +386,13 @@ function qa_post_get_full($postid, $requiredbasetypes = null)
 /**
  * Return the handle corresponding to $userid, unless it is null in which case return null.
  *
- * @deprecated Deprecated from 1.7; use `qa_userid_to_handle($userid)` instead.
+ * @deprecated Deprecated from 1.7; use `ilya_userid_to_handle($userid)` instead.
  * @param $userid
  * @return mixed|null
  */
-function qa_post_userid_to_handle($userid)
+function ilya_post_userid_to_handle($userid)
 {
-	return qa_userid_to_handle($userid);
+	return ilya_userid_to_handle($userid);
 }
 
 
@@ -402,12 +402,12 @@ function qa_post_userid_to_handle($userid)
  * @param $format
  * @return string
  */
-function qa_post_content_to_text($content, $format)
+function ilya_post_content_to_text($content, $format)
 {
-	$viewer = qa_load_viewer($content, $format);
+	$viewer = ilya_load_viewer($content, $format);
 
 	if (!isset($viewer))
-		qa_fatal_error('Content could not be parsed in format: ' . $format);
+		ilya_fatal_error('Content could not be parsed in format: ' . $format);
 
 	return $viewer->get_text($content, $format, array());
 }
@@ -418,12 +418,12 @@ function qa_post_content_to_text($content, $format)
  * @param $tags
  * @return mixed|string
  */
-function qa_post_tags_to_tagstring($tags)
+function ilya_post_tags_to_tagstring($tags)
 {
 	if (is_array($tags))
 		$tags = implode(',', $tags);
 
-	return qa_tags_to_tagstring(array_unique(preg_split('/\s*,\s*/', qa_strtolower(strtr($tags, '/', ' ')), -1, PREG_SPLIT_NO_EMPTY)));
+	return ilya_tags_to_tagstring(array_unique(preg_split('/\s*,\s*/', ilya_strtolower(strtr($tags, '/', ' ')), -1, PREG_SPLIT_NO_EMPTY)));
 }
 
 
@@ -432,11 +432,11 @@ function qa_post_tags_to_tagstring($tags)
  * @param $questionid
  * @return array
  */
-function qa_post_get_question_answers($questionid)
+function ilya_post_get_question_answers($questionid)
 {
 	$answers = array();
 
-	$childposts = qa_db_single_select(qa_db_full_child_posts_selectspec(null, $questionid));
+	$childposts = ilya_db_single_select(ilya_db_full_child_posts_selectspec(null, $questionid));
 
 	foreach ($childposts as $postid => $post) {
 		if ($post['basetype'] == 'A')
@@ -452,13 +452,13 @@ function qa_post_get_question_answers($questionid)
  * @param $questionid
  * @return array
  */
-function qa_post_get_question_commentsfollows($questionid)
+function ilya_post_get_question_commentsfollows($questionid)
 {
 	$commentsfollows = array();
 
-	list($childposts, $achildposts) = qa_db_multi_select(array(
-		qa_db_full_child_posts_selectspec(null, $questionid),
-		qa_db_full_a_child_posts_selectspec(null, $questionid),
+	list($childposts, $achildposts) = ilya_db_multi_select(array(
+		ilya_db_full_child_posts_selectspec(null, $questionid),
+		ilya_db_full_a_child_posts_selectspec(null, $questionid),
 	));
 
 	foreach ($childposts as $postid => $post) {
@@ -480,9 +480,9 @@ function qa_post_get_question_commentsfollows($questionid)
  * @param $questionid
  * @return array|mixed
  */
-function qa_post_get_question_closepost($questionid)
+function ilya_post_get_question_closepost($questionid)
 {
-	return qa_db_single_select(qa_db_post_close_post_selectspec($questionid));
+	return ilya_db_single_select(ilya_db_post_close_post_selectspec($questionid));
 }
 
 
@@ -491,11 +491,11 @@ function qa_post_get_question_closepost($questionid)
  * @param $answerid
  * @return array
  */
-function qa_post_get_answer_commentsfollows($answerid)
+function ilya_post_get_answer_commentsfollows($answerid)
 {
 	$commentsfollows = array();
 
-	$childposts = qa_db_single_select(qa_db_full_child_posts_selectspec(null, $answerid));
+	$childposts = ilya_db_single_select(ilya_db_full_child_posts_selectspec(null, $answerid));
 
 	foreach ($childposts as $postid => $post) {
 		if ($post['basetype'] == 'Q' || $post['basetype'] == 'C')
@@ -511,12 +511,12 @@ function qa_post_get_answer_commentsfollows($answerid)
  * @param $parent
  * @return array|mixed
  */
-function qa_post_parent_to_question($parent)
+function ilya_post_parent_to_question($parent)
 {
 	if ($parent['basetype'] == 'Q')
 		$question = $parent;
 	else
-		$question = qa_post_get_full($parent['parentid'], 'Q');
+		$question = ilya_post_get_full($parent['parentid'], 'Q');
 
 	return $question;
 }

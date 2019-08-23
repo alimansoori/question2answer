@@ -31,36 +31,36 @@ require_once QA_INCLUDE_DIR . 'app/format.php';
 
 // Find queued questions, answers, comments
 
-$userid = qa_get_logged_in_userid();
+$userid = ilya_get_logged_in_userid();
 
-list($queuedquestions, $queuedanswers, $queuedcomments) = qa_db_select_with_pending(
-	qa_db_qs_selectspec($userid, 'created', 0, null, null, 'Q_QUEUED', true),
-	qa_db_recent_a_qs_selectspec($userid, 0, null, null, 'A_QUEUED', true),
-	qa_db_recent_c_qs_selectspec($userid, 0, null, null, 'C_QUEUED', true)
+list($queuedquestions, $queuedanswers, $queuedcomments) = ilya_db_select_with_pending(
+	ilya_db_qs_selectspec($userid, 'created', 0, null, null, 'Q_QUEUED', true),
+	ilya_db_recent_a_qs_selectspec($userid, 0, null, null, 'A_QUEUED', true),
+	ilya_db_recent_c_qs_selectspec($userid, 0, null, null, 'C_QUEUED', true)
 );
 
 
 // Check admin privileges (do late to allow one DB query)
 
-if (qa_user_maximum_permit_error('permit_moderate')) {
-	$qa_content = qa_content_prepare();
-	$qa_content['error'] = qa_lang_html('users/no_permission');
-	return $qa_content;
+if (ilya_user_maximum_permit_error('permit_moderate')) {
+	$ilya_content = ilya_content_prepare();
+	$ilya_content['error'] = ilya_lang_html('users/no_permission');
+	return $ilya_content;
 }
 
 
 // Check to see if any were approved/rejected here
 
-$pageerror = qa_admin_check_clicks();
+$pageerror = ilya_admin_check_clicks();
 
 
 // Combine sets of questions and remove those this user has no permission to moderate
 
-$questions = qa_any_sort_by_date(array_merge($queuedquestions, $queuedanswers, $queuedcomments));
+$questions = ilya_any_sort_by_date(array_merge($queuedquestions, $queuedanswers, $queuedcomments));
 
-if (qa_user_permit_error('permit_moderate')) { // if user not allowed to moderate all posts
+if (ilya_user_permit_error('permit_moderate')) { // if user not allowed to moderate all posts
 	foreach ($questions as $index => $question) {
-		if (qa_user_post_permit_error('permit_moderate', $question))
+		if (ilya_user_post_permit_error('permit_moderate', $question))
 			unset($questions[$index]);
 	}
 }
@@ -68,22 +68,22 @@ if (qa_user_permit_error('permit_moderate')) { // if user not allowed to moderat
 
 // Get information for users
 
-$usershtml = qa_userids_handles_html(qa_any_get_userids_handles($questions));
+$usershtml = ilya_userids_handles_html(ilya_any_get_userids_handles($questions));
 
 
 // Prepare content for theme
 
-$qa_content = qa_content_prepare();
+$ilya_content = ilya_content_prepare();
 
-$qa_content['title'] = qa_lang_html('admin/recent_approve_title');
-$qa_content['error'] = isset($pageerror) ? $pageerror : qa_admin_page_error();
+$ilya_content['title'] = ilya_lang_html('admin/recent_approve_title');
+$ilya_content['error'] = isset($pageerror) ? $pageerror : ilya_admin_page_error();
 
-$qa_content['q_list'] = array(
+$ilya_content['q_list'] = array(
 	'form' => array(
-		'tags' => 'method="post" action="' . qa_self_html() . '"',
+		'tags' => 'method="post" action="' . ilya_self_html() . '"',
 
 		'hidden' => array(
-			'code' => qa_get_form_security_code('admin/click'),
+			'code' => ilya_get_form_security_code('admin/click'),
 		),
 	),
 
@@ -92,10 +92,10 @@ $qa_content['q_list'] = array(
 
 if (count($questions)) {
 	foreach ($questions as $question) {
-		$postid = qa_html(isset($question['opostid']) ? $question['opostid'] : $question['postid']);
+		$postid = ilya_html(isset($question['opostid']) ? $question['opostid'] : $question['postid']);
 		$elementid = 'p' . $postid;
 
-		$htmloptions = qa_post_html_options($question);
+		$htmloptions = ilya_post_html_options($question);
 		$htmloptions['voteview'] = false;
 		$htmloptions['tagsview'] = !isset($question['opostid']);
 		$htmloptions['answersview'] = false;
@@ -103,12 +103,12 @@ if (count($questions)) {
 		$htmloptions['contentview'] = true;
 		$htmloptions['elementid'] = $elementid;
 
-		$htmlfields = qa_any_to_q_html_fields($question, $userid, qa_cookie_get(), $usershtml, null, $htmloptions);
+		$htmlfields = ilya_any_to_q_html_fields($question, $userid, ilya_cookie_get(), $usershtml, null, $htmloptions);
 
 		if (isset($htmlfields['what_url'])) // link directly to relevant content
 			$htmlfields['url'] = $htmlfields['what_url'];
 
-		$posttype = qa_strtolower(isset($question['obasetype']) ? $question['obasetype'] : $question['basetype']);
+		$posttype = ilya_strtolower(isset($question['obasetype']) ? $question['obasetype'] : $question['basetype']);
 		switch ($posttype) {
 			case 'q':
 			default:
@@ -131,29 +131,29 @@ if (count($questions)) {
 			'buttons' => array(
 				// Possible values for popup: approve_q_popup, approve_a_popup, approve_c_popup
 				'approve' => array(
-					'tags' => 'name="admin_' . $postid . '_approve" onclick="return qa_admin_click(this);"',
-					'label' => qa_lang_html('question/approve_button'),
-					'popup' => qa_lang_html($approveKey),
+					'tags' => 'name="admin_' . $postid . '_approve" onclick="return ilya_admin_click(this);"',
+					'label' => ilya_lang_html('question/approve_button'),
+					'popup' => ilya_lang_html($approveKey),
 				),
 
 				// Possible values for popup: reject_q_popup, reject_a_popup, reject_c_popup
 				'reject' => array(
-					'tags' => 'name="admin_' . $postid . '_reject" onclick="return qa_admin_click(this);"',
-					'label' => qa_lang_html('question/reject_button'),
-					'popup' => qa_lang_html($rejectKey),
+					'tags' => 'name="admin_' . $postid . '_reject" onclick="return ilya_admin_click(this);"',
+					'label' => ilya_lang_html('question/reject_button'),
+					'popup' => ilya_lang_html($rejectKey),
 				),
 			),
 		);
 
-		$qa_content['q_list']['qs'][] = $htmlfields;
+		$ilya_content['q_list']['qs'][] = $htmlfields;
 	}
 
 } else
-	$qa_content['title'] = qa_lang_html('admin/no_approve_found');
+	$ilya_content['title'] = ilya_lang_html('admin/no_approve_found');
 
 
-$qa_content['navigation']['sub'] = qa_admin_sub_navigation();
-$qa_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
+$ilya_content['navigation']['sub'] = ilya_admin_sub_navigation();
+$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . QA_VERSION;
 
 
-return $qa_content;
+return $ilya_content;

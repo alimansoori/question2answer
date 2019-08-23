@@ -32,14 +32,14 @@ require_once QA_INCLUDE_DIR . 'app/q-list.php';
 // Get list of unanswered questions, allow per-category if QA_ALLOW_UNINDEXED_QUERIES set in ilya-config.php
 
 if (QA_ALLOW_UNINDEXED_QUERIES)
-	$categoryslugs = qa_request_parts(1);
+	$categoryslugs = ilya_request_parts(1);
 else
 	$categoryslugs = null;
 
 $countslugs = @count($categoryslugs);
-$by = qa_get('by');
-$start = qa_get_start();
-$userid = qa_get_logged_in_userid();
+$by = ilya_get('by');
+$start = ilya_get_start();
+$userid = ilya_get_logged_in_userid();
 
 switch ($by) {
 	case 'selected':
@@ -55,17 +55,17 @@ switch ($by) {
 		break;
 }
 
-list($questions, $categories, $categoryid) = qa_db_select_with_pending(
-	qa_db_unanswered_qs_selectspec($userid, $selectby, $start, $categoryslugs, false, false, qa_opt_if_loaded('page_size_una_qs')),
-	QA_ALLOW_UNINDEXED_QUERIES ? qa_db_category_nav_selectspec($categoryslugs, false, false, true) : null,
-	$countslugs ? qa_db_slugs_to_category_id_selectspec($categoryslugs) : null
+list($questions, $categories, $categoryid) = ilya_db_select_with_pending(
+	ilya_db_unanswered_qs_selectspec($userid, $selectby, $start, $categoryslugs, false, false, ilya_opt_if_loaded('page_size_una_qs')),
+	QA_ALLOW_UNINDEXED_QUERIES ? ilya_db_category_nav_selectspec($categoryslugs, false, false, true) : null,
+	$countslugs ? ilya_db_slugs_to_category_id_selectspec($categoryslugs) : null
 );
 
 if ($countslugs) {
 	if (!isset($categoryid))
 		return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
-	$categorytitlehtml = qa_html($categories[$categoryid]['title']);
+	$categorytitlehtml = ilya_html($categories[$categoryid]['title']);
 }
 
 $feedpathprefix = null;
@@ -74,40 +74,40 @@ $linkparams = array('by' => $by);
 switch ($by) {
 	case 'selected':
 		if ($countslugs) {
-			$sometitle = qa_lang_html_sub('main/unselected_qs_in_x', $categorytitlehtml);
-			$nonetitle = qa_lang_html_sub('main/no_una_questions_in_x', $categorytitlehtml);
+			$sometitle = ilya_lang_html_sub('main/unselected_qs_in_x', $categorytitlehtml);
+			$nonetitle = ilya_lang_html_sub('main/no_una_questions_in_x', $categorytitlehtml);
 
 		} else {
-			$sometitle = qa_lang_html('main/unselected_qs_title');
-			$nonetitle = qa_lang_html('main/no_unselected_qs_found');
-			$count = qa_opt('cache_unselqcount');
+			$sometitle = ilya_lang_html('main/unselected_qs_title');
+			$nonetitle = ilya_lang_html('main/no_unselected_qs_found');
+			$count = ilya_opt('cache_unselqcount');
 		}
 		break;
 
 	case 'upvotes':
 		if ($countslugs) {
-			$sometitle = qa_lang_html_sub('main/unupvoteda_qs_in_x', $categorytitlehtml);
-			$nonetitle = qa_lang_html_sub('main/no_una_questions_in_x', $categorytitlehtml);
+			$sometitle = ilya_lang_html_sub('main/unupvoteda_qs_in_x', $categorytitlehtml);
+			$nonetitle = ilya_lang_html_sub('main/no_una_questions_in_x', $categorytitlehtml);
 
 		} else {
-			$sometitle = qa_lang_html('main/unupvoteda_qs_title');
-			$nonetitle = qa_lang_html('main/no_unupvoteda_qs_found');
-			$count = qa_opt('cache_unupaqcount');
+			$sometitle = ilya_lang_html('main/unupvoteda_qs_title');
+			$nonetitle = ilya_lang_html('main/no_unupvoteda_qs_found');
+			$count = ilya_opt('cache_unupaqcount');
 		}
 		break;
 
 	default:
-		$feedpathprefix = qa_opt('feed_for_unanswered') ? 'unanswered' : null;
+		$feedpathprefix = ilya_opt('feed_for_unanswered') ? 'unanswered' : null;
 		$linkparams = array();
 
 		if ($countslugs) {
-			$sometitle = qa_lang_html_sub('main/unanswered_qs_in_x', $categorytitlehtml);
-			$nonetitle = qa_lang_html_sub('main/no_una_questions_in_x', $categorytitlehtml);
+			$sometitle = ilya_lang_html_sub('main/unanswered_qs_in_x', $categorytitlehtml);
+			$nonetitle = ilya_lang_html_sub('main/no_una_questions_in_x', $categorytitlehtml);
 
 		} else {
-			$sometitle = qa_lang_html('main/unanswered_qs_title');
-			$nonetitle = qa_lang_html('main/no_una_questions_found');
-			$count = qa_opt('cache_unaqcount');
+			$sometitle = ilya_lang_html('main/unanswered_qs_title');
+			$nonetitle = ilya_lang_html('main/no_una_questions_found');
+			$count = ilya_opt('cache_unaqcount');
 		}
 		break;
 }
@@ -115,9 +115,9 @@ switch ($by) {
 
 // Prepare and return content for theme
 
-$qa_content = qa_q_list_page_content(
+$ilya_content = ilya_q_list_page_content(
 	$questions, // questions
-	qa_opt('page_size_una_qs'), // questions per page
+	ilya_opt('page_size_una_qs'), // questions per page
 	$start, // start offset
 	@$count, // total count
 	$sometitle, // title if some questions
@@ -127,12 +127,12 @@ $qa_content = qa_q_list_page_content(
 	false, // show question counts in category navigation
 	QA_ALLOW_UNINDEXED_QUERIES ? 'unanswered/' : null, // prefix for links in category navigation (null if no navigation)
 	$feedpathprefix, // prefix for RSS feed paths (null to hide)
-	qa_html_suggest_qs_tags(qa_using_tags()), // suggest what to do next
+	ilya_html_suggest_qs_tags(ilya_using_tags()), // suggest what to do next
 	$linkparams, // extra parameters for page links
 	$linkparams // category nav params
 );
 
-$qa_content['navigation']['sub'] = qa_unanswered_sub_navigation($by, $categoryslugs);
+$ilya_content['navigation']['sub'] = ilya_unanswered_sub_navigation($by, $categoryslugs);
 
 
-return $qa_content;
+return $ilya_content;

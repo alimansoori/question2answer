@@ -19,13 +19,13 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-function qa_title_change(value)
+function ilya_title_change(value)
 {
-	qa_ajax_post('asktitle', {title: value}, function(lines) {
+	ilya_ajax_post('asktitle', {title: value}, function(lines) {
 		if (lines[0] == '1') {
 			if (lines[1].length) {
-				qa_tags_examples = lines[1];
-				qa_tag_hints(true);
+				ilya_tags_examples = lines[1];
+				ilya_tag_hints(true);
 			}
 
 			if (lines.length > 2) {
@@ -37,67 +37,67 @@ function qa_title_change(value)
 		} else if (lines[0] == '0')
 			alert(lines[1]);
 		else
-			qa_ajax_error();
+			ilya_ajax_error();
 	});
 
-	qa_show_waiting_after(document.getElementById('similar'), true);
+	ilya_show_waiting_after(document.getElementById('similar'), true);
 }
 
-function qa_html_unescape(html)
+function ilya_html_unescape(html)
 {
 	return html.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
 
-function qa_html_escape(text)
+function ilya_html_escape(text)
 {
 	return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function qa_tag_click(link)
+function ilya_tag_click(link)
 {
 	var elem = document.getElementById('tags');
-	var parts = qa_tag_typed_parts(elem);
+	var parts = ilya_tag_typed_parts(elem);
 
 	// removes any HTML tags and ampersand
-	var tag = qa_html_unescape(link.innerHTML.replace(/<[^>]*>/g, ''));
+	var tag = ilya_html_unescape(link.innerHTML.replace(/<[^>]*>/g, ''));
 
-	var separator = qa_tag_onlycomma ? ', ' : ' ';
+	var separator = ilya_tag_onlycomma ? ', ' : ' ';
 
 	// replace if matches typed, otherwise append
 	var newvalue = (parts.typed && (tag.toLowerCase().indexOf(parts.typed.toLowerCase()) >= 0))
 		? (parts.before + separator + tag + separator + parts.after + separator) : (elem.value + separator + tag + separator);
 
 	// sanitize and set value
-	if (qa_tag_onlycomma)
+	if (ilya_tag_onlycomma)
 		elem.value = newvalue.replace(/[\s,]*,[\s,]*/g, ', ').replace(/^[\s,]+/g, '');
 	else
 		elem.value = newvalue.replace(/[\s,]+/g, ' ').replace(/^[\s,]+/g, '');
 
 	elem.focus();
-	qa_tag_hints();
+	ilya_tag_hints();
 
 	return false;
 }
 
-function qa_tag_hints(skipcomplete)
+function ilya_tag_hints(skipcomplete)
 {
 	var elem = document.getElementById('tags');
 	var html = '';
 	var completed = false;
 
 	// first try to auto-complete
-	if (qa_tags_complete && !skipcomplete) {
-		var parts = qa_tag_typed_parts(elem);
+	if (ilya_tags_complete && !skipcomplete) {
+		var parts = ilya_tag_typed_parts(elem);
 
 		if (parts.typed) {
-			html = qa_tags_to_html((qa_html_unescape(qa_tags_examples + ',' + qa_tags_complete)).split(','), parts.typed.toLowerCase());
+			html = ilya_tags_to_html((ilya_html_unescape(ilya_tags_examples + ',' + ilya_tags_complete)).split(','), parts.typed.toLowerCase());
 			completed = html ? true : false;
 		}
 	}
 
 	// otherwise show examples
-	if (qa_tags_examples && !completed)
-		html = qa_tags_to_html((qa_html_unescape(qa_tags_examples)).split(','), null);
+	if (ilya_tags_examples && !completed)
+		html = ilya_tags_to_html((ilya_html_unescape(ilya_tags_examples)).split(','), null);
 
 	// set title visiblity and hint list
 	document.getElementById('tag_examples_title').style.display = (html && !completed) ? '' : 'none';
@@ -105,7 +105,7 @@ function qa_tag_hints(skipcomplete)
 	document.getElementById('tag_hints').innerHTML = html;
 }
 
-function qa_tags_to_html(tags, matchlc)
+function ilya_tags_to_html(tags, matchlc)
 {
 	var html = '';
 	var added = 0;
@@ -122,14 +122,14 @@ function qa_tags_to_html(tags, matchlc)
 				if (matchlc) { // if matching, show appropriate part in bold
 					var matchstart = taglc.indexOf(matchlc);
 					var matchend = matchstart + matchlc.length;
-					inner = '<span style="font-weight:normal;">' + qa_html_escape(tag.substring(0, matchstart)) + '<b>' +
-						qa_html_escape(tag.substring(matchstart, matchend)) + '</b>' + qa_html_escape(tag.substring(matchend)) + '</span>';
+					inner = '<span style="font-weight:normal;">' + ilya_html_escape(tag.substring(0, matchstart)) + '<b>' +
+						ilya_html_escape(tag.substring(matchstart, matchend)) + '</b>' + ilya_html_escape(tag.substring(matchend)) + '</span>';
 				} else // otherwise show as-is
-					inner = qa_html_escape(tag);
+					inner = ilya_html_escape(tag);
 
-				html += qa_tag_template.replace(/\^/g, inner.replace('$', '$$$$')) + ' '; // replace ^ in template, escape $s
+				html += ilya_tag_template.replace(/\^/g, inner.replace('$', '$$$$')) + ' '; // replace ^ in template, escape $s
 
-				if (++added >= qa_tags_max)
+				if (++added >= ilya_tags_max)
 					break;
 			}
 		}
@@ -138,7 +138,7 @@ function qa_tags_to_html(tags, matchlc)
 	return html;
 }
 
-function qa_caret_from_end(elem)
+function ilya_caret_from_end(elem)
 {
 	if (document.selection) { // for IE
 		elem.focus();
@@ -154,33 +154,33 @@ function qa_caret_from_end(elem)
 		return 0;
 }
 
-function qa_tag_typed_parts(elem)
+function ilya_tag_typed_parts(elem)
 {
-	var caret = elem.value.length - qa_caret_from_end(elem);
+	var caret = elem.value.length - ilya_caret_from_end(elem);
 	var active = elem.value.substring(0, caret);
 	var passive = elem.value.substring(active.length);
 
 	// if the caret is in the middle of a word, move the end of word from passive to active
 	if (
-		active.match(qa_tag_onlycomma ? /[^\s,][^,]*$/ : /[^\s,]$/) &&
-		(adjoinmatch = passive.match(qa_tag_onlycomma ? /^[^,]*[^\s,][^,]*/ : /^[^\s,]+/))
+		active.match(ilya_tag_onlycomma ? /[^\s,][^,]*$/ : /[^\s,]$/) &&
+		(adjoinmatch = passive.match(ilya_tag_onlycomma ? /^[^,]*[^\s,][^,]*/ : /^[^\s,]+/))
 		) {
 		active += adjoinmatch[0];
 		passive = elem.value.substring(active.length);
 	}
 
 	// find what has been typed so far
-	var typedmatch = active.match(qa_tag_onlycomma ? /[^\s,]+[^,]*$/ : /[^\s,]+$/) || [''];
+	var typedmatch = active.match(ilya_tag_onlycomma ? /[^\s,]+[^,]*$/ : /[^\s,]+$/) || [''];
 
 	return {before: active.substring(0, active.length - typedmatch[0].length), after: passive, typed: typedmatch[0]};
 }
 
-function qa_category_select(idprefix, startpath)
+function ilya_category_select(idprefix, startpath)
 {
 	var startval = startpath ? startpath.split("/") : [];
 	var setdescnow = true;
 
-	for (var l = 0; l <= qa_cat_maxdepth; l++) {
+	for (var l = 0; l <= ilya_cat_maxdepth; l++) {
 		var elem = document.getElementById(idprefix + '_' + l);
 
 		if (elem) {
@@ -196,8 +196,8 @@ function qa_category_select(idprefix, startpath)
 			} else
 				val = '';
 
-			if (elem.qa_last_sel !== val) {
-				elem.qa_last_sel = val;
+			if (elem.ilya_last_sel !== val) {
+				elem.ilya_last_sel = val;
 
 				var subelem = document.getElementById(idprefix + '_' + l + '_sub');
 				if (subelem)
@@ -206,9 +206,9 @@ function qa_category_select(idprefix, startpath)
 				if (val.length || (l == 0)) {
 					subelem = elem.parentNode.insertBefore(document.createElement('span'), elem.nextSibling);
 					subelem.id = idprefix + '_' + l + '_sub';
-					qa_show_waiting_after(subelem, true);
+					ilya_show_waiting_after(subelem, true);
 
-					qa_ajax_post('category', {categoryid: val},
+					ilya_ajax_post('category', {categoryid: val},
 						(function(elem, l) {
 							return function(lines) {
 								var subelem = document.getElementById(idprefix + '_' + l + '_sub');
@@ -216,7 +216,7 @@ function qa_category_select(idprefix, startpath)
 									subelem.parentNode.removeChild(subelem);
 
 								if (lines[0] == '1') {
-									elem.qa_cat_desc = lines[1];
+									elem.ilya_cat_desc = lines[1];
 
 									var addedoption = false;
 
@@ -230,13 +230,13 @@ function qa_category_select(idprefix, startpath)
 										newelem.name = newelem.id = idprefix + '_' + (l + 1);
 										newelem.options.length = 0;
 
-										if (l ? qa_cat_allownosub : qa_cat_allownone)
+										if (l ? ilya_cat_allownosub : ilya_cat_allownone)
 											newelem.options[0] = new Option(l ? '' : elem.options[0].text, '', true, true);
 
 										for (var i = 2; i < lines.length; i++) {
 											var parts = lines[i].split('/');
 
-											if (String(qa_cat_exclude).length && (String(qa_cat_exclude) == parts[0]))
+											if (String(ilya_cat_exclude).length && (String(ilya_cat_exclude) == parts[0]))
 												continue;
 
 											newelem.options[newelem.options.length] = new Option(parts.slice(1).join('/'), parts[0]);
@@ -245,7 +245,7 @@ function qa_category_select(idprefix, startpath)
 
 										if (addedoption) {
 											subelem.appendChild(newelem);
-											qa_category_select(idprefix, startpath);
+											ilya_category_select(idprefix, startpath);
 
 										}
 
@@ -259,7 +259,7 @@ function qa_category_select(idprefix, startpath)
 								} else if (lines[0] == '0')
 									alert(lines[1]);
 								else
-									qa_ajax_error();
+									ilya_ajax_error();
 							}
 						})(elem, l)
 					);
@@ -283,11 +283,11 @@ function set_category_description(idprefix)
 	if (n) {
 		desc = '';
 
-		for (var l = 1; l <= qa_cat_maxdepth; l++) {
+		for (var l = 1; l <= ilya_cat_maxdepth; l++) {
 			var elem = document.getElementById(idprefix + '_' + l);
 
 			if (elem && elem.options[elem.selectedIndex].value.length)
-				desc = elem.qa_cat_desc;
+				desc = elem.ilya_cat_desc;
 		}
 
 		n.innerHTML = desc;

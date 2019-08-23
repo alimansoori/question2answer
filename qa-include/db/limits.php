@@ -33,7 +33,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $action
  * @return array
  */
-function qa_db_limits_get($userid, $ip, $action)
+function ilya_db_limits_get($userid, $ip, $action)
 {
 	$selects = array();
 	$arguments = array();
@@ -51,8 +51,8 @@ function qa_db_limits_get($userid, $ip, $action)
 	}
 
 	if (count($selects)) {
-		$query = qa_db_apply_sub(implode(' UNION ALL ', $selects), $arguments);
-		return qa_db_read_all_assoc(qa_db_query_raw($query), 'limitkey');
+		$query = ilya_db_apply_sub(implode(' UNION ALL ', $selects), $arguments);
+		return ilya_db_read_all_assoc(ilya_db_query_raw($query), 'limitkey');
 
 	} else
 		return array();
@@ -66,9 +66,9 @@ function qa_db_limits_get($userid, $ip, $action)
  * @param $period
  * @param $count
  */
-function qa_db_limits_user_add($userid, $action, $period, $count)
+function ilya_db_limits_user_add($userid, $action, $period, $count)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT INTO ^userlimits (userid, action, period, count) VALUES ($, $, #, #) ' .
 		'ON DUPLICATE KEY UPDATE count=IF(period=#, count+#, #), period=#',
 		$userid, $action, $period, $count, $period, $count, $count, $period
@@ -83,9 +83,9 @@ function qa_db_limits_user_add($userid, $action, $period, $count)
  * @param $period
  * @param $count
  */
-function qa_db_limits_ip_add($ip, $action, $period, $count)
+function ilya_db_limits_ip_add($ip, $action, $period, $count)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT INTO ^iplimits (ip, action, period, count) VALUES (UNHEX($), $, #, #) ' .
 		'ON DUPLICATE KEY UPDATE count=IF(period=#, count+#, #), period=#',
 		bin2hex(@inet_pton($ip)), $action, $period, $count, $period, $count, $count, $period

@@ -33,15 +33,15 @@ require_once QA_INCLUDE_DIR . 'app/format.php';
 
 // Find the recent activity for this user
 
-$loginuserid = qa_get_logged_in_userid();
+$loginuserid = ilya_get_logged_in_userid();
 $identifier = QA_FINAL_EXTERNAL_USERS ? $userid : $handle;
 
-list($useraccount, $questions, $answerqs, $commentqs, $editqs) = qa_db_select_with_pending(
-	QA_FINAL_EXTERNAL_USERS ? null : qa_db_user_account_selectspec($handle, false),
-	qa_db_user_recent_qs_selectspec($loginuserid, $identifier, qa_opt_if_loaded('page_size_activity')),
-	qa_db_user_recent_a_qs_selectspec($loginuserid, $identifier),
-	qa_db_user_recent_c_qs_selectspec($loginuserid, $identifier),
-	qa_db_user_recent_edit_qs_selectspec($loginuserid, $identifier)
+list($useraccount, $questions, $answerqs, $commentqs, $editqs) = ilya_db_select_with_pending(
+	QA_FINAL_EXTERNAL_USERS ? null : ilya_db_user_account_selectspec($handle, false),
+	ilya_db_user_recent_qs_selectspec($loginuserid, $identifier, ilya_opt_if_loaded('page_size_activity')),
+	ilya_db_user_recent_a_qs_selectspec($loginuserid, $identifier),
+	ilya_db_user_recent_c_qs_selectspec($loginuserid, $identifier),
+	ilya_db_user_recent_edit_qs_selectspec($loginuserid, $identifier)
 );
 
 if (!QA_FINAL_EXTERNAL_USERS && !is_array($useraccount)) // check the user exists
@@ -50,48 +50,48 @@ if (!QA_FINAL_EXTERNAL_USERS && !is_array($useraccount)) // check the user exist
 
 // Get information on user references
 
-$questions = qa_any_sort_and_dedupe(array_merge($questions, $answerqs, $commentqs, $editqs));
-$questions = array_slice($questions, 0, qa_opt('page_size_activity'));
-$usershtml = qa_userids_handles_html(qa_any_get_userids_handles($questions), false);
+$questions = ilya_any_sort_and_dedupe(array_merge($questions, $answerqs, $commentqs, $editqs));
+$questions = array_slice($questions, 0, ilya_opt('page_size_activity'));
+$usershtml = ilya_userids_handles_html(ilya_any_get_userids_handles($questions), false);
 
 
 // Prepare content for theme
 
-$qa_content = qa_content_prepare(true);
+$ilya_content = ilya_content_prepare(true);
 
 if (count($questions))
-	$qa_content['title'] = qa_lang_html_sub('profile/recent_activity_by_x', $userhtml);
+	$ilya_content['title'] = ilya_lang_html_sub('profile/recent_activity_by_x', $userhtml);
 else
-	$qa_content['title'] = qa_lang_html_sub('profile/no_posts_by_x', $userhtml);
+	$ilya_content['title'] = ilya_lang_html_sub('profile/no_posts_by_x', $userhtml);
 
 
 // Recent activity by this user
 
-$qa_content['q_list']['form'] = array(
-	'tags' => 'method="post" action="' . qa_self_html() . '"',
+$ilya_content['q_list']['form'] = array(
+	'tags' => 'method="post" action="' . ilya_self_html() . '"',
 
 	'hidden' => array(
-		'code' => qa_get_form_security_code('vote'),
+		'code' => ilya_get_form_security_code('vote'),
 	),
 );
 
-$qa_content['q_list']['qs'] = array();
+$ilya_content['q_list']['qs'] = array();
 
-$htmldefaults = qa_post_html_defaults('Q');
+$htmldefaults = ilya_post_html_defaults('Q');
 $htmldefaults['whoview'] = false;
 $htmldefaults['voteview'] = false;
 $htmldefaults['avatarsize'] = 0;
 
 foreach ($questions as $question) {
-	$qa_content['q_list']['qs'][] = qa_any_to_q_html_fields($question, $loginuserid, qa_cookie_get(),
-		$usershtml, null, array('voteview' => false) + qa_post_html_options($question, $htmldefaults));
+	$ilya_content['q_list']['qs'][] = ilya_any_to_q_html_fields($question, $loginuserid, ilya_cookie_get(),
+		$usershtml, null, array('voteview' => false) + ilya_post_html_options($question, $htmldefaults));
 }
 
 
 // Sub menu for navigation in user pages
 
 $ismyuser = isset($loginuserid) && $loginuserid == (QA_FINAL_EXTERNAL_USERS ? $userid : $useraccount['userid']);
-$qa_content['navigation']['sub'] = qa_user_sub_navigation($handle, 'activity', $ismyuser);
+$ilya_content['navigation']['sub'] = ilya_user_sub_navigation($handle, 'activity', $ismyuser);
 
 
-return $qa_content;
+return $ilya_content;

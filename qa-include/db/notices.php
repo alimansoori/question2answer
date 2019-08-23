@@ -33,14 +33,14 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $tags
  * @return mixed
  */
-function qa_db_usernotice_create($userid, $content, $format = '', $tags = null)
+function ilya_db_usernotice_create($userid, $content, $format = '', $tags = null)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT INTO ^usernotices (userid, content, format, tags, created) VALUES ($, $, $, $, NOW())',
 		$userid, $content, $format, $tags
 	);
 
-	return qa_db_last_insert_id();
+	return ilya_db_last_insert_id();
 }
 
 
@@ -49,9 +49,9 @@ function qa_db_usernotice_create($userid, $content, $format = '', $tags = null)
  * @param $userid
  * @param $noticeid
  */
-function qa_db_usernotice_delete($userid, $noticeid)
+function ilya_db_usernotice_delete($userid, $noticeid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^usernotices WHERE userid=$ AND noticeid=#',
 		$userid, $noticeid
 	);
@@ -63,9 +63,9 @@ function qa_db_usernotice_delete($userid, $noticeid)
  * @param $userid
  * @return array
  */
-function qa_db_usernotices_list($userid)
+function ilya_db_usernotices_list($userid)
 {
-	return qa_db_read_all_assoc(qa_db_query_sub(
+	return ilya_db_read_all_assoc(ilya_db_query_sub(
 		'SELECT noticeid, tags, UNIX_TIMESTAMP(created) AS created FROM ^usernotices WHERE userid=$ ORDER BY created',
 		$userid
 	));

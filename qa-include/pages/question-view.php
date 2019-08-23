@@ -31,7 +31,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $childposts
  * @return array
  */
-function qa_page_q_load_as($question, $childposts)
+function ilya_page_q_load_as($question, $childposts)
 {
 	$answers = array();
 
@@ -52,14 +52,14 @@ function qa_page_q_load_as($question, $childposts)
 /**
  * Given a $question, its $childposts and its answers $achildposts from the database,
  * return a list of comments or follow-on questions for that question or its answers.
- * Follow-on and duplicate questions are now returned, with their visibility determined in qa_page_q_comment_follow_list()
+ * Follow-on and duplicate questions are now returned, with their visibility determined in ilya_page_q_comment_follow_list()
  * @param $question
  * @param $childposts
  * @param $achildposts
  * @param array $duplicateposts
  * @return array
  */
-function qa_page_q_load_c_follows($question, $childposts, $achildposts, $duplicateposts = array())
+function ilya_page_q_load_c_follows($question, $childposts, $achildposts, $duplicateposts = array())
 {
 	$commentsfollows = array();
 
@@ -100,15 +100,15 @@ function qa_page_q_load_c_follows($question, $childposts, $achildposts, $duplica
  * @param array $childposts The post's children (e.g. comments on answers).
  * @return array List of elements that can be added to the post.
  */
-function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $childposts = null)
+function ilya_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $childposts = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$userid = qa_get_logged_in_userid();
-	$cookieid = qa_cookie_get();
-	$userlevel = qa_user_level_for_post($post);
+	$userid = ilya_get_logged_in_userid();
+	$cookieid = ilya_cookie_get();
+	$userlevel = ilya_user_level_for_post($post);
 
-	$userfields = qa_get_logged_in_user_cache();
+	$userfields = ilya_get_logged_in_user_cache();
 	if (!isset($userfields)) {
 		$userfields = array(
 			'userid' => null,
@@ -117,25 +117,25 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
 		);
 	}
 
-	$rules['isbyuser'] = qa_post_is_by_user($post, $userid, $cookieid);
-	$rules['closed'] = $post['basetype'] == 'Q' && (isset($post['closedbyid']) || (isset($post['selchildid']) && qa_opt('do_close_on_select')));
+	$rules['isbyuser'] = ilya_post_is_by_user($post, $userid, $cookieid);
+	$rules['closed'] = $post['basetype'] == 'Q' && (isset($post['closedbyid']) || (isset($post['selchildid']) && ilya_opt('do_close_on_select')));
 
 	// Cache some responses to the user permission checks
 
-	$permiterror_post_q = qa_user_permit_error('permit_post_q', null, $userlevel, true, $userfields); // don't check limits here, so we can show error message
-	$permiterror_post_a = qa_user_permit_error('permit_post_a', null, $userlevel, true, $userfields);
-	$permiterror_post_c = qa_user_permit_error('permit_post_c', null, $userlevel, true, $userfields);
+	$permiterror_post_q = ilya_user_permit_error('permit_post_q', null, $userlevel, true, $userfields); // don't check limits here, so we can show error message
+	$permiterror_post_a = ilya_user_permit_error('permit_post_a', null, $userlevel, true, $userfields);
+	$permiterror_post_c = ilya_user_permit_error('permit_post_c', null, $userlevel, true, $userfields);
 
 	$edit_option = $post['basetype'] == 'Q' ? 'permit_edit_q' : ($post['basetype'] == 'A' ? 'permit_edit_a' : 'permit_edit_c');
-	$permiterror_edit = qa_user_permit_error($edit_option, null, $userlevel, true, $userfields);
-	$permiterror_retagcat = qa_user_permit_error('permit_retag_cat', null, $userlevel, true, $userfields);
-	$permiterror_flag = qa_user_permit_error('permit_flag', null, $userlevel, true, $userfields);
-	$permiterror_hide_show = qa_user_permit_error('permit_hide_show', null, $userlevel, true, $userfields);
-	$permiterror_hide_show_self = $rules['isbyuser'] ? qa_user_permit_error(null, null, $userlevel, true, $userfields) : $permiterror_hide_show;
+	$permiterror_edit = ilya_user_permit_error($edit_option, null, $userlevel, true, $userfields);
+	$permiterror_retagcat = ilya_user_permit_error('permit_retag_cat', null, $userlevel, true, $userfields);
+	$permiterror_flag = ilya_user_permit_error('permit_flag', null, $userlevel, true, $userfields);
+	$permiterror_hide_show = ilya_user_permit_error('permit_hide_show', null, $userlevel, true, $userfields);
+	$permiterror_hide_show_self = $rules['isbyuser'] ? ilya_user_permit_error(null, null, $userlevel, true, $userfields) : $permiterror_hide_show;
 
-	$close_option = $rules['isbyuser'] && qa_opt('allow_close_own_questions') ? null : 'permit_close_q';
-	$permiterror_close_open = qa_user_permit_error($close_option, null, $userlevel, true, $userfields);
-	$permiterror_moderate = qa_user_permit_error('permit_moderate', null, $userlevel, true, $userfields);
+	$close_option = $rules['isbyuser'] && ilya_opt('allow_close_own_questions') ? null : 'permit_close_q';
+	$permiterror_close_open = ilya_user_permit_error($close_option, null, $userlevel, true, $userfields);
+	$permiterror_moderate = ilya_user_permit_error('permit_moderate', null, $userlevel, true, $userfields);
 
 	// General permissions
 
@@ -145,10 +145,10 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
 	// Answer, comment and edit might show the button even if the user still needs to do something (e.g. log in)
 
 	$rules['answerbutton'] = $post['type'] == 'Q' && $permiterror_post_a != 'level' && !$rules['closed']
-		&& (qa_opt('allow_self_answer') || !$rules['isbyuser']);
+		&& (ilya_opt('allow_self_answer') || !$rules['isbyuser']);
 
 	$rules['commentbutton'] = ($post['type'] == 'Q' || $post['type'] == 'A') && $permiterror_post_c != 'level'
-		&& qa_opt($post['type'] == 'Q' ? 'comment_on_qs' : 'comment_on_as');
+		&& ilya_opt($post['type'] == 'Q' ? 'comment_on_qs' : 'comment_on_as');
 	$rules['commentable'] = $rules['commentbutton'] && !$permiterror_post_c;
 
 	$button_errors = array('login', 'level', 'approve');
@@ -157,7 +157,7 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
 		&& ($rules['isbyuser'] || (!in_array($permiterror_edit, $button_errors) && (!$post['queued'])));
 	$rules['editable'] = $rules['editbutton'] && ($rules['isbyuser'] || !$permiterror_edit);
 
-	$rules['retagcatbutton'] = $post['basetype'] == 'Q' && (qa_using_tags() || qa_using_categories())
+	$rules['retagcatbutton'] = $post['basetype'] == 'Q' && (ilya_using_tags() || ilya_using_categories())
 		&& !$post['hidden'] && ($rules['isbyuser'] || !in_array($permiterror_retagcat, $button_errors));
 	$rules['retagcatable'] = $rules['retagcatbutton'] && ($rules['isbyuser'] || !$permiterror_retagcat);
 
@@ -169,11 +169,11 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
 			$rules['retagcatbutton'] = false;
 	}
 
-	$rules['aselectable'] = $post['type'] == 'Q' && !qa_user_permit_error($rules['isbyuser'] ? null : 'permit_select_a', null, $userlevel, true, $userfields);
+	$rules['aselectable'] = $post['type'] == 'Q' && !ilya_user_permit_error($rules['isbyuser'] ? null : 'permit_select_a', null, $userlevel, true, $userfields);
 
-	$rules['flagbutton'] = qa_opt('flagging_of_posts') && !$rules['isbyuser'] && !$post['hidden'] && !$post['queued']
+	$rules['flagbutton'] = ilya_opt('flagging_of_posts') && !$rules['isbyuser'] && !$post['hidden'] && !$post['queued']
 		&& !@$post['userflag'] && !in_array($permiterror_flag, $button_errors);
-	$rules['flagtohide'] = $rules['flagbutton'] && !$permiterror_flag && ($post['flagcount'] + 1) >= qa_opt('flagging_hide_after');
+	$rules['flagtohide'] = $rules['flagbutton'] && !$permiterror_flag && ($post['flagcount'] + 1) >= ilya_opt('flagging_hide_after');
 	$rules['unflaggable'] = @$post['userflag'] && !$post['hidden'];
 	$rules['clearflaggable'] = $post['flagcount'] >= (@$post['userflag'] ? 2 : 1) && !$permiterror_hide_show;
 
@@ -182,10 +182,10 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
 	$notclosedbyother = !($rules['closed'] && isset($post['closedbyid']) && !$rules['authorlast']);
 	$nothiddenbyother = !($post['hidden'] && !$rules['authorlast']);
 
-	$rules['closeable'] = qa_opt('allow_close_questions') && $post['type'] == 'Q' && !$rules['closed'] && $permiterror_close_open === false;
+	$rules['closeable'] = ilya_opt('allow_close_questions') && $post['type'] == 'Q' && !$rules['closed'] && $permiterror_close_open === false;
 	// cannot reopen a question if it's been hidden, or if it was closed by someone else and you don't have global closing permissions
 	$rules['reopenable'] = $rules['closed'] && $permiterror_close_open === false && !$post['hidden']
-		&& ($notclosedbyother || !qa_user_permit_error('permit_close_q', null, $userlevel, true, $userfields));
+		&& ($notclosedbyother || !ilya_user_permit_error('permit_close_q', null, $userlevel, true, $userfields));
 
 	$rules['moderatable'] = $post['queued'] && !$permiterror_moderate;
 	// cannot hide a question if it was closed by someone else and you don't have global hiding permissions
@@ -197,20 +197,20 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
 	$rules['reshowable'] = $post['hidden'] && (!$permiterror_hide_show_self) &&
 		($rules['reshowimmed'] || ($nothiddenbyother && !$post['flagcount']));
 
-	$rules['deleteable'] = $post['hidden'] && !qa_user_permit_error('permit_delete_hidden', null, $userlevel, true, $userfields);
+	$rules['deleteable'] = $post['hidden'] && !ilya_user_permit_error('permit_delete_hidden', null, $userlevel, true, $userfields);
 	$rules['claimable'] = !isset($post['userid']) && isset($userid) && strlen(@$post['cookieid']) && (strcmp(@$post['cookieid'], $cookieid) == 0)
 		&& !($post['basetype'] == 'Q' ? $permiterror_post_q : ($post['basetype'] == 'A' ? $permiterror_post_a : $permiterror_post_c));
-	$rules['followable'] = $post['type'] == 'A' ? qa_opt('follow_on_as') : false;
+	$rules['followable'] = $post['type'] == 'A' ? ilya_opt('follow_on_as') : false;
 
 	// Check for claims that could break rules about self answering and multiple answers
 
 	if ($rules['claimable'] && $post['basetype'] == 'A') {
-		if (!qa_opt('allow_self_answer') && isset($parentpost) && qa_post_is_by_user($parentpost, $userid, $cookieid))
+		if (!ilya_opt('allow_self_answer') && isset($parentpost) && ilya_post_is_by_user($parentpost, $userid, $cookieid))
 			$rules['claimable'] = false;
 
-		if (isset($siblingposts) && !qa_opt('allow_multi_answers')) {
+		if (isset($siblingposts) && !ilya_opt('allow_multi_answers')) {
 			foreach ($siblingposts as $siblingpost) {
-				if ($siblingpost['parentid'] == $post['parentid'] && $siblingpost['basetype'] == 'A' && qa_post_is_by_user($siblingpost, $userid, $cookieid))
+				if ($siblingpost['parentid'] == $post['parentid'] && $siblingpost['basetype'] == 'A' && ilya_post_is_by_user($siblingpost, $userid, $cookieid))
 					$rules['claimable'] = false;
 			}
 		}
@@ -224,11 +224,11 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
 				// this post has comments
 				$rules['deleteable'] = false;
 
-				if ($childpost['basetype'] == 'A' && qa_post_is_by_user($childpost, $userid, $cookieid)) {
-					if (!qa_opt('allow_multi_answers'))
+				if ($childpost['basetype'] == 'A' && ilya_post_is_by_user($childpost, $userid, $cookieid)) {
+					if (!ilya_opt('allow_multi_answers'))
 						$rules['answerbutton'] = false;
 
-					if (!qa_opt('allow_self_answer'))
+					if (!ilya_opt('allow_self_answer'))
 						$rules['claimable'] = false;
 				}
 			}
@@ -247,7 +247,7 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
 
 
 /**
- * Return the $qa_content['q_view'] element for $question as viewed by the current user. If this question is a
+ * Return the $ilya_content['q_view'] element for $question as viewed by the current user. If this question is a
  * follow-on, pass the question for this question's parent answer in $parentquestion, otherwise null. If the question
  * is closed, pass the post used to close this question in $closepost, otherwise null. $usershtml should be an array
  * which maps userids to HTML user representations, including the question's author and (if present) last editor. If a
@@ -259,48 +259,48 @@ function qa_page_q_post_rules($post, $parentpost = null, $siblingposts = null, $
  * @param $formrequested
  * @return array
  */
-function qa_page_q_question_view($question, $parentquestion, $closepost, $usershtml, $formrequested)
+function ilya_page_q_question_view($question, $parentquestion, $closepost, $usershtml, $formrequested)
 {
 	require_once QA_INCLUDE_DIR . 'app/posts.php';
 
 	$questionid = $question['postid'];
-	$userid = qa_get_logged_in_userid();
-	$cookieid = qa_cookie_get();
+	$userid = ilya_get_logged_in_userid();
+	$cookieid = ilya_cookie_get();
 
-	$htmloptions = qa_post_html_options($question, null, true);
+	$htmloptions = ilya_post_html_options($question, null, true);
 	$htmloptions['answersview'] = false; // answer count is displayed separately so don't show it here
-	$htmloptions['avatarsize'] = qa_opt('avatar_q_page_q_size');
-	$htmloptions['q_request'] = qa_q_request($question['postid'], $question['title']);
-	$q_view = qa_post_html_fields($question, $userid, $cookieid, $usershtml, null, $htmloptions);
+	$htmloptions['avatarsize'] = ilya_opt('avatar_q_page_q_size');
+	$htmloptions['q_request'] = ilya_q_request($question['postid'], $question['title']);
+	$q_view = ilya_post_html_fields($question, $userid, $cookieid, $usershtml, null, $htmloptions);
 
 
-	$q_view['main_form_tags'] = 'method="post" action="' . qa_self_html() . '"';
-	$q_view['voting_form_hidden'] = array('code' => qa_get_form_security_code('vote'));
-	$q_view['buttons_form_hidden'] = array('code' => qa_get_form_security_code('buttons-' . $questionid), 'qa_click' => '');
+	$q_view['main_form_tags'] = 'method="post" action="' . ilya_self_html() . '"';
+	$q_view['voting_form_hidden'] = array('code' => ilya_get_form_security_code('vote'));
+	$q_view['buttons_form_hidden'] = array('code' => ilya_get_form_security_code('buttons-' . $questionid), 'ilya_click' => '');
 
 
 	// Buttons for operating on the question
 
 	if (!$formrequested) { // don't show if another form is currently being shown on page
-		$clicksuffix = ' onclick="qa_show_waiting_after(this, false);"'; // add to operations that write to database
+		$clicksuffix = ' onclick="ilya_show_waiting_after(this, false);"'; // add to operations that write to database
 		$buttons = array();
 
 		if ($question['editbutton']) {
 			$buttons['edit'] = array(
 				'tags' => 'name="q_doedit"',
-				'label' => qa_lang_html('question/edit_button'),
-				'popup' => qa_lang_html('question/edit_q_popup'),
+				'label' => ilya_lang_html('question/edit_button'),
+				'popup' => ilya_lang_html('question/edit_q_popup'),
 			);
 		}
 
-		$hascategories = qa_using_categories();
+		$hascategories = ilya_using_categories();
 
 		if ($question['retagcatbutton']) {
 			$buttons['retagcat'] = array(
 				'tags' => 'name="q_doedit"',
-				'label' => qa_lang_html($hascategories ? 'question/recat_button' : 'question/retag_button'),
-				'popup' => qa_lang_html($hascategories
-					? (qa_using_tags() ? 'question/retag_cat_popup' : 'question/recat_popup')
+				'label' => ilya_lang_html($hascategories ? 'question/recat_button' : 'question/retag_button'),
+				'popup' => ilya_lang_html($hascategories
+					? (ilya_using_tags() ? 'question/retag_cat_popup' : 'question/recat_popup')
 					: 'question/retag_popup'
 				),
 			);
@@ -309,103 +309,103 @@ function qa_page_q_question_view($question, $parentquestion, $closepost, $usersh
 		if ($question['flagbutton']) {
 			$buttons['flag'] = array(
 				'tags' => 'name="q_doflag"' . $clicksuffix,
-				'label' => qa_lang_html($question['flagtohide'] ? 'question/flag_hide_button' : 'question/flag_button'),
-				'popup' => qa_lang_html('question/flag_q_popup'),
+				'label' => ilya_lang_html($question['flagtohide'] ? 'question/flag_hide_button' : 'question/flag_button'),
+				'popup' => ilya_lang_html('question/flag_q_popup'),
 			);
 		}
 
 		if ($question['unflaggable']) {
 			$buttons['unflag'] = array(
 				'tags' => 'name="q_dounflag"' . $clicksuffix,
-				'label' => qa_lang_html('question/unflag_button'),
-				'popup' => qa_lang_html('question/unflag_popup'),
+				'label' => ilya_lang_html('question/unflag_button'),
+				'popup' => ilya_lang_html('question/unflag_popup'),
 			);
 		}
 
 		if ($question['clearflaggable']) {
 			$buttons['clearflags'] = array(
 				'tags' => 'name="q_doclearflags"' . $clicksuffix,
-				'label' => qa_lang_html('question/clear_flags_button'),
-				'popup' => qa_lang_html('question/clear_flags_popup'),
+				'label' => ilya_lang_html('question/clear_flags_button'),
+				'popup' => ilya_lang_html('question/clear_flags_popup'),
 			);
 		}
 
 		if ($question['closeable']) {
 			$buttons['close'] = array(
 				'tags' => 'name="q_doclose"',
-				'label' => qa_lang_html('question/close_button'),
-				'popup' => qa_lang_html('question/close_q_popup'),
+				'label' => ilya_lang_html('question/close_button'),
+				'popup' => ilya_lang_html('question/close_q_popup'),
 			);
 		}
 
 		if ($question['reopenable']) {
 			$buttons['reopen'] = array(
 				'tags' => 'name="q_doreopen"' . $clicksuffix,
-				'label' => qa_lang_html('question/reopen_button'),
-				'popup' => qa_lang_html('question/reopen_q_popup'),
+				'label' => ilya_lang_html('question/reopen_button'),
+				'popup' => ilya_lang_html('question/reopen_q_popup'),
 			);
 		}
 
 		if ($question['moderatable']) {
 			$buttons['approve'] = array(
 				'tags' => 'name="q_doapprove"' . $clicksuffix,
-				'label' => qa_lang_html('question/approve_button'),
-				'popup' => qa_lang_html('question/approve_q_popup'),
+				'label' => ilya_lang_html('question/approve_button'),
+				'popup' => ilya_lang_html('question/approve_q_popup'),
 			);
 
 			$buttons['reject'] = array(
 				'tags' => 'name="q_doreject"' . $clicksuffix,
-				'label' => qa_lang_html('question/reject_button'),
-				'popup' => qa_lang_html('question/reject_q_popup'),
+				'label' => ilya_lang_html('question/reject_button'),
+				'popup' => ilya_lang_html('question/reject_q_popup'),
 			);
 		}
 
 		if ($question['hideable']) {
 			$buttons['hide'] = array(
 				'tags' => 'name="q_dohide"' . $clicksuffix,
-				'label' => qa_lang_html('question/hide_button'),
-				'popup' => qa_lang_html('question/hide_q_popup'),
+				'label' => ilya_lang_html('question/hide_button'),
+				'popup' => ilya_lang_html('question/hide_q_popup'),
 			);
 		}
 
 		if ($question['reshowable']) {
 			$buttons['reshow'] = array(
 				'tags' => 'name="q_doreshow"' . $clicksuffix,
-				'label' => qa_lang_html('question/reshow_button'),
-				'popup' => qa_lang_html('question/reshow_q_popup'),
+				'label' => ilya_lang_html('question/reshow_button'),
+				'popup' => ilya_lang_html('question/reshow_q_popup'),
 			);
 		}
 
 		if ($question['deleteable']) {
 			$buttons['delete'] = array(
 				'tags' => 'name="q_dodelete"' . $clicksuffix,
-				'label' => qa_lang_html('question/delete_button'),
-				'popup' => qa_lang_html('question/delete_q_popup'),
+				'label' => ilya_lang_html('question/delete_button'),
+				'popup' => ilya_lang_html('question/delete_q_popup'),
 			);
 		}
 
 		if ($question['claimable']) {
 			$buttons['claim'] = array(
 				'tags' => 'name="q_doclaim"' . $clicksuffix,
-				'label' => qa_lang_html('question/claim_button'),
-				'popup' => qa_lang_html('question/claim_q_popup'),
+				'label' => ilya_lang_html('question/claim_button'),
+				'popup' => ilya_lang_html('question/claim_q_popup'),
 			);
 		}
 
 		if ($question['answerbutton']) {
 			// don't show if shown by default
 			$buttons['answer'] = array(
-				'tags' => 'name="q_doanswer" id="q_doanswer" onclick="return qa_toggle_element(\'anew\')"',
-				'label' => qa_lang_html('question/answer_button'),
-				'popup' => qa_lang_html('question/answer_q_popup'),
+				'tags' => 'name="q_doanswer" id="q_doanswer" onclick="return ilya_toggle_element(\'anew\')"',
+				'label' => ilya_lang_html('question/answer_button'),
+				'popup' => ilya_lang_html('question/answer_q_popup'),
 			);
 		}
 
 		if ($question['commentbutton']) {
 			$buttons['comment'] = array(
-				'tags' => 'name="q_docomment" onclick="return qa_toggle_element(\'c' . $questionid . '\')"',
-				'label' => qa_lang_html('question/comment_button'),
-				'popup' => qa_lang_html('question/comment_q_popup'),
+				'tags' => 'name="q_docomment" onclick="return ilya_toggle_element(\'c' . $questionid . '\')"',
+				'label' => ilya_lang_html('question/comment_button'),
+				'popup' => ilya_lang_html('question/comment_q_popup'),
 			);
 		}
 
@@ -420,9 +420,9 @@ function qa_page_q_question_view($question, $parentquestion, $closepost, $usersh
 
 	if (isset($parentquestion)) {
 		$q_view['follows'] = array(
-			'label' => qa_lang_html(($question['parentid'] == $parentquestion['postid']) ? 'question/follows_q' : 'question/follows_a'),
-			'title' => qa_html(qa_block_words_replace($parentquestion['title'], qa_get_block_words_preg())),
-			'url' => qa_q_path_html($parentquestion['postid'], $parentquestion['title'], false,
+			'label' => ilya_lang_html(($question['parentid'] == $parentquestion['postid']) ? 'question/follows_q' : 'question/follows_a'),
+			'title' => ilya_html(ilya_block_words_replace($parentquestion['title'], ilya_get_block_words_preg())),
+			'url' => ilya_q_path_html($parentquestion['postid'], $parentquestion['title'], false,
 				($question['parentid'] == $parentquestion['postid']) ? 'Q' : 'A', $question['parentid']),
 		);
 	}
@@ -430,38 +430,38 @@ function qa_page_q_question_view($question, $parentquestion, $closepost, $usersh
 
 	// Information about the question that this question is a duplicate of (if appropriate)
 
-	if (isset($closepost) || qa_post_is_closed($question)) {
+	if (isset($closepost) || ilya_post_is_closed($question)) {
 		if ($closepost['basetype'] == 'Q') {
 			if ($closepost['hidden']) {
 				// don't show link for hidden questions
 				$q_view['closed'] = array(
-					'state' => qa_lang_html('main/closed'),
-					'label' => qa_lang_html('main/closed'),
+					'state' => ilya_lang_html('main/closed'),
+					'label' => ilya_lang_html('main/closed'),
 					'content' => '',
 				);
 			} else {
 				$q_view['closed'] = array(
-					'state' => qa_lang_html('main/closed'),
-					'label' => qa_lang_html('question/closed_as_duplicate'),
-					'content' => qa_html(qa_block_words_replace($closepost['title'], qa_get_block_words_preg())),
-					'url' => qa_q_path_html($closepost['postid'], $closepost['title']),
+					'state' => ilya_lang_html('main/closed'),
+					'label' => ilya_lang_html('question/closed_as_duplicate'),
+					'content' => ilya_html(ilya_block_words_replace($closepost['title'], ilya_get_block_words_preg())),
+					'url' => ilya_q_path_html($closepost['postid'], $closepost['title']),
 				);
 			}
 
 		} elseif ($closepost['type'] == 'NOTE') {
-			$viewer = qa_load_viewer($closepost['content'], $closepost['format']);
+			$viewer = ilya_load_viewer($closepost['content'], $closepost['format']);
 
 			$q_view['closed'] = array(
-				'state' => qa_lang_html('main/closed'),
-				'label' => qa_lang_html('question/closed_with_note'),
+				'state' => ilya_lang_html('main/closed'),
+				'label' => ilya_lang_html('question/closed_with_note'),
 				'content' => $viewer->get_html($closepost['content'], $closepost['format'], array(
-					'blockwordspreg' => qa_get_block_words_preg(),
+					'blockwordspreg' => ilya_get_block_words_preg(),
 				)),
 			);
 		} else { // If closed by a selected answer due to the do_close_on_select setting being enabled
 			$q_view['closed'] = array(
-				'state' => qa_lang_html('main/closed'),
-				'label' => qa_lang_html('main/closed'),
+				'state' => ilya_lang_html('main/closed'),
+				'label' => ilya_lang_html('main/closed'),
 				'content' => '',
 			);
 		}
@@ -470,10 +470,10 @@ function qa_page_q_question_view($question, $parentquestion, $closepost, $usersh
 
 	// Extra value display
 
-	if (strlen(@$question['extra']) && qa_opt('extra_field_active') && qa_opt('extra_field_display')) {
+	if (strlen(@$question['extra']) && ilya_opt('extra_field_active') && ilya_opt('extra_field_display')) {
 		$q_view['extra'] = array(
-			'label' => qa_html(qa_opt('extra_field_label')),
-			'content' => qa_html(qa_block_words_replace($question['extra'], qa_get_block_words_preg())),
+			'label' => ilya_html(ilya_opt('extra_field_label')),
+			'content' => ilya_html(ilya_block_words_replace($question['extra'], ilya_get_block_words_preg())),
 		);
 	}
 
@@ -483,7 +483,7 @@ function qa_page_q_question_view($question, $parentquestion, $closepost, $usersh
 
 
 /**
- * Returns an element to add to $qa_content['a_list']['as'] for $answer as viewed by $userid and $cookieid. Pass the
+ * Returns an element to add to $ilya_content['a_list']['as'] for $answer as viewed by $userid and $cookieid. Pass the
  * answer's $question and whether it $isselected. $usershtml should be an array which maps userids to HTML user
  * representations, including the answer's author and (if present) last editor. If a form has been explicitly requested
  * for the page, set $formrequested to true - this will hide the buttons.
@@ -494,37 +494,37 @@ function qa_page_q_question_view($question, $parentquestion, $closepost, $usersh
  * @param $formrequested
  * @return array
  */
-function qa_page_q_answer_view($question, $answer, $isselected, $usershtml, $formrequested)
+function ilya_page_q_answer_view($question, $answer, $isselected, $usershtml, $formrequested)
 {
 	$answerid = $answer['postid'];
-	$userid = qa_get_logged_in_userid();
-	$cookieid = qa_cookie_get();
+	$userid = ilya_get_logged_in_userid();
+	$cookieid = ilya_cookie_get();
 
-	$htmloptions = qa_post_html_options($answer, null, true);
+	$htmloptions = ilya_post_html_options($answer, null, true);
 	$htmloptions['isselected'] = $isselected;
-	$htmloptions['avatarsize'] = qa_opt('avatar_q_page_a_size');
-	$htmloptions['q_request'] = qa_q_request($question['postid'], $question['title']);
-	$a_view = qa_post_html_fields($answer, $userid, $cookieid, $usershtml, null, $htmloptions);
+	$htmloptions['avatarsize'] = ilya_opt('avatar_q_page_a_size');
+	$htmloptions['q_request'] = ilya_q_request($question['postid'], $question['title']);
+	$a_view = ilya_post_html_fields($answer, $userid, $cookieid, $usershtml, null, $htmloptions);
 
 	if ($answer['queued'])
-		$a_view['error'] = $answer['isbyuser'] ? qa_lang_html('question/a_your_waiting_approval') : qa_lang_html('question/a_waiting_your_approval');
+		$a_view['error'] = $answer['isbyuser'] ? ilya_lang_html('question/a_your_waiting_approval') : ilya_lang_html('question/a_waiting_your_approval');
 
-	$a_view['main_form_tags'] = 'method="post" action="' . qa_self_html() . '"';
-	$a_view['voting_form_hidden'] = array('code' => qa_get_form_security_code('vote'));
-	$a_view['buttons_form_hidden'] = array('code' => qa_get_form_security_code('buttons-' . $answerid), 'qa_click' => '');
+	$a_view['main_form_tags'] = 'method="post" action="' . ilya_self_html() . '"';
+	$a_view['voting_form_hidden'] = array('code' => ilya_get_form_security_code('vote'));
+	$a_view['buttons_form_hidden'] = array('code' => ilya_get_form_security_code('buttons-' . $answerid), 'ilya_click' => '');
 
 
 	// Selection/unselect buttons and others for operating on the answer
 
 	if (!$formrequested) { // don't show if another form is currently being shown on page
-		$prefix = 'a' . qa_html($answerid) . '_';
-		$clicksuffix = ' onclick="return qa_answer_click(' . qa_js($answerid) . ', ' . qa_js($question['postid']) . ', this);"';
+		$prefix = 'a' . ilya_html($answerid) . '_';
+		$clicksuffix = ' onclick="return ilya_answer_click(' . ilya_js($answerid) . ', ' . ilya_js($question['postid']) . ', this);"';
 
 		if ($question['aselectable'] && !$answer['hidden'] && !$answer['queued']) {
 			if ($isselected)
-				$a_view['unselect_tags'] = 'title="' . qa_lang_html('question/unselect_popup') . '" name="' . $prefix . 'dounselect"' . $clicksuffix;
+				$a_view['unselect_tags'] = 'title="' . ilya_lang_html('question/unselect_popup') . '" name="' . $prefix . 'dounselect"' . $clicksuffix;
 			else
-				$a_view['select_tags'] = 'title="' . qa_lang_html('question/select_popup') . '" name="' . $prefix . 'doselect"' . $clicksuffix;
+				$a_view['select_tags'] = 'title="' . ilya_lang_html('question/select_popup') . '" name="' . $prefix . 'doselect"' . $clicksuffix;
 		}
 
 		$buttons = array();
@@ -532,94 +532,94 @@ function qa_page_q_answer_view($question, $answer, $isselected, $usershtml, $for
 		if ($answer['editbutton']) {
 			$buttons['edit'] = array(
 				'tags' => 'name="' . $prefix . 'doedit"',
-				'label' => qa_lang_html('question/edit_button'),
-				'popup' => qa_lang_html('question/edit_a_popup'),
+				'label' => ilya_lang_html('question/edit_button'),
+				'popup' => ilya_lang_html('question/edit_a_popup'),
 			);
 		}
 
 		if ($answer['flagbutton']) {
 			$buttons['flag'] = array(
 				'tags' => 'name="' . $prefix . 'doflag"' . $clicksuffix,
-				'label' => qa_lang_html($answer['flagtohide'] ? 'question/flag_hide_button' : 'question/flag_button'),
-				'popup' => qa_lang_html('question/flag_a_popup'),
+				'label' => ilya_lang_html($answer['flagtohide'] ? 'question/flag_hide_button' : 'question/flag_button'),
+				'popup' => ilya_lang_html('question/flag_a_popup'),
 			);
 		}
 
 		if ($answer['unflaggable']) {
 			$buttons['unflag'] = array(
 				'tags' => 'name="' . $prefix . 'dounflag"' . $clicksuffix,
-				'label' => qa_lang_html('question/unflag_button'),
-				'popup' => qa_lang_html('question/unflag_popup'),
+				'label' => ilya_lang_html('question/unflag_button'),
+				'popup' => ilya_lang_html('question/unflag_popup'),
 			);
 		}
 
 		if ($answer['clearflaggable']) {
 			$buttons['clearflags'] = array(
 				'tags' => 'name="' . $prefix . 'doclearflags"' . $clicksuffix,
-				'label' => qa_lang_html('question/clear_flags_button'),
-				'popup' => qa_lang_html('question/clear_flags_popup'),
+				'label' => ilya_lang_html('question/clear_flags_button'),
+				'popup' => ilya_lang_html('question/clear_flags_popup'),
 			);
 		}
 
 		if ($answer['moderatable']) {
 			$buttons['approve'] = array(
 				'tags' => 'name="' . $prefix . 'doapprove"' . $clicksuffix,
-				'label' => qa_lang_html('question/approve_button'),
-				'popup' => qa_lang_html('question/approve_a_popup'),
+				'label' => ilya_lang_html('question/approve_button'),
+				'popup' => ilya_lang_html('question/approve_a_popup'),
 			);
 
 			$buttons['reject'] = array(
 				'tags' => 'name="' . $prefix . 'doreject"' . $clicksuffix,
-				'label' => qa_lang_html('question/reject_button'),
-				'popup' => qa_lang_html('question/reject_a_popup'),
+				'label' => ilya_lang_html('question/reject_button'),
+				'popup' => ilya_lang_html('question/reject_a_popup'),
 			);
 		}
 
 		if ($answer['hideable']) {
 			$buttons['hide'] = array(
 				'tags' => 'name="' . $prefix . 'dohide"' . $clicksuffix,
-				'label' => qa_lang_html('question/hide_button'),
-				'popup' => qa_lang_html('question/hide_a_popup'),
+				'label' => ilya_lang_html('question/hide_button'),
+				'popup' => ilya_lang_html('question/hide_a_popup'),
 			);
 		}
 
 		if ($answer['reshowable']) {
 			$buttons['reshow'] = array(
 				'tags' => 'name="' . $prefix . 'doreshow"' . $clicksuffix,
-				'label' => qa_lang_html('question/reshow_button'),
-				'popup' => qa_lang_html('question/reshow_a_popup'),
+				'label' => ilya_lang_html('question/reshow_button'),
+				'popup' => ilya_lang_html('question/reshow_a_popup'),
 			);
 		}
 
 		if ($answer['deleteable']) {
 			$buttons['delete'] = array(
 				'tags' => 'name="' . $prefix . 'dodelete"' . $clicksuffix,
-				'label' => qa_lang_html('question/delete_button'),
-				'popup' => qa_lang_html('question/delete_a_popup'),
+				'label' => ilya_lang_html('question/delete_button'),
+				'popup' => ilya_lang_html('question/delete_a_popup'),
 			);
 		}
 
 		if ($answer['claimable']) {
 			$buttons['claim'] = array(
 				'tags' => 'name="' . $prefix . 'doclaim"' . $clicksuffix,
-				'label' => qa_lang_html('question/claim_button'),
-				'popup' => qa_lang_html('question/claim_a_popup'),
+				'label' => ilya_lang_html('question/claim_button'),
+				'popup' => ilya_lang_html('question/claim_a_popup'),
 			);
 		}
 
 		if ($answer['followable']) {
 			$buttons['follow'] = array(
 				'tags' => 'name="' . $prefix . 'dofollow"',
-				'label' => qa_lang_html('question/follow_button'),
-				'popup' => qa_lang_html('question/follow_a_popup'),
+				'label' => ilya_lang_html('question/follow_button'),
+				'popup' => ilya_lang_html('question/follow_a_popup'),
 			);
 		}
 
 		if ($answer['commentbutton']) {
 			$buttons['comment'] = array(
-				'tags' => 'name="' . $prefix . 'docomment" onclick="return qa_toggle_element(\'c' . $answerid . '\')"',
-				'label' => qa_lang_html('question/comment_button'),
-				'popup' => qa_lang_html('question/comment_a_popup'),
+				'tags' => 'name="' . $prefix . 'docomment" onclick="return ilya_toggle_element(\'c' . $answerid . '\')"',
+				'label' => ilya_lang_html('question/comment_button'),
+				'popup' => ilya_lang_html('question/comment_a_popup'),
 			);
 		}
 
@@ -634,7 +634,7 @@ function qa_page_q_answer_view($question, $answer, $isselected, $usershtml, $for
 
 
 /**
- * Returns an element to add to the appropriate $qa_content[...]['c_list']['cs'] array for $comment as viewed by the
+ * Returns an element to add to the appropriate $ilya_content[...]['c_list']['cs'] array for $comment as viewed by the
  * current user. Pass the comment's $parent post and antecedent $question. $usershtml should be an array which maps
  * userids to HTML user representations, including the comments's author and (if present) last editor. If a form has
  * been explicitly requested for the page, set $formrequested to true - this will hide the buttons.
@@ -645,119 +645,119 @@ function qa_page_q_answer_view($question, $answer, $isselected, $usershtml, $for
  * @param $formrequested
  * @return array
  */
-function qa_page_q_comment_view($question, $parent, $comment, $usershtml, $formrequested)
+function ilya_page_q_comment_view($question, $parent, $comment, $usershtml, $formrequested)
 {
 	$commentid = $comment['postid'];
 	$questionid = ($parent['basetype'] == 'Q') ? $parent['postid'] : $parent['parentid'];
 	$answerid = ($parent['basetype'] == 'Q') ? null : $parent['postid'];
-	$userid = qa_get_logged_in_userid();
-	$cookieid = qa_cookie_get();
+	$userid = ilya_get_logged_in_userid();
+	$cookieid = ilya_cookie_get();
 
-	$htmloptions = qa_post_html_options($comment, null, true);
-	$htmloptions['avatarsize'] = qa_opt('avatar_q_page_c_size');
-	$htmloptions['q_request'] = qa_q_request($question['postid'], $question['title']);
-	$c_view = qa_post_html_fields($comment, $userid, $cookieid, $usershtml, null, $htmloptions);
+	$htmloptions = ilya_post_html_options($comment, null, true);
+	$htmloptions['avatarsize'] = ilya_opt('avatar_q_page_c_size');
+	$htmloptions['q_request'] = ilya_q_request($question['postid'], $question['title']);
+	$c_view = ilya_post_html_fields($comment, $userid, $cookieid, $usershtml, null, $htmloptions);
 
 	if ($comment['queued'])
-		$c_view['error'] = $comment['isbyuser'] ? qa_lang_html('question/c_your_waiting_approval') : qa_lang_html('question/c_waiting_your_approval');
+		$c_view['error'] = $comment['isbyuser'] ? ilya_lang_html('question/c_your_waiting_approval') : ilya_lang_html('question/c_waiting_your_approval');
 
-	$c_view['main_form_tags'] = 'method="post" action="' . qa_self_html() . '"';
-	$c_view['voting_form_hidden'] = array('code' => qa_get_form_security_code('vote'));
-	$c_view['buttons_form_hidden'] = array('code' => qa_get_form_security_code('buttons-' . $parent['postid']), 'qa_click' => '');
+	$c_view['main_form_tags'] = 'method="post" action="' . ilya_self_html() . '"';
+	$c_view['voting_form_hidden'] = array('code' => ilya_get_form_security_code('vote'));
+	$c_view['buttons_form_hidden'] = array('code' => ilya_get_form_security_code('buttons-' . $parent['postid']), 'ilya_click' => '');
 
 
 	// Buttons for operating on this comment
 
 	if (!$formrequested) { // don't show if another form is currently being shown on page
-		$prefix = 'c' . qa_html($commentid) . '_';
-		$clicksuffix = ' onclick="return qa_comment_click(' . qa_js($commentid) . ', ' . qa_js($questionid) . ', ' . qa_js($parent['postid']) . ', this);"';
+		$prefix = 'c' . ilya_html($commentid) . '_';
+		$clicksuffix = ' onclick="return ilya_comment_click(' . ilya_js($commentid) . ', ' . ilya_js($questionid) . ', ' . ilya_js($parent['postid']) . ', this);"';
 
 		$buttons = array();
 
 		if ($comment['editbutton']) {
 			$buttons['edit'] = array(
 				'tags' => 'name="' . $prefix . 'doedit"',
-				'label' => qa_lang_html('question/edit_button'),
-				'popup' => qa_lang_html('question/edit_c_popup'),
+				'label' => ilya_lang_html('question/edit_button'),
+				'popup' => ilya_lang_html('question/edit_c_popup'),
 			);
 		}
 
 		if ($comment['flagbutton']) {
 			$buttons['flag'] = array(
 				'tags' => 'name="' . $prefix . 'doflag"' . $clicksuffix,
-				'label' => qa_lang_html($comment['flagtohide'] ? 'question/flag_hide_button' : 'question/flag_button'),
-				'popup' => qa_lang_html('question/flag_c_popup'),
+				'label' => ilya_lang_html($comment['flagtohide'] ? 'question/flag_hide_button' : 'question/flag_button'),
+				'popup' => ilya_lang_html('question/flag_c_popup'),
 			);
 		}
 
 		if ($comment['unflaggable']) {
 			$buttons['unflag'] = array(
 				'tags' => 'name="' . $prefix . 'dounflag"' . $clicksuffix,
-				'label' => qa_lang_html('question/unflag_button'),
-				'popup' => qa_lang_html('question/unflag_popup'),
+				'label' => ilya_lang_html('question/unflag_button'),
+				'popup' => ilya_lang_html('question/unflag_popup'),
 			);
 		}
 
 		if ($comment['clearflaggable']) {
 			$buttons['clearflags'] = array(
 				'tags' => 'name="' . $prefix . 'doclearflags"' . $clicksuffix,
-				'label' => qa_lang_html('question/clear_flags_button'),
-				'popup' => qa_lang_html('question/clear_flags_popup'),
+				'label' => ilya_lang_html('question/clear_flags_button'),
+				'popup' => ilya_lang_html('question/clear_flags_popup'),
 			);
 		}
 
 		if ($comment['moderatable']) {
 			$buttons['approve'] = array(
 				'tags' => 'name="' . $prefix . 'doapprove"' . $clicksuffix,
-				'label' => qa_lang_html('question/approve_button'),
-				'popup' => qa_lang_html('question/approve_c_popup'),
+				'label' => ilya_lang_html('question/approve_button'),
+				'popup' => ilya_lang_html('question/approve_c_popup'),
 			);
 
 			$buttons['reject'] = array(
 				'tags' => 'name="' . $prefix . 'doreject"' . $clicksuffix,
-				'label' => qa_lang_html('question/reject_button'),
-				'popup' => qa_lang_html('question/reject_c_popup'),
+				'label' => ilya_lang_html('question/reject_button'),
+				'popup' => ilya_lang_html('question/reject_c_popup'),
 			);
 		}
 
 		if ($comment['hideable']) {
 			$buttons['hide'] = array(
 				'tags' => 'name="' . $prefix . 'dohide"' . $clicksuffix,
-				'label' => qa_lang_html('question/hide_button'),
-				'popup' => qa_lang_html('question/hide_c_popup'),
+				'label' => ilya_lang_html('question/hide_button'),
+				'popup' => ilya_lang_html('question/hide_c_popup'),
 			);
 		}
 
 		if ($comment['reshowable']) {
 			$buttons['reshow'] = array(
 				'tags' => 'name="' . $prefix . 'doreshow"' . $clicksuffix,
-				'label' => qa_lang_html('question/reshow_button'),
-				'popup' => qa_lang_html('question/reshow_c_popup'),
+				'label' => ilya_lang_html('question/reshow_button'),
+				'popup' => ilya_lang_html('question/reshow_c_popup'),
 			);
 		}
 
 		if ($comment['deleteable']) {
 			$buttons['delete'] = array(
 				'tags' => 'name="' . $prefix . 'dodelete"' . $clicksuffix,
-				'label' => qa_lang_html('question/delete_button'),
-				'popup' => qa_lang_html('question/delete_c_popup'),
+				'label' => ilya_lang_html('question/delete_button'),
+				'popup' => ilya_lang_html('question/delete_c_popup'),
 			);
 		}
 
 		if ($comment['claimable']) {
 			$buttons['claim'] = array(
 				'tags' => 'name="' . $prefix . 'doclaim"' . $clicksuffix,
-				'label' => qa_lang_html('question/claim_button'),
-				'popup' => qa_lang_html('question/claim_c_popup'),
+				'label' => ilya_lang_html('question/claim_button'),
+				'popup' => ilya_lang_html('question/claim_c_popup'),
 			);
 		}
 
-		if ($parent['commentbutton'] && qa_opt('show_c_reply_buttons') && $comment['type'] == 'C') {
+		if ($parent['commentbutton'] && ilya_opt('show_c_reply_buttons') && $comment['type'] == 'C') {
 			$buttons['comment'] = array(
-				'tags' => 'name="' . (($parent['basetype'] == 'Q') ? 'q' : ('a' . qa_html($parent['postid']))) .
-					'_docomment" onclick="return qa_toggle_element(\'c' . qa_html($parent['postid']) . '\')"',
-				'label' => qa_lang_html('question/reply_button'),
-				'popup' => qa_lang_html('question/reply_c_popup'),
+				'tags' => 'name="' . (($parent['basetype'] == 'Q') ? 'q' : ('a' . ilya_html($parent['postid']))) .
+					'_docomment" onclick="return ilya_toggle_element(\'c' . ilya_html($parent['postid']) . '\')"',
+				'label' => ilya_lang_html('question/reply_button'),
+				'popup' => ilya_lang_html('question/reply_c_popup'),
 			);
 		}
 
@@ -772,7 +772,7 @@ function qa_page_q_comment_view($question, $parent, $comment, $usershtml, $formr
 
 
 /**
- * Return an array for $qa_content[...]['c_list'] to display all of the comments and follow-on questions in
+ * Return an array for $ilya_content[...]['c_list'] to display all of the comments and follow-on questions in
  * $commentsfollows which belong to post $parent with antecedent $question, as viewed by the current user. If
  * $alwaysfull then all comments will be included, otherwise the list may be shortened with a 'show previous x
  * comments' link. $usershtml should be an array which maps userids to HTML user representations, including all
@@ -788,14 +788,14 @@ function qa_page_q_comment_view($question, $parent, $comment, $usershtml, $formr
  * @param $formpostid
  * @return array
  */
-function qa_page_q_comment_follow_list($question, $parent, $commentsfollows, $alwaysfull, $usershtml, $formrequested, $formpostid)
+function ilya_page_q_comment_follow_list($question, $parent, $commentsfollows, $alwaysfull, $usershtml, $formrequested, $formpostid)
 {
 	$parentid = $parent['postid'];
-	$userid = qa_get_logged_in_userid();
-	$cookieid = qa_cookie_get();
+	$userid = ilya_get_logged_in_userid();
+	$cookieid = ilya_cookie_get();
 
 	$commentlist = array(
-		'tags' => 'id="c' . qa_html($parentid) . '_list"',
+		'tags' => 'id="c' . ilya_html($parentid) . '_list"',
 		'cs' => array(),
 	);
 
@@ -818,29 +818,29 @@ function qa_page_q_comment_follow_list($question, $parent, $commentsfollows, $al
 
 	$countshowcomments = count($showcomments);
 
-	if (!$alwaysfull && $countshowcomments > qa_opt('show_fewer_cs_from'))
-		$skipfirst = $countshowcomments - qa_opt('show_fewer_cs_count');
+	if (!$alwaysfull && $countshowcomments > ilya_opt('show_fewer_cs_from'))
+		$skipfirst = $countshowcomments - ilya_opt('show_fewer_cs_count');
 	else
 		$skipfirst = 0;
 
 	if ($skipfirst == $countshowcomments) { // showing none
 		if ($skipfirst == 1)
-			$expandtitle = qa_lang_html('question/show_1_comment');
+			$expandtitle = ilya_lang_html('question/show_1_comment');
 		else
-			$expandtitle = qa_lang_html_sub('question/show_x_comments', $skipfirst);
+			$expandtitle = ilya_lang_html_sub('question/show_x_comments', $skipfirst);
 
 	} else {
 		if ($skipfirst == 1)
-			$expandtitle = qa_lang_html('question/show_1_previous_comment');
+			$expandtitle = ilya_lang_html('question/show_1_previous_comment');
 		else
-			$expandtitle = qa_lang_html_sub('question/show_x_previous_comments', $skipfirst);
+			$expandtitle = ilya_lang_html_sub('question/show_x_previous_comments', $skipfirst);
 	}
 
 	if ($skipfirst > 0) {
 		$commentlist['cs'][$parentid] = array(
-			'url' => qa_html('?state=showcomments-' . $parentid . '&show=' . $parentid . '#' . urlencode(qa_anchor($parent['basetype'], $parentid))),
+			'url' => ilya_html('?state=showcomments-' . $parentid . '&show=' . $parentid . '#' . urlencode(ilya_anchor($parent['basetype'], $parentid))),
 
-			'expand_tags' => 'onclick="return qa_show_comments(' . qa_js($question['postid']) . ', ' . qa_js($parentid) . ', this);"',
+			'expand_tags' => 'onclick="return ilya_show_comments(' . ilya_js($question['postid']) . ', ' . ilya_js($parentid) . ', this);"',
 
 			'title' => $expandtitle,
 		);
@@ -850,13 +850,13 @@ function qa_page_q_comment_follow_list($question, $parent, $commentsfollows, $al
 		if ($skipfirst > 0) {
 			$skipfirst--;
 		} elseif ($commentfollow['basetype'] == 'C') {
-			$commentlist['cs'][$commentfollowid] = qa_page_q_comment_view($question, $parent, $commentfollow, $usershtml, $formrequested);
+			$commentlist['cs'][$commentfollowid] = ilya_page_q_comment_view($question, $parent, $commentfollow, $usershtml, $formrequested);
 		} elseif ($commentfollow['basetype'] == 'Q') {
-			$htmloptions = qa_post_html_options($commentfollow);
-			$htmloptions['avatarsize'] = qa_opt('avatar_q_page_c_size');
+			$htmloptions = ilya_post_html_options($commentfollow);
+			$htmloptions['avatarsize'] = ilya_opt('avatar_q_page_c_size');
 			$htmloptions['voteview'] = false;
 
-			$commentlist['cs'][$commentfollowid] = qa_post_html_fields($commentfollow, $userid, $cookieid, $usershtml, null, $htmloptions);
+			$commentlist['cs'][$commentfollowid] = ilya_post_html_fields($commentfollow, $userid, $cookieid, $usershtml, null, $htmloptions);
 		}
 	}
 
@@ -868,11 +868,11 @@ function qa_page_q_comment_follow_list($question, $parent, $commentsfollows, $al
 
 
 /**
- * Return a $qa_content form for adding an answer to $question. Pass an HTML element id to use for the form in $formid
- * and the result of qa_user_captcha_reason() in $captchareason. Pass previous inputs from a submitted version of this
+ * Return a $ilya_content form for adding an answer to $question. Pass an HTML element id to use for the form in $formid
+ * and the result of ilya_user_captcha_reason() in $captchareason. Pass previous inputs from a submitted version of this
  * form in the array $in and resulting errors in $errors. If $loadnow is true, the form will be loaded immediately. Set
  * $formrequested to true if the user explicitly requested it, as opposed being shown automatically.
- * @param $qa_content
+ * @param $ilya_content
  * @param $formid
  * @param $captchareason
  * @param $question
@@ -882,28 +882,28 @@ function qa_page_q_comment_follow_list($question, $parent, $commentsfollows, $al
  * @param $formrequested
  * @return array
  */
-function qa_page_q_add_a_form(&$qa_content, $formid, $captchareason, $question, $in, $errors, $loadnow, $formrequested)
+function ilya_page_q_add_a_form(&$ilya_content, $formid, $captchareason, $question, $in, $errors, $loadnow, $formrequested)
 {
 	// The 'approve', 'login', 'confirm', 'limit', 'userblock', 'ipblock' permission errors are reported to the user here
-	// The other option ('level') prevents the answer button being shown, in qa_page_q_post_rules(...)
+	// The other option ('level') prevents the answer button being shown, in ilya_page_q_post_rules(...)
 
-	switch (qa_user_post_permit_error('permit_post_a', $question, QA_LIMIT_ANSWERS)) {
+	switch (ilya_user_post_permit_error('permit_post_a', $question, QA_LIMIT_ANSWERS)) {
 		case 'login':
 			$form = array(
-				'title' => qa_insert_login_links(qa_lang_html('question/answer_must_login'), qa_request()),
+				'title' => ilya_insert_login_links(ilya_lang_html('question/answer_must_login'), ilya_request()),
 			);
 			break;
 
 		case 'confirm':
 			$form = array(
-				'title' => qa_insert_login_links(qa_lang_html('question/answer_must_confirm'), qa_request()),
+				'title' => ilya_insert_login_links(ilya_lang_html('question/answer_must_confirm'), ilya_request()),
 			);
 			break;
 
 		case 'approve':
 			$form = array(
-				'title' => strtr(qa_lang_html('question/answer_must_be_approved'), array(
-					'^1' => '<a href="' . qa_path_html('account') . '">',
+				'title' => strtr(ilya_lang_html('question/answer_must_be_approved'), array(
+					'^1' => '<a href="' . ilya_path_html('account') . '">',
 					'^2' => '</a>',
 				)),
 			);
@@ -911,31 +911,31 @@ function qa_page_q_add_a_form(&$qa_content, $formid, $captchareason, $question, 
 
 		case 'limit':
 			$form = array(
-				'title' => qa_lang_html('question/answer_limit'),
+				'title' => ilya_lang_html('question/answer_limit'),
 			);
 			break;
 
 		default:
 			$form = array(
-				'title' => qa_lang_html('users/no_permission'),
+				'title' => ilya_lang_html('users/no_permission'),
 			);
 			break;
 
 		case false:
-			$editorname = isset($in['editor']) ? $in['editor'] : qa_opt('editor_for_as');
-			$editor = qa_load_editor(@$in['content'], @$in['format'], $editorname);
+			$editorname = isset($in['editor']) ? $in['editor'] : ilya_opt('editor_for_as');
+			$editor = ilya_load_editor(@$in['content'], @$in['format'], $editorname);
 
 			if (method_exists($editor, 'update_script'))
 				$updatescript = $editor->update_script('a_content');
 			else
 				$updatescript = '';
 
-			$custom = qa_opt('show_custom_answer') ? trim(qa_opt('custom_answer')) : '';
+			$custom = ilya_opt('show_custom_answer') ? trim(ilya_opt('custom_answer')) : '';
 
 			$form = array(
-				'tags' => 'method="post" action="' . qa_self_html() . '" name="a_form"',
+				'tags' => 'method="post" action="' . ilya_self_html() . '" name="a_form"',
 
-				'title' => qa_lang_html('question/your_answer_title'),
+				'title' => ilya_lang_html('question/your_answer_title'),
 
 				'fields' => array(
 					'custom' => array(
@@ -944,24 +944,24 @@ function qa_page_q_add_a_form(&$qa_content, $formid, $captchareason, $question, 
 					),
 
 					'content' => array_merge(
-						qa_editor_load_field($editor, $qa_content, @$in['content'], @$in['format'], 'a_content', 12, $formrequested, $loadnow),
+						ilya_editor_load_field($editor, $ilya_content, @$in['content'], @$in['format'], 'a_content', 12, $formrequested, $loadnow),
 						array(
-							'error' => qa_html(@$errors['content']),
+							'error' => ilya_html(@$errors['content']),
 						)
 					),
 				),
 
 				'buttons' => array(
 					'answer' => array(
-						'tags' => 'onclick="' . $updatescript . ' return qa_submit_answer(' . qa_js($question['postid']) . ', this);"',
-						'label' => qa_lang_html('question/add_answer_button'),
+						'tags' => 'onclick="' . $updatescript . ' return ilya_submit_answer(' . ilya_js($question['postid']) . ', this);"',
+						'label' => ilya_lang_html('question/add_answer_button'),
 					),
 				),
 
 				'hidden' => array(
-					'a_editor' => qa_html($editorname),
+					'a_editor' => ilya_html($editorname),
 					'a_doadd' => '1',
-					'code' => qa_get_form_security_code('answer-' . $question['postid']),
+					'code' => ilya_get_form_security_code('answer-' . $question['postid']),
 				),
 			);
 
@@ -971,38 +971,38 @@ function qa_page_q_add_a_form(&$qa_content, $formid, $captchareason, $question, 
 			if ($formrequested || !$loadnow)
 				$form['buttons']['cancel'] = array(
 					'tags' => 'name="docancel"',
-					'label' => qa_lang_html('main/cancel_button'),
+					'label' => ilya_lang_html('main/cancel_button'),
 				);
 
-			if (!qa_is_logged_in() && qa_opt('allow_anonymous_naming'))
-				qa_set_up_name_field($qa_content, $form['fields'], @$in['name'], 'a_');
+			if (!ilya_is_logged_in() && ilya_opt('allow_anonymous_naming'))
+				ilya_set_up_name_field($ilya_content, $form['fields'], @$in['name'], 'a_');
 
-			qa_set_up_notify_fields($qa_content, $form['fields'], 'A', qa_get_logged_in_email(),
-				isset($in['notify']) ? $in['notify'] : qa_opt('notify_users_default'), @$in['email'], @$errors['email'], 'a_');
+			ilya_set_up_notify_fields($ilya_content, $form['fields'], 'A', ilya_get_logged_in_email(),
+				isset($in['notify']) ? $in['notify'] : ilya_opt('notify_users_default'), @$in['email'], @$errors['email'], 'a_');
 
 			$onloads = array();
 
 			if ($captchareason) {
-				$captchaloadscript = qa_set_up_captcha_field($qa_content, $form['fields'], $errors, qa_captcha_reason_note($captchareason));
+				$captchaloadscript = ilya_set_up_captcha_field($ilya_content, $form['fields'], $errors, ilya_captcha_reason_note($captchareason));
 
 				if (strlen($captchaloadscript))
-					$onloads[] = 'document.getElementById(' . qa_js($formid) . ').qa_show = function() { ' . $captchaloadscript . ' };';
+					$onloads[] = 'document.getElementById(' . ilya_js($formid) . ').ilya_show = function() { ' . $captchaloadscript . ' };';
 			}
 
 			if (!$loadnow) {
 				if (method_exists($editor, 'load_script'))
-					$onloads[] = 'document.getElementById(' . qa_js($formid) . ').qa_load = function() { ' . $editor->load_script('a_content') . ' };';
+					$onloads[] = 'document.getElementById(' . ilya_js($formid) . ').ilya_load = function() { ' . $editor->load_script('a_content') . ' };';
 
-				$form['buttons']['cancel']['tags'] .= ' onclick="return qa_toggle_element();"';
+				$form['buttons']['cancel']['tags'] .= ' onclick="return ilya_toggle_element();"';
 			}
 
 			if (!$formrequested) {
 				if (method_exists($editor, 'focus_script'))
-					$onloads[] = 'document.getElementById(' . qa_js($formid) . ').qa_focus = function() { ' . $editor->focus_script('a_content') . ' };';
+					$onloads[] = 'document.getElementById(' . ilya_js($formid) . ').ilya_focus = function() { ' . $editor->focus_script('a_content') . ' };';
 			}
 
 			if (count($onloads)) {
-				$qa_content['script_onloads'][] = $onloads;
+				$ilya_content['script_onloads'][] = $onloads;
 			}
 
 			break;
@@ -1017,11 +1017,11 @@ function qa_page_q_add_a_form(&$qa_content, $formid, $captchareason, $question, 
 
 
 /**
- * Returns a $qa_content form for adding a comment to post $parent which is part of $question. Pass an HTML element id
- * to use for the form in $formid and the result of qa_user_captcha_reason() in $captchareason. Pass previous inputs
+ * Returns a $ilya_content form for adding a comment to post $parent which is part of $question. Pass an HTML element id
+ * to use for the form in $formid and the result of ilya_user_captcha_reason() in $captchareason. Pass previous inputs
  * from a submitted version of this form in the array $in and resulting errors in $errors. If $loadfocusnow is true,
  * the form will be loaded and focused immediately.
- * @param $qa_content
+ * @param $ilya_content
  * @param $question
  * @param $parent
  * @param $formid
@@ -1031,28 +1031,28 @@ function qa_page_q_add_a_form(&$qa_content, $formid, $captchareason, $question, 
  * @param $loadfocusnow
  * @return array
  */
-function qa_page_q_add_c_form(&$qa_content, $question, $parent, $formid, $captchareason, $in, $errors, $loadfocusnow)
+function ilya_page_q_add_c_form(&$ilya_content, $question, $parent, $formid, $captchareason, $in, $errors, $loadfocusnow)
 {
 	// The 'approve', 'login', 'confirm', 'userblock', 'ipblock' permission errors are reported to the user here
-	// The other option ('level') prevents the comment button being shown, in qa_page_q_post_rules(...)
+	// The other option ('level') prevents the comment button being shown, in ilya_page_q_post_rules(...)
 
-	switch (qa_user_post_permit_error('permit_post_c', $parent, QA_LIMIT_COMMENTS)) {
+	switch (ilya_user_post_permit_error('permit_post_c', $parent, QA_LIMIT_COMMENTS)) {
 		case 'login':
 			$form = array(
-				'title' => qa_insert_login_links(qa_lang_html('question/comment_must_login'), qa_request()),
+				'title' => ilya_insert_login_links(ilya_lang_html('question/comment_must_login'), ilya_request()),
 			);
 			break;
 
 		case 'confirm':
 			$form = array(
-				'title' => qa_insert_login_links(qa_lang_html('question/comment_must_confirm'), qa_request()),
+				'title' => ilya_insert_login_links(ilya_lang_html('question/comment_must_confirm'), ilya_request()),
 			);
 			break;
 
 		case 'approve':
 			$form = array(
-				'title' => strtr(qa_lang_html('question/comment_must_be_approved'), array(
-					'^1' => '<a href="' . qa_path_html('account') . '">',
+				'title' => strtr(ilya_lang_html('question/comment_must_be_approved'), array(
+					'^1' => '<a href="' . ilya_path_html('account') . '">',
 					'^2' => '</a>',
 				)),
 			);
@@ -1060,33 +1060,33 @@ function qa_page_q_add_c_form(&$qa_content, $question, $parent, $formid, $captch
 
 		case 'limit':
 			$form = array(
-				'title' => qa_lang_html('question/comment_limit'),
+				'title' => ilya_lang_html('question/comment_limit'),
 			);
 			break;
 
 		default:
 			$form = array(
-				'title' => qa_lang_html('users/no_permission'),
+				'title' => ilya_lang_html('users/no_permission'),
 			);
 			break;
 
 		case false:
 			$prefix = 'c' . $parent['postid'] . '_';
 
-			$editorname = isset($in['editor']) ? $in['editor'] : qa_opt('editor_for_cs');
-			$editor = qa_load_editor(@$in['content'], @$in['format'], $editorname);
+			$editorname = isset($in['editor']) ? $in['editor'] : ilya_opt('editor_for_cs');
+			$editor = ilya_load_editor(@$in['content'], @$in['format'], $editorname);
 
 			if (method_exists($editor, 'update_script'))
 				$updatescript = $editor->update_script($prefix . 'content');
 			else
 				$updatescript = '';
 
-			$custom = qa_opt('show_custom_comment') ? trim(qa_opt('custom_comment')) : '';
+			$custom = ilya_opt('show_custom_comment') ? trim(ilya_opt('custom_comment')) : '';
 
 			$form = array(
-				'tags' => 'method="post" action="' . qa_self_html() . '" name="c_form_' . qa_html($parent['postid']) . '"',
+				'tags' => 'method="post" action="' . ilya_self_html() . '" name="c_form_' . ilya_html($parent['postid']) . '"',
 
-				'title' => qa_lang_html(($question['postid'] == $parent['postid']) ? 'question/your_comment_q' : 'question/your_comment_a'),
+				'title' => ilya_lang_html(($question['postid'] == $parent['postid']) ? 'question/your_comment_q' : 'question/your_comment_a'),
 
 				'fields' => array(
 					'custom' => array(
@@ -1095,61 +1095,61 @@ function qa_page_q_add_c_form(&$qa_content, $question, $parent, $formid, $captch
 					),
 
 					'content' => array_merge(
-						qa_editor_load_field($editor, $qa_content, @$in['content'], @$in['format'], $prefix . 'content', 4, $loadfocusnow, $loadfocusnow),
+						ilya_editor_load_field($editor, $ilya_content, @$in['content'], @$in['format'], $prefix . 'content', 4, $loadfocusnow, $loadfocusnow),
 						array(
-							'error' => qa_html(@$errors['content']),
+							'error' => ilya_html(@$errors['content']),
 						)
 					),
 				),
 
 				'buttons' => array(
 					'comment' => array(
-						'tags' => 'onclick="' . $updatescript . ' return qa_submit_comment(' . qa_js($question['postid']) . ', ' . qa_js($parent['postid']) . ', this);"',
-						'label' => qa_lang_html('question/add_comment_button'),
+						'tags' => 'onclick="' . $updatescript . ' return ilya_submit_comment(' . ilya_js($question['postid']) . ', ' . ilya_js($parent['postid']) . ', this);"',
+						'label' => ilya_lang_html('question/add_comment_button'),
 					),
 
 					'cancel' => array(
 						'tags' => 'name="docancel"',
-						'label' => qa_lang_html('main/cancel_button'),
+						'label' => ilya_lang_html('main/cancel_button'),
 					),
 				),
 
 				'hidden' => array(
-					$prefix . 'editor' => qa_html($editorname),
+					$prefix . 'editor' => ilya_html($editorname),
 					$prefix . 'doadd' => '1',
-					$prefix . 'code' => qa_get_form_security_code('comment-' . $parent['postid']),
+					$prefix . 'code' => ilya_get_form_security_code('comment-' . $parent['postid']),
 				),
 			);
 
 			if (!strlen($custom))
 				unset($form['fields']['custom']);
 
-			if (!qa_is_logged_in() && qa_opt('allow_anonymous_naming'))
-				qa_set_up_name_field($qa_content, $form['fields'], @$in['name'], $prefix);
+			if (!ilya_is_logged_in() && ilya_opt('allow_anonymous_naming'))
+				ilya_set_up_name_field($ilya_content, $form['fields'], @$in['name'], $prefix);
 
-			qa_set_up_notify_fields($qa_content, $form['fields'], 'C', qa_get_logged_in_email(),
-				isset($in['notify']) ? $in['notify'] : qa_opt('notify_users_default'), $in['email'], @$errors['email'], $prefix);
+			ilya_set_up_notify_fields($ilya_content, $form['fields'], 'C', ilya_get_logged_in_email(),
+				isset($in['notify']) ? $in['notify'] : ilya_opt('notify_users_default'), $in['email'], @$errors['email'], $prefix);
 
 			$onloads = array();
 
 			if ($captchareason) {
-				$captchaloadscript = qa_set_up_captcha_field($qa_content, $form['fields'], $errors, qa_captcha_reason_note($captchareason));
+				$captchaloadscript = ilya_set_up_captcha_field($ilya_content, $form['fields'], $errors, ilya_captcha_reason_note($captchareason));
 
 				if (strlen($captchaloadscript))
-					$onloads[] = 'document.getElementById(' . qa_js($formid) . ').qa_show = function() { ' . $captchaloadscript . ' };';
+					$onloads[] = 'document.getElementById(' . ilya_js($formid) . ').ilya_show = function() { ' . $captchaloadscript . ' };';
 			}
 
 			if (!$loadfocusnow) {
 				if (method_exists($editor, 'load_script'))
-					$onloads[] = 'document.getElementById(' . qa_js($formid) . ').qa_load = function() { ' . $editor->load_script($prefix . 'content') . ' };';
+					$onloads[] = 'document.getElementById(' . ilya_js($formid) . ').ilya_load = function() { ' . $editor->load_script($prefix . 'content') . ' };';
 				if (method_exists($editor, 'focus_script'))
-					$onloads[] = 'document.getElementById(' . qa_js($formid) . ').qa_focus = function() { ' . $editor->focus_script($prefix . 'content') . ' };';
+					$onloads[] = 'document.getElementById(' . ilya_js($formid) . ').ilya_focus = function() { ' . $editor->focus_script($prefix . 'content') . ' };';
 
-				$form['buttons']['cancel']['tags'] .= ' onclick="return qa_toggle_element()"';
+				$form['buttons']['cancel']['tags'] .= ' onclick="return ilya_toggle_element()"';
 			}
 
 			if (count($onloads)) {
-				$qa_content['script_onloads'][] = $onloads;
+				$ilya_content['script_onloads'][] = $onloads;
 			}
 
 			break;

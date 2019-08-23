@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('widget', 'ilya-tag-cloud.php', 'qa_tag_cloud', 'Tag Cloud');
+ilya_register_plugin_module('widget', 'ilya-tag-cloud.php', 'ilya_tag_cloud', 'Tag Cloud');

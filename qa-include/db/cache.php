@@ -34,16 +34,16 @@ require_once QA_INCLUDE_DIR . 'db/maxima.php';
  * @param $content
  * @return mixed
  */
-function qa_db_cache_set($type, $cacheid, $content)
+function ilya_db_cache_set($type, $cacheid, $content)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^cache WHERE lastread<NOW()-INTERVAL # SECOND',
 		QA_DB_MAX_CACHE_AGE
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT INTO ^cache (type, cacheid, content, created, lastread) VALUES ($, #, $, NOW(), NOW()) ' .
 		'ON DUPLICATE KEY UPDATE content = VALUES(content), created = VALUES(created), lastread = VALUES(lastread)',
 		$type, $cacheid, $content
@@ -57,17 +57,17 @@ function qa_db_cache_set($type, $cacheid, $content)
  * @param $cacheid
  * @return mixed|null
  */
-function qa_db_cache_get($type, $cacheid)
+function ilya_db_cache_get($type, $cacheid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$content = qa_db_read_one_value(qa_db_query_sub(
+	$content = ilya_db_read_one_value(ilya_db_query_sub(
 		'SELECT content FROM ^cache WHERE type=$ AND cacheid=#',
 		$type, $cacheid
 	), true);
 
 	if (isset($content))
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^cache SET lastread=NOW() WHERE type=$ AND cacheid=#',
 			$type, $cacheid
 		);

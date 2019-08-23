@@ -28,15 +28,15 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 /*
 	How do I make a theme which goes beyond CSS to actually modify the HTML output?
 
-	Create a file named ilya-theme.php in your new theme directory which defines a class qa_html_theme
-	that extends this base class qa_html_theme_base. You can then override any of the methods below,
-	referring back to the default method using double colon (qa_html_theme_base::) notation.
+	Create a file named ilya-theme.php in your new theme directory which defines a class ilya_html_theme
+	that extends this base class ilya_html_theme_base. You can then override any of the methods below,
+	referring back to the default method using double colon (ilya_html_theme_base::) notation.
 
 	Plugins can also do something similar by using a layer. For more information and to see some example
 	code, please consult the online Q2A documentation.
 */
 
-class qa_html_theme_base
+class ilya_html_theme_base
 {
 	public $template;
 	public $content;
@@ -80,7 +80,7 @@ class qa_html_theme_base
 	 * @param $rooturl
 	 * @param $request
 	 */
-	public function qa_html_theme_base($template, $content, $rooturl, $request)
+	public function ilya_html_theme_base($template, $content, $rooturl, $request)
 	{
 		self::__construct($template, $content, $rooturl, $request);
 	}
@@ -188,7 +188,7 @@ class qa_html_theme_base
 
 	/**
 	 * Reorder the parts of the page according to the $parts array which contains part keys in their new order. Call this
-	 * before main_parts(). See the docs for qa_array_reorder() in util/sort.php for the other parameters.
+	 * before main_parts(). See the docs for ilya_array_reorder() in util/sort.php for the other parameters.
 	 * @param $parts
 	 * @param string $beforekey
 	 * @param bool $reorderrelative
@@ -197,7 +197,7 @@ class qa_html_theme_base
 	{
 		require_once QA_INCLUDE_DIR . 'util/sort.php';
 
-		qa_array_reorder($this->content, $parts, $beforekey, $reorderrelative);
+		ilya_array_reorder($this->content, $parts, $beforekey, $reorderrelative);
 	}
 
 
@@ -454,12 +454,12 @@ class qa_html_theme_base
 
 	public function body_tags()
 	{
-		$class = 'ilya-template-' . qa_html($this->template);
-		$class .= empty($this->theme) ? '' : ' ilya-theme-' . qa_html($this->theme);
+		$class = 'ilya-template-' . ilya_html($this->template);
+		$class .= empty($this->theme) ? '' : ' ilya-theme-' . ilya_html($this->theme);
 
 		if (isset($this->content['categoryids'])) {
 			foreach ($this->content['categoryids'] as $categoryid) {
-				$class .= ' ilya-category-' . qa_html($categoryid);
+				$class .= ' ilya-category-' . ilya_html($categoryid);
 			}
 		}
 
@@ -1016,7 +1016,7 @@ class qa_html_theme_base
 
 	/**
 	 * Reorder the fields of $form according to the $keys array which contains the field keys in their new order. Call
-	 * before any fields are output. See the docs for qa_array_reorder() in util/sort.php for the other parameters.
+	 * before any fields are output. See the docs for ilya_array_reorder() in util/sort.php for the other parameters.
 	 * @param $form
 	 * @param $keys
 	 * @param mixed $beforekey
@@ -1027,7 +1027,7 @@ class qa_html_theme_base
 		require_once QA_INCLUDE_DIR . 'util/sort.php';
 
 		if (is_array($form['fields']))
-			qa_array_reorder($form['fields'], $keys, $beforekey, $reorderrelative);
+			ilya_array_reorder($form['fields'], $keys, $beforekey, $reorderrelative);
 	}
 
 	public function form_fields($form, $columns)
@@ -1200,7 +1200,7 @@ class qa_html_theme_base
 
 	/**
 	 * Reorder the buttons of $form according to the $keys array which contains the button keys in their new order. Call
-	 * before any buttons are output. See the docs for qa_array_reorder() in util/sort.php for the other parameters.
+	 * before any buttons are output. See the docs for ilya_array_reorder() in util/sort.php for the other parameters.
 	 * @param $form
 	 * @param $keys
 	 * @param mixed $beforekey
@@ -1211,7 +1211,7 @@ class qa_html_theme_base
 		require_once QA_INCLUDE_DIR . 'util/sort.php';
 
 		if (is_array($form['buttons']))
-			qa_array_reorder($form['buttons'], $keys, $beforekey, $reorderrelative);
+			ilya_array_reorder($form['buttons'], $keys, $beforekey, $reorderrelative);
 	}
 
 	public function form_buttons($form, $columns)
@@ -2501,7 +2501,7 @@ class qa_html_theme_base
 		foreach ($q_list as $q) {
 			$this->output(
 				'<li class="ilya-q-title-item">',
-				'<a href="' . qa_q_path_html($q['postid'], $q['title']) . '" ' . $attrs . '>' . qa_html($q['title']) . '</a>',
+				'<a href="' . ilya_q_path_html($q['postid'], $q['title']) . '" ' . $attrs . '>' . ilya_html($q['title']) . '</a>',
 				'</li>'
 			);
 		}

@@ -28,11 +28,11 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 /**
  * Return the user identification cookie sent by the browser for this page request, or null if none
  */
-function qa_cookie_get()
+function ilya_cookie_get()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return isset($_COOKIE['qa_id']) ? qa_gpc_to_string($_COOKIE['qa_id']) : null;
+	return isset($_COOKIE['ilya_id']) ? ilya_gpc_to_string($_COOKIE['ilya_id']) : null;
 }
 
 
@@ -40,21 +40,21 @@ function qa_cookie_get()
  * Return user identification cookie sent by browser if valid, or create a new one if not.
  * Either way, extend for another year (this is used when an anonymous post is created)
  */
-function qa_cookie_get_create()
+function ilya_cookie_get_create()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/cookies.php';
 
-	$cookieid = qa_cookie_get();
+	$cookieid = ilya_cookie_get();
 
-	if (!isset($cookieid) || !qa_db_cookie_exists($cookieid)) {
+	if (!isset($cookieid) || !ilya_db_cookie_exists($cookieid)) {
 		// cookie is invalid
-		$cookieid = qa_db_cookie_create(qa_remote_ip_address());
+		$cookieid = ilya_db_cookie_create(ilya_remote_ip_address());
 	}
 
-	setcookie('qa_id', $cookieid, time() + 86400 * 365, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
-	$_COOKIE['qa_id'] = $cookieid;
+	setcookie('ilya_id', $cookieid, time() + 86400 * 365, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
+	$_COOKIE['ilya_id'] = $cookieid;
 
 	return $cookieid;
 }
@@ -66,9 +66,9 @@ function qa_cookie_get_create()
  * @param $cookieid
  * @param $action
  */
-function qa_cookie_report_action($cookieid, $action)
+function ilya_cookie_report_action($cookieid, $action)
 {
 	require_once QA_INCLUDE_DIR . 'db/cookies.php';
 
-	qa_db_cookie_written($cookieid, qa_remote_ip_address());
+	ilya_db_cookie_written($cookieid, ilya_remote_ip_address());
 }

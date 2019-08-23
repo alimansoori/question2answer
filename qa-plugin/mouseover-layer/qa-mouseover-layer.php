@@ -20,11 +20,11 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_html_theme_layer extends qa_html_theme_base
+class ilya_html_theme_layer extends ilya_html_theme_base
 {
 	public function q_list($q_list)
 	{
-		if (!empty($q_list['qs']) && qa_opt('mouseover_content_on')) { // first check it is not an empty list and the feature is turned on
+		if (!empty($q_list['qs']) && ilya_opt('mouseover_content_on')) { // first check it is not an empty list and the feature is turned on
 			// Collect the question ids of all items in the question list (so we can do this in one DB query)
 
 			$postids = array();
@@ -35,24 +35,24 @@ class qa_html_theme_layer extends qa_html_theme_base
 
 			if (!empty($postids)) {
 				// Retrieve the content for these questions from the database
-				$maxlength = qa_opt('mouseover_content_max_len');
-				$result = qa_db_query_sub('SELECT postid, content, format FROM ^posts WHERE postid IN (#)', $postids);
-				$postinfo = qa_db_read_all_assoc($result, 'postid');
+				$maxlength = ilya_opt('mouseover_content_max_len');
+				$result = ilya_db_query_sub('SELECT postid, content, format FROM ^posts WHERE postid IN (#)', $postids);
+				$postinfo = ilya_db_read_all_assoc($result, 'postid');
 
 				// Get the regular expression fragment to use for blocked words and the maximum length of content to show
 
-				$blockwordspreg = qa_get_block_words_preg();
+				$blockwordspreg = ilya_get_block_words_preg();
 
 				// Now add the popup to the title for each question
 
 				foreach ($q_list['qs'] as $index => $question) {
 					if (isset($postinfo[$question['raw']['postid']])) {
 						$thispost = $postinfo[$question['raw']['postid']];
-						$text = qa_viewer_text($thispost['content'], $thispost['format'], array('blockwordspreg' => $blockwordspreg));
+						$text = ilya_viewer_text($thispost['content'], $thispost['format'], array('blockwordspreg' => $blockwordspreg));
 						$text = preg_replace('/\s+/', ' ', $text);  // Remove duplicated blanks, new line characters, tabs, etc
-						$text = qa_shorten_string_line($text, $maxlength);
+						$text = ilya_shorten_string_line($text, $maxlength);
 						$title = isset($question['title']) ? $question['title'] : '';
-						$q_list['qs'][$index]['title'] = $this->getHtmlTitle(qa_html($text), $title);
+						$q_list['qs'][$index]['title'] = $this->getHtmlTitle(ilya_html($text), $title);
 					}
 				}
 			}

@@ -29,13 +29,13 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * Indicates to the Q2A database layer that database connections are permitted fro this point forwards
  * (before this point, some plugins may not have had a chance to override some database access functions).
  */
-function qa_db_allow_connect()
+function ilya_db_allow_connect()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_db_allow_connect;
+	global $ilya_db_allow_connect;
 
-	$qa_db_allow_connect = true;
+	$ilya_db_allow_connect = true;
 }
 
 
@@ -45,19 +45,19 @@ function qa_db_allow_connect()
  * @param null $failhandler
  * @return mixed|void
  */
-function qa_db_connect($failhandler = null)
+function ilya_db_connect($failhandler = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_db_connection, $qa_db_fail_handler, $qa_db_allow_connect;
+	global $ilya_db_connection, $ilya_db_fail_handler, $ilya_db_allow_connect;
 
-	if (!$qa_db_allow_connect)
-		qa_fatal_error('It appears that a plugin is trying to access the database, but this is not allowed until Q2A initialization is complete.');
+	if (!$ilya_db_allow_connect)
+		ilya_fatal_error('It appears that a plugin is trying to access the database, but this is not allowed until Q2A initialization is complete.');
 
 	if (isset($failhandler))
-		$qa_db_fail_handler = $failhandler; // set this even if connection already opened
+		$ilya_db_fail_handler = $failhandler; // set this even if connection already opened
 
-	if ($qa_db_connection instanceof mysqli)
+	if ($ilya_db_connection instanceof mysqli)
 		return;
 
 	$host = QA_FINAL_MYSQL_HOSTNAME;
@@ -86,17 +86,17 @@ function qa_db_connect($failhandler = null)
 	// must use procedural `mysqli_connect_error` here prior to 5.2.9
 	$conn_error = mysqli_connect_error();
 	if ($conn_error)
-		qa_db_fail_error('connect', $db->connect_errno, $conn_error);
+		ilya_db_fail_error('connect', $db->connect_errno, $conn_error);
 
 	// From Q2A 1.5, we explicitly set the character encoding of the MySQL connection, instead of using lots of "SELECT BINARY col"-style queries.
 	// Testing showed that overhead is minimal, so this seems worth trading off against the benefit of more straightforward queries, especially
 	// for plugin developers.
 	if (!$db->set_charset('utf8'))
-		qa_db_fail_error('set_charset', $db->errno, $db->error);
+		ilya_db_fail_error('set_charset', $db->errno, $db->error);
 
-	qa_report_process_stage('db_connected');
+	ilya_report_process_stage('db_connected');
 
-	$qa_db_connection = $db;
+	$ilya_db_connection = $db;
 }
 
 
@@ -108,22 +108,22 @@ function qa_db_connect($failhandler = null)
  * @param string $query
  * @return mixed
  */
-function qa_db_fail_error($type, $errno = null, $error = null, $query = null)
+function ilya_db_fail_error($type, $errno = null, $error = null, $query = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_db_fail_handler;
+	global $ilya_db_fail_handler;
 
 	@error_log('PHP Question2Answer MySQL ' . $type . ' error ' . $errno . ': ' . $error . (isset($query) ? (' - Query: ' . $query) : ''));
 
-	if (function_exists($qa_db_fail_handler))
-		$qa_db_fail_handler($type, $errno, $error, $query);
+	if (function_exists($ilya_db_fail_handler))
+		$ilya_db_fail_handler($type, $errno, $error, $query);
 	else {
 		echo sprintf(
 			'<hr><div style="color: red">Database %s<p>%s</p><code>%s</code></div>',
 			htmlspecialchars($type . ' error ' . $errno), nl2br(htmlspecialchars($error)), nl2br(htmlspecialchars($query))
 		);
-		qa_exit('error');
+		ilya_exit('error');
 	}
 }
 
@@ -133,41 +133,41 @@ function qa_db_fail_error($type, $errno = null, $error = null, $query = null)
  * @param bool $connect
  * @return mixed
  */
-function qa_db_connection($connect = true)
+function ilya_db_connection($connect = true)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_db_connection;
+	global $ilya_db_connection;
 
-	if ($connect && !($qa_db_connection instanceof mysqli)) {
-		qa_db_connect();
+	if ($connect && !($ilya_db_connection instanceof mysqli)) {
+		ilya_db_connect();
 
-		if (!($qa_db_connection instanceof mysqli))
-			qa_fatal_error('Failed to connect to database');
+		if (!($ilya_db_connection instanceof mysqli))
+			ilya_fatal_error('Failed to connect to database');
 	}
 
-	return $qa_db_connection;
+	return $ilya_db_connection;
 }
 
 
 /**
  * Disconnect from the Q2A database.
  */
-function qa_db_disconnect()
+function ilya_db_disconnect()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_db_connection;
+	global $ilya_db_connection;
 
-	if ($qa_db_connection instanceof mysqli) {
-		qa_report_process_stage('db_disconnect');
+	if ($ilya_db_connection instanceof mysqli) {
+		ilya_report_process_stage('db_disconnect');
 
 		if (!QA_PERSISTENT_CONN_DB) {
-			if (!$qa_db_connection->close())
-				qa_fatal_error('Database disconnect failed');
+			if (!$ilya_db_connection->close())
+				ilya_fatal_error('Database disconnect failed');
 		}
 
-		$qa_db_connection = null;
+		$ilya_db_connection = null;
 	}
 }
 
@@ -178,16 +178,16 @@ function qa_db_disconnect()
  * @param $query
  * @return mixed
  */
-function qa_db_query_raw($query)
+function ilya_db_query_raw($query)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (QA_DEBUG_PERFORMANCE) {
-		global $qa_usage;
+		global $ilya_usage;
 
 		// time the query
 		$oldtime = array_sum(explode(' ', microtime()));
-		$result = qa_db_query_execute($query);
+		$result = ilya_db_query_execute($query);
 		$usedtime = array_sum(explode(' ', microtime())) - $oldtime;
 
 		// fetch counts
@@ -197,15 +197,15 @@ function qa_db_query_raw($query)
 			$gotcolumns = $result->field_count;
 		}
 
-		$qa_usage->logDatabaseQuery($query, $usedtime, $gotrows, $gotcolumns);
+		$ilya_usage->logDatabaseQuery($query, $usedtime, $gotrows, $gotcolumns);
 	} else
-		$result = qa_db_query_execute($query);
+		$result = ilya_db_query_execute($query);
 
 	// @error_log('Question2Answer MySQL query: '.$query);
 
 	if ($result === false) {
-		$db = qa_db_connection();
-		qa_db_fail_error('query', $db->errno, $db->error, $query);
+		$db = ilya_db_connection();
+		ilya_db_fail_error('query', $db->errno, $db->error, $query);
 	}
 
 	return $result;
@@ -217,11 +217,11 @@ function qa_db_query_raw($query)
  * @param $query
  * @return mixed
  */
-function qa_db_query_execute($query)
+function ilya_db_query_execute($query)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$db = qa_db_connection();
+	$db = ilya_db_connection();
 
 	for ($attempt = 0; $attempt < 100; $attempt++) {
 		$result = $db->query($query);
@@ -241,11 +241,11 @@ function qa_db_query_execute($query)
  * @param $string
  * @return mixed
  */
-function qa_db_escape_string($string)
+function ilya_db_escape_string($string)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$db = qa_db_connection();
+	$db = ilya_db_connection();
 	return $db->real_escape_string($string);
 }
 
@@ -258,13 +258,13 @@ function qa_db_escape_string($string)
  * @param bool $arraybrackets
  * @return mixed|string
  */
-function qa_db_argument_to_mysql($argument, $alwaysquote, $arraybrackets = false)
+function ilya_db_argument_to_mysql($argument, $alwaysquote, $arraybrackets = false)
 {
 	if (is_array($argument)) {
 		$parts = array();
 
 		foreach ($argument as $subargument)
-			$parts[] = qa_db_argument_to_mysql($subargument, $alwaysquote, true);
+			$parts[] = ilya_db_argument_to_mysql($subargument, $alwaysquote, true);
 
 		if ($arraybrackets)
 			$result = '(' . implode(',', $parts) . ')';
@@ -273,9 +273,9 @@ function qa_db_argument_to_mysql($argument, $alwaysquote, $arraybrackets = false
 
 	} elseif (isset($argument)) {
 		if ($alwaysquote || !is_numeric($argument))
-			$result = "'" . qa_db_escape_string($argument) . "'";
+			$result = "'" . ilya_db_escape_string($argument) . "'";
 		else
-			$result = qa_db_escape_string($argument);
+			$result = ilya_db_escape_string($argument);
 	} else
 		$result = 'NULL';
 
@@ -288,9 +288,9 @@ function qa_db_argument_to_mysql($argument, $alwaysquote, $arraybrackets = false
  * @param $rawname
  * @return string
  */
-function qa_db_add_table_prefix($rawname)
+function ilya_db_add_table_prefix($rawname)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$prefix = QA_MYSQL_TABLE_PREFIX;
 
@@ -316,13 +316,13 @@ function qa_db_add_table_prefix($rawname)
 
 
 /**
- * Callback function to add table prefixes, as used in qa_db_apply_sub().
+ * Callback function to add table prefixes, as used in ilya_db_apply_sub().
  * @param $matches
  * @return string
  */
-function qa_db_prefix_callback($matches)
+function ilya_db_prefix_callback($matches)
 {
-	return qa_db_add_table_prefix($matches[1]);
+	return ilya_db_add_table_prefix($matches[1]);
 }
 
 
@@ -336,9 +336,9 @@ function qa_db_prefix_callback($matches)
  * @param $arguments
  * @return mixed
  */
-function qa_db_apply_sub($query, $arguments)
+function ilya_db_apply_sub($query, $arguments)
 {
-	$query = preg_replace_callback('/\^([A-Za-z_0-9]+)/', 'qa_db_prefix_callback', $query);
+	$query = preg_replace_callback('/\^([A-Za-z_0-9]+)/', 'ilya_db_prefix_callback', $query);
 
 	if (!is_array($arguments))
 		return $query;
@@ -359,9 +359,9 @@ function qa_db_apply_sub($query, $arguments)
 		}
 
 		if (!is_numeric($position))
-			qa_fatal_error('Insufficient parameters in query: ' . $query);
+			ilya_fatal_error('Insufficient parameters in query: ' . $query);
 
-		$value = qa_db_argument_to_mysql($arguments[$argument], $alwaysquote);
+		$value = ilya_db_argument_to_mysql($arguments[$argument], $alwaysquote);
 		$query = substr_replace($query, $value, $position, 1);
 		$offset = $position + strlen($value); // allows inserting strings which contain #/$ character
 	}
@@ -375,11 +375,11 @@ function qa_db_apply_sub($query, $arguments)
  * @param string $query
  * @return mixed
  */
-function qa_db_query_sub($query) // arguments for substitution retrieved using func_get_args()
+function ilya_db_query_sub($query) // arguments for substitution retrieved using func_get_args()
 {
 	$funcargs = func_get_args();
 
-	return qa_db_query_sub_params($query, array_slice($funcargs, 1));
+	return ilya_db_query_sub_params($query, array_slice($funcargs, 1));
 }
 
 /**
@@ -389,9 +389,9 @@ function qa_db_query_sub($query) // arguments for substitution retrieved using f
  * @param array $params
  * @return mixed
  */
-function qa_db_query_sub_params($query, $params)
+function ilya_db_query_sub_params($query, $params)
 {
-	return qa_db_query_raw(qa_db_apply_sub($query, $params));
+	return ilya_db_query_raw(ilya_db_apply_sub($query, $params));
 }
 
 
@@ -400,7 +400,7 @@ function qa_db_query_sub_params($query, $params)
  * @param $result
  * @return int
  */
-function qa_db_num_rows($result)
+function ilya_db_num_rows($result)
 {
 	if ($result instanceof mysqli_result)
 		return $result->num_rows;
@@ -412,9 +412,9 @@ function qa_db_num_rows($result)
 /**
  * Return the value of the auto-increment column for the last inserted row.
  */
-function qa_db_last_insert_id()
+function ilya_db_last_insert_id()
 {
-	$db = qa_db_connection();
+	$db = ilya_db_connection();
 	return $db->insert_id;
 }
 
@@ -422,9 +422,9 @@ function qa_db_last_insert_id()
 /**
  * Return the number of rows affected by the last query.
  */
-function qa_db_affected_rows()
+function ilya_db_affected_rows()
 {
-	$db = qa_db_connection();
+	$db = ilya_db_connection();
 	return $db->affected_rows;
 }
 
@@ -432,9 +432,9 @@ function qa_db_affected_rows()
 /**
  * For the previous INSERT ... ON DUPLICATE KEY UPDATE query, return whether an insert operation took place.
  */
-function qa_db_insert_on_duplicate_inserted()
+function ilya_db_insert_on_duplicate_inserted()
 {
-	return (qa_db_affected_rows() == 1);
+	return (ilya_db_affected_rows() == 1);
 }
 
 
@@ -442,7 +442,7 @@ function qa_db_insert_on_duplicate_inserted()
  * Return a random integer (as a string) for use in a BIGINT column.
  * Actual limit is 18,446,744,073,709,551,615 - we aim for 18,446,743,999,999,999,999.
  */
-function qa_db_random_bigint()
+function ilya_db_random_bigint()
 {
 	return sprintf('%d%06d%06d', mt_rand(1, 18446743), mt_rand(0, 999999), mt_rand(0, 999999));
 }
@@ -452,9 +452,9 @@ function qa_db_random_bigint()
  * Return an array of the names of all tables in the Q2A database, converted to lower case.
  * No longer used by Q2A and shouldn't be needed.
  */
-function qa_db_list_tables_lc()
+function ilya_db_list_tables_lc()
 {
-	return array_map('strtolower', qa_db_list_tables());
+	return array_map('strtolower', ilya_db_list_tables());
 }
 
 
@@ -465,7 +465,7 @@ function qa_db_list_tables_lc()
  * QA_MYSQL_TABLE_PREFIX or if it should include all tables in the database.
  * @return array
  */
-function qa_db_list_tables($onlyTablesWithPrefix = false)
+function ilya_db_list_tables($onlyTablesWithPrefix = false)
 {
 	$query = 'SHOW TABLES';
 
@@ -477,14 +477,14 @@ function qa_db_list_tables($onlyTablesWithPrefix = false)
 		}
 	}
 
-	return qa_db_read_all_values(qa_db_query_raw($query));
+	return ilya_db_read_all_values(ilya_db_query_raw($query));
 }
 
 
 /*
 	The selectspec array can contain the elements below. See db/selects.php for lots of examples.
 
-	By default, qa_db_single_select() and qa_db_multi_select() return the data for each selectspec as a numbered
+	By default, ilya_db_single_select() and ilya_db_multi_select() return the data for each selectspec as a numbered
 	array of arrays, one per row. The array for each row has column names in the keys, and data in the values.
 	But this can be changed using the 'arraykey', 'arrayvalue' and 'single' in the selectspec.
 
@@ -501,7 +501,7 @@ function qa_db_list_tables($onlyTablesWithPrefix = false)
 
 	'source' => Any SQL after FROM, including table names, JOINs, GROUP BY, ORDER BY, WHERE, etc... (required)
 
-	'arguments' => Substitutions in order for $s and #s in the query, applied in qa_db_apply_sub() above (required)
+	'arguments' => Substitutions in order for $s and #s in the query, applied in ilya_db_apply_sub() above (required)
 
 	'arraykey' => Name of column to use for keys of the outer-level returned array, instead of numbers by default
 
@@ -514,7 +514,7 @@ function qa_db_list_tables($onlyTablesWithPrefix = false)
 	'sortdesc' => Sort the output descending by this column
 
 
-	Why does qa_db_multi_select() combine usually unrelated SELECT statements into a single query?
+	Why does ilya_db_multi_select() combine usually unrelated SELECT statements into a single query?
 
 	Because if the database and web servers are on different computers, there will be latency.
 	This way we ensure that every read pageview on the site requires as few DB queries as possible, so
@@ -532,7 +532,7 @@ function qa_db_list_tables($onlyTablesWithPrefix = false)
  * @param $selectspec
  * @return array|mixed
  */
-function qa_db_single_select($selectspec)
+function ilya_db_single_select($selectspec)
 {
 	// check for cached results
 	if (isset($selectspec['caching'])) {
@@ -552,12 +552,12 @@ function qa_db_single_select($selectspec)
 		$query .= is_int($columnas) ? "$columnfrom, " : "$columnfrom AS `$columnas`, ";
 	}
 
-	$results = qa_db_read_all_assoc(qa_db_query_raw(qa_db_apply_sub(
+	$results = ilya_db_read_all_assoc(ilya_db_query_raw(ilya_db_apply_sub(
 			substr($query, 0, -2) . (strlen(@$selectspec['source']) ? (' FROM ' . $selectspec['source']) : ''),
 			@$selectspec['arguments'])
-	), @$selectspec['arraykey']); // arrayvalue is applied in qa_db_post_select()
+	), @$selectspec['arraykey']); // arrayvalue is applied in ilya_db_post_select()
 
-	qa_db_post_select($results, $selectspec); // post-processing
+	ilya_db_post_select($results, $selectspec); // post-processing
 
 	// save cached results
 	if (isset($selectspec['caching'])) {
@@ -576,7 +576,7 @@ function qa_db_single_select($selectspec)
  * @param array $selectspecs
  * @return array
  */
-function qa_db_multi_select($selectspecs)
+function ilya_db_multi_select($selectspecs)
 {
 	if (!count($selectspecs))
 		return array();
@@ -587,7 +587,7 @@ function qa_db_multi_select($selectspecs)
 		$outresults = array();
 
 		foreach ($selectspecs as $selectkey => $selectspec)
-			$outresults[$selectkey] = qa_db_single_select($selectspec);
+			$outresults[$selectkey] = ilya_db_single_select($selectspec);
 
 		return $outresults;
 	}
@@ -606,18 +606,18 @@ function qa_db_multi_select($selectspecs)
 			}
 
 			if (isset($selectspecs[$selectkey]['outcolumns'][$columnas]))
-				qa_fatal_error('Duplicate column name in qa_db_multi_select()');
+				ilya_fatal_error('Duplicate column name in ilya_db_multi_select()');
 
 			$selectspecs[$selectkey]['outcolumns'][$columnas] = $columnfrom;
 		}
 
 		if (isset($selectspec['arraykey']))
 			if (!isset($selectspecs[$selectkey]['outcolumns'][$selectspec['arraykey']]))
-				qa_fatal_error('Used arraykey not in columns in qa_db_multi_select()');
+				ilya_fatal_error('Used arraykey not in columns in ilya_db_multi_select()');
 
 		if (isset($selectspec['arrayvalue']))
 			if (!isset($selectspecs[$selectkey]['outcolumns'][$selectspec['arrayvalue']]))
-				qa_fatal_error('Used arrayvalue not in columns in qa_db_multi_select()');
+				ilya_fatal_error('Used arrayvalue not in columns in ilya_db_multi_select()');
 	}
 
 	// Work out the full list of columns used
@@ -630,7 +630,7 @@ function qa_db_multi_select($selectspecs)
 
 	$query = '';
 	foreach ($selectspecs as $selectkey => $selectspec) {
-		$subquery = "(SELECT '" . qa_db_escape_string($selectkey) . "'" . (empty($query) ? ' AS selectkey' : '');
+		$subquery = "(SELECT '" . ilya_db_escape_string($selectkey) . "'" . (empty($query) ? ' AS selectkey' : '');
 
 		foreach ($outcolumns as $columnas) {
 			$subquery .= ', ' . (isset($selectspec['outcolumns'][$columnas]) ? $selectspec['outcolumns'][$columnas] : 'NULL');
@@ -647,12 +647,12 @@ function qa_db_multi_select($selectspecs)
 		if (strlen($query))
 			$query .= ' UNION ALL ';
 
-		$query .= qa_db_apply_sub($subquery, @$selectspec['arguments']);
+		$query .= ilya_db_apply_sub($subquery, @$selectspec['arguments']);
 	}
 
 	// Perform query and extract results
 
-	$rawresults = qa_db_read_all_assoc(qa_db_query_raw($query));
+	$rawresults = ilya_db_read_all_assoc(ilya_db_query_raw($query));
 
 	$outresults = array();
 	foreach ($selectspecs as $selectkey => $selectspec)
@@ -675,7 +675,7 @@ function qa_db_multi_select($selectspecs)
 	// Post-processing to apply various stuff include sorting request, since we can't rely on ORDER BY due to UNION
 
 	foreach ($selectspecs as $selectkey => $selectspec)
-		qa_db_post_select($outresults[$selectkey], $selectspec);
+		ilya_db_post_select($outresults[$selectkey], $selectspec);
 
 	// Return results
 
@@ -688,7 +688,7 @@ function qa_db_multi_select($selectspecs)
  * @param array $outresult
  * @param array $selectspec
  */
-function qa_db_post_select(&$outresult, $selectspec)
+function ilya_db_post_select(&$outresult, $selectspec)
 {
 	// PHP's sorting algorithm is not 'stable', so we use '_order_' element to keep stability.
 	// By contrast, MySQL's ORDER BY does seem to give the results in a reliable order.
@@ -700,20 +700,20 @@ function qa_db_post_select(&$outresult, $selectspec)
 		foreach ($outresult as $key => $value)
 			$outresult[$key]['_order_'] = $index++;
 
-		qa_sort_by($outresult, $selectspec['sortasc'], '_order_');
+		ilya_sort_by($outresult, $selectspec['sortasc'], '_order_');
 
 	} elseif (isset($selectspec['sortdesc'])) {
 		require_once QA_INCLUDE_DIR . 'util/sort.php';
 
 		if (isset($selectspec['sortdesc_2']))
-			qa_sort_by($outresult, $selectspec['sortdesc'], $selectspec['sortdesc_2']);
+			ilya_sort_by($outresult, $selectspec['sortdesc'], $selectspec['sortdesc_2']);
 
 		else {
 			$index = count($outresult);
 			foreach ($outresult as $key => $value)
 				$outresult[$key]['_order_'] = $index--;
 
-			qa_sort_by($outresult, $selectspec['sortdesc'], '_order_');
+			ilya_sort_by($outresult, $selectspec['sortdesc'], '_order_');
 		}
 
 		$outresult = array_reverse($outresult, true);
@@ -737,10 +737,10 @@ function qa_db_post_select(&$outresult, $selectspec)
  * @param mixed $value
  * @return array
  */
-function qa_db_read_all_assoc($result, $key = null, $value = null)
+function ilya_db_read_all_assoc($result, $key = null, $value = null)
 {
 	if (!($result instanceof mysqli_result))
-		qa_fatal_error('Reading all assoc from invalid result');
+		ilya_fatal_error('Reading all assoc from invalid result');
 
 	$assocs = array();
 
@@ -762,10 +762,10 @@ function qa_db_read_all_assoc($result, $key = null, $value = null)
  * @param bool $allowempty
  * @return array|null
  */
-function qa_db_read_one_assoc($result, $allowempty = false)
+function ilya_db_read_one_assoc($result, $allowempty = false)
 {
 	if (!($result instanceof mysqli_result))
-		qa_fatal_error('Reading one assoc from invalid result');
+		ilya_fatal_error('Reading one assoc from invalid result');
 
 	$assoc = $result->fetch_assoc();
 
@@ -775,7 +775,7 @@ function qa_db_read_one_assoc($result, $allowempty = false)
 	if ($allowempty)
 		return null;
 	else
-		qa_fatal_error('Reading one assoc from empty results');
+		ilya_fatal_error('Reading one assoc from empty results');
 }
 
 
@@ -784,10 +784,10 @@ function qa_db_read_one_assoc($result, $allowempty = false)
  * @param $result
  * @return array
  */
-function qa_db_read_all_values($result)
+function ilya_db_read_all_values($result)
 {
 	if (!($result instanceof mysqli_result))
-		qa_fatal_error('Reading column from invalid result');
+		ilya_fatal_error('Reading column from invalid result');
 
 	$output = array();
 
@@ -805,10 +805,10 @@ function qa_db_read_all_values($result)
  * @param bool $allowempty
  * @return mixed|null
  */
-function qa_db_read_one_value($result, $allowempty = false)
+function ilya_db_read_one_value($result, $allowempty = false)
 {
 	if (!($result instanceof mysqli_result))
-		qa_fatal_error('Reading one value from invalid result');
+		ilya_fatal_error('Reading one value from invalid result');
 
 	$row = $result->fetch_row();
 
@@ -818,7 +818,7 @@ function qa_db_read_one_value($result, $allowempty = false)
 	if ($allowempty)
 		return null;
 	else
-		qa_fatal_error('Reading one value from empty results');
+		ilya_fatal_error('Reading one value from empty results');
 }
 
 
@@ -827,11 +827,11 @@ function qa_db_read_one_value($result, $allowempty = false)
  * if $suspend is true, otherwise reinstate it. A counter is kept to allow multiple calls.
  * @param bool $suspend
  */
-function qa_suspend_update_counts($suspend = true)
+function ilya_suspend_update_counts($suspend = true)
 {
-	global $qa_update_counts_suspended;
+	global $ilya_update_counts_suspended;
 
-	$qa_update_counts_suspended += ($suspend ? 1 : -1);
+	$ilya_update_counts_suspended += ($suspend ? 1 : -1);
 }
 
 
@@ -839,9 +839,9 @@ function qa_suspend_update_counts($suspend = true)
  * Returns whether counts should currently be updated (i.e. if count updating has not been suspended).
  * @return bool
  */
-function qa_should_update_counts()
+function ilya_should_update_counts()
 {
-	global $qa_update_counts_suspended;
+	global $ilya_update_counts_suspended;
 
-	return ($qa_update_counts_suspended <= 0);
+	return ($ilya_update_counts_suspended <= 0);
 }

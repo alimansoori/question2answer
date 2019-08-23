@@ -29,7 +29,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 /**
  * Return true if PHP has the GD extension installed and it appears to be usable
  */
-function qa_has_gd_image()
+function ilya_has_gd_image()
 {
 	return extension_loaded('gd') && function_exists('imagecreatefromstring') && function_exists('imagejpeg');
 }
@@ -43,7 +43,7 @@ function qa_has_gd_image()
  * @param int $size
  * @return bool|float
  */
-function qa_image_file_too_big($imagefile, $size = null)
+function ilya_image_file_too_big($imagefile, $size = null)
 {
 	if (function_exists('memory_get_usage')) {
 		$gotbytes = trim(@ini_get('memory_limit'));
@@ -65,7 +65,7 @@ function qa_image_file_too_big($imagefile, $size = null)
 
 				$needbytes += $width * $height * $bits * $channels / 8 * 2; // memory to load original image
 
-				if (isset($size) && qa_image_constrain($width, $height, $size)) // memory for constrained image
+				if (isset($size) && ilya_image_constrain($width, $height, $size)) // memory for constrained image
 					$needbytes += $width * $height * 3 * 2; // *2 here and above based on empirical tests
 			}
 
@@ -89,7 +89,7 @@ function qa_image_file_too_big($imagefile, $size = null)
  * @param int $maxheight
  * @return null|string
  */
-function qa_image_constrain_data($imagedata, &$width, &$height, $maxwidth, $maxheight = null)
+function ilya_image_constrain_data($imagedata, &$width, &$height, $maxwidth, $maxheight = null)
 {
 	$inimage = @imagecreatefromstring($imagedata);
 
@@ -97,13 +97,13 @@ function qa_image_constrain_data($imagedata, &$width, &$height, $maxwidth, $maxh
 		$width = imagesx($inimage);
 		$height = imagesy($inimage);
 
-		// always call qa_gd_image_resize(), even if the size is the same, to take care of possible PNG transparency
-		qa_image_constrain($width, $height, $maxwidth, $maxheight);
-		qa_gd_image_resize($inimage, $width, $height);
+		// always call ilya_gd_image_resize(), even if the size is the same, to take care of possible PNG transparency
+		ilya_image_constrain($width, $height, $maxwidth, $maxheight);
+		ilya_gd_image_resize($inimage, $width, $height);
 	}
 
 	if (is_resource($inimage)) {
-		$imagedata = qa_gd_image_jpeg($inimage);
+		$imagedata = ilya_gd_image_jpeg($inimage);
 		imagedestroy($inimage);
 		return $imagedata;
 	}
@@ -122,7 +122,7 @@ function qa_image_constrain_data($imagedata, &$width, &$height, $maxwidth, $maxh
  * @param int $maxheight
  * @return bool
  */
-function qa_image_constrain(&$width, &$height, $maxwidth, $maxheight = null)
+function ilya_image_constrain(&$width, &$height, $maxwidth, $maxheight = null)
 {
 	if (!isset($maxheight))
 		$maxheight = $maxwidth;
@@ -145,7 +145,7 @@ function qa_image_constrain(&$width, &$height, $maxwidth, $maxheight = null)
  * @param $width
  * @param $height
  */
-function qa_gd_image_resize(&$image, $width, $height)
+function ilya_gd_image_resize(&$image, $width, $height)
 {
 	$oldimage = $image;
 	$image = null;
@@ -171,7 +171,7 @@ function qa_gd_image_resize(&$image, $width, $height)
  * @param bool $output
  * @return string
  */
-function qa_gd_image_jpeg($image, $output = false)
+function ilya_gd_image_jpeg($image, $output = false)
 {
 	ob_start();
 	imagejpeg($image, null, 90);
@@ -182,7 +182,7 @@ function qa_gd_image_jpeg($image, $output = false)
 /**
  * Return an array of strings listing the image formats that are supported
  */
-function qa_gd_image_formats()
+function ilya_gd_image_formats()
 {
 	$imagetypebits = imagetypes();
 

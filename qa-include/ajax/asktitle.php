@@ -27,15 +27,15 @@ require_once QA_INCLUDE_DIR . 'app/format.php';
 
 // Collect the information we need from the database
 
-$intitle = qa_post_text('title');
-$doaskcheck = qa_opt('do_ask_check_qs');
-$doexampletags = qa_using_tags() && qa_opt('do_example_tags');
+$intitle = ilya_post_text('title');
+$doaskcheck = ilya_opt('do_ask_check_qs');
+$doexampletags = ilya_using_tags() && ilya_opt('do_example_tags');
 
 if ($doaskcheck || $doexampletags) {
-	$countqs = max($doexampletags ? QA_DB_RETRIEVE_ASK_TAG_QS : 0, $doaskcheck ? qa_opt('page_size_ask_check_qs') : 0);
+	$countqs = max($doexampletags ? QA_DB_RETRIEVE_ASK_TAG_QS : 0, $doaskcheck ? ilya_opt('page_size_ask_check_qs') : 0);
 
-	$relatedquestions = qa_db_select_with_pending(
-		qa_db_search_posts_selectspec(null, qa_string_to_words($intitle), null, null, null, null, 0, false, $countqs)
+	$relatedquestions = ilya_db_select_with_pending(
+		ilya_db_search_posts_selectspec(null, ilya_string_to_words($intitle), null, null, null, null, 0, false, $countqs)
 	);
 }
 
@@ -45,7 +45,7 @@ if ($doaskcheck || $doexampletags) {
 if ($doexampletags) {
 	$tagweight = array();
 	foreach ($relatedquestions as $question) {
-		$tags = qa_tagstring_to_tags($question['tags']);
+		$tags = ilya_tagstring_to_tags($question['tags']);
 		foreach ($tags as $tag) {
 			@$tagweight[$tag] += exp($question['score']);
 		}
@@ -55,8 +55,8 @@ if ($doexampletags) {
 
 	$exampletags = array();
 
-	$minweight = exp(qa_match_to_min_score(qa_opt('match_example_tags')));
-	$maxcount = qa_opt('page_size_ask_tags');
+	$minweight = exp(ilya_match_to_min_score(ilya_opt('match_example_tags')));
+	$maxcount = ilya_opt('page_size_ask_tags');
 
 	foreach ($tagweight as $tag => $weight) {
 		if ($weight < $minweight)
@@ -75,14 +75,14 @@ if ($doexampletags) {
 
 echo "QA_AJAX_RESPONSE\n1\n";
 
-echo strtr(qa_html(implode(',', $exampletags)), "\r\n", '  ') . "\n";
+echo strtr(ilya_html(implode(',', $exampletags)), "\r\n", '  ') . "\n";
 
 
 // Collect and output the list of related questions
 
 if ($doaskcheck) {
-	$minscore = qa_match_to_min_score(qa_opt('match_ask_check_qs'));
-	$maxcount = qa_opt('page_size_ask_check_qs');
+	$minscore = ilya_match_to_min_score(ilya_opt('match_ask_check_qs'));
+	$maxcount = ilya_opt('page_size_ask_check_qs');
 
 	$relatedquestions = array_slice($relatedquestions, 0, $maxcount);
 	$limitedquestions = array();
@@ -94,7 +94,7 @@ if ($doaskcheck) {
 		$limitedquestions[] = $question;
 	}
 
-	$themeclass = qa_load_theme_class(qa_get_site_theme(), 'ajax-asktitle', null, null);
+	$themeclass = ilya_load_theme_class(ilya_get_site_theme(), 'ajax-asktitle', null, null);
 	$themeclass->initialize();
-	$themeclass->q_ask_similar($limitedquestions, qa_lang_html('question/ask_same_q'));
+	$themeclass->q_ask_similar($limitedquestions, ilya_lang_html('question/ask_same_q'));
 }

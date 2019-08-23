@@ -15,40 +15,40 @@ if (defined('QA_DEBUG_PERFORMANCE') && QA_DEBUG_PERFORMANCE) {
 	trigger_error('Included file ' . basename(__FILE__) . ' is deprecated');
 }
 
-function qa_usage_init()
+function ilya_usage_init()
 {
 	// should already be initialised in ilya-base.php
-	global $qa_usage;
-	if (empty($qa_usage))
-		$qa_usage = new Q2A_Util_Usage;
+	global $ilya_usage;
+	if (empty($ilya_usage))
+		$ilya_usage = new Q2A_Util_Usage;
 }
 
-function qa_usage_get()
+function ilya_usage_get()
 {
-	global $qa_usage;
-	return $qa_usage->getCurrent();
+	global $ilya_usage;
+	return $ilya_usage->getCurrent();
 }
 
-function qa_usage_delta($oldusage, $newusage)
+function ilya_usage_delta($oldusage, $newusage)
 {
 	// equivalent function is now private
 	return array();
 }
 
-function qa_usage_mark($stage)
+function ilya_usage_mark($stage)
 {
-	global $qa_usage;
-	return $qa_usage->mark($stage);
+	global $ilya_usage;
+	return $ilya_usage->mark($stage);
 }
 
-function qa_usage_line($stage, $usage, $totalusage)
+function ilya_usage_line($stage, $usage, $totalusage)
 {
 	// equivalent function is now private
 	return '';
 }
 
-function qa_usage_output()
+function ilya_usage_output()
 {
-	global $qa_usage;
-	return $qa_usage->output();
+	global $ilya_usage;
+	return $ilya_usage->output();
 }

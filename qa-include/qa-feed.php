@@ -26,7 +26,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 @ini_set('display_errors', 0); // we don't want to show PHP errors to RSS readers
 
-qa_report_process_stage('init_feed');
+ilya_report_process_stage('init_feed');
 
 require_once QA_INCLUDE_DIR . 'app/options.php';
 
@@ -40,22 +40,22 @@ require_once QA_INCLUDE_DIR . 'app/options.php';
  * @param string $error
  * @param string $query
  */
-function qa_feed_db_fail_handler($type, $errno = null, $error = null, $query = null)
+function ilya_feed_db_fail_handler($type, $errno = null, $error = null, $query = null)
 {
 	header('HTTP/1.1 500 Internal Server Error');
-	echo qa_lang_html('main/general_error');
-	qa_exit('error');
+	echo ilya_lang_html('main/general_error');
+	ilya_exit('error');
 }
 
 
 /**
  * Common function called when a non-existent feed is requested - outputs HTTP and text errors
  */
-function qa_feed_not_found()
+function ilya_feed_not_found()
 {
 	header('HTTP/1.0 404 Not Found');
-	echo qa_lang_html('misc/feed_not_found');
-	qa_exit();
+	echo ilya_lang_html('misc/feed_not_found');
+	ilya_exit();
 }
 
 
@@ -71,25 +71,25 @@ function qa_feed_not_found()
  * @param array $questionselectspec4
  * @return array
  */
-function qa_feed_load_ifcategory($categoryslugs, $allkey, $catkey, &$title,
+function ilya_feed_load_ifcategory($categoryslugs, $allkey, $catkey, &$title,
 	$questionselectspec1 = null, $questionselectspec2 = null, $questionselectspec3 = null, $questionselectspec4 = null)
 {
 	$countslugs = @count($categoryslugs);
 
-	list($questions1, $questions2, $questions3, $questions4, $categories, $categoryid) = qa_db_select_with_pending(
+	list($questions1, $questions2, $questions3, $questions4, $categories, $categoryid) = ilya_db_select_with_pending(
 		$questionselectspec1,
 		$questionselectspec2,
 		$questionselectspec3,
 		$questionselectspec4,
-		$countslugs ? qa_db_category_nav_selectspec($categoryslugs, false) : null,
-		$countslugs ? qa_db_slugs_to_category_id_selectspec($categoryslugs) : null
+		$countslugs ? ilya_db_category_nav_selectspec($categoryslugs, false) : null,
+		$countslugs ? ilya_db_slugs_to_category_id_selectspec($categoryslugs) : null
 	);
 
 	if ($countslugs && !isset($categoryid))
-		qa_feed_not_found();
+		ilya_feed_not_found();
 
 	if (isset($allkey))
-		$title = (isset($categoryid) && isset($catkey)) ? qa_lang_sub($catkey, $categories[$categoryid]['title']) : qa_lang($allkey);
+		$title = (isset($categoryid) && isset($catkey)) ? ilya_lang_sub($catkey, $categories[$categoryid]['title']) : ilya_lang($allkey);
 
 	return array_merge(
 		is_array($questions1) ? $questions1 : array(),
@@ -102,10 +102,10 @@ function qa_feed_load_ifcategory($categoryslugs, $allkey, $catkey, &$title,
 
 // Connect to database and get the type of feed and category requested (in some cases these are overridden later)
 
-qa_db_connect('qa_feed_db_fail_handler');
-qa_initialize_postdb_plugins();
+ilya_db_connect('ilya_feed_db_fail_handler');
+ilya_initialize_postdb_plugins();
 
-$requestlower = strtolower(qa_request());
+$requestlower = strtolower(ilya_request());
 $foursuffix = substr($requestlower, -4);
 
 if ($foursuffix == '.rss' || $foursuffix == '.xml') {
@@ -168,83 +168,83 @@ switch ($feedtype) {
 $countslugs = @count($categoryslugs);
 
 if (!isset($feedoption))
-	qa_feed_not_found();
+	ilya_feed_not_found();
 
 
 // Check that all the appropriate options are in place to allow this feed to be retrieved
 
-if (!(qa_opt($feedoption) && ($countslugs ? (qa_using_categories() && qa_opt('feed_per_category')) : true)))
-	qa_feed_not_found();
+if (!(ilya_opt($feedoption) && ($countslugs ? (ilya_using_categories() && ilya_opt('feed_per_category')) : true)))
+	ilya_feed_not_found();
 
 
 // Retrieve the appropriate questions and other information for this feed
 
 require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-$sitetitle = qa_opt('site_title');
-$siteurl = qa_opt('site_url');
-$full = qa_opt('feed_full_text');
-$count = qa_opt('feed_number_items');
-$showurllinks = qa_opt('show_url_links');
+$sitetitle = ilya_opt('site_title');
+$siteurl = ilya_opt('site_url');
+$full = ilya_opt('feed_full_text');
+$count = ilya_opt('feed_number_items');
+$showurllinks = ilya_opt('show_url_links');
 
 $linkrequest = $feedtype . ($countslugs ? ('/' . implode('/', $categoryslugs)) : '');
 $linkparams = null;
 
 switch ($feedtype) {
 	case 'questions':
-		$questions = qa_feed_load_ifcategory($categoryslugs, 'main/recent_qs_title', 'main/recent_qs_in_x', $title,
-			qa_db_qs_selectspec(null, 'created', 0, $categoryslugs, null, false, $full, $count)
+		$questions = ilya_feed_load_ifcategory($categoryslugs, 'main/recent_qs_title', 'main/recent_qs_in_x', $title,
+			ilya_db_qs_selectspec(null, 'created', 0, $categoryslugs, null, false, $full, $count)
 		);
 		break;
 
 	case 'hot':
-		$questions = qa_feed_load_ifcategory($categoryslugs, 'main/hot_qs_title', 'main/hot_qs_in_x', $title,
-			qa_db_qs_selectspec(null, 'hotness', 0, $categoryslugs, null, false, $full, $count)
+		$questions = ilya_feed_load_ifcategory($categoryslugs, 'main/hot_qs_title', 'main/hot_qs_in_x', $title,
+			ilya_db_qs_selectspec(null, 'hotness', 0, $categoryslugs, null, false, $full, $count)
 		);
 		break;
 
 	case 'unanswered':
-		$questions = qa_feed_load_ifcategory($categoryslugs, 'main/unanswered_qs_title', 'main/unanswered_qs_in_x', $title,
-			qa_db_unanswered_qs_selectspec(null, null, 0, $categoryslugs, false, $full, $count)
+		$questions = ilya_feed_load_ifcategory($categoryslugs, 'main/unanswered_qs_title', 'main/unanswered_qs_in_x', $title,
+			ilya_db_unanswered_qs_selectspec(null, null, 0, $categoryslugs, false, $full, $count)
 		);
 		break;
 
 	case 'answers':
-		$questions = qa_feed_load_ifcategory($categoryslugs, 'main/recent_as_title', 'main/recent_as_in_x', $title,
-			qa_db_recent_a_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count)
+		$questions = ilya_feed_load_ifcategory($categoryslugs, 'main/recent_as_title', 'main/recent_as_in_x', $title,
+			ilya_db_recent_a_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count)
 		);
 		break;
 
 	case 'comments':
-		$questions = qa_feed_load_ifcategory($categoryslugs, 'main/recent_cs_title', 'main/recent_cs_in_x', $title,
-			qa_db_recent_c_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count)
+		$questions = ilya_feed_load_ifcategory($categoryslugs, 'main/recent_cs_title', 'main/recent_cs_in_x', $title,
+			ilya_db_recent_c_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count)
 		);
 		break;
 
 	case 'qa':
-		$questions = qa_feed_load_ifcategory($categoryslugs, 'main/recent_qs_as_title', 'main/recent_qs_as_in_x', $title,
-			qa_db_qs_selectspec(null, 'created', 0, $categoryslugs, null, false, $full, $count),
-			qa_db_recent_a_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count)
+		$questions = ilya_feed_load_ifcategory($categoryslugs, 'main/recent_qs_as_title', 'main/recent_qs_as_in_x', $title,
+			ilya_db_qs_selectspec(null, 'created', 0, $categoryslugs, null, false, $full, $count),
+			ilya_db_recent_a_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count)
 		);
 		break;
 
 	case 'activity':
-		$questions = qa_feed_load_ifcategory($categoryslugs, 'main/recent_activity_title', 'main/recent_activity_in_x', $title,
-			qa_db_qs_selectspec(null, 'created', 0, $categoryslugs, null, false, $full, $count),
-			qa_db_recent_a_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count),
-			qa_db_recent_c_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count),
-			qa_db_recent_edit_qs_selectspec(null, 0, $categoryslugs, null, true, $full, $count)
+		$questions = ilya_feed_load_ifcategory($categoryslugs, 'main/recent_activity_title', 'main/recent_activity_in_x', $title,
+			ilya_db_qs_selectspec(null, 'created', 0, $categoryslugs, null, false, $full, $count),
+			ilya_db_recent_a_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count),
+			ilya_db_recent_c_qs_selectspec(null, 0, $categoryslugs, null, false, $full, $count),
+			ilya_db_recent_edit_qs_selectspec(null, 0, $categoryslugs, null, true, $full, $count)
 		);
 		break;
 
 	case 'tag':
 		$tag = $feedparams[0];
 
-		$questions = qa_feed_load_ifcategory(null, null, null, $title,
-			qa_db_tag_recent_qs_selectspec(null, $tag, 0, $full, $count)
+		$questions = ilya_feed_load_ifcategory(null, null, null, $title,
+			ilya_db_tag_recent_qs_selectspec(null, $tag, 0, $full, $count)
 		);
 
-		$title = qa_lang_sub('main/questions_tagged_x', $tag);
+		$title = ilya_lang_sub('main/questions_tagged_x', $tag);
 		$linkrequest = 'tag/' . $tag;
 		break;
 
@@ -253,9 +253,9 @@ switch ($feedtype) {
 
 		$query = $feedparams[0];
 
-		$results = qa_get_search_results($query, 0, $count, null, true, $full);
+		$results = ilya_get_search_results($query, 0, $count, null, true, $full);
 
-		$title = qa_lang_sub('main/results_for_x', $query);
+		$title = ilya_lang_sub('main/results_for_x', $query);
 		$linkrequest = 'search';
 		$linkparams = array('q' => $query);
 
@@ -284,10 +284,10 @@ require_once QA_INCLUDE_DIR . 'app/posts.php';
 require_once QA_INCLUDE_DIR . 'util/string.php';
 
 if ($feedtype != 'search' && $feedtype != 'hot') // leave search results and hot questions sorted by relevance
-	$questions = qa_any_sort_and_dedupe($questions);
+	$questions = ilya_any_sort_and_dedupe($questions);
 
 $questions = array_slice($questions, 0, $count);
-$blockwordspreg = qa_get_block_words_preg();
+$blockwordspreg = ilya_get_block_words_preg();
 
 
 // Prepare the XML output
@@ -298,8 +298,8 @@ $lines[] = '<?xml version="1.0" encoding="utf-8"?>';
 $lines[] = '<rss version="2.0">';
 $lines[] = '<channel>';
 
-$lines[] = '<title>' . qa_xml($sitetitle . ' - ' . $title) . '</title>';
-$lines[] = '<link>' . qa_xml(qa_path($linkrequest, $linkparams, $siteurl)) . '</link>';
+$lines[] = '<title>' . ilya_xml($sitetitle . ' - ' . $title) . '</title>';
+$lines[] = '<link>' . ilya_xml(ilya_path($linkrequest, $linkparams, $siteurl)) . '</link>';
 $lines[] = '<description>Powered by Question2Answer</description>';
 
 foreach ($questions as $question) {
@@ -313,18 +313,18 @@ foreach ($questions as $question) {
 		$time = $question['otime'];
 
 		if ($full)
-			$htmlcontent = qa_viewer_html($question['ocontent'], $question['oformat'], $options);
+			$htmlcontent = ilya_viewer_html($question['ocontent'], $question['oformat'], $options);
 
 	} elseif (isset($question['postid'])) {
 		$time = $question['created'];
 
 		if ($full)
-			$htmlcontent = qa_viewer_html($question['content'], $question['format'], $options);
+			$htmlcontent = ilya_viewer_html($question['content'], $question['format'], $options);
 	}
 
 	if ($feedtype == 'search') {
 		$titleprefix = '';
-		$urlxml = qa_xml($question['url']);
+		$urlxml = ilya_xml($question['url']);
 
 	} else {
 		switch (@$question['obasetype'] . '-' . @$question['oupdatetype']) {
@@ -338,7 +338,7 @@ foreach ($questions as $question) {
 				break;
 
 			case 'Q-' . QA_UPDATE_CLOSED:
-				$langstring = qa_post_is_closed($question) ? 'misc/feed_closed_prefix' : 'misc/feed_reopened_prefix';
+				$langstring = ilya_post_is_closed($question) ? 'misc/feed_closed_prefix' : 'misc/feed_reopened_prefix';
 				break;
 
 			case 'Q-' . QA_UPDATE_TAGS:
@@ -388,30 +388,30 @@ foreach ($questions as $question) {
 
 		}
 
-		$titleprefix = isset($langstring) ? qa_lang($langstring) : '';
+		$titleprefix = isset($langstring) ? ilya_lang($langstring) : '';
 
-		$urlxml = qa_xml(qa_q_path($question['postid'], $question['title'], true, @$question['obasetype'], @$question['opostid']));
+		$urlxml = ilya_xml(ilya_q_path($question['postid'], $question['title'], true, @$question['obasetype'], @$question['opostid']));
 	}
 
 	if (isset($blockwordspreg))
-		$question['title'] = qa_block_words_replace($question['title'], $blockwordspreg);
+		$question['title'] = ilya_block_words_replace($question['title'], $blockwordspreg);
 
 	// Build the inner XML structure for each item
 
 	$lines[] = '<item>';
-	$lines[] = '<title>' . qa_xml($titleprefix . $question['title']) . '</title>';
+	$lines[] = '<title>' . ilya_xml($titleprefix . $question['title']) . '</title>';
 	$lines[] = '<link>' . $urlxml . '</link>';
 
 	if (isset($htmlcontent))
-		$lines[] = '<description>' . qa_xml($htmlcontent) . '</description>';
+		$lines[] = '<description>' . ilya_xml($htmlcontent) . '</description>';
 
 	if (isset($question['categoryname']))
-		$lines[] = '<category>' . qa_xml($question['categoryname']) . '</category>';
+		$lines[] = '<category>' . ilya_xml($question['categoryname']) . '</category>';
 
 	$lines[] = '<guid isPermaLink="true">' . $urlxml . '</guid>';
 
 	if (isset($time))
-		$lines[] = '<pubDate>' . qa_xml(gmdate('r', $time)) . '</pubDate>';
+		$lines[] = '<pubDate>' . ilya_xml(gmdate('r', $time)) . '</pubDate>';
 
 	$lines[] = '</item>';
 }
@@ -422,7 +422,7 @@ $lines[] = '</rss>';
 
 // Disconnect here, once all output is ready to go
 
-qa_db_disconnect();
+ilya_db_disconnect();
 
 
 // Output the XML - and we're done!

@@ -25,23 +25,23 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-function qa_get_mysql_user_column_type()
+function ilya_get_mysql_user_column_type()
 {
 	return 'BIGINT UNSIGNED';
 }
 
 
-function qa_get_login_links($relative_url_prefix, $redirect_back_to_url)
+function ilya_get_login_links($relative_url_prefix, $redirect_back_to_url)
 {
 	return array(
-		'login' => wp_login_url(qa_opt('site_url') . $redirect_back_to_url),
+		'login' => wp_login_url(ilya_opt('site_url') . $redirect_back_to_url),
 		'register' => function_exists('wp_registration_url') ? wp_registration_url() : site_url('wp-login.php?action=register'),
 		'logout' => strtr(wp_logout_url(), array('&amp;' => '&')),
 	);
 }
 
 
-function qa_get_logged_in_user()
+function ilya_get_logged_in_user()
 {
 	$wordpressuser = wp_get_current_user();
 
@@ -68,7 +68,7 @@ function qa_get_logged_in_user()
 }
 
 
-function qa_get_user_email($userid)
+function ilya_get_user_email($userid)
 {
 	$user = get_userdata($userid);
 
@@ -76,12 +76,12 @@ function qa_get_user_email($userid)
 }
 
 
-function qa_get_userids_from_public($publicusernames)
+function ilya_get_userids_from_public($publicusernames)
 {
 	global $wpdb;
 
 	if (count($publicusernames))
-		return qa_db_read_all_assoc(qa_db_query_sub(
+		return ilya_db_read_all_assoc(ilya_db_query_sub(
 			'SELECT user_nicename, ID FROM ' . $wpdb->base_prefix . 'users WHERE user_nicename IN ($)',
 			$publicusernames
 		), 'user_nicename', 'ID');
@@ -90,22 +90,22 @@ function qa_get_userids_from_public($publicusernames)
 }
 
 
-function qa_get_public_from_userids($userids)
+function ilya_get_public_from_userids($userids)
 {
-	global $wpdb, $qa_cache_wp_user_emails;
+	global $wpdb, $ilya_cache_wp_user_emails;
 
 	if (count($userids)) {
 		$useridtopublic = array();
-		$qa_cache_wp_user_emails = array();
+		$ilya_cache_wp_user_emails = array();
 
-		$userfields = qa_db_read_all_assoc(qa_db_query_sub(
+		$userfields = ilya_db_read_all_assoc(ilya_db_query_sub(
 			'SELECT ID, user_nicename, user_email FROM ' . $wpdb->base_prefix . 'users WHERE ID IN (#)',
 			$userids
 		), 'ID');
 
 		foreach ($userfields as $id => $fields) {
 			$useridtopublic[$id] = $fields['user_nicename'];
-			$qa_cache_wp_user_emails[$id] = $fields['user_email'];
+			$ilya_cache_wp_user_emails[$id] = $fields['user_email'];
 		}
 
 		return $useridtopublic;
@@ -115,17 +115,17 @@ function qa_get_public_from_userids($userids)
 }
 
 
-function qa_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
+function ilya_get_logged_in_user_html($logged_in_user, $relative_url_prefix)
 {
 	$publicusername = $logged_in_user['publicusername'];
 
-	return '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
+	return '<a href="' . ilya_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . htmlspecialchars($publicusername) . '</a>';
 }
 
 
-function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
+function ilya_get_users_html($userids, $should_include_link, $relative_url_prefix)
 {
-	$useridtopublic = qa_get_public_from_userids($userids);
+	$useridtopublic = ilya_get_public_from_userids($userids);
 
 	$usershtml = array();
 
@@ -135,26 +135,26 @@ function qa_get_users_html($userids, $should_include_link, $relative_url_prefix)
 		$usershtml[$userid] = htmlspecialchars($publicusername);
 
 		if ($should_include_link)
-			$usershtml[$userid] = '<a href="' . qa_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
+			$usershtml[$userid] = '<a href="' . ilya_path_html('user/' . $publicusername) . '" class="ilya-user-link">' . $usershtml[$userid] . '</a>';
 	}
 
 	return $usershtml;
 }
 
 
-function qa_avatar_html_from_userid($userid, $size, $padding)
+function ilya_avatar_html_from_userid($userid, $size, $padding)
 {
 	require_once QA_INCLUDE_DIR . 'app/format.php';
 
-	global $qa_cache_wp_user_emails;
+	global $ilya_cache_wp_user_emails;
 
-	if (isset($qa_cache_wp_user_emails[$userid]))
-		return qa_get_gravatar_html($qa_cache_wp_user_emails[$userid], $size);
+	if (isset($ilya_cache_wp_user_emails[$userid]))
+		return ilya_get_gravatar_html($ilya_cache_wp_user_emails[$userid], $size);
 
 	return null;
 }
 
 
-function qa_user_report_action($userid, $action)
+function ilya_user_report_action($userid, $action)
 {
 }

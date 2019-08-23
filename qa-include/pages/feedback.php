@@ -30,27 +30,27 @@ require_once QA_INCLUDE_DIR . 'db/selects.php';
 
 // Get useful information on the logged in user
 
-$userid = qa_get_logged_in_userid();
+$userid = ilya_get_logged_in_userid();
 
 if (isset($userid) && !QA_FINAL_EXTERNAL_USERS) {
-	list($useraccount, $userprofile) = qa_db_select_with_pending(
-		qa_db_user_account_selectspec($userid, true),
-		qa_db_user_profile_selectspec($userid, true)
+	list($useraccount, $userprofile) = ilya_db_select_with_pending(
+		ilya_db_user_account_selectspec($userid, true),
+		ilya_db_user_profile_selectspec($userid, true)
 	);
 }
 
-$usecaptcha = qa_opt('captcha_on_feedback') && qa_user_use_captcha();
+$usecaptcha = ilya_opt('captcha_on_feedback') && ilya_user_use_captcha();
 
 
 // Check feedback is enabled and the person isn't blocked
 
-if (!qa_opt('feedback_enabled'))
+if (!ilya_opt('feedback_enabled'))
 	return include QA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
-if (qa_user_permit_error()) {
-	$qa_content = qa_content_prepare();
-	$qa_content['error'] = qa_lang_html('users/no_permission');
-	return $qa_content;
+if (ilya_user_permit_error()) {
+	$ilya_content = ilya_content_prepare();
+	$ilya_content['error'] = ilya_lang_html('users/no_permission');
+	return $ilya_content;
 }
 
 
@@ -59,24 +59,24 @@ if (qa_user_permit_error()) {
 
 $feedbacksent = false;
 
-if (qa_clicked('dofeedback')) {
+if (ilya_clicked('dofeedback')) {
 	require_once QA_INCLUDE_DIR . 'app/emails.php';
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
-	$inmessage = qa_post_text('message');
-	$inname = qa_post_text('name');
-	$inemail = qa_post_text('email');
-	$inreferer = qa_post_text('referer');
+	$inmessage = ilya_post_text('message');
+	$inname = ilya_post_text('name');
+	$inemail = ilya_post_text('email');
+	$inreferer = ilya_post_text('referer');
 
-	if (!qa_check_form_security_code('feedback', qa_post_text('code')))
-		$pageerror = qa_lang_html('misc/form_security_again');
+	if (!ilya_check_form_security_code('feedback', ilya_post_text('code')))
+		$pageerror = ilya_lang_html('misc/form_security_again');
 
 	else {
 		if (empty($inmessage))
-			$errors['message'] = qa_lang('misc/feedback_empty');
+			$errors['message'] = ilya_lang('misc/feedback_empty');
 
 		if ($usecaptcha)
-			qa_captcha_validate_post($errors);
+			ilya_captcha_validate_post($errors);
 
 		if (empty($errors)) {
 			$subs = array(
@@ -84,28 +84,28 @@ if (qa_clicked('dofeedback')) {
 				'^name' => empty($inname) ? '-' : $inname,
 				'^email' => empty($inemail) ? '-' : $inemail,
 				'^previous' => empty($inreferer) ? '-' : $inreferer,
-				'^url' => isset($userid) ? qa_path_absolute('user/' . qa_get_logged_in_handle()) : '-',
-				'^ip' => qa_remote_ip_address(),
+				'^url' => isset($userid) ? ilya_path_absolute('user/' . ilya_get_logged_in_handle()) : '-',
+				'^ip' => ilya_remote_ip_address(),
 				'^browser' => @$_SERVER['HTTP_USER_AGENT'],
 			);
 
-			if (qa_send_email(array(
-				'fromemail' => qa_opt('from_email'),
+			if (ilya_send_email(array(
+				'fromemail' => ilya_opt('from_email'),
 				'fromname' => $inname,
-				'replytoemail' => qa_email_validate(@$inemail) ? $inemail : null,
+				'replytoemail' => ilya_email_validate(@$inemail) ? $inemail : null,
 				'replytoname' => $inname,
-				'toemail' => qa_opt('feedback_email'),
-				'toname' => qa_opt('site_title'),
-				'subject' => qa_lang_sub('emails/feedback_subject', qa_opt('site_title')),
-				'body' => strtr(qa_lang('emails/feedback_body'), $subs),
+				'toemail' => ilya_opt('feedback_email'),
+				'toname' => ilya_opt('site_title'),
+				'subject' => ilya_lang_sub('emails/feedback_subject', ilya_opt('site_title')),
+				'body' => strtr(ilya_lang('emails/feedback_body'), $subs),
 				'html' => false,
 			))) {
 				$feedbacksent = true;
 			} else {
-				$pageerror = qa_lang_html('main/general_error');
+				$pageerror = ilya_lang_html('main/general_error');
 			}
 
-			qa_report_event('feedback', $userid, qa_get_logged_in_handle(), qa_cookie_get(), array(
+			ilya_report_event('feedback', $userid, ilya_get_logged_in_handle(), ilya_cookie_get(), array(
 				'email' => $inemail,
 				'name' => $inname,
 				'message' => $inmessage,
@@ -119,66 +119,66 @@ if (qa_clicked('dofeedback')) {
 
 // Prepare content for theme
 
-$qa_content = qa_content_prepare();
+$ilya_content = ilya_content_prepare();
 
-$qa_content['title'] = qa_lang_html('misc/feedback_title');
+$ilya_content['title'] = ilya_lang_html('misc/feedback_title');
 
-$qa_content['error'] = @$pageerror;
+$ilya_content['error'] = @$pageerror;
 
-$qa_content['form'] = array(
-	'tags' => 'method="post" action="' . qa_self_html() . '"',
+$ilya_content['form'] = array(
+	'tags' => 'method="post" action="' . ilya_self_html() . '"',
 
 	'style' => 'tall',
 
 	'fields' => array(
 		'message' => array(
 			'type' => $feedbacksent ? 'static' : '',
-			'label' => qa_lang_html_sub('misc/feedback_message', qa_opt('site_title')),
+			'label' => ilya_lang_html_sub('misc/feedback_message', ilya_opt('site_title')),
 			'tags' => 'name="message" id="message"',
-			'value' => qa_html(@$inmessage),
+			'value' => ilya_html(@$inmessage),
 			'rows' => 8,
-			'error' => qa_html(@$errors['message']),
+			'error' => ilya_html(@$errors['message']),
 		),
 
 		'name' => array(
 			'type' => $feedbacksent ? 'static' : '',
-			'label' => qa_lang_html('misc/feedback_name'),
+			'label' => ilya_lang_html('misc/feedback_name'),
 			'tags' => 'name="name"',
-			'value' => qa_html(isset($inname) ? $inname : @$userprofile['name']),
+			'value' => ilya_html(isset($inname) ? $inname : @$userprofile['name']),
 		),
 
 		'email' => array(
 			'type' => $feedbacksent ? 'static' : '',
-			'label' => qa_lang_html('misc/feedback_email'),
+			'label' => ilya_lang_html('misc/feedback_email'),
 			'tags' => 'name="email"',
-			'value' => qa_html(isset($inemail) ? $inemail : qa_get_logged_in_email()),
-			'note' => $feedbacksent ? null : qa_opt('email_privacy'),
+			'value' => ilya_html(isset($inemail) ? $inemail : ilya_get_logged_in_email()),
+			'note' => $feedbacksent ? null : ilya_opt('email_privacy'),
 		),
 	),
 
 	'buttons' => array(
 		'send' => array(
-			'label' => qa_lang_html('main/send_button'),
+			'label' => ilya_lang_html('main/send_button'),
 		),
 	),
 
 	'hidden' => array(
 		'dofeedback' => '1',
-		'code' => qa_get_form_security_code('feedback'),
-		'referer' => qa_html(isset($inreferer) ? $inreferer : @$_SERVER['HTTP_REFERER']),
+		'code' => ilya_get_form_security_code('feedback'),
+		'referer' => ilya_html(isset($inreferer) ? $inreferer : @$_SERVER['HTTP_REFERER']),
 	),
 );
 
 if ($usecaptcha && !$feedbacksent)
-	qa_set_up_captcha_field($qa_content, $qa_content['form']['fields'], @$errors);
+	ilya_set_up_captcha_field($ilya_content, $ilya_content['form']['fields'], @$errors);
 
 
-$qa_content['focusid'] = 'message';
+$ilya_content['focusid'] = 'message';
 
 if ($feedbacksent) {
-	$qa_content['form']['ok'] = qa_lang_html('misc/feedback_sent');
-	unset($qa_content['form']['buttons']);
+	$ilya_content['form']['ok'] = ilya_lang_html('misc/feedback_sent');
+	unset($ilya_content['form']['buttons']);
 }
 
 
-return $qa_content;
+return $ilya_content;

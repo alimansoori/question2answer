@@ -40,7 +40,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('editor', 'ilya-wysiwyg-editor.php', 'qa_wysiwyg_editor', 'WYSIWYG Editor');
-qa_register_plugin_module('page', 'ilya-wysiwyg-upload.php', 'qa_wysiwyg_upload', 'WYSIWYG Upload');
+ilya_register_plugin_module('editor', 'ilya-wysiwyg-editor.php', 'ilya_wysiwyg_editor', 'WYSIWYG Editor');
+ilya_register_plugin_module('page', 'ilya-wysiwyg-upload.php', 'ilya_wysiwyg_upload', 'WYSIWYG Upload');
 
-qa_register_plugin_module('page', 'ilya-wysiwyg-ajax.php', 'qa_wysiwyg_ajax', 'WYSIWYG Editor AJAX handler');
+ilya_register_plugin_module('page', 'ilya-wysiwyg-ajax.php', 'ilya_wysiwyg_ajax', 'WYSIWYG Editor AJAX handler');

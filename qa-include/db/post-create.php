@@ -41,15 +41,15 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $name
  * @return mixed
  */
-function qa_db_post_create($type, $parentid, $userid, $cookieid, $ip, $title, $content, $format, $tagstring, $notify, $categoryid = null, $name = null)
+function ilya_db_post_create($type, $parentid, $userid, $cookieid, $ip, $title, $content, $format, $tagstring, $notify, $categoryid = null, $name = null)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT INTO ^posts (categoryid, type, parentid, userid, cookieid, createip, title, content, format, tags, notify, name, created) ' .
 		'VALUES (#, $, #, $, #, UNHEX($), $, $, $, $, $, $, NOW())',
 		$categoryid, $type, $parentid, $userid, $cookieid, bin2hex(@inet_pton($ip)), $title, $content, $format, $tagstring, $notify, $name
 	);
 
-	return qa_db_last_insert_id();
+	return ilya_db_last_insert_id();
 }
 
 
@@ -58,12 +58,12 @@ function qa_db_post_create($type, $parentid, $userid, $cookieid, $ip, $title, $c
  * @param $firstpostid
  * @param $lastpostid
  */
-function qa_db_posts_calc_category_path($firstpostid, $lastpostid = null)
+function ilya_db_posts_calc_category_path($firstpostid, $lastpostid = null)
 {
 	if (!isset($lastpostid))
 		$lastpostid = $firstpostid;
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		"UPDATE ^posts AS x, (SELECT ^posts.postid, " .
 		"COALESCE(parent2.parentid, parent1.parentid, parent0.parentid, parent0.categoryid) AS catidpath1, " .
 		"IF (parent2.parentid IS NOT NULL, parent1.parentid, IF (parent1.parentid IS NOT NULL, parent0.parentid, IF (parent0.parentid IS NOT NULL, parent0.categoryid, NULL))) AS catidpath2, " .
@@ -79,9 +79,9 @@ function qa_db_posts_calc_category_path($firstpostid, $lastpostid = null)
  * @param $postid
  * @return array|null
  */
-function qa_db_post_get_category_path($postid)
+function ilya_db_post_get_category_path($postid)
 {
-	return qa_db_read_one_assoc(qa_db_query_sub(
+	return ilya_db_read_one_assoc(ilya_db_query_sub(
 		'SELECT categoryid, catidpath1, catidpath2, catidpath3 FROM ^posts WHERE postid=#',
 		$postid
 	)); // requires QA_CATEGORY_DEPTH=4
@@ -92,10 +92,10 @@ function qa_db_post_get_category_path($postid)
  * Update the cached number of answers for $questionid in the database, along with the highest netvotes of any of its answers
  * @param $questionid
  */
-function qa_db_post_acount_update($questionid)
+function ilya_db_post_acount_update($questionid)
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"UPDATE ^posts AS x, (SELECT COUNT(*) AS acount, COALESCE(GREATEST(MAX(netvotes), 0), 0) AS amaxvote FROM ^posts WHERE parentid=# AND type='A') AS a SET x.acount=a.acount, x.amaxvote=a.amaxvote WHERE x.postid=#",
 			$questionid, $questionid
 		);
@@ -104,15 +104,15 @@ function qa_db_post_acount_update($questionid)
 
 
 /**
- * Recalculate the number of questions for each category in $path retrieved via qa_db_post_get_category_path()
+ * Recalculate the number of questions for each category in $path retrieved via ilya_db_post_get_category_path()
  * @param $path
  */
-function qa_db_category_path_qcount_update($path)
+function ilya_db_category_path_qcount_update($path)
 {
-	qa_db_ifcategory_qcount_update($path['categoryid']); // requires QA_CATEGORY_DEPTH=4
-	qa_db_ifcategory_qcount_update($path['catidpath1']);
-	qa_db_ifcategory_qcount_update($path['catidpath2']);
-	qa_db_ifcategory_qcount_update($path['catidpath3']);
+	ilya_db_ifcategory_qcount_update($path['categoryid']); // requires QA_CATEGORY_DEPTH=4
+	ilya_db_ifcategory_qcount_update($path['catidpath1']);
+	ilya_db_ifcategory_qcount_update($path['catidpath2']);
+	ilya_db_ifcategory_qcount_update($path['catidpath3']);
 }
 
 
@@ -120,12 +120,12 @@ function qa_db_category_path_qcount_update($path)
  * Update the cached number of questions for category $categoryid in the database, including its subcategories
  * @param $categoryid
  */
-function qa_db_ifcategory_qcount_update($categoryid)
+function ilya_db_ifcategory_qcount_update($categoryid)
 {
-	if (qa_should_update_counts() && isset($categoryid)) {
+	if (ilya_should_update_counts() && isset($categoryid)) {
 		// This seemed like the most sensible approach which avoids explicitly calculating the category's depth in the hierarchy
 
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			"UPDATE ^categories SET qcount=GREATEST( (SELECT COUNT(*) FROM ^posts WHERE categoryid=# AND type='Q'), (SELECT COUNT(*) FROM ^posts WHERE catidpath1=# AND type='Q'), (SELECT COUNT(*) FROM ^posts WHERE catidpath2=# AND type='Q'), (SELECT COUNT(*) FROM ^posts WHERE catidpath3=# AND type='Q') ) WHERE categoryid=#",
 			$categoryid, $categoryid, $categoryid, $categoryid, $categoryid
 		); // requires QA_CATEGORY_DEPTH=4
@@ -135,18 +135,18 @@ function qa_db_ifcategory_qcount_update($categoryid)
 
 /**
  * Add rows into the database title index, where $postid contains the words $wordids - this does the same sort
- * of thing as qa_db_posttags_add_post_wordids() in a different way, for no particularly good reason.
+ * of thing as ilya_db_posttags_add_post_wordids() in a different way, for no particularly good reason.
  * @param $postid
  * @param $wordids
  */
-function qa_db_titlewords_add_post_wordids($postid, $wordids)
+function ilya_db_titlewords_add_post_wordids($postid, $wordids)
 {
 	if (count($wordids)) {
 		$rowstoadd = array();
 		foreach ($wordids as $wordid)
 			$rowstoadd[] = array($postid, $wordid);
 
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT INTO ^titlewords (postid, wordid) VALUES #',
 			$rowstoadd
 		);
@@ -162,14 +162,14 @@ function qa_db_titlewords_add_post_wordids($postid, $wordids)
  * @param $questionid
  * @param $wordidcounts
  */
-function qa_db_contentwords_add_post_wordidcounts($postid, $type, $questionid, $wordidcounts)
+function ilya_db_contentwords_add_post_wordidcounts($postid, $type, $questionid, $wordidcounts)
 {
 	if (count($wordidcounts)) {
 		$rowstoadd = array();
 		foreach ($wordidcounts as $wordid => $count)
 			$rowstoadd[] = array($postid, $wordid, $count, $type, $questionid);
 
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT INTO ^contentwords (postid, wordid, count, type, questionid) VALUES #',
 			$rowstoadd
 		);
@@ -182,14 +182,14 @@ function qa_db_contentwords_add_post_wordidcounts($postid, $type, $questionid, $
  * @param $postid
  * @param $wordids
  */
-function qa_db_tagwords_add_post_wordids($postid, $wordids)
+function ilya_db_tagwords_add_post_wordids($postid, $wordids)
 {
 	if (count($wordids)) {
 		$rowstoadd = array();
 		foreach ($wordids as $wordid)
 			$rowstoadd[] = array($postid, $wordid);
 
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT INTO ^tagwords (postid, wordid) VALUES #',
 			$rowstoadd
 		);
@@ -202,10 +202,10 @@ function qa_db_tagwords_add_post_wordids($postid, $wordids)
  * @param $postid
  * @param $wordids
  */
-function qa_db_posttags_add_post_wordids($postid, $wordids)
+function ilya_db_posttags_add_post_wordids($postid, $wordids)
 {
 	if (count($wordids)) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT INTO ^posttags (postid, wordid, postcreated) SELECT postid, wordid, created FROM ^words, ^posts WHERE postid=# AND wordid IN ($)',
 			$postid, $wordids
 		);
@@ -218,10 +218,10 @@ function qa_db_posttags_add_post_wordids($postid, $wordids)
  * @param $words
  * @return array
  */
-function qa_db_word_mapto_ids($words)
+function ilya_db_word_mapto_ids($words)
 {
 	if (count($words)) {
-		return qa_db_read_all_assoc(qa_db_query_sub(
+		return ilya_db_read_all_assoc(ilya_db_query_sub(
 			'SELECT wordid, word FROM ^words WHERE word IN ($)', $words
 		), 'word', 'wordid');
 	}
@@ -235,9 +235,9 @@ function qa_db_word_mapto_ids($words)
  * @param $words
  * @return array
  */
-function qa_db_word_mapto_ids_add($words)
+function ilya_db_word_mapto_ids_add($words)
 {
-	$wordtoid = qa_db_word_mapto_ids($words);
+	$wordtoid = ilya_db_word_mapto_ids($words);
 
 	$wordstoadd = array();
 	foreach ($words as $word) {
@@ -246,9 +246,9 @@ function qa_db_word_mapto_ids_add($words)
 	}
 
 	if (count($wordstoadd)) {
-		qa_db_query_sub('LOCK TABLES ^words WRITE'); // to prevent two requests adding the same word
+		ilya_db_query_sub('LOCK TABLES ^words WRITE'); // to prevent two requests adding the same word
 
-		$wordtoid = qa_db_word_mapto_ids($words); // map it again in case table content changed before it was locked
+		$wordtoid = ilya_db_word_mapto_ids($words); // map it again in case table content changed before it was locked
 
 		$rowstoadd = array();
 		foreach ($words as $word) {
@@ -256,11 +256,11 @@ function qa_db_word_mapto_ids_add($words)
 				$rowstoadd[] = array($word);
 		}
 
-		qa_db_query_sub('INSERT IGNORE INTO ^words (word) VALUES $', $rowstoadd);
+		ilya_db_query_sub('INSERT IGNORE INTO ^words (word) VALUES $', $rowstoadd);
 
-		qa_db_query_sub('UNLOCK TABLES');
+		ilya_db_query_sub('UNLOCK TABLES');
 
-		$wordtoid = qa_db_word_mapto_ids($words); // do it one last time
+		$wordtoid = ilya_db_word_mapto_ids($words); // do it one last time
 	}
 
 	return $wordtoid;
@@ -271,10 +271,10 @@ function qa_db_word_mapto_ids_add($words)
  * Update the titlecount column in the database for the words in $wordids, based on how many posts they appear in the title of
  * @param $wordids
  */
-function qa_db_word_titlecount_update($wordids)
+function ilya_db_word_titlecount_update($wordids)
 {
-	if (qa_should_update_counts() && count($wordids)) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts() && count($wordids)) {
+		ilya_db_query_sub(
 			'UPDATE ^words AS x, (SELECT ^words.wordid, COUNT(^titlewords.wordid) AS titlecount FROM ^words LEFT JOIN ^titlewords ON ^titlewords.wordid=^words.wordid WHERE ^words.wordid IN (#) GROUP BY wordid) AS a SET x.titlecount=a.titlecount WHERE x.wordid=a.wordid',
 			$wordids
 		);
@@ -286,10 +286,10 @@ function qa_db_word_titlecount_update($wordids)
  * Update the contentcount column in the database for the words in $wordids, based on how many posts they appear in the content of
  * @param $wordids
  */
-function qa_db_word_contentcount_update($wordids)
+function ilya_db_word_contentcount_update($wordids)
 {
-	if (qa_should_update_counts() && count($wordids)) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts() && count($wordids)) {
+		ilya_db_query_sub(
 			'UPDATE ^words AS x, (SELECT ^words.wordid, COUNT(^contentwords.wordid) AS contentcount FROM ^words LEFT JOIN ^contentwords ON ^contentwords.wordid=^words.wordid WHERE ^words.wordid IN (#) GROUP BY wordid) AS a SET x.contentcount=a.contentcount WHERE x.wordid=a.wordid',
 			$wordids
 		);
@@ -301,10 +301,10 @@ function qa_db_word_contentcount_update($wordids)
  * Update the tagwordcount column in the database for the individual tag words in $wordids, based on how many posts they appear in the tags of
  * @param $wordids
  */
-function qa_db_word_tagwordcount_update($wordids)
+function ilya_db_word_tagwordcount_update($wordids)
 {
-	if (qa_should_update_counts() && count($wordids)) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts() && count($wordids)) {
+		ilya_db_query_sub(
 			'UPDATE ^words AS x, (SELECT ^words.wordid, COUNT(^tagwords.wordid) AS tagwordcount FROM ^words LEFT JOIN ^tagwords ON ^tagwords.wordid=^words.wordid WHERE ^words.wordid IN (#) GROUP BY wordid) AS a SET x.tagwordcount=a.tagwordcount WHERE x.wordid=a.wordid',
 			$wordids
 		);
@@ -316,10 +316,10 @@ function qa_db_word_tagwordcount_update($wordids)
  * Update the tagcount column in the database for the whole tags in $wordids, based on how many posts they appear as tags of
  * @param $wordids
  */
-function qa_db_word_tagcount_update($wordids)
+function ilya_db_word_tagcount_update($wordids)
 {
-	if (qa_should_update_counts() && count($wordids)) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts() && count($wordids)) {
+		ilya_db_query_sub(
 			'UPDATE ^words AS x, (SELECT ^words.wordid, COUNT(^posttags.wordid) AS tagcount FROM ^words LEFT JOIN ^posttags ON ^posttags.wordid=^words.wordid WHERE ^words.wordid IN (#) GROUP BY wordid) AS a SET x.tagcount=a.tagcount WHERE x.wordid=a.wordid',
 			$wordids
 		);
@@ -330,10 +330,10 @@ function qa_db_word_tagcount_update($wordids)
 /**
  * Update the cached count in the database of the number of questions (excluding hidden/queued)
  */
-function qa_db_qcount_update()
+function ilya_db_qcount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_qcount', COUNT(*) FROM ^posts " .
 			"WHERE type = 'Q' " .
@@ -346,10 +346,10 @@ function qa_db_qcount_update()
 /**
  * Update the cached count in the database of the number of answers (excluding hidden/queued)
  */
-function qa_db_acount_update()
+function ilya_db_acount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_acount', COUNT(*) FROM ^posts " .
 			"WHERE type = 'A' " .
@@ -362,10 +362,10 @@ function qa_db_acount_update()
 /**
  * Update the cached count in the database of the number of comments (excluding hidden/queued)
  */
-function qa_db_ccount_update()
+function ilya_db_ccount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_ccount', COUNT(*) FROM ^posts " .
 			"WHERE type = 'C' " .
@@ -378,10 +378,10 @@ function qa_db_ccount_update()
 /**
  * Update the cached count in the database of the number of different tags used
  */
-function qa_db_tagcount_update()
+function ilya_db_tagcount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_tagcount', COUNT(*) FROM ^words " .
 			"WHERE tagcount > 0 " .
@@ -394,10 +394,10 @@ function qa_db_tagcount_update()
 /**
  * Update the cached count in the database of the number of unanswered questions (excluding hidden/queued)
  */
-function qa_db_unaqcount_update()
+function ilya_db_unaqcount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_unaqcount', COUNT(*) FROM ^posts " .
 			"WHERE type = 'Q' AND acount = 0 AND closedbyid IS NULL " .
@@ -410,10 +410,10 @@ function qa_db_unaqcount_update()
 /**
  * Update the cached count in the database of the number of questions with no answer selected (excluding hidden/queued)
  */
-function qa_db_unselqcount_update()
+function ilya_db_unselqcount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_unselqcount', COUNT(*) FROM ^posts " .
 			"WHERE type = 'Q' AND selchildid IS NULL AND closedbyid IS NULL " .
@@ -426,10 +426,10 @@ function qa_db_unselqcount_update()
 /**
  * Update the cached count in the database of the number of questions with no upvoted answers (excluding hidden/queued)
  */
-function qa_db_unupaqcount_update()
+function ilya_db_unupaqcount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_unupaqcount', COUNT(*) FROM ^posts " .
 			"WHERE type = 'Q' AND amaxvote = 0 AND closedbyid IS NULL " .
@@ -442,10 +442,10 @@ function qa_db_unupaqcount_update()
 /**
  * Update the cached count in the database of the number of posts which are queued for moderation
  */
-function qa_db_queuedcount_update()
+function ilya_db_queuedcount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_queuedcount', COUNT(*) FROM ^posts " .
 			"WHERE type IN ('Q_QUEUED', 'A_QUEUED', 'C_QUEUED') " .

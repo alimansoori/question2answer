@@ -37,18 +37,18 @@ define('QA_BUILD_DATE', '2019-01-12');
  *
  * @param $class
  */
-function qa_autoload($class)
+function ilya_autoload($class)
 {
 	if (strpos($class, 'Q2A_') === 0)
 		require QA_INCLUDE_DIR . strtr($class, '_', '/') . '.php';
 }
-spl_autoload_register('qa_autoload');
+spl_autoload_register('ilya_autoload');
 
 
 // Execution section of this file - remainder contains function definitions
 
-qa_initialize_php();
-qa_initialize_constants_1();
+ilya_initialize_php();
+ilya_initialize_constants_1();
 
 if (defined('QA_WORDPRESS_LOAD_FILE')) {
 	// if relevant, load WordPress integration in global scope
@@ -59,19 +59,19 @@ if (defined('QA_WORDPRESS_LOAD_FILE')) {
 }
 
 
-qa_initialize_constants_2();
-qa_initialize_modularity();
-qa_register_core_modules();
+ilya_initialize_constants_2();
+ilya_initialize_modularity();
+ilya_register_core_modules();
 
-qa_initialize_predb_plugins();
+ilya_initialize_predb_plugins();
 require_once QA_INCLUDE_DIR . 'ilya-db.php';
-qa_db_allow_connect();
+ilya_db_allow_connect();
 
-// $qa_autoconnect defaults to true so that optional plugins will load for external code. Q2A core
-// code sets $qa_autoconnect to false so that we can use custom fail handlers.
-if (!isset($qa_autoconnect) || $qa_autoconnect !== false) {
-	qa_db_connect('qa_page_db_fail_handler');
-	qa_initialize_postdb_plugins();
+// $ilya_autoconnect defaults to true so that optional plugins will load for external code. Q2A core
+// code sets $ilya_autoconnect to false so that we can use custom fail handlers.
+if (!isset($ilya_autoconnect) || $ilya_autoconnect !== false) {
+	ilya_db_connect('ilya_page_db_fail_handler');
+	ilya_initialize_postdb_plugins();
 }
 
 
@@ -84,7 +84,7 @@ if (!isset($qa_autoconnect) || $qa_autoconnect !== false) {
  * @param $version
  * @return float
  */
-function qa_version_to_float($version)
+function ilya_version_to_float($version)
 {
 	$value = 0.0;
 
@@ -107,7 +107,7 @@ function qa_version_to_float($version)
  * @param $version
  * @return bool
  */
-function qa_qa_version_below($version)
+function ilya_ilya_version_below($version)
 {
 	return version_compare(QA_VERSION, $version) < 0;
 }
@@ -118,7 +118,7 @@ function qa_qa_version_below($version)
  * @param $version
  * @return bool
  */
-function qa_php_version_below($version)
+function ilya_php_version_below($version)
 {
 	return version_compare(phpversion(), $version) < 0;
 }
@@ -129,10 +129,10 @@ function qa_php_version_below($version)
 /**
  * Set up and verify the PHP environment for Q2A, including unregistering globals if necessary
  */
-function qa_initialize_php()
+function ilya_initialize_php()
 {
-	if (qa_php_version_below('5.1.6'))
-		qa_fatal_error('Q2A requires PHP 5.1.6 or later');
+	if (ilya_php_version_below('5.1.6'))
+		ilya_fatal_error('Q2A requires PHP 5.1.6 or later');
 
 	error_reporting(E_ALL); // be ultra-strict about error checking
 
@@ -151,7 +151,7 @@ function qa_initialize_php()
 			if (isset(${$checkarray}) && is_array(${$checkarray})) {
 				foreach (${$checkarray} as $checkkey => $checkvalue) {
 					if (isset($keyprotect[$checkkey])) {
-						qa_fatal_error('My superglobals are not for overriding');
+						ilya_fatal_error('My superglobals are not for overriding');
 					} else {
 						unset($GLOBALS[$checkkey]);
 					}
@@ -165,9 +165,9 @@ function qa_initialize_php()
 /**
  * First stage of setting up Q2A constants, before (if necessary) loading WordPress or Joomla! integration
  */
-function qa_initialize_constants_1()
+function ilya_initialize_constants_1()
 {
-	global $qa_request_map;
+	global $ilya_request_map;
 
 	define('QA_CATEGORY_DEPTH', 4); // you can't change this number!
 
@@ -181,32 +181,32 @@ function qa_initialize_constants_1()
 	define('QA_PLUGIN_DIR', QA_BASE_DIR . 'ilya-plugin/');
 
 	if (!file_exists(QA_BASE_DIR . 'ilya-config.php'))
-		qa_fatal_error('The config file could not be found. Please read the instructions in ilya-config-example.php.');
+		ilya_fatal_error('The config file could not be found. Please read the instructions in ilya-config-example.php.');
 
 	require_once QA_BASE_DIR . 'ilya-config.php';
 
-	$qa_request_map = isset($QA_CONST_PATH_MAP) && is_array($QA_CONST_PATH_MAP) ? $QA_CONST_PATH_MAP : array();
+	$ilya_request_map = isset($QA_CONST_PATH_MAP) && is_array($QA_CONST_PATH_MAP) ? $QA_CONST_PATH_MAP : array();
 
 	if (defined('QA_WORDPRESS_INTEGRATE_PATH') && strlen(QA_WORDPRESS_INTEGRATE_PATH)) {
 		define('QA_FINAL_WORDPRESS_INTEGRATE_PATH', QA_WORDPRESS_INTEGRATE_PATH . ((substr(QA_WORDPRESS_INTEGRATE_PATH, -1) == '/') ? '' : '/'));
 		define('QA_WORDPRESS_LOAD_FILE', QA_FINAL_WORDPRESS_INTEGRATE_PATH . 'wp-load.php');
 
 		if (!is_readable(QA_WORDPRESS_LOAD_FILE)) {
-			qa_fatal_error('Could not find wp-load.php file for WordPress integration - please check QA_WORDPRESS_INTEGRATE_PATH in ilya-config.php');
+			ilya_fatal_error('Could not find wp-load.php file for WordPress integration - please check QA_WORDPRESS_INTEGRATE_PATH in ilya-config.php');
 		}
 	} elseif (defined('QA_JOOMLA_INTEGRATE_PATH') && strlen(QA_JOOMLA_INTEGRATE_PATH)) {
 		define('QA_FINAL_JOOMLA_INTEGRATE_PATH', QA_JOOMLA_INTEGRATE_PATH . ((substr(QA_JOOMLA_INTEGRATE_PATH, -1) == '/') ? '' : '/'));
 		define('QA_JOOMLA_LOAD_FILE', QA_FINAL_JOOMLA_INTEGRATE_PATH . 'configuration.php');
 
 		if (!is_readable(QA_JOOMLA_LOAD_FILE)) {
-			qa_fatal_error('Could not find configuration.php file for Joomla integration - please check QA_JOOMLA_INTEGRATE_PATH in ilya-config.php');
+			ilya_fatal_error('Could not find configuration.php file for Joomla integration - please check QA_JOOMLA_INTEGRATE_PATH in ilya-config.php');
 		}
 	}
 
 	// Polyfills
 
 	// password_hash compatibility for 5.3-5.4
-	define('QA_PASSWORD_HASH', !qa_php_version_below('5.3.7'));
+	define('QA_PASSWORD_HASH', !ilya_php_version_below('5.3.7'));
 	if (QA_PASSWORD_HASH) {
 		require_once QA_INCLUDE_DIR . 'vendor/password_compat.php';
 	}
@@ -232,7 +232,7 @@ function qa_initialize_constants_1()
 /**
  * Second stage of setting up Q2A constants, after (if necessary) loading WordPress or Joomla! integration
  */
-function qa_initialize_constants_2()
+function ilya_initialize_constants_2()
 {
 	// Default values if not set in ilya-config.php
 
@@ -257,8 +257,8 @@ function qa_initialize_constants_2()
 	// Start performance monitoring
 
 	if (QA_DEBUG_PERFORMANCE) {
-		global $qa_usage;
-		$qa_usage = new Q2A_Util_Usage;
+		global $ilya_usage;
+		$ilya_usage = new Q2A_Util_Usage;
 		// ensure errors are displayed
 		@ini_set('display_errors', 'On');
 	}
@@ -274,11 +274,11 @@ function qa_initialize_constants_2()
 
 		// Undo WordPress's addition of magic quotes to various things (leave $_COOKIE as is since WP code might need that)
 
-		function qa_undo_wordpress_quoting($param, $isget)
+		function ilya_undo_wordpress_quoting($param, $isget)
 		{
 			if (is_array($param)) { //
 				foreach ($param as $key => $value)
-					$param[$key] = qa_undo_wordpress_quoting($value, $isget);
+					$param[$key] = ilya_undo_wordpress_quoting($value, $isget);
 
 			} else {
 				$param = stripslashes($param);
@@ -289,8 +289,8 @@ function qa_initialize_constants_2()
 			return $param;
 		}
 
-		$_GET = qa_undo_wordpress_quoting($_GET, true);
-		$_POST = qa_undo_wordpress_quoting($_POST, false);
+		$_GET = ilya_undo_wordpress_quoting($_GET, true);
+		$_POST = ilya_undo_wordpress_quoting($_POST, false);
 		$_SERVER['PHP_SELF'] = stripslashes($_SERVER['PHP_SELF']);
 
 	} elseif (defined('QA_FINAL_JOOMLA_INTEGRATE_PATH')) {
@@ -318,8 +318,8 @@ function qa_initialize_constants_2()
 	define('QA_URL_FORMAT_INDEX', 0);  // http://...../index.php/123/why-is-the-sky-blue
 	define('QA_URL_FORMAT_NEAT', 1);   // http://...../123/why-is-the-sky-blue [requires .htaccess]
 	define('QA_URL_FORMAT_PARAM', 3);  // http://...../?qa=123/why-is-the-sky-blue
-	define('QA_URL_FORMAT_PARAMS', 4); // http://...../?qa=123&qa_1=why-is-the-sky-blue
-	define('QA_URL_FORMAT_SAFEST', 5); // http://...../index.php?qa=123&qa_1=why-is-the-sky-blue
+	define('QA_URL_FORMAT_PARAMS', 4); // http://...../?qa=123&ilya_1=why-is-the-sky-blue
+	define('QA_URL_FORMAT_SAFEST', 5); // http://...../index.php?qa=123&ilya_1=why-is-the-sky-blue
 
 	define('QA_URL_TEST_STRING', '$&-_~#%\\@^*()][`\';=:|".{},!<>?# π§½Жש'); // tests escaping, spaces, quote slashing and unicode - but not + and /
 }
@@ -328,16 +328,16 @@ function qa_initialize_constants_2()
 /**
  * Gets everything ready to start using modules, layers and overrides
  */
-function qa_initialize_modularity()
+function ilya_initialize_modularity()
 {
-	global $qa_modules, $qa_layers, $qa_override_files, $qa_override_files_temp, $qa_overrides, $qa_direct;
+	global $ilya_modules, $ilya_layers, $ilya_override_files, $ilya_override_files_temp, $ilya_overrides, $ilya_direct;
 
-	$qa_modules = array();
-	$qa_layers = array();
-	$qa_override_files = array();
-	$qa_override_files_temp = array();
-	$qa_overrides = array();
-	$qa_direct = array();
+	$ilya_modules = array();
+	$ilya_layers = array();
+	$ilya_override_files = array();
+	$ilya_override_files_temp = array();
+	$ilya_overrides = array();
+	$ilya_direct = array();
 }
 
 
@@ -346,7 +346,7 @@ function qa_initialize_modularity()
  * @param $request
  * @return bool whether buffering was used
  */
-function qa_initialize_buffering($request = '')
+function ilya_initialize_buffering($request = '')
 {
 	if (headers_sent()) {
 		return false;
@@ -361,19 +361,19 @@ function qa_initialize_buffering($request = '')
 /**
  * Register all modules that come as part of the Q2A core (as opposed to plugins)
  */
-function qa_register_core_modules()
+function ilya_register_core_modules()
 {
-	qa_register_module('filter', 'plugins/ilya-filter-basic.php', 'qa_filter_basic', '');
-	qa_register_module('editor', 'plugins/ilya-editor-basic.php', 'qa_editor_basic', '');
-	qa_register_module('viewer', 'plugins/ilya-viewer-basic.php', 'qa_viewer_basic', '');
-	qa_register_module('event', 'plugins/ilya-event-limits.php', 'qa_event_limits', 'Q2A Event Limits');
-	qa_register_module('event', 'plugins/ilya-event-notify.php', 'qa_event_notify', 'Q2A Event Notify');
-	qa_register_module('event', 'plugins/ilya-event-updates.php', 'qa_event_updates', 'Q2A Event Updates');
-	qa_register_module('search', 'plugins/ilya-search-basic.php', 'qa_search_basic', '');
-	qa_register_module('widget', 'plugins/ilya-widget-activity-count.php', 'qa_activity_count', 'Activity Count');
-	qa_register_module('widget', 'plugins/ilya-widget-ask-box.php', 'qa_ask_box', 'Ask Box');
-	qa_register_module('widget', 'plugins/ilya-widget-related-qs.php', 'qa_related_qs', 'Related Questions');
-	qa_register_module('widget', 'plugins/ilya-widget-category-list.php', 'qa_category_list', 'Categories');
+	ilya_register_module('filter', 'plugins/ilya-filter-basic.php', 'ilya_filter_basic', '');
+	ilya_register_module('editor', 'plugins/ilya-editor-basic.php', 'ilya_editor_basic', '');
+	ilya_register_module('viewer', 'plugins/ilya-viewer-basic.php', 'ilya_viewer_basic', '');
+	ilya_register_module('event', 'plugins/ilya-event-limits.php', 'ilya_event_limits', 'Q2A Event Limits');
+	ilya_register_module('event', 'plugins/ilya-event-notify.php', 'ilya_event_notify', 'Q2A Event Notify');
+	ilya_register_module('event', 'plugins/ilya-event-updates.php', 'ilya_event_updates', 'Q2A Event Updates');
+	ilya_register_module('search', 'plugins/ilya-search-basic.php', 'ilya_search_basic', '');
+	ilya_register_module('widget', 'plugins/ilya-widget-activity-count.php', 'ilya_activity_count', 'Activity Count');
+	ilya_register_module('widget', 'plugins/ilya-widget-ask-box.php', 'ilya_ask_box', 'Ask Box');
+	ilya_register_module('widget', 'plugins/ilya-widget-related-qs.php', 'ilya_related_qs', 'Related Questions');
+	ilya_register_module('widget', 'plugins/ilya-widget-category-list.php', 'ilya_category_list', 'Categories');
 }
 
 
@@ -381,31 +381,31 @@ function qa_register_core_modules()
  * Load plugins before database is available. Generally this includes database overrides and
  * process plugins that run early in the request lifecycle.
  */
-function qa_initialize_predb_plugins()
+function ilya_initialize_predb_plugins()
 {
-	global $qa_pluginManager;
-	$qa_pluginManager = new Q2A_Plugin_PluginManager();
-	$qa_pluginManager->readAllPluginMetadatas();
+	global $ilya_pluginManager;
+	$ilya_pluginManager = new Q2A_Plugin_PluginManager();
+	$ilya_pluginManager->readAllPluginMetadatas();
 
-	$qa_pluginManager->loadPluginsBeforeDbInit();
-	qa_load_override_files();
+	$ilya_pluginManager->loadPluginsBeforeDbInit();
+	ilya_load_override_files();
 }
 
 
 /**
  * Load plugins after database is available. Plugins loaded here are able to be disabled in admin.
  */
-function qa_initialize_postdb_plugins()
+function ilya_initialize_postdb_plugins()
 {
-	global $qa_pluginManager;
+	global $ilya_pluginManager;
 
 	require_once QA_INCLUDE_DIR . 'app/options.php';
-	qa_preload_options();
+	ilya_preload_options();
 
-	$qa_pluginManager->loadPluginsAfterDbInit();
-	qa_load_override_files();
+	$ilya_pluginManager->loadPluginsAfterDbInit();
+	ilya_load_override_files();
 
-	qa_report_process_stage('plugins_loaded');
+	ilya_report_process_stage('plugins_loaded');
 }
 
 
@@ -417,9 +417,9 @@ function qa_initialize_postdb_plugins()
  * @param string $query
  * @return mixed
  */
-function qa_page_db_fail_handler($type, $errno = null, $error = null, $query = null)
+function ilya_page_db_fail_handler($type, $errno = null, $error = null, $query = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$pass_failure_type = $type;
 	$pass_failure_errno = $errno;
@@ -428,7 +428,7 @@ function qa_page_db_fail_handler($type, $errno = null, $error = null, $query = n
 
 	require_once QA_INCLUDE_DIR . 'ilya-install.php';
 
-	qa_exit('error');
+	ilya_exit('error');
 }
 
 
@@ -443,7 +443,7 @@ function qa_page_db_fail_handler($type, $errno = null, $error = null, $query = n
  * @param bool $versiononly
  * @return array
  */
-function qa_addon_metadata($contents, $type, $versiononly = false)
+function ilya_addon_metadata($contents, $type, $versiononly = false)
 {
 	$fields = array(
 		'min_q2a' => 'Minimum Question2Answer Version',
@@ -478,18 +478,18 @@ function qa_addon_metadata($contents, $type, $versiononly = false)
 /**
  * Apply all the function overrides in override files that have been registered by plugins
  */
-function qa_load_override_files()
+function ilya_load_override_files()
 {
-	global $qa_override_files, $qa_override_files_temp, $qa_overrides;
+	global $ilya_override_files, $ilya_override_files_temp, $ilya_overrides;
 
 	$functionindex = array();
 
-	foreach ($qa_override_files_temp as $override) {
-		$qa_override_files[] = $override;
+	foreach ($ilya_override_files_temp as $override) {
+		$ilya_override_files[] = $override;
 		$filename = $override['directory'] . $override['include'];
 		$functionsphp = file_get_contents($filename);
 
-		preg_match_all('/\Wfunction\s+(qa_[a-z_]+)\s*\(/im', $functionsphp, $rawmatches, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
+		preg_match_all('/\Wfunction\s+(ilya_[a-z_]+)\s*\(/im', $functionsphp, $rawmatches, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
 
 		$reversematches = array_reverse($rawmatches[1], true); // reverse so offsets remain correct as we step through
 		$postreplace = array();
@@ -500,12 +500,12 @@ function qa_load_override_files()
 			$function = strtolower($rawmatch[0]);
 			$position = $rawmatch[1];
 
-			if (isset($qa_overrides[$function]))
-				$postreplace[$function . '_base'] = $qa_overrides[$function];
+			if (isset($ilya_overrides[$function]))
+				$postreplace[$function . '_base'] = $ilya_overrides[$function];
 
 			$newname = $function . '_override_' . (@++$functionindex[$function]) . $suffix;
 			$functionsphp = substr_replace($functionsphp, $newname, $position, strlen($function));
-			$qa_overrides[$function] = $newname;
+			$ilya_overrides[$function] = $newname;
 		}
 
 		foreach ($postreplace as $oldname => $newname) {
@@ -519,10 +519,10 @@ function qa_load_override_files()
 
 		// echo '<pre style="text-align:left;">'.htmlspecialchars($functionsphp).'</pre>'; // to debug munged code
 
-		qa_eval_from_file($functionsphp, $filename);
+		ilya_eval_from_file($functionsphp, $filename);
 	}
 
-	$qa_override_files_temp = array();
+	$ilya_override_files_temp = array();
 }
 
 
@@ -538,18 +538,18 @@ function qa_load_override_files()
  * @param string $directory
  * @param string $urltoroot
  */
-function qa_register_module($type, $include, $class, $name, $directory = QA_INCLUDE_DIR, $urltoroot = null)
+function ilya_register_module($type, $include, $class, $name, $directory = QA_INCLUDE_DIR, $urltoroot = null)
 {
-	global $qa_modules;
+	global $ilya_modules;
 
-	$previous = @$qa_modules[$type][$name];
+	$previous = @$ilya_modules[$type][$name];
 
 	if (isset($previous)) {
-		qa_fatal_error('A ' . $type . ' module named ' . $name . ' already exists. Please check there are no duplicate plugins. ' .
+		ilya_fatal_error('A ' . $type . ' module named ' . $name . ' already exists. Please check there are no duplicate plugins. ' .
 			"\n\nModule 1: " . $previous['directory'] . $previous['include'] . "\nModule 2: " . $directory . $include);
 	}
 
-	$qa_modules[$type][$name] = array(
+	$ilya_modules[$type][$name] = array(
 		'directory' => $directory,
 		'urltoroot' => $urltoroot,
 		'include' => $include,
@@ -566,18 +566,18 @@ function qa_register_module($type, $include, $class, $name, $directory = QA_INCL
  * @param string $directory
  * @param string $urltoroot
  */
-function qa_register_layer($include, $name, $directory = QA_INCLUDE_DIR, $urltoroot = null)
+function ilya_register_layer($include, $name, $directory = QA_INCLUDE_DIR, $urltoroot = null)
 {
-	global $qa_layers;
+	global $ilya_layers;
 
-	$previous = @$qa_layers[$name];
+	$previous = @$ilya_layers[$name];
 
 	if (isset($previous)) {
-		qa_fatal_error('A layer named ' . $name . ' already exists. Please check there are no duplicate plugins. ' .
+		ilya_fatal_error('A layer named ' . $name . ' already exists. Please check there are no duplicate plugins. ' .
 			"\n\nLayer 1: " . $previous['directory'] . $previous['include'] . "\nLayer 2: " . $directory . $include);
 	}
 
-	$qa_layers[$name] = array(
+	$ilya_layers[$name] = array(
 		'directory' => $directory,
 		'urltoroot' => $urltoroot,
 		'include' => $include,
@@ -592,11 +592,11 @@ function qa_register_layer($include, $name, $directory = QA_INCLUDE_DIR, $urltor
  * @param string $directory
  * @param string $urltoroot
  */
-function qa_register_overrides($include, $directory = QA_INCLUDE_DIR, $urltoroot = null)
+function ilya_register_overrides($include, $directory = QA_INCLUDE_DIR, $urltoroot = null)
 {
-	global $qa_override_files_temp;
+	global $ilya_override_files_temp;
 
-	$qa_override_files_temp[] = array(
+	$ilya_override_files_temp[] = array(
 		'directory' => $directory,
 		'urltoroot' => $urltoroot,
 		'include' => $include,
@@ -605,26 +605,26 @@ function qa_register_overrides($include, $directory = QA_INCLUDE_DIR, $urltoroot
 
 
 /**
- * Register a set of language phrases, which should be accessed by the prefix $name/ in the qa_lang_*() functions.
+ * Register a set of language phrases, which should be accessed by the prefix $name/ in the ilya_lang_*() functions.
  * Pass in the $pattern representing the PHP files that define these phrases, where * in the pattern is replaced with
  * the language code (e.g. 'fr') and/or 'default'. These files should be formatted like Q2A's ilya-lang-*.php files.
  * @param $pattern
  * @param $name
  */
-function qa_register_phrases($pattern, $name)
+function ilya_register_phrases($pattern, $name)
 {
-	global $qa_lang_file_pattern;
+	global $ilya_lang_file_pattern;
 
 	if (file_exists(QA_INCLUDE_DIR . 'lang/ilya-lang-' . $name . '.php')) {
-		qa_fatal_error('The name "' . $name . '" for phrases is reserved and cannot be used by plugins.' . "\n\nPhrases: " . $pattern);
+		ilya_fatal_error('The name "' . $name . '" for phrases is reserved and cannot be used by plugins.' . "\n\nPhrases: " . $pattern);
 	}
 
-	if (isset($qa_lang_file_pattern[$name])) {
-		qa_fatal_error('A set of phrases named ' . $name . ' already exists. Please check there are no duplicate plugins. ' .
-			"\n\nPhrases 1: " . $qa_lang_file_pattern[$name] . "\nPhrases 2: " . $pattern);
+	if (isset($ilya_lang_file_pattern[$name])) {
+		ilya_fatal_error('A set of phrases named ' . $name . ' already exists. Please check there are no duplicate plugins. ' .
+			"\n\nPhrases 1: " . $ilya_lang_file_pattern[$name] . "\nPhrases 2: " . $pattern);
 	}
 
-	$qa_lang_file_pattern[$name] = $pattern;
+	$ilya_lang_file_pattern[$name] = $pattern;
 }
 
 
@@ -638,15 +638,15 @@ function qa_register_phrases($pattern, $name)
  * @param $class
  * @param $name
  */
-function qa_register_plugin_module($type, $include, $class, $name)
+function ilya_register_plugin_module($type, $include, $class, $name)
 {
-	global $qa_plugin_directory, $qa_plugin_urltoroot;
+	global $ilya_plugin_directory, $ilya_plugin_urltoroot;
 
-	if (empty($qa_plugin_directory) || empty($qa_plugin_urltoroot)) {
-		qa_fatal_error('qa_register_plugin_module() can only be called from a plugin ilya-plugin.php file');
+	if (empty($ilya_plugin_directory) || empty($ilya_plugin_urltoroot)) {
+		ilya_fatal_error('ilya_register_plugin_module() can only be called from a plugin ilya-plugin.php file');
 	}
 
-	qa_register_module($type, $include, $class, $name, $qa_plugin_directory, $qa_plugin_urltoroot);
+	ilya_register_module($type, $include, $class, $name, $ilya_plugin_directory, $ilya_plugin_urltoroot);
 }
 
 
@@ -655,15 +655,15 @@ function qa_register_plugin_module($type, $include, $class, $name)
  * @param $include
  * @param $name
  */
-function qa_register_plugin_layer($include, $name)
+function ilya_register_plugin_layer($include, $name)
 {
-	global $qa_plugin_directory, $qa_plugin_urltoroot;
+	global $ilya_plugin_directory, $ilya_plugin_urltoroot;
 
-	if (empty($qa_plugin_directory) || empty($qa_plugin_urltoroot)) {
-		qa_fatal_error('qa_register_plugin_layer() can only be called from a plugin ilya-plugin.php file');
+	if (empty($ilya_plugin_directory) || empty($ilya_plugin_urltoroot)) {
+		ilya_fatal_error('ilya_register_plugin_layer() can only be called from a plugin ilya-plugin.php file');
 	}
 
-	qa_register_layer($include, $name, $qa_plugin_directory, $qa_plugin_urltoroot);
+	ilya_register_layer($include, $name, $ilya_plugin_directory, $ilya_plugin_urltoroot);
 }
 
 
@@ -671,15 +671,15 @@ function qa_register_plugin_layer($include, $name)
  * Register a plugin file $include containing override functions. Can only be called from a plugin's ilya-plugin.php file
  * @param $include
  */
-function qa_register_plugin_overrides($include)
+function ilya_register_plugin_overrides($include)
 {
-	global $qa_plugin_directory, $qa_plugin_urltoroot;
+	global $ilya_plugin_directory, $ilya_plugin_urltoroot;
 
-	if (empty($qa_plugin_directory) || empty($qa_plugin_urltoroot)) {
-		qa_fatal_error('qa_register_plugin_overrides() can only be called from a plugin ilya-plugin.php file');
+	if (empty($ilya_plugin_directory) || empty($ilya_plugin_urltoroot)) {
+		ilya_fatal_error('ilya_register_plugin_overrides() can only be called from a plugin ilya-plugin.php file');
 	}
 
-	qa_register_overrides($include, $qa_plugin_directory, $qa_plugin_urltoroot);
+	ilya_register_overrides($include, $ilya_plugin_directory, $ilya_plugin_urltoroot);
 }
 
 
@@ -688,15 +688,15 @@ function qa_register_plugin_overrides($include)
  * @param $pattern
  * @param $name
  */
-function qa_register_plugin_phrases($pattern, $name)
+function ilya_register_plugin_phrases($pattern, $name)
 {
-	global $qa_plugin_directory, $qa_plugin_urltoroot;
+	global $ilya_plugin_directory, $ilya_plugin_urltoroot;
 
-	if (empty($qa_plugin_directory) || empty($qa_plugin_urltoroot)) {
-		qa_fatal_error('qa_register_plugin_phrases() can only be called from a plugin ilya-plugin.php file');
+	if (empty($ilya_plugin_directory) || empty($ilya_plugin_urltoroot)) {
+		ilya_fatal_error('ilya_register_plugin_phrases() can only be called from a plugin ilya-plugin.php file');
 	}
 
-	qa_register_phrases($qa_plugin_directory . $pattern, $name);
+	ilya_register_phrases($ilya_plugin_directory . $pattern, $name);
 }
 
 
@@ -708,7 +708,7 @@ function qa_register_plugin_phrases($pattern, $name)
  * @param $eval
  * @param $filename
  */
-function qa_eval_from_file($eval, $filename)
+function ilya_eval_from_file($eval, $filename)
 {
 	// could also use ini_set('error_append_string') but apparently it doesn't work for errors logged on disk
 
@@ -727,11 +727,11 @@ function qa_eval_from_file($eval, $filename)
 			case 'true':
 			case 'stdout':
 			case 'stderr':
-				echo ' of ' . qa_html($filename) . "\n";
+				echo ' of ' . ilya_html($filename) . "\n";
 				break;
 		}
 
-		@error_log('PHP Question2Answer more info: ' . $php_errormsg . " in eval()'d code from " . qa_html($filename));
+		@error_log('PHP Question2Answer more info: ' . $php_errormsg . " in eval()'d code from " . ilya_html($filename));
 	}
 
 	@ini_set('track_errors', $oldtrackerrors);
@@ -744,7 +744,7 @@ function qa_eval_from_file($eval, $filename)
  * @param $args
  * @return mixed
  */
-function qa_call($function, $args)
+function ilya_call($function, $args)
 {
 	// call_user_func_array(...) is very slow, so we break out most common cases first
 	switch (count($args)) {
@@ -768,30 +768,30 @@ function qa_call($function, $args)
 
 /**
  * Determines whether a function is to be overridden by a plugin. But if the function is being called with
- * the _base suffix, any override will be bypassed due to $qa_direct.
+ * the _base suffix, any override will be bypassed due to $ilya_direct.
  *
  * @param string $function The function to override
- * @return string|null The name of the overriding function (of the form `qa_functionname_override_1_in_filename`)
+ * @return string|null The name of the overriding function (of the form `ilya_functionname_override_1_in_filename`)
  */
-function qa_to_override($function)
+function ilya_to_override($function)
 {
-	global $qa_overrides, $qa_direct;
+	global $ilya_overrides, $ilya_direct;
 
 	// handle most common case first
-	if (!isset($qa_overrides[$function])) {
+	if (!isset($ilya_overrides[$function])) {
 		return null;
 	}
 
 	if (strpos($function, '_override_') !== false) {
-		qa_fatal_error('Override functions should not be calling qa_to_override()!');
+		ilya_fatal_error('Override functions should not be calling ilya_to_override()!');
 	}
 
-	if (@$qa_direct[$function]) {
-		unset($qa_direct[$function]); // bypass the override just this once
+	if (@$ilya_direct[$function]) {
+		unset($ilya_direct[$function]); // bypass the override just this once
 		return null;
 	}
 
-	return $qa_overrides[$function];
+	return $ilya_overrides[$function];
 }
 
 
@@ -801,20 +801,20 @@ function qa_to_override($function)
  * @param $args
  * @return mixed
  */
-function qa_call_override($function, $args)
+function ilya_call_override($function, $args)
 {
-	global $qa_overrides;
+	global $ilya_overrides;
 
 	if (strpos($function, '_override_') !== false) {
-		qa_fatal_error('Override functions should not be calling qa_call_override()!');
+		ilya_fatal_error('Override functions should not be calling ilya_call_override()!');
 	}
 
 	if (!function_exists($function . '_base')) {
 		// define the base function the first time that it's needed
-		eval('function ' . $function . '_base() { global $qa_direct; $qa_direct[\'' . $function . '\']=true; $args=func_get_args(); return qa_call(\'' . $function . '\', $args); }');
+		eval('function ' . $function . '_base() { global $ilya_direct; $ilya_direct[\'' . $function . '\']=true; $args=func_get_args(); return ilya_call(\'' . $function . '\', $args); }');
 	}
 
-	return qa_call($qa_overrides[$function], $args);
+	return ilya_call($ilya_overrides[$function], $args);
 }
 
 
@@ -822,9 +822,9 @@ function qa_call_override($function, $args)
  * Exit PHP immediately after reporting a shutdown with $reason to any installed process modules
  * @param string $reason
  */
-function qa_exit($reason = null)
+function ilya_exit($reason = null)
 {
-	qa_report_process_stage('shutdown', $reason);
+	ilya_report_process_stage('shutdown', $reason);
 
 	$code = $reason === 'error' ? 1 : 0;
 	exit($code);
@@ -836,11 +836,11 @@ function qa_exit($reason = null)
  * @param $message
  * @return mixed
  */
-function qa_fatal_error($message)
+function ilya_fatal_error($message)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	echo 'Question2Answer fatal error:<p style="color: red">' . qa_html($message, true) . '</p>';
+	echo 'Question2Answer fatal error:<p style="color: red">' . ilya_html($message, true) . '</p>';
 	@error_log('PHP Question2Answer fatal error: ' . $message);
 	echo '<p>Stack trace:<p>';
 
@@ -849,11 +849,11 @@ function qa_fatal_error($message)
 		$color = strpos(@$trace['file'], '/ilya-plugin/') !== false ? 'red' : '#999';
 		echo sprintf(
 			'<code style="color: %s">%s() in %s:%s</code><br>',
-			$color, qa_html(@$trace['function']), basename(@$trace['file']), @$trace['line']
+			$color, ilya_html(@$trace['function']), basename(@$trace['file']), @$trace['line']
 		);
 	}
 
-	qa_exit('error');
+	ilya_exit('error');
 }
 
 
@@ -862,18 +862,18 @@ function qa_fatal_error($message)
 /**
  * Return an array with all registered modules' information
  */
-function qa_list_modules_info()
+function ilya_list_modules_info()
 {
-	global $qa_modules;
-	return $qa_modules;
+	global $ilya_modules;
+	return $ilya_modules;
 }
 
 /**
  * Return an array of all the module types for which at least one module has been registered
  */
-function qa_list_module_types()
+function ilya_list_module_types()
 {
-	return array_keys(qa_list_modules_info());
+	return array_keys(ilya_list_modules_info());
 }
 
 /**
@@ -881,9 +881,9 @@ function qa_list_module_types()
  * @param $type
  * @return array
  */
-function qa_list_modules($type)
+function ilya_list_modules($type)
 {
-	$modules = qa_list_modules_info();
+	$modules = ilya_list_modules_info();
 	return is_array(@$modules[$type]) ? array_keys($modules[$type]) : array();
 }
 
@@ -893,9 +893,9 @@ function qa_list_modules($type)
  * @param $name
  * @return array
  */
-function qa_get_module_info($type, $name)
+function ilya_get_module_info($type, $name)
 {
-	$modules = qa_list_modules_info();
+	$modules = ilya_list_modules_info();
 	return @$modules[$type][$name];
 }
 
@@ -905,11 +905,11 @@ function qa_get_module_info($type, $name)
  * @param $name
  * @return mixed|null
  */
-function qa_load_module($type, $name)
+function ilya_load_module($type, $name)
 {
-	global $qa_modules;
+	global $ilya_modules;
 
-	$module = @$qa_modules[$type][$name];
+	$module = @$ilya_modules[$type][$name];
 
 	if (is_array($module)) {
 		if (isset($module['object']))
@@ -922,9 +922,9 @@ function qa_load_module($type, $name)
 			$object = new $module['class'];
 
 			if (method_exists($object, 'load_module'))
-				$object->load_module($module['directory'], qa_path_to_root() . $module['urltoroot'], $type, $name);
+				$object->load_module($module['directory'], ilya_path_to_root() . $module['urltoroot'], $type, $name);
 
-			$qa_modules[$type][$name]['object'] = $object;
+			$ilya_modules[$type][$name]['object'] = $object;
 			return $object;
 		}
 	}
@@ -938,15 +938,15 @@ function qa_load_module($type, $name)
  * @param $method
  * @return array
  */
-function qa_load_all_modules_with($method)
+function ilya_load_all_modules_with($method)
 {
 	$modules = array();
 
-	$regmodules = qa_list_modules_info();
+	$regmodules = ilya_list_modules_info();
 
 	foreach ($regmodules as $moduletype => $modulesinfo) {
 		foreach ($modulesinfo as $modulename => $moduleinfo) {
-			$module = qa_load_module($moduletype, $modulename);
+			$module = ilya_load_module($moduletype, $modulename);
 
 			if (method_exists($module, $method))
 				$modules[$modulename] = $module;
@@ -963,14 +963,14 @@ function qa_load_all_modules_with($method)
  * @param $method
  * @return array
  */
-function qa_load_modules_with($type, $method)
+function ilya_load_modules_with($type, $method)
 {
 	$modules = array();
 
-	$trynames = qa_list_modules($type);
+	$trynames = ilya_list_modules($type);
 
 	foreach ($trynames as $tryname) {
-		$module = qa_load_module($type, $tryname);
+		$module = ilya_load_module($type, $tryname);
 
 		if (method_exists($module, $method))
 			$modules[$tryname] = $module;
@@ -988,7 +988,7 @@ function qa_load_modules_with($type, $method)
  * @param bool $multiline
  * @return mixed|string
  */
-function qa_html($string, $multiline = false)
+function ilya_html($string, $multiline = false)
 {
 	$html = htmlspecialchars((string)$string);
 
@@ -1012,15 +1012,15 @@ function qa_html($string, $multiline = false)
  * @param bool $storage
  * @return mixed|string
  */
-function qa_sanitize_html($html, $linksnewwindow = false, $storage = false)
+function ilya_sanitize_html($html, $linksnewwindow = false, $storage = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once 'vendor/htmLawed.php';
 
-	global $qa_sanitize_html_newwindow;
+	global $ilya_sanitize_html_newwindow;
 
-	$qa_sanitize_html_newwindow = $linksnewwindow;
+	$ilya_sanitize_html_newwindow = $linksnewwindow;
 
 	$safe = htmLawed($html, array(
 		'safe' => 1,
@@ -1028,7 +1028,7 @@ function qa_sanitize_html($html, $linksnewwindow = false, $storage = false)
 		'schemes' => 'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, telnet; *:file, http, https; style: !; classid:clsid',
 		'keep_bad' => 0,
 		'anti_link_spam' => array('/.*/', ''),
-		'hook_tag' => 'qa_sanitize_html_hook_tag',
+		'hook_tag' => 'ilya_sanitize_html_hook_tag',
 	));
 
 	return $safe;
@@ -1036,14 +1036,14 @@ function qa_sanitize_html($html, $linksnewwindow = false, $storage = false)
 
 
 /**
- * htmLawed hook function used to process tags in qa_sanitize_html(...)
+ * htmLawed hook function used to process tags in ilya_sanitize_html(...)
  * @param $element
  * @param array $attributes
  * @return string
  */
-function qa_sanitize_html_hook_tag($element, $attributes = null)
+function ilya_sanitize_html_hook_tag($element, $attributes = null)
 {
-	global $qa_sanitize_html_newwindow;
+	global $ilya_sanitize_html_newwindow;
 
 	if (!isset($attributes)) // it's a closing tag
 		return '</' . $element . '>';
@@ -1054,7 +1054,7 @@ function qa_sanitize_html_hook_tag($element, $attributes = null)
 	if ($element == 'embed')
 		unset($attributes['allowscriptaccess']);
 
-	if ($element == 'a' && isset($attributes['href']) && $qa_sanitize_html_newwindow)
+	if ($element == 'a' && isset($attributes['href']) && $ilya_sanitize_html_newwindow)
 		$attributes['target'] = '_blank';
 
 	$html = '<' . $element;
@@ -1070,7 +1070,7 @@ function qa_sanitize_html_hook_tag($element, $attributes = null)
  * @param $string
  * @return string
  */
-function qa_xml($string)
+function ilya_xml($string)
 {
 	return htmlspecialchars(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string)$string));
 }
@@ -1083,7 +1083,7 @@ function qa_xml($string)
  * @param bool $forcequotes
  * @return string
  */
-function qa_js($value, $forcequotes = false)
+function ilya_js($value, $forcequotes = false)
 {
 	$boolean = is_bool($value);
 	if ($boolean)
@@ -1111,27 +1111,27 @@ function qa_js($value, $forcequotes = false)
  * @param $usedformat
  * @return mixed
  */
-function qa_set_request($request, $relativeroot, $usedformat = null)
+function ilya_set_request($request, $relativeroot, $usedformat = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_request, $qa_root_url_relative, $qa_used_url_format;
+	global $ilya_request, $ilya_root_url_relative, $ilya_used_url_format;
 
-	$qa_request = $request;
-	$qa_root_url_relative = $relativeroot;
-	$qa_used_url_format = $usedformat;
+	$ilya_request = $request;
+	$ilya_root_url_relative = $relativeroot;
+	$ilya_used_url_format = $usedformat;
 }
 
 
 /**
  * Returns the current Q2A request (slash-separated, independent of the url scheme chosen)
  */
-function qa_request()
+function ilya_request()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_request;
-	return $qa_request;
+	global $ilya_request;
+	return $ilya_request;
 }
 
 
@@ -1140,9 +1140,9 @@ function qa_request()
  * @param $part
  * @return
  */
-function qa_request_part($part)
+function ilya_request_part($part)
 {
-	$parts = explode('/', qa_request());
+	$parts = explode('/', ilya_request());
 	return @$parts[$part];
 }
 
@@ -1152,9 +1152,9 @@ function qa_request_part($part)
  * @param int $start
  * @return array
  */
-function qa_request_parts($start = 0)
+function ilya_request_parts($start = 0)
 {
-	return array_slice(explode('/', qa_request()), $start);
+	return array_slice(explode('/', ilya_request()), $start);
 }
 
 
@@ -1163,22 +1163,22 @@ function qa_request_parts($start = 0)
  * @param $string
  * @return mixed|string
  */
-function qa_gpc_to_string($string)
+function ilya_gpc_to_string($string)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return get_magic_quotes_gpc() ? stripslashes($string) : $string;
 }
 
 
 /**
- * Return string with slashes added, if appropriate for later removal by qa_gpc_to_string()
+ * Return string with slashes added, if appropriate for later removal by ilya_gpc_to_string()
  * @param $string
  * @return mixed|string
  */
-function qa_string_to_gpc($string)
+function ilya_string_to_gpc($string)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return get_magic_quotes_gpc() ? addslashes($string) : $string;
 }
@@ -1189,11 +1189,11 @@ function qa_string_to_gpc($string)
  * @param $field
  * @return mixed|null|string
  */
-function qa_get($field)
+function ilya_get($field)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return isset($_GET[$field]) ? qa_gpc_to_string($_GET[$field]) : null;
+	return isset($_GET[$field]) ? ilya_gpc_to_string($_GET[$field]) : null;
 }
 
 
@@ -1203,11 +1203,11 @@ function qa_get($field)
  * @param $field
  * @return mixed|null
  */
-function qa_post_text($field)
+function ilya_post_text($field)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return isset($_POST[$field]) ? preg_replace('/\r\n?/', "\n", trim(qa_gpc_to_string($_POST[$field]))) : null;
+	return isset($_POST[$field]) ? preg_replace('/\r\n?/', "\n", trim(ilya_gpc_to_string($_POST[$field]))) : null;
 }
 
 /**
@@ -1216,9 +1216,9 @@ function qa_post_text($field)
  * @param $field
  * @return array|mixed|null
  */
-function qa_post_array($field)
+function ilya_post_array($field)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (!isset($_POST[$field]) || !is_array($_POST[$field])) {
 		return null;
@@ -1226,7 +1226,7 @@ function qa_post_array($field)
 
 	$result = array();
 	foreach ($_POST[$field] as $key => $value)
-		$result[$key] = preg_replace('/\r\n?/', "\n", trim(qa_gpc_to_string($value)));
+		$result[$key] = preg_replace('/\r\n?/', "\n", trim(ilya_gpc_to_string($value)));
 
 	return $result;
 }
@@ -1234,15 +1234,15 @@ function qa_post_array($field)
 
 /**
  * Return true if form button $name was clicked (as type=submit/image) to create this page request, or if a
- * simulated click was sent for the button (via 'qa_click' POST field)
+ * simulated click was sent for the button (via 'ilya_click' POST field)
  * @param $name
  * @return bool|mixed
  */
-function qa_clicked($name)
+function ilya_clicked($name)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return isset($_POST[$name]) || isset($_POST[$name . '_x']) || (qa_post_text('qa_click') == $name);
+	return isset($_POST[$name]) || isset($_POST[$name . '_x']) || (ilya_post_text('ilya_click') == $name);
 }
 
 
@@ -1250,9 +1250,9 @@ function qa_clicked($name)
  * Determine the remote IP address of the user accessing the site.
  * @return mixed  String representing IP if it's available, or null otherwise.
  */
-function qa_remote_ip_address()
+function ilya_remote_ip_address()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
 }
@@ -1264,7 +1264,7 @@ function qa_remote_ip_address()
  * is added to the server's log displaying the size of the file that triggered this situation. It is important to note
  * that whenever this happens the $_POST and $_FILES superglobals are empty.
  */
-function qa_post_limit_exceeded()
+function ilya_post_limit_exceeded()
 {
 	if (in_array($_SERVER['REQUEST_METHOD'], array('POST', 'PUT')) && empty($_POST) && empty($_FILES)) {
 		$postmaxsize = ini_get('post_max_size');  // Gets the current post_max_size configuration
@@ -1307,9 +1307,9 @@ function convert_to_bytes($unit, $value)
  * Whether we are responding to an HTTP GET request
  * @return bool True if the request is GET
  */
-function qa_is_http_get()
+function ilya_is_http_get()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return $_SERVER['REQUEST_METHOD'] === 'GET';
 }
@@ -1317,9 +1317,9 @@ function qa_is_http_get()
 /**
  * Return true if we are responding to an HTTP POST request
  */
-function qa_is_http_post()
+function ilya_is_http_post()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return $_SERVER['REQUEST_METHOD'] === 'POST' || !empty($_POST);
 }
@@ -1328,9 +1328,9 @@ function qa_is_http_post()
 /**
  * Return true if we appear to be responding to a secure HTTP request (but hard to be sure)
  */
-function qa_is_https_probably()
+function ilya_is_https_probably()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return (@$_SERVER['HTTPS'] && ($_SERVER['HTTPS'] != 'off')) || (@$_SERVER['SERVER_PORT'] == 443);
 }
@@ -1340,15 +1340,15 @@ function qa_is_https_probably()
  * Return true if it appears the page request is coming from a human using a web browser, rather than a search engine
  * or other bot. Based on a whitelist of terms in user agents, this can easily be tricked by a scraper or bad bot.
  */
-function qa_is_human_probably()
+function ilya_is_human_probably()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
 	$useragent = @$_SERVER['HTTP_USER_AGENT'];
 
-	return (strlen($useragent) == 0) || qa_string_matches_one($useragent, array(
+	return (strlen($useragent) == 0) || ilya_string_matches_one($useragent, array(
 		'MSIE', 'Firefox', 'Chrome', 'Safari', 'Opera', 'Gecko', 'MIDP', 'PLAYSTATION', 'Teleca',
 		'BlackBerry', 'UP.Browser', 'Polaris', 'MAUI_WAP_Browser', 'iPad', 'iPhone', 'iPod',
 	));
@@ -1358,9 +1358,9 @@ function qa_is_human_probably()
 /**
  * Return true if it appears that the page request is coming from a mobile client rather than a desktop/laptop web browser
  */
-function qa_is_mobile_probably()
+function ilya_is_mobile_probably()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
@@ -1377,14 +1377,14 @@ function qa_is_mobile_probably()
 		if (isset($_SERVER[$header]))
 			return true;
 
-	if (qa_string_matches_one($loweragent, array(
+	if (ilya_string_matches_one($loweragent, array(
 		'android', 'phone', 'mobile', 'windows ce', 'palm', ' mobi', 'wireless', 'blackberry', 'opera mini', 'symbian',
 		'nokia', 'samsung', 'ericsson,', 'vodafone/', 'kindle', 'ipod', 'wap1.', 'wap2.', 'sony', 'sanyo', 'sharp',
 		'panasonic', 'philips', 'pocketpc', 'avantgo', 'blazer', 'ipaq', 'up.browser', 'up.link', 'mmp', 'smartphone', 'midp',
 	)))
 		return true;
 
-	return qa_string_matches_one(strtolower(@$_SERVER['HTTP_ACCEPT']), array(
+	return ilya_string_matches_one(strtolower(@$_SERVER['HTTP_ACCEPT']), array(
 		'application/vnd.wap.xhtml+xml', 'text/vnd.wap.wml',
 	));
 }
@@ -1395,51 +1395,51 @@ function qa_is_mobile_probably()
 /**
  * Return the translated string for $identifier, unless we're using external translation logic.
  * This will retrieve the 'site_language' option so make sure you've already loaded/set that if
- * loading an option now will cause a problem (see issue in qa_default_option()). The part of
+ * loading an option now will cause a problem (see issue in ilya_default_option()). The part of
  * $identifier before the slash (/) replaces the * in the ilya-lang-*.php file references, and the
  * part after the / is the key of the array element to be taken from that file's returned result.
  * @param $identifier
  * @return string
  */
-function qa_lang($identifier)
+function ilya_lang($identifier)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_lang_file_pattern, $qa_phrases_full;
+	global $ilya_lang_file_pattern, $ilya_phrases_full;
 
 	list($group, $label) = explode('/', $identifier, 2);
 
-	if (isset($qa_phrases_full[$group][$label]))
-		return $qa_phrases_full[$group][$label];
+	if (isset($ilya_phrases_full[$group][$label]))
+		return $ilya_phrases_full[$group][$label];
 
-	if (!isset($qa_phrases_full[$group])) {
+	if (!isset($ilya_phrases_full[$group])) {
 		// load the default language files
-		if (isset($qa_lang_file_pattern[$group]))
-			$include = str_replace('*', 'default', $qa_lang_file_pattern[$group]);
+		if (isset($ilya_lang_file_pattern[$group]))
+			$include = str_replace('*', 'default', $ilya_lang_file_pattern[$group]);
 		else
 			$include = QA_INCLUDE_DIR . 'lang/ilya-lang-' . $group . '.php';
 
-		$qa_phrases_full[$group] = is_file($include) ? (array)(include_once $include) : array();
+		$ilya_phrases_full[$group] = is_file($include) ? (array)(include_once $include) : array();
 
 		// look for a localized file in ilya-lang/<lang>/
-		$languagecode = qa_opt('site_language');
+		$languagecode = ilya_opt('site_language');
 		if (strlen($languagecode)) {
-			if (isset($qa_lang_file_pattern[$group]))
-				$include = str_replace('*', $languagecode, $qa_lang_file_pattern[$group]);
+			if (isset($ilya_lang_file_pattern[$group]))
+				$include = str_replace('*', $languagecode, $ilya_lang_file_pattern[$group]);
 			else
 				$include = QA_LANG_DIR . $languagecode . '/ilya-lang-' . $group . '.php';
 
 			$phrases = is_file($include) ? (array)(include $include) : array();
-			$qa_phrases_full[$group] = array_merge($qa_phrases_full[$group], $phrases);
+			$ilya_phrases_full[$group] = array_merge($ilya_phrases_full[$group], $phrases);
 		}
 
 		// add any custom phrases from ilya-lang/custom/
 		$include = QA_LANG_DIR . 'custom/ilya-lang-' . $group . '.php';
 		$phrases = is_file($include) ? (array)(include $include) : array();
-		$qa_phrases_full[$group] = array_merge($qa_phrases_full[$group], $phrases);
+		$ilya_phrases_full[$group] = array_merge($ilya_phrases_full[$group], $phrases);
 
-		if (isset($qa_phrases_full[$group][$label]))
-			return $qa_phrases_full[$group][$label];
+		if (isset($ilya_phrases_full[$group][$label]))
+			return $ilya_phrases_full[$group][$label];
 	}
 
 	return '[' . $identifier . ']'; // as a last resort, return the identifier to help in development
@@ -1453,9 +1453,9 @@ function qa_lang($identifier)
  * @param string $symbol
  * @return mixed
  */
-function qa_lang_sub($identifier, $textparam, $symbol = '^')
+function ilya_lang_sub($identifier, $textparam, $symbol = '^')
 {
-	return str_replace($symbol, $textparam, qa_lang($identifier));
+	return str_replace($symbol, $textparam, ilya_lang($identifier));
 }
 
 
@@ -1464,9 +1464,9 @@ function qa_lang_sub($identifier, $textparam, $symbol = '^')
  * @param $identifier
  * @return mixed|string
  */
-function qa_lang_html($identifier)
+function ilya_lang_html($identifier)
 {
-	return qa_html(qa_lang($identifier));
+	return ilya_html(ilya_lang($identifier));
 }
 
 
@@ -1477,9 +1477,9 @@ function qa_lang_html($identifier)
  * @param string $symbol
  * @return mixed
  */
-function qa_lang_html_sub($identifier, $htmlparam, $symbol = '^')
+function ilya_lang_html_sub($identifier, $htmlparam, $symbol = '^')
 {
-	return str_replace($symbol, $htmlparam, qa_lang_html($identifier));
+	return str_replace($symbol, $htmlparam, ilya_lang_html($identifier));
 }
 
 
@@ -1491,13 +1491,13 @@ function qa_lang_html_sub($identifier, $htmlparam, $symbol = '^')
  * @param string $symbol
  * @return array
  */
-function qa_lang_html_sub_split($identifier, $htmlparam, $symbol = '^')
+function ilya_lang_html_sub_split($identifier, $htmlparam, $symbol = '^')
 {
-	$html = qa_lang_html($identifier);
+	$html = ilya_lang_html($identifier);
 
 	$symbolpos = strpos($html, $symbol);
 	if (!is_numeric($symbolpos))
-		qa_fatal_error('Missing ' . $symbol . ' in language string ' . $identifier);
+		ilya_fatal_error('Missing ' . $symbol . ' in language string ' . $identifier);
 
 	return array(
 		'prefix' => substr($html, 0, $symbolpos),
@@ -1510,26 +1510,26 @@ function qa_lang_html_sub_split($identifier, $htmlparam, $symbol = '^')
 // Request and path generation
 
 /**
- * Return the relative path to the Q2A root (if it was previously set by qa_set_request())
+ * Return the relative path to the Q2A root (if it was previously set by ilya_set_request())
  */
-function qa_path_to_root()
+function ilya_path_to_root()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_root_url_relative;
-	return $qa_root_url_relative;
+	global $ilya_root_url_relative;
+	return $ilya_root_url_relative;
 }
 
 
 /**
  * Return an array of mappings of Q2A requests, as defined in the ilya-config.php file
  */
-function qa_get_request_map()
+function ilya_get_request_map()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_request_map;
-	return $qa_request_map;
+	global $ilya_request_map;
+	return $ilya_request_map;
 }
 
 
@@ -1545,23 +1545,23 @@ function qa_get_request_map()
  * @param string $anchor
  * @return string
  */
-function qa_path($request, $params = null, $rooturl = null, $neaturls = null, $anchor = null)
+function ilya_path($request, $params = null, $rooturl = null, $neaturls = null, $anchor = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (!isset($neaturls)) {
 		require_once QA_INCLUDE_DIR . 'app/options.php';
-		$neaturls = qa_opt('neat_urls');
+		$neaturls = ilya_opt('neat_urls');
 	}
 
 	if (!isset($rooturl))
-		$rooturl = qa_path_to_root();
+		$rooturl = ilya_path_to_root();
 
 	$url = $rooturl . ((empty($rooturl) || (substr($rooturl, -1) == '/')) ? '' : '/');
 	$paramsextra = '';
 
 	$requestparts = explode('/', $request);
-	$pathmap = qa_get_request_map();
+	$pathmap = ilya_get_request_map();
 
 	if (isset($pathmap[$requestparts[0]])) {
 		$newpart = $pathmap[$requestparts[0]];
@@ -1615,7 +1615,7 @@ function qa_path($request, $params = null, $rooturl = null, $neaturls = null, $a
 
 
 /**
- * Return HTML representation of relative URI path for $request - see qa_path() for other parameters
+ * Return HTML representation of relative URI path for $request - see ilya_path() for other parameters
  * @param $request
  * @param array $params
  * @param string $rooturl
@@ -1623,22 +1623,22 @@ function qa_path($request, $params = null, $rooturl = null, $neaturls = null, $a
  * @param string $anchor
  * @return mixed|string
  */
-function qa_path_html($request, $params = null, $rooturl = null, $neaturls = null, $anchor = null)
+function ilya_path_html($request, $params = null, $rooturl = null, $neaturls = null, $anchor = null)
 {
-	return qa_html(qa_path($request, $params, $rooturl, $neaturls, $anchor));
+	return ilya_html(ilya_path($request, $params, $rooturl, $neaturls, $anchor));
 }
 
 
 /**
- * Return the absolute URI for $request - see qa_path() for other parameters
+ * Return the absolute URI for $request - see ilya_path() for other parameters
  * @param $request
  * @param array $params
  * @param string $anchor
  * @return string
  */
-function qa_path_absolute($request, $params = null, $anchor = null)
+function ilya_path_absolute($request, $params = null, $anchor = null)
 {
-	return qa_path($request, $params, qa_opt('site_url'), null, $anchor);
+	return ilya_path($request, $params, ilya_opt('site_url'), null, $anchor);
 }
 
 
@@ -1649,15 +1649,15 @@ function qa_path_absolute($request, $params = null, $anchor = null)
  * @param string $title The question title
  * @return string
  */
-function qa_q_request($questionid, $title)
+function ilya_q_request($questionid, $title)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'app/options.php';
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
-	$title = qa_block_words_replace($title, qa_get_block_words_preg());
-	$slug = qa_slugify($title, qa_opt('q_urls_remove_accents'), qa_opt('q_urls_title_length'));
+	$title = ilya_block_words_replace($title, ilya_get_block_words_preg());
+	$slug = ilya_slugify($title, ilya_opt('q_urls_remove_accents'), ilya_opt('q_urls_title_length'));
 
 	return (int)$questionid . '/' . $slug;
 }
@@ -1669,9 +1669,9 @@ function qa_q_request($questionid, $title)
  * @param $postid
  * @return mixed|string
  */
-function qa_anchor($basetype, $postid)
+function ilya_anchor($basetype, $postid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return strtolower($basetype) . $postid; // used to be $postid only but this violated HTML spec
 }
@@ -1687,25 +1687,25 @@ function qa_anchor($basetype, $postid)
  * @param int $showid
  * @return mixed|string
  */
-function qa_q_path($questionid, $title, $absolute = false, $showtype = null, $showid = null)
+function ilya_q_path($questionid, $title, $absolute = false, $showtype = null, $showid = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (($showtype == 'Q' || $showtype == 'A' || $showtype == 'C') && isset($showid)) {
 		$params = array('show' => $showid); // due to pagination
-		$anchor = qa_anchor($showtype, $showid);
+		$anchor = ilya_anchor($showtype, $showid);
 
 	} else {
 		$params = null;
 		$anchor = null;
 	}
 
-	return qa_path(qa_q_request($questionid, $title), $params, $absolute ? qa_opt('site_url') : null, null, $anchor);
+	return ilya_path(ilya_q_request($questionid, $title), $params, $absolute ? ilya_opt('site_url') : null, null, $anchor);
 }
 
 
 /**
- * Return the HTML representation of the URL for $questionid - other parameters as for qa_q_path()
+ * Return the HTML representation of the URL for $questionid - other parameters as for ilya_q_path()
  * @param $questionid
  * @param $title
  * @param bool $absolute
@@ -1713,9 +1713,9 @@ function qa_q_path($questionid, $title, $absolute = false, $showtype = null, $sh
  * @param int $showid
  * @return mixed|string
  */
-function qa_q_path_html($questionid, $title, $absolute = false, $showtype = null, $showid = null)
+function ilya_q_path_html($questionid, $title, $absolute = false, $showtype = null, $showid = null)
 {
-	return qa_html(qa_q_path($questionid, $title, $absolute, $showtype, $showid));
+	return ilya_html(ilya_q_path($questionid, $title, $absolute, $showtype, $showid));
 }
 
 
@@ -1724,9 +1724,9 @@ function qa_q_path_html($questionid, $title, $absolute = false, $showtype = null
  * @param $feed
  * @return mixed|string
  */
-function qa_feed_request($feed)
+function ilya_feed_request($feed)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return 'feed/' . $feed . '.rss';
 }
@@ -1735,13 +1735,13 @@ function qa_feed_request($feed)
 /**
  * Return an HTML-ready relative URL for the current page, preserving GET parameters - this is useful for action="..." in HTML forms
  */
-function qa_self_html()
+function ilya_self_html()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_used_url_format;
+	global $ilya_used_url_format;
 
-	return qa_path_html(qa_request(), $_GET, null, $qa_used_url_format);
+	return ilya_path_html(ilya_request(), $_GET, null, $ilya_used_url_format);
 }
 
 
@@ -1755,11 +1755,11 @@ function qa_self_html()
  * @param string $anchor
  * @return mixed|string
  */
-function qa_path_form_html($request, $params = null, $rooturl = null, $neaturls = null, $anchor = null)
+function ilya_path_form_html($request, $params = null, $rooturl = null, $neaturls = null, $anchor = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$path = qa_path($request, $params, $rooturl, $neaturls, $anchor);
+	$path = ilya_path($request, $params, $rooturl, $neaturls, $anchor);
 	$formhtml = '';
 
 	$questionpos = strpos($path, '?');
@@ -1768,7 +1768,7 @@ function qa_path_form_html($request, $params = null, $rooturl = null, $neaturls 
 
 		foreach ($params as $param)
 			if (preg_match('/^([^\=]*)(\=(.*))?$/', $param, $matches))
-				$formhtml .= '<input type="hidden" name="' . qa_html(urldecode($matches[1])) . '" value="' . qa_html(urldecode(@$matches[3])) . '"/>';
+				$formhtml .= '<input type="hidden" name="' . ilya_html(urldecode($matches[1])) . '" value="' . ilya_html(urldecode(@$matches[3])) . '"/>';
 	}
 
 	return $formhtml;
@@ -1776,7 +1776,7 @@ function qa_path_form_html($request, $params = null, $rooturl = null, $neaturls 
 
 
 /**
- * Redirect the user's web browser to $request and then we're done - see qa_path() for other parameters
+ * Redirect the user's web browser to $request and then we're done - see ilya_path() for other parameters
  * @param $request
  * @param array $params
  * @param string $rooturl
@@ -1784,11 +1784,11 @@ function qa_path_form_html($request, $params = null, $rooturl = null, $neaturls 
  * @param string $anchor
  * @return mixed
  */
-function qa_redirect($request, $params = null, $rooturl = null, $neaturls = null, $anchor = null)
+function ilya_redirect($request, $params = null, $rooturl = null, $neaturls = null, $anchor = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	qa_redirect_raw(qa_path($request, $params, $rooturl, $neaturls, $anchor));
+	ilya_redirect_raw(ilya_path($request, $params, $rooturl, $neaturls, $anchor));
 }
 
 
@@ -1797,12 +1797,12 @@ function qa_redirect($request, $params = null, $rooturl = null, $neaturls = null
  * @param $url
  * @return mixed
  */
-function qa_redirect_raw($url)
+function ilya_redirect_raw($url)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	header('Location: ' . $url);
-	qa_exit('redirect');
+	ilya_exit('redirect');
 }
 
 
@@ -1813,9 +1813,9 @@ function qa_redirect_raw($url)
  * @param $url
  * @return mixed|string
  */
-function qa_retrieve_url($url)
+function ilya_retrieve_url($url)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	// ensure we're fetching a remote URL
 	if (!preg_match('#^https?://#', $url)) {
@@ -1842,19 +1842,19 @@ function qa_retrieve_url($url)
  * @param mixed $value
  * @return
  */
-function qa_opt($name, $value = null)
+function ilya_opt($name, $value = null)
 {
-	global $qa_options_cache;
+	global $ilya_options_cache;
 
-	if (!isset($value) && isset($qa_options_cache[$name]))
-		return $qa_options_cache[$name]; // quick shortcut to reduce calls to qa_get_options()
+	if (!isset($value) && isset($ilya_options_cache[$name]))
+		return $ilya_options_cache[$name]; // quick shortcut to reduce calls to ilya_get_options()
 
 	require_once QA_INCLUDE_DIR . 'app/options.php';
 
 	if (isset($value))
-		qa_set_option($name, $value);
+		ilya_set_option($name, $value);
 
-	$options = qa_get_options(array($name));
+	$options = ilya_get_options(array($name));
 
 	return $options[$name];
 }
@@ -1863,7 +1863,7 @@ function qa_opt($name, $value = null)
  * Simple method to output a preformatted variable
  * @param $var
  */
-function qa_debug($var)
+function ilya_debug($var)
 {
 	echo "\n" . '<pre style="padding: 10px; background-color: #eee; color: #444; font-size: 11px; text-align: left">';
 	echo $var === null ? 'NULL' : htmlspecialchars(print_r($var, true), ENT_COMPAT|ENT_SUBSTITUTE);
@@ -1874,15 +1874,15 @@ function qa_debug($var)
 // Event and process stage reporting
 
 /**
- * Suspend the reporting of events to event modules via qa_report_event(...) if $suspend is
+ * Suspend the reporting of events to event modules via ilya_report_event(...) if $suspend is
  * true, otherwise reinstate it. A counter is kept to allow multiple calls.
  * @param bool $suspend
  */
-function qa_suspend_event_reports($suspend = true)
+function ilya_suspend_event_reports($suspend = true)
 {
-	global $qa_event_reports_suspended;
+	global $ilya_event_reports_suspended;
 
-	$qa_event_reports_suspended += ($suspend ? 1 : -1);
+	$ilya_event_reports_suspended += ($suspend ? 1 : -1);
 }
 
 
@@ -1895,37 +1895,37 @@ function qa_suspend_event_reports($suspend = true)
  * @param array $params
  * @return mixed|void
  */
-function qa_report_event($event, $userid, $handle, $cookieid, $params = array())
+function ilya_report_event($event, $userid, $handle, $cookieid, $params = array())
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_event_reports_suspended;
+	global $ilya_event_reports_suspended;
 
-	if ($qa_event_reports_suspended > 0)
+	if ($ilya_event_reports_suspended > 0)
 		return;
 
-	$eventmodules = qa_load_modules_with('event', 'process_event');
+	$eventmodules = ilya_load_modules_with('event', 'process_event');
 	foreach ($eventmodules as $eventmodule)
 		$eventmodule->process_event($event, $userid, $handle, $cookieid, $params);
 }
 
 
-function qa_report_process_stage($method) // can have extra params
+function ilya_report_process_stage($method) // can have extra params
 {
-	global $qa_process_reports_suspended;
+	global $ilya_process_reports_suspended;
 
-	if (@$qa_process_reports_suspended)
+	if (@$ilya_process_reports_suspended)
 		return;
 
-	$qa_process_reports_suspended = true; // prevent loop, e.g. because of an error
+	$ilya_process_reports_suspended = true; // prevent loop, e.g. because of an error
 
 	$args = func_get_args();
 	$args = array_slice($args, 1);
 
-	$processmodules = qa_load_modules_with('process', $method);
+	$processmodules = ilya_load_modules_with('process', $method);
 	foreach ($processmodules as $processmodule) {
 		call_user_func_array(array($processmodule, $method), $args);
 	}
 
-	$qa_process_reports_suspended = null;
+	$ilya_process_reports_suspended = null;
 }

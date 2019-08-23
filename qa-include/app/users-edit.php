@@ -44,7 +44,7 @@ if (!defined('QA_NEW_PASSWORD_LEN')){
  * @param $olduser
  * @return array
  */
-function qa_handle_email_filter(&$handle, &$email, $olduser = null)
+function ilya_handle_email_filter(&$handle, &$email, $olduser = null)
 {
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 	require_once QA_INCLUDE_DIR . 'util/string.php';
@@ -52,9 +52,9 @@ function qa_handle_email_filter(&$handle, &$email, $olduser = null)
 	$errors = array();
 
 	// sanitise 4-byte Unicode
-	$handle = qa_remove_utf8mb4($handle);
+	$handle = ilya_remove_utf8mb4($handle);
 
-	$filtermodules = qa_load_modules_with('filter', 'filter_handle');
+	$filtermodules = ilya_load_modules_with('filter', 'filter_handle');
 
 	foreach ($filtermodules as $filtermodule) {
 		$error = $filtermodule->filter_handle($handle, $olduser);
@@ -65,12 +65,12 @@ function qa_handle_email_filter(&$handle, &$email, $olduser = null)
 	}
 
 	if (!isset($errors['handle'])) { // first test through filters, then check for duplicates here
-		$handleusers = qa_db_user_find_by_handle($handle);
+		$handleusers = ilya_db_user_find_by_handle($handle);
 		if (count($handleusers) && ((!isset($olduser['userid'])) || (array_search($olduser['userid'], $handleusers) === false)))
-			$errors['handle'] = qa_lang('users/handle_exists');
+			$errors['handle'] = ilya_lang('users/handle_exists');
 	}
 
-	$filtermodules = qa_load_modules_with('filter', 'filter_email');
+	$filtermodules = ilya_load_modules_with('filter', 'filter_email');
 
 	$error = null;
 	foreach ($filtermodules as $filtermodule) {
@@ -82,9 +82,9 @@ function qa_handle_email_filter(&$handle, &$email, $olduser = null)
 	}
 
 	if (!isset($errors['email'])) {
-		$emailusers = qa_db_user_find_by_email($email);
+		$emailusers = ilya_db_user_find_by_email($email);
 		if (count($emailusers) && ((!isset($olduser['userid'])) || (array_search($olduser['userid'], $emailusers) === false)))
-			$errors['email'] = qa_lang('users/email_exists');
+			$errors['email'] = ilya_lang('users/email_exists');
 	}
 
 	return $errors;
@@ -96,22 +96,22 @@ function qa_handle_email_filter(&$handle, &$email, $olduser = null)
  * @param $handle
  * @return string
  */
-function qa_handle_make_valid($handle)
+function ilya_handle_make_valid($handle)
 {
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 	require_once QA_INCLUDE_DIR . 'db/maxima.php';
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 
 	if (!strlen($handle))
-		$handle = qa_lang('users/registered_user');
+		$handle = ilya_lang('users/registered_user');
 
 	$handle = preg_replace('/[\\@\\+\\/]/', ' ', $handle);
 
 	for ($attempt = 0; $attempt <= 99; $attempt++) {
 		$suffix = $attempt ? (' ' . $attempt) : '';
-		$tryhandle = qa_substr($handle, 0, QA_DB_MAX_HANDLE_LENGTH - strlen($suffix)) . $suffix;
+		$tryhandle = ilya_substr($handle, 0, QA_DB_MAX_HANDLE_LENGTH - strlen($suffix)) . $suffix;
 
-		$filtermodules = qa_load_modules_with('filter', 'filter_handle');
+		$filtermodules = ilya_load_modules_with('filter', 'filter_handle');
 		foreach ($filtermodules as $filtermodule) {
 			// filter first without worrying about errors, since our goal is to get a valid one
 			$filtermodule->filter_handle($tryhandle, null);
@@ -126,13 +126,13 @@ function qa_handle_make_valid($handle)
 		}
 
 		if (!$haderror) {
-			$handleusers = qa_db_user_find_by_handle($tryhandle);
+			$handleusers = ilya_db_user_find_by_handle($tryhandle);
 			if (!count($handleusers))
 				return $tryhandle;
 		}
 	}
 
-	qa_fatal_error('Could not create a valid and unique handle from: ' . $handle);
+	ilya_fatal_error('Could not create a valid and unique handle from: ' . $handle);
 }
 
 
@@ -143,10 +143,10 @@ function qa_handle_make_valid($handle)
  * @param $olduser
  * @return array
  */
-function qa_password_validate($password, $olduser = null)
+function ilya_password_validate($password, $olduser = null)
 {
 	$error = null;
-	$filtermodules = qa_load_modules_with('filter', 'validate_password');
+	$filtermodules = ilya_load_modules_with('filter', 'validate_password');
 
 	foreach ($filtermodules as $filtermodule) {
 		$error = $filtermodule->validate_password($password, $olduser);
@@ -156,8 +156,8 @@ function qa_password_validate($password, $olduser = null)
 
 	if (!isset($error)) {
 		$minpasslen = max(QA_MIN_PASSWORD_LEN, 1);
-		if (qa_strlen($password) < $minpasslen)
-			$error = qa_lang_sub('users/password_min', $minpasslen);
+		if (ilya_strlen($password) < $minpasslen)
+			$error = ilya_lang_sub('users/password_min', $minpasslen);
 	}
 
 	if (isset($error))
@@ -178,9 +178,9 @@ function qa_password_validate($password, $olduser = null)
  * @param bool $confirmed
  * @return mixed
  */
-function qa_create_new_user($email, $password, $handle, $level = QA_USER_LEVEL_BASIC, $confirmed = false)
+function ilya_create_new_user($email, $password, $handle, $level = QA_USER_LEVEL_BASIC, $confirmed = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 	require_once QA_INCLUDE_DIR . 'db/points.php';
@@ -188,39 +188,39 @@ function qa_create_new_user($email, $password, $handle, $level = QA_USER_LEVEL_B
 	require_once QA_INCLUDE_DIR . 'app/emails.php';
 	require_once QA_INCLUDE_DIR . 'app/cookies.php';
 
-	$userid = qa_db_user_create($email, $password, $handle, $level, qa_remote_ip_address());
-	qa_db_points_update_ifuser($userid, null);
-	qa_db_uapprovecount_update();
+	$userid = ilya_db_user_create($email, $password, $handle, $level, ilya_remote_ip_address());
+	ilya_db_points_update_ifuser($userid, null);
+	ilya_db_uapprovecount_update();
 
 	if ($confirmed)
-		qa_db_user_set_flag($userid, QA_USER_FLAGS_EMAIL_CONFIRMED, true);
+		ilya_db_user_set_flag($userid, QA_USER_FLAGS_EMAIL_CONFIRMED, true);
 
-	if (qa_opt('show_notice_welcome'))
-		qa_db_user_set_flag($userid, QA_USER_FLAGS_WELCOME_NOTICE, true);
+	if (ilya_opt('show_notice_welcome'))
+		ilya_db_user_set_flag($userid, QA_USER_FLAGS_WELCOME_NOTICE, true);
 
-	$custom = qa_opt('show_custom_welcome') ? trim(qa_opt('custom_welcome')) : '';
+	$custom = ilya_opt('show_custom_welcome') ? trim(ilya_opt('custom_welcome')) : '';
 
-	if (qa_opt('confirm_user_emails') && $level < QA_USER_LEVEL_EXPERT && !$confirmed) {
-		$confirm = strtr(qa_lang('emails/welcome_confirm'), array(
-			'^url' => qa_get_new_confirm_url($userid, $handle),
+	if (ilya_opt('confirm_user_emails') && $level < QA_USER_LEVEL_EXPERT && !$confirmed) {
+		$confirm = strtr(ilya_lang('emails/welcome_confirm'), array(
+			'^url' => ilya_get_new_confirm_url($userid, $handle),
 		));
 
-		if (qa_opt('confirm_user_required'))
-			qa_db_user_set_flag($userid, QA_USER_FLAGS_MUST_CONFIRM, true);
+		if (ilya_opt('confirm_user_required'))
+			ilya_db_user_set_flag($userid, QA_USER_FLAGS_MUST_CONFIRM, true);
 
 	} else
 		$confirm = '';
 
 	// we no longer use the 'approve_user_required' option to set QA_USER_FLAGS_MUST_APPROVE; this can be handled by the Permissions settings
 
-	qa_send_notification($userid, $email, $handle, qa_lang('emails/welcome_subject'), qa_lang('emails/welcome_body'), array(
-		'^password' => isset($password) ? qa_lang('main/hidden') : qa_lang('users/password_to_set'), // v 1.6.3: no longer email out passwords
-		'^url' => qa_opt('site_url'),
+	ilya_send_notification($userid, $email, $handle, ilya_lang('emails/welcome_subject'), ilya_lang('emails/welcome_body'), array(
+		'^password' => isset($password) ? ilya_lang('main/hidden') : ilya_lang('users/password_to_set'), // v 1.6.3: no longer email out passwords
+		'^url' => ilya_opt('site_url'),
 		'^custom' => strlen($custom) ? ($custom . "\n\n") : '',
 		'^confirm' => $confirm,
 	));
 
-	qa_report_event('u_register', $userid, $handle, qa_cookie_get(), array(
+	ilya_report_event('u_register', $userid, $handle, ilya_cookie_get(), array(
 		'email' => $email,
 		'level' => $level,
 	));
@@ -235,30 +235,30 @@ function qa_create_new_user($email, $password, $handle, $level = QA_USER_LEVEL_B
  * @param $userid
  * @return mixed
  */
-function qa_delete_user($userid)
+function ilya_delete_user($userid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/votes.php';
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 	require_once QA_INCLUDE_DIR . 'db/post-update.php';
 	require_once QA_INCLUDE_DIR . 'db/points.php';
 
-	$postids = qa_db_uservoteflag_user_get($userid); // posts this user has flagged or voted on, whose counts need updating
+	$postids = ilya_db_uservoteflag_user_get($userid); // posts this user has flagged or voted on, whose counts need updating
 
-	qa_db_user_delete($userid);
-	qa_db_uapprovecount_update();
-	qa_db_userpointscount_update();
+	ilya_db_user_delete($userid);
+	ilya_db_uapprovecount_update();
+	ilya_db_userpointscount_update();
 
 	foreach ($postids as $postid) { // hoping there aren't many of these - saves a lot of new SQL code...
-		qa_db_post_recount_votes($postid);
-		qa_db_post_recount_flags($postid);
+		ilya_db_post_recount_votes($postid);
+		ilya_db_post_recount_flags($postid);
 	}
 
-	$postuserids = qa_db_posts_get_userids($postids);
+	$postuserids = ilya_db_posts_get_userids($postids);
 
 	foreach ($postuserids as $postuserid) {
-		qa_db_points_update_ifuser($postuserid, array('avoteds', 'qvoteds', 'upvoteds', 'downvoteds'));
+		ilya_db_points_update_ifuser($postuserid, array('avoteds', 'qvoteds', 'upvoteds', 'downvoteds'));
 	}
 }
 
@@ -268,23 +268,23 @@ function qa_delete_user($userid)
  * @param $userid
  * @return mixed
  */
-function qa_send_new_confirm($userid)
+function ilya_send_new_confirm($userid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 	require_once QA_INCLUDE_DIR . 'db/selects.php';
 	require_once QA_INCLUDE_DIR . 'app/emails.php';
 
-	$userinfo = qa_db_select_with_pending(qa_db_user_account_selectspec($userid, true));
+	$userinfo = ilya_db_select_with_pending(ilya_db_user_account_selectspec($userid, true));
 
-	$emailcode = qa_db_user_rand_emailcode();
+	$emailcode = ilya_db_user_rand_emailcode();
 
-	if (!qa_send_notification($userid, $userinfo['email'], $userinfo['handle'], qa_lang('emails/confirm_subject'), qa_lang('emails/confirm_body'), array(
-			'^url' => qa_get_new_confirm_url($userid, $userinfo['handle'], $emailcode),
+	if (!ilya_send_notification($userid, $userinfo['email'], $userinfo['handle'], ilya_lang('emails/confirm_subject'), ilya_lang('emails/confirm_body'), array(
+			'^url' => ilya_get_new_confirm_url($userid, $userinfo['handle'], $emailcode),
 			'^code' => $emailcode,
 	))) {
-		qa_fatal_error('Could not send email confirmation');
+		ilya_fatal_error('Could not send email confirmation');
 	}
 }
 
@@ -297,18 +297,18 @@ function qa_send_new_confirm($userid)
  * @param $emailcode
  * @return mixed|string
  */
-function qa_get_new_confirm_url($userid, $handle, $emailcode = null)
+function ilya_get_new_confirm_url($userid, $handle, $emailcode = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 
 	if (!isset($emailcode)) {
-		$emailcode = qa_db_user_rand_emailcode();
+		$emailcode = ilya_db_user_rand_emailcode();
 	}
-	qa_db_user_set($userid, 'emailcode', $emailcode);
+	ilya_db_user_set($userid, 'emailcode', $emailcode);
 
-	return qa_path_absolute('confirm', array('c' => $emailcode, 'u' => $handle));
+	return ilya_path_absolute('confirm', array('c' => $emailcode, 'u' => $handle));
 }
 
 
@@ -319,18 +319,18 @@ function qa_get_new_confirm_url($userid, $handle, $emailcode = null)
  * @param $handle
  * @return mixed
  */
-function qa_complete_confirm($userid, $email, $handle)
+function ilya_complete_confirm($userid, $email, $handle)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 	require_once QA_INCLUDE_DIR . 'app/cookies.php';
 
-	qa_db_user_set_flag($userid, QA_USER_FLAGS_EMAIL_CONFIRMED, true);
-	qa_db_user_set_flag($userid, QA_USER_FLAGS_MUST_CONFIRM, false);
-	qa_db_user_set($userid, 'emailcode', ''); // to prevent re-use of the code
+	ilya_db_user_set_flag($userid, QA_USER_FLAGS_EMAIL_CONFIRMED, true);
+	ilya_db_user_set_flag($userid, QA_USER_FLAGS_MUST_CONFIRM, false);
+	ilya_db_user_set($userid, 'emailcode', ''); // to prevent re-use of the code
 
-	qa_report_event('u_confirmed', $userid, $handle, qa_cookie_get(), array(
+	ilya_report_event('u_confirmed', $userid, $handle, ilya_cookie_get(), array(
 		'email' => $email,
 	));
 }
@@ -344,19 +344,19 @@ function qa_complete_confirm($userid, $email, $handle)
  * @param $level
  * @param $oldlevel
  */
-function qa_set_user_level($userid, $handle, $level, $oldlevel)
+function ilya_set_user_level($userid, $handle, $level, $oldlevel)
 {
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 
-	qa_db_user_set($userid, 'level', $level);
-	qa_db_uapprovecount_update();
+	ilya_db_user_set($userid, 'level', $level);
+	ilya_db_uapprovecount_update();
 
 	if ($level >= QA_USER_LEVEL_APPROVED) {
 		// no longer necessary as QA_USER_FLAGS_MUST_APPROVE is deprecated, but kept for posterity
-		qa_db_user_set_flag($userid, QA_USER_FLAGS_MUST_APPROVE, false);
+		ilya_db_user_set_flag($userid, QA_USER_FLAGS_MUST_APPROVE, false);
 	}
 
-	qa_report_event('u_level', qa_get_logged_in_userid(), qa_get_logged_in_handle(), qa_cookie_get(), array(
+	ilya_report_event('u_level', ilya_get_logged_in_userid(), ilya_get_logged_in_handle(), ilya_cookie_get(), array(
 		'userid' => $userid,
 		'handle' => $handle,
 		'level' => $level,
@@ -372,14 +372,14 @@ function qa_set_user_level($userid, $handle, $level, $oldlevel)
  * @param $handle
  * @param $blocked
  */
-function qa_set_user_blocked($userid, $handle, $blocked)
+function ilya_set_user_blocked($userid, $handle, $blocked)
 {
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 
-	qa_db_user_set_flag($userid, QA_USER_FLAGS_USER_BLOCKED, $blocked);
-	qa_db_uapprovecount_update();
+	ilya_db_user_set_flag($userid, QA_USER_FLAGS_USER_BLOCKED, $blocked);
+	ilya_db_uapprovecount_update();
 
-	qa_report_event($blocked ? 'u_block' : 'u_unblock', qa_get_logged_in_userid(), qa_get_logged_in_handle(), qa_cookie_get(), array(
+	ilya_report_event($blocked ? 'u_block' : 'u_unblock', ilya_get_logged_in_userid(), ilya_get_logged_in_handle(), ilya_cookie_get(), array(
 		'userid' => $userid,
 		'handle' => $handle,
 	));
@@ -391,24 +391,24 @@ function qa_set_user_blocked($userid, $handle, $blocked)
  * @param $userid
  * @return mixed
  */
-function qa_start_reset_user($userid)
+function ilya_start_reset_user($userid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 	require_once QA_INCLUDE_DIR . 'app/options.php';
 	require_once QA_INCLUDE_DIR . 'app/emails.php';
 	require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-	qa_db_user_set($userid, 'emailcode', qa_db_user_rand_emailcode());
+	ilya_db_user_set($userid, 'emailcode', ilya_db_user_rand_emailcode());
 
-	$userinfo = qa_db_select_with_pending(qa_db_user_account_selectspec($userid, true));
+	$userinfo = ilya_db_select_with_pending(ilya_db_user_account_selectspec($userid, true));
 
-	if (!qa_send_notification($userid, $userinfo['email'], $userinfo['handle'], qa_lang('emails/reset_subject'), qa_lang('emails/reset_body'), array(
+	if (!ilya_send_notification($userid, $userinfo['email'], $userinfo['handle'], ilya_lang('emails/reset_subject'), ilya_lang('emails/reset_body'), array(
 		'^code' => $userinfo['emailcode'],
-		'^url' => qa_path_absolute('reset', array('c' => $userinfo['emailcode'], 'e' => $userinfo['email'])),
+		'^url' => ilya_path_absolute('reset', array('c' => $userinfo['emailcode'], 'e' => $userinfo['email'])),
 	))) {
-		qa_fatal_error('Could not send reset password email');
+		ilya_fatal_error('Could not send reset password email');
 	}
 }
 
@@ -416,13 +416,13 @@ function qa_start_reset_user($userid)
 /**
  * Successfully finish the 'I forgot my password' process for $userid, sending new password
  *
- * @deprecated This function has been replaced by qa_finish_reset_user since Q2A 1.8
+ * @deprecated This function has been replaced by ilya_finish_reset_user since Q2A 1.8
  * @param $userid
  * @return mixed
  */
-function qa_complete_reset_user($userid)
+function ilya_complete_reset_user($userid)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 	require_once QA_INCLUDE_DIR . 'app/options.php';
@@ -430,21 +430,21 @@ function qa_complete_reset_user($userid)
 	require_once QA_INCLUDE_DIR . 'app/cookies.php';
 	require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-	$password = qa_random_alphanum(max(QA_MIN_PASSWORD_LEN, QA_NEW_PASSWORD_LEN));
+	$password = ilya_random_alphanum(max(QA_MIN_PASSWORD_LEN, QA_NEW_PASSWORD_LEN));
 
-	$userinfo = qa_db_select_with_pending(qa_db_user_account_selectspec($userid, true));
+	$userinfo = ilya_db_select_with_pending(ilya_db_user_account_selectspec($userid, true));
 
-	if (!qa_send_notification($userid, $userinfo['email'], $userinfo['handle'], qa_lang('emails/new_password_subject'), qa_lang('emails/new_password_body'), array(
+	if (!ilya_send_notification($userid, $userinfo['email'], $userinfo['handle'], ilya_lang('emails/new_password_subject'), ilya_lang('emails/new_password_body'), array(
 		'^password' => $password,
-		'^url' => qa_opt('site_url'),
+		'^url' => ilya_opt('site_url'),
 	))) {
-		qa_fatal_error('Could not send new password - password not reset');
+		ilya_fatal_error('Could not send new password - password not reset');
 	}
 
-	qa_db_user_set_password($userid, $password); // do this last, to be safe
-	qa_db_user_set($userid, 'emailcode', ''); // so can't be reused
+	ilya_db_user_set_password($userid, $password); // do this last, to be safe
+	ilya_db_user_set($userid, 'emailcode', ''); // so can't be reused
 
-	qa_report_event('u_reset', $userid, $userinfo['handle'], qa_cookie_get(), array(
+	ilya_report_event('u_reset', $userid, $userinfo['handle'], ilya_cookie_get(), array(
 		'email' => $userinfo['email'],
 	));
 }
@@ -456,34 +456,34 @@ function qa_complete_reset_user($userid)
  * @param string $newPassword The new password for the user
  * @return void
  */
-function qa_finish_reset_user($userId, $newPassword)
+function ilya_finish_reset_user($userId, $newPassword)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	// For qa_db_user_set_password(), qa_db_user_set()
+	// For ilya_db_user_set_password(), ilya_db_user_set()
 	require_once QA_INCLUDE_DIR . 'db/users.php';
 
-	// For qa_set_logged_in_user()
+	// For ilya_set_logged_in_user()
 	require_once QA_INCLUDE_DIR . 'app/options.php';
 
-	// For qa_cookie_get()
+	// For ilya_cookie_get()
 	require_once QA_INCLUDE_DIR . 'app/cookies.php';
 
-	// For qa_db_select_with_pending(), qa_db_user_account_selectspec()
+	// For ilya_db_select_with_pending(), ilya_db_user_account_selectspec()
 	require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-	// For qa_set_logged_in_user()
+	// For ilya_set_logged_in_user()
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 
-	qa_db_user_set_password($userId, $newPassword);
+	ilya_db_user_set_password($userId, $newPassword);
 
-	qa_db_user_set($userId, 'emailcode', ''); // to prevent re-use of the code
+	ilya_db_user_set($userId, 'emailcode', ''); // to prevent re-use of the code
 
-	$userInfo = qa_db_select_with_pending(qa_db_user_account_selectspec($userId, true));
+	$userInfo = ilya_db_select_with_pending(ilya_db_user_account_selectspec($userId, true));
 
-	qa_set_logged_in_user($userId, $userInfo['handle'], false, $userInfo['sessionsource']); // reinstate this specific session
+	ilya_set_logged_in_user($userId, $userInfo['handle'], false, $userInfo['sessionsource']); // reinstate this specific session
 
-	qa_report_event('u_reset', $userId, $userInfo['handle'], qa_cookie_get(), array(
+	ilya_report_event('u_reset', $userId, $userInfo['handle'], ilya_cookie_get(), array(
 		'email' => $userInfo['email'],
 	));
 }
@@ -491,11 +491,11 @@ function qa_finish_reset_user($userId, $newPassword)
 /**
  * Flush any information about the currently logged in user, so it is retrieved from database again
  */
-function qa_logged_in_user_flush()
+function ilya_logged_in_user_flush()
 {
-	global $qa_cached_logged_in_user;
+	global $ilya_cached_logged_in_user;
 
-	$qa_cached_logged_in_user = null;
+	$ilya_cached_logged_in_user = null;
 }
 
 
@@ -506,31 +506,31 @@ function qa_logged_in_user_flush()
  * @param $oldblobid
  * @return bool
  */
-function qa_set_user_avatar($userid, $imagedata, $oldblobid = null)
+function ilya_set_user_avatar($userid, $imagedata, $oldblobid = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'util/image.php';
 
-	$imagedata = qa_image_constrain_data($imagedata, $width, $height, qa_opt('avatar_store_size'));
+	$imagedata = ilya_image_constrain_data($imagedata, $width, $height, ilya_opt('avatar_store_size'));
 
 	if (isset($imagedata)) {
 		require_once QA_INCLUDE_DIR . 'app/blobs.php';
 
-		$newblobid = qa_create_blob($imagedata, 'jpeg', null, $userid, null, qa_remote_ip_address());
+		$newblobid = ilya_create_blob($imagedata, 'jpeg', null, $userid, null, ilya_remote_ip_address());
 
 		if (isset($newblobid)) {
-			qa_db_user_set($userid, array(
+			ilya_db_user_set($userid, array(
 				'avatarblobid' => $newblobid,
 				'avatarwidth' => $width,
 				'avatarheight' => $height,
 			));
 
-			qa_db_user_set_flag($userid, QA_USER_FLAGS_SHOW_AVATAR, true);
-			qa_db_user_set_flag($userid, QA_USER_FLAGS_SHOW_GRAVATAR, false);
+			ilya_db_user_set_flag($userid, QA_USER_FLAGS_SHOW_AVATAR, true);
+			ilya_db_user_set_flag($userid, QA_USER_FLAGS_SHOW_GRAVATAR, false);
 
 			if (isset($oldblobid))
-				qa_delete_blob($oldblobid);
+				ilya_delete_blob($oldblobid);
 
 			return true;
 		}

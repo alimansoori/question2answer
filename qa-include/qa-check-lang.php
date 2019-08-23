@@ -24,8 +24,8 @@ define('QA_BASE_DIR', dirname(dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FIL
 require 'ilya-base.php';
 require_once QA_INCLUDE_DIR . 'app/users.php';
 
-if (qa_get_logged_in_level() < QA_USER_LEVEL_ADMIN)
-	qa_redirect('admin/general', null, qa_opt('site_url'));
+if (ilya_get_logged_in_level() < QA_USER_LEVEL_ADMIN)
+	ilya_redirect('admin/general', null, ilya_opt('site_url'));
 
 header('Content-type: text/html; charset=utf-8');
 
@@ -81,7 +81,7 @@ output_start_includes();
 foreach ($includefiles as $includefile) {
 	$contents = file_get_contents($includefile);
 
-	preg_match_all('/qa_lang[a-z_]*\s*\(\s*[\'\"]([a-z]+)\/([0-9a-z_]+)[\'\"]/', $contents, $matches, PREG_SET_ORDER);
+	preg_match_all('/ilya_lang[a-z_]*\s*\(\s*[\'\"]([a-z]+)\/([0-9a-z_]+)[\'\"]/', $contents, $matches, PREG_SET_ORDER);
 
 	foreach ($matches as $matchparts) {
 		if ($matchparts[2] == 'date_month_') { // special case for month names
@@ -149,7 +149,7 @@ foreach ($backmap as $phrase => $where) {
 
 require_once QA_INCLUDE_DIR . 'app/admin.php';
 
-$languages = qa_admin_language_options();
+$languages = ilya_admin_language_options();
 unset($languages['']);
 
 foreach ($languages as $code => $language) {
@@ -239,11 +239,11 @@ function output_lang_issue($prefix, $key, $issue, $error = true)
 {
 	$colorClass = $error ? 'severe' : 'warning';
 
-	$htmlKey = strlen($key) > 0 ? "'<strong>" . qa_html($key) . "</strong>'" : '';
+	$htmlKey = strlen($key) > 0 ? "'<strong>" . ilya_html($key) . "</strong>'" : '';
 
 	echo sprintf(
 		'<code class="%s">ilya-lang-<strong>%s</strong>.php:%s</code> &nbsp; %s<br>',
-		$colorClass, qa_html($prefix), $htmlKey, qa_html($issue)
+		$colorClass, ilya_html($prefix), $htmlKey, ilya_html($issue)
 	);
 }
 

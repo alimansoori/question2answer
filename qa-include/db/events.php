@@ -39,16 +39,16 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @param $lastuserid
  * @param $timestamp
  */
-function qa_db_event_create_for_entity($entitytype, $entityid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp = null)
+function ilya_db_event_create_for_entity($entitytype, $entityid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp = null)
 {
 	require_once QA_INCLUDE_DIR . 'db/maxima.php';
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
-	$updatedsql = isset($timestamp) ? ('FROM_UNIXTIME(' . qa_db_argument_to_mysql($timestamp, false) . ')') : 'NOW()';
+	$updatedsql = isset($timestamp) ? ('FROM_UNIXTIME(' . ilya_db_argument_to_mysql($timestamp, false) . ')') : 'NOW()';
 
 	// Enter it into the appropriate shared event stream for that entity
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT INTO ^sharedevents (entitytype, entityid, questionid, lastpostid, updatetype, lastuserid, updated) ' .
 		'VALUES ($, #, #, #, $, $, ' . $updatedsql . ')',
 		$entitytype, $entityid, $questionid, $lastpostid, $updatetype, $lastuserid
@@ -59,13 +59,13 @@ function qa_db_event_create_for_entity($entitytype, $entityid, $questionid, $las
 	$questiontruncated = false;
 
 	if ($entitytype == QA_ENTITY_QUESTION) {
-		$truncate = qa_db_read_one_value(qa_db_query_sub(
+		$truncate = ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT updated FROM ^sharedevents WHERE entitytype=$ AND entityid=# AND questionid=# ORDER BY updated DESC LIMIT #,1',
 			$entitytype, $entityid, $questionid, QA_DB_MAX_EVENTS_PER_Q
 		), true);
 
 		if (isset($truncate)) {
-			qa_db_query_sub(
+			ilya_db_query_sub(
 				'DELETE FROM ^sharedevents WHERE entitytype=$ AND entityid=# AND questionid=# AND updated<=$',
 				$entitytype, $entityid, $questionid, $truncate
 			);
@@ -77,13 +77,13 @@ function qa_db_event_create_for_entity($entitytype, $entityid, $questionid, $las
 	// If we didn't truncate due to a specific question, truncate the shared event stream for its overall length
 
 	if (!$questiontruncated) {
-		$truncate = qa_db_read_one_value(qa_db_query_sub(
+		$truncate = ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT updated FROM ^sharedevents WHERE entitytype=$ AND entityid=$ ORDER BY updated DESC LIMIT #,1',
-			$entitytype, $entityid, (int)qa_opt('max_store_user_updates')
+			$entitytype, $entityid, (int)ilya_opt('max_store_user_updates')
 		), true);
 
 		if (isset($truncate))
-			qa_db_query_sub(
+			ilya_db_query_sub(
 				'DELETE FROM ^sharedevents WHERE entitytype=$ AND entityid=$ AND updated<=$',
 				$entitytype, $entityid, $truncate
 			);
@@ -91,14 +91,14 @@ function qa_db_event_create_for_entity($entitytype, $entityid, $questionid, $las
 
 	// See if we can identify a user who has favorited this entity, but is not using its shared event stream
 
-	$randomuserid = qa_db_read_one_value(qa_db_query_sub(
+	$randomuserid = ilya_db_read_one_value(ilya_db_query_sub(
 		'SELECT userid FROM ^userfavorites WHERE entitytype=$ AND entityid=# AND nouserevents=0 ORDER BY RAND() LIMIT 1',
 		$entitytype, $entityid
 	), true);
 
 	if (isset($randomuserid)) {
 		// If one was found, this means we have one or more individual event streams, so update them all
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT INTO ^userevents (userid, entitytype, entityid, questionid, lastpostid, updatetype, lastuserid, updated) ' .
 			'SELECT userid, $, #, #, #, $, $, ' . $updatedsql . ' FROM ^userfavorites WHERE entitytype=$ AND entityid=# AND nouserevents=0',
 			$entitytype, $entityid, $questionid, $lastpostid, $updatetype, $lastuserid, $entitytype, $entityid
@@ -106,7 +106,7 @@ function qa_db_event_create_for_entity($entitytype, $entityid, $questionid, $las
 
 		// Now truncate the random individual event stream that was found earlier
 		// (in theory we should truncate them all, but truncation is just a 'housekeeping' activity, so it's not necessary)
-		qa_db_user_events_truncate($randomuserid, $questionid);
+		ilya_db_user_events_truncate($randomuserid, $questionid);
 	}
 }
 
@@ -123,19 +123,19 @@ function qa_db_event_create_for_entity($entitytype, $entityid, $questionid, $las
  * @param $lastuserid
  * @param $timestamp
  */
-function qa_db_event_create_not_entity($userid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp = null)
+function ilya_db_event_create_not_entity($userid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp = null)
 {
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
-	$updatedsql = isset($timestamp) ? ('FROM_UNIXTIME(' . qa_db_argument_to_mysql($timestamp, false) . ')') : 'NOW()';
+	$updatedsql = isset($timestamp) ? ('FROM_UNIXTIME(' . ilya_db_argument_to_mysql($timestamp, false) . ')') : 'NOW()';
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		"INSERT INTO ^userevents (userid, entitytype, entityid, questionid, lastpostid, updatetype, lastuserid, updated) " .
 		"VALUES ($, $, 0, #, #, $, $, " . $updatedsql . ")",
 		$userid, QA_ENTITY_NONE, $questionid, $lastpostid, $updatetype, $lastuserid
 	);
 
-	qa_db_user_events_truncate($userid, $questionid);
+	ilya_db_user_events_truncate($userid, $questionid);
 }
 
 
@@ -145,20 +145,20 @@ function qa_db_event_create_not_entity($userid, $questionid, $lastpostid, $updat
  * @param $userid
  * @param $questionid
  */
-function qa_db_user_events_truncate($userid, $questionid = null)
+function ilya_db_user_events_truncate($userid, $questionid = null)
 {
 	// First try truncating based on there being too many events for this question
 
 	$questiontruncated = false;
 
 	if (isset($questionid)) {
-		$truncate = qa_db_read_one_value(qa_db_query_sub(
+		$truncate = ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT updated FROM ^userevents WHERE userid=$ AND questionid=# ORDER BY updated DESC LIMIT #,1',
 			$userid, $questionid, QA_DB_MAX_EVENTS_PER_Q
 		), true);
 
 		if (isset($truncate)) {
-			qa_db_query_sub(
+			ilya_db_query_sub(
 				'DELETE FROM ^userevents WHERE userid=$ AND questionid=# AND updated<=$',
 				$userid, $questionid, $truncate
 			);
@@ -170,13 +170,13 @@ function qa_db_user_events_truncate($userid, $questionid = null)
 	// If that didn't happen, try truncating the stream in general based on its total length
 
 	if (!$questiontruncated) {
-		$truncate = qa_db_read_one_value(qa_db_query_sub(
+		$truncate = ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT updated FROM ^userevents WHERE userid=$ ORDER BY updated DESC LIMIT #,1',
-			$userid, (int)qa_opt('max_store_user_updates')
+			$userid, (int)ilya_opt('max_store_user_updates')
 		), true);
 
 		if (isset($truncate))
-			qa_db_query_sub(
+			ilya_db_query_sub(
 				'DELETE FROM ^userevents WHERE userid=$ AND updated<=$',
 				$userid, $truncate
 			);

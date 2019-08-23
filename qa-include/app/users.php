@@ -72,21 +72,21 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	/**
 	 * Return array of information about the currently logged in user, cache to ensure only one call to external code
 	 */
-	function qa_get_logged_in_user_cache()
+	function ilya_get_logged_in_user_cache()
 	{
-		global $qa_cached_logged_in_user;
+		global $ilya_cached_logged_in_user;
 
-		if (!isset($qa_cached_logged_in_user)) {
-			$user = qa_get_logged_in_user();
+		if (!isset($ilya_cached_logged_in_user)) {
+			$user = ilya_get_logged_in_user();
 
 			if (isset($user)) {
 				$user['flags'] = isset($user['blocked']) ? QA_USER_FLAGS_USER_BLOCKED : 0;
-				$qa_cached_logged_in_user = $user;
+				$ilya_cached_logged_in_user = $user;
 			} else
-				$qa_cached_logged_in_user = false;
+				$ilya_cached_logged_in_user = false;
 		}
 
-		return @$qa_cached_logged_in_user;
+		return @$ilya_cached_logged_in_user;
 	}
 
 
@@ -95,9 +95,9 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $field
 	 * @return null
 	 */
-	function qa_get_logged_in_user_field($field)
+	function ilya_get_logged_in_user_field($field)
 	{
-		$user = qa_get_logged_in_user_cache();
+		$user = ilya_get_logged_in_user_cache();
 
 		return isset($user[$field]) ? $user[$field] : null;
 	}
@@ -106,26 +106,26 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	/**
 	 * Return the userid of the currently logged in user, or null if none
 	 */
-	function qa_get_logged_in_userid()
+	function ilya_get_logged_in_userid()
 	{
-		return qa_get_logged_in_user_field('userid');
+		return ilya_get_logged_in_user_field('userid');
 	}
 
 
 	/**
 	 * Return the number of points of the currently logged in user, or null if none is logged in
 	 */
-	function qa_get_logged_in_points()
+	function ilya_get_logged_in_points()
 	{
-		global $qa_cached_logged_in_points;
+		global $ilya_cached_logged_in_points;
 
-		if (!isset($qa_cached_logged_in_points)) {
+		if (!isset($ilya_cached_logged_in_points)) {
 			require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-			$qa_cached_logged_in_points = qa_db_select_with_pending(qa_db_user_points_selectspec(qa_get_logged_in_userid(), true));
+			$ilya_cached_logged_in_points = ilya_db_select_with_pending(ilya_db_user_points_selectspec(ilya_get_logged_in_userid(), true));
 		}
 
-		return $qa_cached_logged_in_points['points'];
+		return $ilya_cached_logged_in_points['points'];
 	}
 
 
@@ -136,10 +136,10 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param bool $padding
 	 * @return mixed|null|string
 	 */
-	function qa_get_external_avatar_html($userid, $size, $padding = false)
+	function ilya_get_external_avatar_html($userid, $size, $padding = false)
 	{
-		if (function_exists('qa_avatar_html_from_userid'))
-			return qa_avatar_html_from_userid($userid, $size, $padding);
+		if (function_exists('ilya_avatar_html_from_userid'))
+			return ilya_avatar_html_from_userid($userid, $size, $padding);
 		else
 			return null;
 	}
@@ -150,9 +150,9 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	/**
 	 * Open a PHP session if one isn't opened already
 	 */
-	function qa_start_session()
+	function ilya_start_session()
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		@ini_set('session.gc_maxlifetime', 86400); // worth a try, but won't help in shared hosting environment
 		@ini_set('session.use_trans_sid', false); // sessions need cookies to work, since we redirect after login
@@ -166,18 +166,18 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	/**
 	 * Returns a suffix to be used for names of session variables to prevent them being shared between multiple Q2A sites on the same server
 	 */
-	function qa_session_var_suffix()
+	function ilya_session_var_suffix()
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		global $qa_session_suffix;
+		global $ilya_session_suffix;
 
-		if (!$qa_session_suffix) {
+		if (!$ilya_session_suffix) {
 			$prefix = defined('QA_MYSQL_USERS_PREFIX') ? QA_MYSQL_USERS_PREFIX : QA_MYSQL_TABLE_PREFIX;
-			$qa_session_suffix = md5(QA_FINAL_MYSQL_HOSTNAME . '/' . QA_FINAL_MYSQL_USERNAME . '/' . QA_FINAL_MYSQL_PASSWORD . '/' . QA_FINAL_MYSQL_DATABASE . '/' . $prefix);
+			$ilya_session_suffix = md5(QA_FINAL_MYSQL_HOSTNAME . '/' . QA_FINAL_MYSQL_USERNAME . '/' . QA_FINAL_MYSQL_PASSWORD . '/' . QA_FINAL_MYSQL_DATABASE . '/' . $prefix);
 		}
 
-		return $qa_session_suffix;
+		return $ilya_session_suffix;
 	}
 
 
@@ -186,9 +186,9 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $userid
 	 * @return mixed|string
 	 */
-	function qa_session_verify_code($userid)
+	function ilya_session_verify_code($userid)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		return sha1($userid . '/' . QA_MYSQL_TABLE_PREFIX . '/' . QA_FINAL_MYSQL_DATABASE . '/' . QA_FINAL_MYSQL_PASSWORD . '/' . QA_FINAL_MYSQL_USERNAME . '/' . QA_FINAL_MYSQL_HOSTNAME);
 	}
@@ -202,23 +202,23 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $remember
 	 * @return mixed
 	 */
-	function qa_set_session_cookie($handle, $sessioncode, $remember)
+	function ilya_set_session_cookie($handle, $sessioncode, $remember)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		// if $remember is true, store in browser for a month, otherwise store only until browser is closed
-		setcookie('qa_session', $handle . '/' . $sessioncode . '/' . ($remember ? 1 : 0), $remember ? (time() + 2592000) : 0, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
+		setcookie('ilya_session', $handle . '/' . $sessioncode . '/' . ($remember ? 1 : 0), $remember ? (time() + 2592000) : 0, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
 	}
 
 
 	/**
 	 * Remove session cookie from browser
 	 */
-	function qa_clear_session_cookie()
+	function ilya_clear_session_cookie()
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		setcookie('qa_session', false, 0, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
+		setcookie('ilya_session', false, 0, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true);
 	}
 
 
@@ -228,31 +228,31 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $source
 	 * @return mixed
 	 */
-	function qa_set_session_user($userid, $source)
+	function ilya_set_session_user($userid, $source)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		$suffix = qa_session_var_suffix();
+		$suffix = ilya_session_var_suffix();
 
-		$_SESSION['qa_session_userid_' . $suffix] = $userid;
-		$_SESSION['qa_session_source_' . $suffix] = $source;
+		$_SESSION['ilya_session_userid_' . $suffix] = $userid;
+		$_SESSION['ilya_session_source_' . $suffix] = $source;
 		// prevents one account on a shared server being able to create a log in a user to Q2A on another account on same server
-		$_SESSION['qa_session_verify_' . $suffix] = qa_session_verify_code($userid);
+		$_SESSION['ilya_session_verify_' . $suffix] = ilya_session_verify_code($userid);
 	}
 
 
 	/**
 	 * Clear the session variables indicating that a user is logged in
 	 */
-	function qa_clear_session_user()
+	function ilya_clear_session_user()
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		$suffix = qa_session_var_suffix();
+		$suffix = ilya_session_var_suffix();
 
-		unset($_SESSION['qa_session_userid_' . $suffix]);
-		unset($_SESSION['qa_session_source_' . $suffix]);
-		unset($_SESSION['qa_session_verify_' . $suffix]);
+		unset($_SESSION['ilya_session_userid_' . $suffix]);
+		unset($_SESSION['ilya_session_source_' . $suffix]);
+		unset($_SESSION['ilya_session_verify_' . $suffix]);
 	}
 
 
@@ -265,16 +265,16 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $source
 	 * @return mixed
 	 */
-	function qa_set_logged_in_user($userid, $handle = '', $remember = false, $source = null)
+	function ilya_set_logged_in_user($userid, $handle = '', $remember = false, $source = null)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		require_once QA_INCLUDE_DIR . 'app/cookies.php';
 
-		qa_start_session();
+		ilya_start_session();
 
 		if (isset($userid)) {
-			qa_set_session_user($userid, $source);
+			ilya_set_session_user($userid, $source);
 
 			// PHP sessions time out too quickly on the server side, so we also set a cookie as backup.
 			// Logging in from a second browser will make the previous browser's 'Remember me' no longer
@@ -282,33 +282,33 @@ if (QA_FINAL_EXTERNAL_USERS) {
 
 			require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-			$userinfo = qa_db_single_select(qa_db_user_account_selectspec($userid, true));
+			$userinfo = ilya_db_single_select(ilya_db_user_account_selectspec($userid, true));
 
 			// if we have logged in before, and are logging in the same way as before, we don't need to change the sessioncode/source
 			// this means it will be possible to automatically log in (via cookies) to the same account from more than one browser
 
 			if (empty($userinfo['sessioncode']) || ($source !== $userinfo['sessionsource'])) {
-				$sessioncode = qa_db_user_rand_sessioncode();
-				qa_db_user_set($userid, array(
+				$sessioncode = ilya_db_user_rand_sessioncode();
+				ilya_db_user_set($userid, array(
 					'sessioncode' => $sessioncode,
 					'sessionsource' => $source,
 				));
 			} else
 				$sessioncode = $userinfo['sessioncode'];
 
-			qa_db_user_logged_in($userid, qa_remote_ip_address());
-			qa_set_session_cookie($handle, $sessioncode, $remember);
+			ilya_db_user_logged_in($userid, ilya_remote_ip_address());
+			ilya_set_session_cookie($handle, $sessioncode, $remember);
 
-			qa_report_event('u_login', $userid, $userinfo['handle'], qa_cookie_get());
+			ilya_report_event('u_login', $userid, $userinfo['handle'], ilya_cookie_get());
 
 		} else {
-			$olduserid = qa_get_logged_in_userid();
-			$oldhandle = qa_get_logged_in_handle();
+			$olduserid = ilya_get_logged_in_userid();
+			$oldhandle = ilya_get_logged_in_handle();
 
-			qa_clear_session_cookie();
-			qa_clear_session_user();
+			ilya_clear_session_cookie();
+			ilya_clear_session_user();
 
-			qa_report_event('u_logout', $olduserid, $oldhandle, qa_cookie_get());
+			ilya_report_event('u_logout', $olduserid, $oldhandle, ilya_cookie_get());
 		}
 	}
 
@@ -321,61 +321,61 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $fields
 	 * @return mixed
 	 */
-	function qa_log_in_external_user($source, $identifier, $fields)
+	function ilya_log_in_external_user($source, $identifier, $fields)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		require_once QA_INCLUDE_DIR . 'db/users.php';
 
-		$users = qa_db_user_login_find($source, $identifier);
+		$users = ilya_db_user_login_find($source, $identifier);
 		$countusers = count($users);
 
 		if ($countusers > 1)
-			qa_fatal_error('External login mapped to more than one user'); // should never happen
+			ilya_fatal_error('External login mapped to more than one user'); // should never happen
 
 		if ($countusers) // user exists so log them in
-			qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], false, $source);
+			ilya_set_logged_in_user($users[0]['userid'], $users[0]['handle'], false, $source);
 
 		else { // create and log in user
 			require_once QA_INCLUDE_DIR . 'app/users-edit.php';
 
-			qa_db_user_login_sync(true);
+			ilya_db_user_login_sync(true);
 
-			$users = qa_db_user_login_find($source, $identifier); // check again after table is locked
+			$users = ilya_db_user_login_find($source, $identifier); // check again after table is locked
 
 			if (count($users) == 1) {
-				qa_db_user_login_sync(false);
-				qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], false, $source);
+				ilya_db_user_login_sync(false);
+				ilya_set_logged_in_user($users[0]['userid'], $users[0]['handle'], false, $source);
 
 			} else {
-				$handle = qa_handle_make_valid(@$fields['handle']);
+				$handle = ilya_handle_make_valid(@$fields['handle']);
 
 				if (strlen(@$fields['email'])) { // remove email address if it will cause a duplicate
-					$emailusers = qa_db_user_find_by_email($fields['email']);
+					$emailusers = ilya_db_user_find_by_email($fields['email']);
 					if (count($emailusers)) {
-						qa_redirect('login', array('e' => $fields['email'], 'ee' => '1'));
+						ilya_redirect('login', array('e' => $fields['email'], 'ee' => '1'));
 						unset($fields['email']);
 						unset($fields['confirmed']);
 					}
 				}
 
-				$userid = qa_create_new_user((string)@$fields['email'], null /* no password */, $handle,
+				$userid = ilya_create_new_user((string)@$fields['email'], null /* no password */, $handle,
 					isset($fields['level']) ? $fields['level'] : QA_USER_LEVEL_BASIC, @$fields['confirmed']);
 
-				qa_db_user_login_add($userid, $source, $identifier);
-				qa_db_user_login_sync(false);
+				ilya_db_user_login_add($userid, $source, $identifier);
+				ilya_db_user_login_sync(false);
 
 				$profilefields = array('name', 'location', 'website', 'about');
 
 				foreach ($profilefields as $fieldname) {
 					if (strlen(@$fields[$fieldname]))
-						qa_db_user_profile_set($userid, $fieldname, $fields[$fieldname]);
+						ilya_db_user_profile_set($userid, $fieldname, $fields[$fieldname]);
 				}
 
 				if (strlen(@$fields['avatar']))
-					qa_set_user_avatar($userid, $fields['avatar']);
+					ilya_set_user_avatar($userid, $fields['avatar']);
 
-				qa_set_logged_in_user($userid, $handle, false, $source);
+				ilya_set_logged_in_user($userid, $handle, false, $source);
 			}
 		}
 	}
@@ -384,100 +384,100 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	/**
 	 * Return the userid of the currently logged in user, or null if none logged in
 	 */
-	function qa_get_logged_in_userid()
+	function ilya_get_logged_in_userid()
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		global $qa_logged_in_userid_checked;
+		global $ilya_logged_in_userid_checked;
 
-		$suffix = qa_session_var_suffix();
+		$suffix = ilya_session_var_suffix();
 
-		if (!$qa_logged_in_userid_checked) { // only check once
-			qa_start_session(); // this will load logged in userid from the native PHP session, but that's not enough
+		if (!$ilya_logged_in_userid_checked) { // only check once
+			ilya_start_session(); // this will load logged in userid from the native PHP session, but that's not enough
 
-			$sessionuserid = @$_SESSION['qa_session_userid_' . $suffix];
+			$sessionuserid = @$_SESSION['ilya_session_userid_' . $suffix];
 
 			if (isset($sessionuserid)) // check verify code matches
-				if (!hash_equals(qa_session_verify_code($sessionuserid), @$_SESSION['qa_session_verify_' . $suffix]))
-					qa_clear_session_user();
+				if (!hash_equals(ilya_session_verify_code($sessionuserid), @$_SESSION['ilya_session_verify_' . $suffix]))
+					ilya_clear_session_user();
 
-			if (!empty($_COOKIE['qa_session'])) {
-				@list($handle, $sessioncode, $remember) = explode('/', $_COOKIE['qa_session']);
+			if (!empty($_COOKIE['ilya_session'])) {
+				@list($handle, $sessioncode, $remember) = explode('/', $_COOKIE['ilya_session']);
 
 				if ($remember)
-					qa_set_session_cookie($handle, $sessioncode, $remember); // extend 'remember me' cookies each time
+					ilya_set_session_cookie($handle, $sessioncode, $remember); // extend 'remember me' cookies each time
 
 				$sessioncode = trim($sessioncode); // trim to prevent passing in blank values to match uninitiated DB rows
 
 				// Try to recover session from the database if PHP session has timed out
-				if (!isset($_SESSION['qa_session_userid_' . $suffix]) && !empty($handle) && !empty($sessioncode)) {
+				if (!isset($_SESSION['ilya_session_userid_' . $suffix]) && !empty($handle) && !empty($sessioncode)) {
 					require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-					$userinfo = qa_db_single_select(qa_db_user_account_selectspec($handle, false)); // don't get any pending
+					$userinfo = ilya_db_single_select(ilya_db_user_account_selectspec($handle, false)); // don't get any pending
 
 					if (strtolower(trim($userinfo['sessioncode'])) == strtolower($sessioncode))
-						qa_set_session_user($userinfo['userid'], $userinfo['sessionsource']);
+						ilya_set_session_user($userinfo['userid'], $userinfo['sessionsource']);
 					else
-						qa_clear_session_cookie(); // if cookie not valid, remove it to save future checks
+						ilya_clear_session_cookie(); // if cookie not valid, remove it to save future checks
 				}
 			}
 
-			$qa_logged_in_userid_checked = true;
+			$ilya_logged_in_userid_checked = true;
 		}
 
-		return @$_SESSION['qa_session_userid_' . $suffix];
+		return @$_SESSION['ilya_session_userid_' . $suffix];
 	}
 
 
 	/**
-	 * Get the source of the currently logged in user, from call to qa_log_in_external_user() or null if logged in normally
+	 * Get the source of the currently logged in user, from call to ilya_log_in_external_user() or null if logged in normally
 	 */
-	function qa_get_logged_in_source()
+	function ilya_get_logged_in_source()
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		$userid = qa_get_logged_in_userid();
-		$suffix = qa_session_var_suffix();
+		$userid = ilya_get_logged_in_userid();
+		$suffix = ilya_session_var_suffix();
 
 		if (isset($userid))
-			return @$_SESSION['qa_session_source_' . $suffix];
+			return @$_SESSION['ilya_session_source_' . $suffix];
 	}
 
 
 	/**
 	 * Return array of information about the currently logged in user, cache to ensure only one call to external code
 	 */
-	function qa_get_logged_in_user_cache()
+	function ilya_get_logged_in_user_cache()
 	{
-		global $qa_cached_logged_in_user;
+		global $ilya_cached_logged_in_user;
 
-		if (!isset($qa_cached_logged_in_user)) {
-			$userid = qa_get_logged_in_userid();
+		if (!isset($ilya_cached_logged_in_user)) {
+			$userid = ilya_get_logged_in_userid();
 
 			if (isset($userid)) {
 				require_once QA_INCLUDE_DIR . 'db/selects.php';
-				$qa_cached_logged_in_user = qa_db_get_pending_result('loggedinuser', qa_db_user_account_selectspec($userid, true));
+				$ilya_cached_logged_in_user = ilya_db_get_pending_result('loggedinuser', ilya_db_user_account_selectspec($userid, true));
 
 				// If the site is configured to share the ^users table then there might not be a record in the
 				// ^userpoints table so this creates it
-				if ($qa_cached_logged_in_user['points'] === null) {
+				if ($ilya_cached_logged_in_user['points'] === null) {
 					require_once QA_INCLUDE_DIR . 'db/points.php';
 					require_once QA_INCLUDE_DIR . 'db/users.php';
 
-					qa_db_points_update_ifuser($userid, null);
-					qa_db_uapprovecount_update();
-					$qa_cached_logged_in_user = qa_db_single_select(qa_db_user_account_selectspec($userid, true));
+					ilya_db_points_update_ifuser($userid, null);
+					ilya_db_uapprovecount_update();
+					$ilya_cached_logged_in_user = ilya_db_single_select(ilya_db_user_account_selectspec($userid, true));
 				}
 
-				if (!isset($qa_cached_logged_in_user)) {
+				if (!isset($ilya_cached_logged_in_user)) {
 					// the user can no longer be found (should only apply to deleted users)
-					qa_clear_session_user();
-					qa_redirect(''); // implicit exit;
+					ilya_clear_session_user();
+					ilya_redirect(''); // implicit exit;
 				}
 			}
 		}
 
-		return $qa_cached_logged_in_user;
+		return $ilya_cached_logged_in_user;
 	}
 
 
@@ -486,11 +486,11 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $field
 	 * @return mixed|null
 	 */
-	function qa_get_logged_in_user_field($field)
+	function ilya_get_logged_in_user_field($field)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		$usercache = qa_get_logged_in_user_cache();
+		$usercache = ilya_get_logged_in_user_cache();
 
 		return isset($usercache[$field]) ? $usercache[$field] : null;
 	}
@@ -499,18 +499,18 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	/**
 	 * Return the number of points of the currently logged in user, or null if none is logged in
 	 */
-	function qa_get_logged_in_points()
+	function ilya_get_logged_in_points()
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		return qa_get_logged_in_user_field('points');
+		return ilya_get_logged_in_user_field('points');
 	}
 
 
 	/**
 	 * Return column type to use for users (if not using single sign-on integration)
 	 */
-	function qa_get_mysql_user_column_type()
+	function ilya_get_mysql_user_column_type()
 	{
 		return 'INT UNSIGNED';
 	}
@@ -527,9 +527,9 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param bool $absolute Whether the link returned should be absolute or relative
 	 * @return string|null The URL to the avatar or null if the $blobId was empty or the $size not valid
 	 */
-	function qa_get_avatar_blob_url($blobId, $size = null, $absolute = false)
+	function ilya_get_avatar_blob_url($blobId, $size = null, $absolute = false)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		require_once QA_INCLUDE_DIR . 'util/image.php';
 
@@ -537,14 +537,14 @@ if (QA_FINAL_EXTERNAL_USERS) {
 			return null;
 		}
 
-		$params = array('qa_blobid' => $blobId);
+		$params = array('ilya_blobid' => $blobId);
 		if (isset($size)) {
-			$params['qa_size'] = $size;
+			$params['ilya_size'] = $size;
 		}
 
-		$rootUrl = $absolute ? qa_opt('site_url') : null;
+		$rootUrl = $absolute ? ilya_opt('site_url') : null;
 
-		return qa_path('image', $params, $rootUrl, QA_URL_FORMAT_PARAMS);
+		return ilya_path('image', $params, $rootUrl, QA_URL_FORMAT_PARAMS);
 	}
 
 
@@ -556,19 +556,19 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param bool $favorited  Show the user as favorited.
 	 * @return string  The user HTML.
 	 */
-	function qa_get_one_user_html($handle, $microdata = false, $favorited = false)
+	function ilya_get_one_user_html($handle, $microdata = false, $favorited = false)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		if (strlen($handle) === 0) {
-			return qa_lang('main/anonymous');
+			return ilya_lang('main/anonymous');
 		}
 
-		$url = qa_path_html('user/' . $handle);
+		$url = ilya_path_html('user/' . $handle);
 		$favclass = $favorited ? ' ilya-user-favorited' : '';
 		$mfAttr = $microdata ? ' itemprop="url"' : '';
 
-		$userHandle = $microdata ? '<span itemprop="name">' . qa_html($handle) . '</span>' : qa_html($handle);
+		$userHandle = $microdata ? '<span itemprop="name">' . ilya_html($handle) . '</span>' : ilya_html($handle);
 		$userHtml = '<a href="' . $url . '" class="ilya-user-link' . $favclass . '"' . $mfAttr . '>' . $userHandle . '</a>';
 
 		if ($microdata) {
@@ -591,15 +591,15 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param string|null $blobId The blob ID for a locally stored avatar.
 	 * @return string|null The source of the avatar: 'gravatar', 'local-user', 'local-default' and null
 	 */
-	function qa_get_user_avatar_source($flags, $email, $blobId)
+	function ilya_get_user_avatar_source($flags, $email, $blobId)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		if (qa_opt('avatar_allow_gravatar') && (($flags & QA_USER_FLAGS_SHOW_GRAVATAR) > 0) && isset($email)) {
+		if (ilya_opt('avatar_allow_gravatar') && (($flags & QA_USER_FLAGS_SHOW_GRAVATAR) > 0) && isset($email)) {
 			return 'gravatar';
-		} elseif (qa_opt('avatar_allow_upload') && (($flags & QA_USER_FLAGS_SHOW_AVATAR) > 0) && isset($blobId)) {
+		} elseif (ilya_opt('avatar_allow_upload') && (($flags & QA_USER_FLAGS_SHOW_AVATAR) > 0) && isset($blobId)) {
 			return 'local-user';
-		} elseif ((qa_opt('avatar_allow_gravatar') || qa_opt('avatar_allow_upload')) && qa_opt('avatar_default_show') && strlen(qa_opt('avatar_default_blobid') > 0)) {
+		} elseif ((ilya_opt('avatar_allow_gravatar') || ilya_opt('avatar_allow_upload')) && ilya_opt('avatar_default_show') && strlen(ilya_opt('avatar_default_blobid') > 0)) {
 			return 'local-default';
 		} else {
 			return null;
@@ -617,19 +617,19 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param bool $absolute Whether the link returned should be absolute or relative
 	 * @return null|string The URL to the user's avatar or null if none could be found (not even as a default site avatar)
 	 */
-	function qa_get_user_avatar_url($flags, $email, $blobId, $size = null, $absolute = false)
+	function ilya_get_user_avatar_url($flags, $email, $blobId, $size = null, $absolute = false)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-		$avatarSource = qa_get_user_avatar_source($flags, $email, $blobId);
+		$avatarSource = ilya_get_user_avatar_source($flags, $email, $blobId);
 
 		switch ($avatarSource) {
 			case 'gravatar':
-				return qa_get_gravatar_url($email, $size);
+				return ilya_get_gravatar_url($email, $size);
 			case 'local-user':
-				return qa_get_avatar_blob_url($blobId, $size, $absolute);
+				return ilya_get_avatar_blob_url($blobId, $size, $absolute);
 			case 'local-default':
-				return qa_get_avatar_blob_url(qa_opt('avatar_default_blobid'), $size, $absolute);
+				return ilya_get_avatar_blob_url(ilya_opt('avatar_default_blobid'), $size, $absolute);
 			default: // NULL
 				return null;
 		}
@@ -649,23 +649,23 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param bool $padding HTML padding to add to the image
 	 * @return string|null The HTML to the user's avatar or null if no valid source for the avatar could be found
 	 */
-	function qa_get_user_avatar_html($flags, $email, $handle, $blobId, $width, $height, $size, $padding = false)
+	function ilya_get_user_avatar_html($flags, $email, $handle, $blobId, $width, $height, $size, $padding = false)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		require_once QA_INCLUDE_DIR . 'app/format.php';
 
-		$avatarSource = qa_get_user_avatar_source($flags, $email, $blobId);
+		$avatarSource = ilya_get_user_avatar_source($flags, $email, $blobId);
 
 		switch ($avatarSource) {
 			case 'gravatar':
-				$html = qa_get_gravatar_html($email, $size);
+				$html = ilya_get_gravatar_html($email, $size);
 				break;
 			case 'local-user':
-				$html = qa_get_avatar_blob_html($blobId, $width, $height, $size, $padding);
+				$html = ilya_get_avatar_blob_html($blobId, $width, $height, $size, $padding);
 				break;
 			case 'local-default':
-				$html = qa_get_avatar_blob_html(qa_opt('avatar_default_blobid'), qa_opt('avatar_default_width'), qa_opt('avatar_default_height'), $size, $padding);
+				$html = ilya_get_avatar_blob_html(ilya_opt('avatar_default_blobid'), ilya_opt('avatar_default_width'), ilya_opt('avatar_default_height'), $size, $padding);
 				if (strlen($handle) == 0) {
 					return $html;
 				}
@@ -674,7 +674,7 @@ if (QA_FINAL_EXTERNAL_USERS) {
 				return null;
 		}
 
-		return sprintf('<a href="%s" class="ilya-avatar-link">%s</a>', qa_path_html('user/' . $handle), $html);
+		return sprintf('<a href="%s" class="ilya-avatar-link">%s</a>', ilya_path_html('user/' . $handle), $html);
 	}
 
 
@@ -683,9 +683,9 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $userid
 	 * @return string
 	 */
-	function qa_get_user_email($userid)
+	function ilya_get_user_email($userid)
 	{
-		$userinfo = qa_db_select_with_pending(qa_db_user_account_selectspec($userid, true));
+		$userinfo = ilya_db_select_with_pending(ilya_db_user_account_selectspec($userid, true));
 
 		return $userinfo['email'];
 	}
@@ -697,13 +697,13 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $action
 	 * @return mixed
 	 */
-	function qa_user_report_action($userid, $action)
+	function ilya_user_report_action($userid, $action)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		require_once QA_INCLUDE_DIR . 'db/users.php';
 
-		qa_db_user_written($userid, qa_remote_ip_address());
+		ilya_db_user_written($userid, ilya_remote_ip_address());
 	}
 
 
@@ -712,9 +712,9 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $level
 	 * @return mixed|string
 	 */
-	function qa_user_level_string($level)
+	function ilya_user_level_string($level)
 	{
-		if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+		if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 		if ($level >= QA_USER_LEVEL_SUPER)
 			$string = 'users/level_super';
@@ -731,7 +731,7 @@ if (QA_FINAL_EXTERNAL_USERS) {
 		else
 			$string = 'users/registered_user';
 
-		return qa_lang($string);
+		return ilya_lang($string);
 	}
 
 
@@ -741,13 +741,13 @@ if (QA_FINAL_EXTERNAL_USERS) {
 	 * @param $tourl
 	 * @return array
 	 */
-	function qa_get_login_links($rooturl, $tourl)
+	function ilya_get_login_links($rooturl, $tourl)
 	{
 		return array(
-			'login' => qa_path('login', isset($tourl) ? array('to' => $tourl) : null, $rooturl),
-			'register' => qa_path('register', isset($tourl) ? array('to' => $tourl) : null, $rooturl),
-			'confirm' => qa_path('confirm', null, $rooturl),
-			'logout' => qa_path('logout', null, $rooturl),
+			'login' => ilya_path('login', isset($tourl) ? array('to' => $tourl) : null, $rooturl),
+			'register' => ilya_path('register', isset($tourl) ? array('to' => $tourl) : null, $rooturl),
+			'confirm' => ilya_path('confirm', null, $rooturl),
+			'logout' => ilya_path('logout', null, $rooturl),
 		);
 	}
 
@@ -757,9 +757,9 @@ if (QA_FINAL_EXTERNAL_USERS) {
 /**
  * Return whether someone is logged in at the moment
  */
-function qa_is_logged_in()
+function ilya_is_logged_in()
 {
-	$userid = qa_get_logged_in_userid();
+	$userid = ilya_get_logged_in_userid();
 	return isset($userid);
 }
 
@@ -767,50 +767,50 @@ function qa_is_logged_in()
 /**
  * Return displayable handle/username of currently logged in user, or null if none
  */
-function qa_get_logged_in_handle()
+function ilya_get_logged_in_handle()
 {
-	return qa_get_logged_in_user_field(QA_FINAL_EXTERNAL_USERS ? 'publicusername' : 'handle');
+	return ilya_get_logged_in_user_field(QA_FINAL_EXTERNAL_USERS ? 'publicusername' : 'handle');
 }
 
 
 /**
  * Return email of currently logged in user, or null if none
  */
-function qa_get_logged_in_email()
+function ilya_get_logged_in_email()
 {
-	return qa_get_logged_in_user_field('email');
+	return ilya_get_logged_in_user_field('email');
 }
 
 
 /**
  * Return level of currently logged in user, or null if none
  */
-function qa_get_logged_in_level()
+function ilya_get_logged_in_level()
 {
-	return qa_get_logged_in_user_field('level');
+	return ilya_get_logged_in_user_field('level');
 }
 
 
 /**
  * Return flags (see QA_USER_FLAGS_*) of currently logged in user, or null if none
  */
-function qa_get_logged_in_flags()
+function ilya_get_logged_in_flags()
 {
 	if (QA_FINAL_EXTERNAL_USERS)
-		return qa_get_logged_in_user_field('blocked') ? QA_USER_FLAGS_USER_BLOCKED : 0;
+		return ilya_get_logged_in_user_field('blocked') ? QA_USER_FLAGS_USER_BLOCKED : 0;
 	else
-		return qa_get_logged_in_user_field('flags');
+		return ilya_get_logged_in_user_field('flags');
 }
 
 
 /**
  * Return an array of all the specific (e.g. per category) level privileges for the logged in user, retrieving from the database if necessary
  */
-function qa_get_logged_in_levels()
+function ilya_get_logged_in_levels()
 {
 	require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-	return qa_db_get_pending_result('userlevels', qa_db_user_levels_selectspec(qa_get_logged_in_userid(), true));
+	return ilya_db_get_pending_result('userlevels', ilya_db_user_levels_selectspec(ilya_get_logged_in_userid(), true));
 }
 
 
@@ -819,14 +819,14 @@ function qa_get_logged_in_levels()
  * @param $userids
  * @return array
  */
-function qa_userids_to_handles($userids)
+function ilya_userids_to_handles($userids)
 {
 	if (QA_FINAL_EXTERNAL_USERS)
-		$rawuseridhandles = qa_get_public_from_userids($userids);
+		$rawuseridhandles = ilya_get_public_from_userids($userids);
 
 	else {
 		require_once QA_INCLUDE_DIR . 'db/users.php';
-		$rawuseridhandles = qa_db_user_get_userid_handles($userids);
+		$rawuseridhandles = ilya_db_user_get_userid_handles($userids);
 	}
 
 	$gotuseridhandles = array();
@@ -842,9 +842,9 @@ function qa_userids_to_handles($userids)
  * @param $userid
  * @return mixed|null
  */
-function qa_userid_to_handle($userid)
+function ilya_userid_to_handle($userid)
 {
-	$handles = qa_userids_to_handles(array($userid));
+	$handles = ilya_userids_to_handles(array($userid));
 	return empty($handles) ? null : $handles[$userid];
 }
 
@@ -857,16 +857,16 @@ function qa_userid_to_handle($userid)
  * @param bool $exactonly
  * @return array
  */
-function qa_handles_to_userids($handles, $exactonly = false)
+function ilya_handles_to_userids($handles, $exactonly = false)
 {
 	require_once QA_INCLUDE_DIR . 'util/string.php';
 
 	if (QA_FINAL_EXTERNAL_USERS)
-		$rawhandleuserids = qa_get_userids_from_public($handles);
+		$rawhandleuserids = ilya_get_userids_from_public($handles);
 
 	else {
 		require_once QA_INCLUDE_DIR . 'db/users.php';
-		$rawhandleuserids = qa_db_user_get_handle_userids($handles);
+		$rawhandleuserids = ilya_db_user_get_handle_userids($handles);
 	}
 
 	$gothandleuserids = array();
@@ -878,10 +878,10 @@ function qa_handles_to_userids($handles, $exactonly = false)
 	} else { // normalize to lowercase without accents, and then find matches
 		$normhandleuserids = array();
 		foreach ($rawhandleuserids as $handle => $userid)
-			$normhandleuserids[qa_string_remove_accents(qa_strtolower($handle))] = $userid;
+			$normhandleuserids[ilya_string_remove_accents(ilya_strtolower($handle))] = $userid;
 
 		foreach ($handles as $handle)
-			$gothandleuserids[$handle] = @$normhandleuserids[qa_string_remove_accents(qa_strtolower($handle))];
+			$gothandleuserids[$handle] = @$normhandleuserids[ilya_string_remove_accents(ilya_strtolower($handle))];
 	}
 
 	return $gothandleuserids;
@@ -893,14 +893,14 @@ function qa_handles_to_userids($handles, $exactonly = false)
  * @param $handle
  * @return mixed|null
  */
-function qa_handle_to_userid($handle)
+function ilya_handle_to_userid($handle)
 {
 	if (QA_FINAL_EXTERNAL_USERS)
-		$handleuserids = qa_get_userids_from_public(array($handle));
+		$handleuserids = ilya_get_userids_from_public(array($handle));
 
 	else {
 		require_once QA_INCLUDE_DIR . 'db/users.php';
-		$handleuserids = qa_db_user_get_handle_userids(array($handle));
+		$handleuserids = ilya_db_user_get_handle_userids(array($handle));
 	}
 
 	if (count($handleuserids) == 1)
@@ -915,16 +915,16 @@ function qa_handle_to_userid($handle)
  * @param $categoryids
  * @return mixed|null
  */
-function qa_user_level_for_categories($categoryids)
+function ilya_user_level_for_categories($categoryids)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'app/updates.php';
 
-	$level = qa_get_logged_in_level();
+	$level = ilya_get_logged_in_level();
 
 	if (count($categoryids)) {
-		$userlevels = qa_get_logged_in_levels();
+		$userlevels = ilya_get_logged_in_levels();
 
 		$categorylevels = array(); // create a map
 		foreach ($userlevels as $userlevel) {
@@ -946,12 +946,12 @@ function qa_user_level_for_categories($categoryids)
  * @param $post
  * @return mixed|null
  */
-function qa_user_level_for_post($post)
+function ilya_user_level_for_post($post)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (strlen(@$post['categoryids']))
-		return qa_user_level_for_categories(explode(',', $post['categoryids']));
+		return ilya_user_level_for_categories(explode(',', $post['categoryids']));
 
 	return null;
 }
@@ -960,13 +960,13 @@ function qa_user_level_for_post($post)
 /**
  * Return the maximum possible level of the logged in user in any context (i.e. for any category)
  */
-function qa_user_level_maximum()
+function ilya_user_level_maximum()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$level = qa_get_logged_in_level();
+	$level = ilya_get_logged_in_level();
 
-	$userlevels = qa_get_logged_in_levels();
+	$userlevels = ilya_get_logged_in_levels();
 	foreach ($userlevels as $userlevel) {
 		$level = max($level, $userlevel['level']);
 	}
@@ -977,30 +977,30 @@ function qa_user_level_maximum()
 
 /**
  * Check whether the logged in user has permission to perform $permitoption on post $post (from the database)
- * Other parameters and the return value are as for qa_user_permit_error(...)
+ * Other parameters and the return value are as for ilya_user_permit_error(...)
  * @param $permitoption
  * @param $post
  * @param $limitaction
  * @param bool $checkblocks
  * @return bool|string
  */
-function qa_user_post_permit_error($permitoption, $post, $limitaction = null, $checkblocks = true)
+function ilya_user_post_permit_error($permitoption, $post, $limitaction = null, $checkblocks = true)
 {
-	return qa_user_permit_error($permitoption, $limitaction, qa_user_level_for_post($post), $checkblocks);
+	return ilya_user_permit_error($permitoption, $limitaction, ilya_user_level_for_post($post), $checkblocks);
 }
 
 
 /**
  * Check whether the logged in user would have permittion to perform $permitoption in any context (i.e. for any category)
- * Other parameters and the return value are as for qa_user_permit_error(...)
+ * Other parameters and the return value are as for ilya_user_permit_error(...)
  * @param $permitoption
  * @param $limitaction
  * @param bool $checkblocks
  * @return bool|string
  */
-function qa_user_maximum_permit_error($permitoption, $limitaction = null, $checkblocks = true)
+function ilya_user_maximum_permit_error($permitoption, $limitaction = null, $checkblocks = true)
 {
-	return qa_user_permit_error($permitoption, $limitaction, qa_user_level_maximum(), $checkblocks);
+	return ilya_user_permit_error($permitoption, $limitaction, ilya_user_level_maximum(), $checkblocks);
 }
 
 
@@ -1024,14 +1024,14 @@ function qa_user_maximum_permit_error($permitoption, $limitaction = null, $check
  *   'limit' => the user or IP address has reached a rate limit (if $limitaction specified)
  *   false => the operation can go ahead
  */
-function qa_user_permit_error($permitoption = null, $limitaction = null, $userlevel = null, $checkblocks = true, $userfields = null)
+function ilya_user_permit_error($permitoption = null, $limitaction = null, $userlevel = null, $checkblocks = true, $userfields = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 
 	if (!isset($userfields))
-		$userfields = qa_get_logged_in_user_cache();
+		$userfields = ilya_get_logged_in_user_cache();
 
 	$userid = isset($userfields['userid']) ? $userfields['userid'] : null;
 
@@ -1042,16 +1042,16 @@ function qa_user_permit_error($permitoption = null, $limitaction = null, $userle
 	if (!$checkblocks)
 		$flags &= ~QA_USER_FLAGS_USER_BLOCKED;
 
-	$error = qa_permit_error($permitoption, $userid, $userlevel, $flags);
+	$error = ilya_permit_error($permitoption, $userid, $userlevel, $flags);
 
-	if ($checkblocks && !$error && qa_is_ip_blocked())
+	if ($checkblocks && !$error && ilya_is_ip_blocked())
 		$error = 'ipblock';
 
-	if (!$error && isset($userid) && ($flags & QA_USER_FLAGS_MUST_CONFIRM) && qa_opt('confirm_user_emails'))
+	if (!$error && isset($userid) && ($flags & QA_USER_FLAGS_MUST_CONFIRM) && ilya_opt('confirm_user_emails'))
 		$error = 'confirm';
 
 	if (isset($limitaction) && !$error) {
-		if (qa_user_limits_remaining($limitaction) <= 0)
+		if (ilya_user_limits_remaining($limitaction) <= 0)
 			$error = 'limit';
 	}
 
@@ -1060,7 +1060,7 @@ function qa_user_permit_error($permitoption = null, $limitaction = null, $userle
 
 
 /**
- * Check whether user can perform $permitoption. Result as for qa_user_permit_error(...).
+ * Check whether user can perform $permitoption. Result as for ilya_user_permit_error(...).
  *
  * @param string $permitoption Permission option name (from database) for action.
  * @param int $userid ID of user (null for no user).
@@ -1070,19 +1070,19 @@ function qa_user_permit_error($permitoption = null, $limitaction = null, $userle
  *
  * @return string|bool Reason the user is not permitted, or false if the operation can go ahead.
  */
-function qa_permit_error($permitoption, $userid, $userlevel, $userflags, $userpoints = null)
+function ilya_permit_error($permitoption, $userid, $userlevel, $userflags, $userpoints = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$permit = isset($permitoption) ? qa_opt($permitoption) : QA_PERMIT_ALL;
+	$permit = isset($permitoption) ? ilya_opt($permitoption) : QA_PERMIT_ALL;
 
 	if (isset($userid) && ($permit == QA_PERMIT_POINTS || $permit == QA_PERMIT_POINTS_CONFIRMED || $permit == QA_PERMIT_APPROVED_POINTS)) {
 		// deal with points threshold by converting as appropriate
 
-		if (!isset($userpoints) && $userid == qa_get_logged_in_userid())
-			$userpoints = qa_get_logged_in_points(); // allow late retrieval of points (to avoid unnecessary DB query when using external users)
+		if (!isset($userpoints) && $userid == ilya_get_logged_in_userid())
+			$userpoints = ilya_get_logged_in_points(); // allow late retrieval of points (to avoid unnecessary DB query when using external users)
 
-		if ($userpoints >= qa_opt($permitoption . '_points')) {
+		if ($userpoints >= ilya_opt($permitoption . '_points')) {
 			$permit = $permit == QA_PERMIT_APPROVED_POINTS
 				? QA_PERMIT_APPROVED
 				: ($permit == QA_PERMIT_POINTS_CONFIRMED ? QA_PERMIT_CONFIRMED : QA_PERMIT_USERS); // convert if user has enough points
@@ -1090,12 +1090,12 @@ function qa_permit_error($permitoption, $userid, $userlevel, $userflags, $userpo
 			$permit = QA_PERMIT_EXPERTS; // otherwise show a generic message so they're not tempted to collect points just for this
 	}
 
-	return qa_permit_value_error($permit, $userid, $userlevel, $userflags);
+	return ilya_permit_value_error($permit, $userid, $userlevel, $userflags);
 }
 
 
 /**
- * Check whether user can reach the permission level. Result as for qa_user_permit_error(...).
+ * Check whether user can reach the permission level. Result as for ilya_user_permit_error(...).
  *
  * @param int $permit Permission constant.
  * @param int $userid ID of user (null for no user).
@@ -1104,9 +1104,9 @@ function qa_permit_error($permitoption, $userid, $userlevel, $userflags, $userpo
  *
  * @return string|bool Reason the user is not permitted, or false if the operation can go ahead
  */
-function qa_permit_value_error($permit, $userid, $userlevel, $userflags)
+function ilya_permit_value_error($permit, $userid, $userlevel, $userflags)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (!isset($userid) && $permit < QA_PERMIT_ALL)
 		return 'login';
@@ -1130,12 +1130,12 @@ function qa_permit_value_error($permit, $userid, $userlevel, $userflags)
 	if ($permit >= QA_PERMIT_CONFIRMED) {
 		$confirmed = ($userflags & QA_USER_FLAGS_EMAIL_CONFIRMED);
 		// not currently supported by single sign-on integration; approved users and above don't need confirmation
-		if (!QA_FINAL_EXTERNAL_USERS && qa_opt('confirm_user_emails') && $userlevel < QA_USER_LEVEL_APPROVED && !$confirmed) {
+		if (!QA_FINAL_EXTERNAL_USERS && ilya_opt('confirm_user_emails') && $userlevel < QA_USER_LEVEL_APPROVED && !$confirmed) {
 			return 'confirm';
 		}
 	} elseif ($permit >= QA_PERMIT_APPROVED) {
 		// check user is approved, only if we require it
-		if (qa_opt('moderate_users') && $userlevel < QA_USER_LEVEL_APPROVED) {
+		if (ilya_opt('moderate_users') && $userlevel < QA_USER_LEVEL_APPROVED) {
 			return 'approve';
 		}
 	}
@@ -1157,22 +1157,22 @@ function qa_permit_value_error($permit, $userid, $userlevel, $userflags)
  * @param $userlevel
  * @return bool|mixed|string
  */
-function qa_user_captcha_reason($userlevel = null)
+function ilya_user_captcha_reason($userlevel = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$reason = false;
 	if (!isset($userlevel))
-		$userlevel = qa_get_logged_in_level();
+		$userlevel = ilya_get_logged_in_level();
 
 	if ($userlevel < QA_USER_LEVEL_APPROVED) { // approved users and above aren't shown captchas
-		$userid = qa_get_logged_in_userid();
+		$userid = ilya_get_logged_in_userid();
 
-		if (qa_opt('captcha_on_anon_post') && !isset($userid))
+		if (ilya_opt('captcha_on_anon_post') && !isset($userid))
 			$reason = 'login';
-		elseif (qa_opt('moderate_users') && qa_opt('captcha_on_unapproved'))
+		elseif (ilya_opt('moderate_users') && ilya_opt('captcha_on_unapproved'))
 			$reason = 'approve';
-		elseif (qa_opt('confirm_user_emails') && qa_opt('captcha_on_unconfirmed') && !(qa_get_logged_in_flags() & QA_USER_FLAGS_EMAIL_CONFIRMED))
+		elseif (ilya_opt('confirm_user_emails') && ilya_opt('captcha_on_unconfirmed') && !(ilya_get_logged_in_flags() & QA_USER_FLAGS_EMAIL_CONFIRMED))
 			$reason = 'confirm';
 	}
 
@@ -1186,11 +1186,11 @@ function qa_user_captcha_reason($userlevel = null)
  * @param $userlevel
  * @return bool|mixed
  */
-function qa_user_use_captcha($userlevel = null)
+function ilya_user_use_captcha($userlevel = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return qa_user_captcha_reason($userlevel) != false;
+	return ilya_user_captcha_reason($userlevel) != false;
 }
 
 
@@ -1208,27 +1208,27 @@ function qa_user_use_captcha($userlevel = null)
  * @param $userlevel
  * @return bool|string
  */
-function qa_user_moderation_reason($userlevel = null)
+function ilya_user_moderation_reason($userlevel = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$reason = false;
 	if (!isset($userlevel))
-		$userlevel = qa_get_logged_in_level();
+		$userlevel = ilya_get_logged_in_level();
 
-	if ($userlevel < QA_USER_LEVEL_EXPERT && qa_user_permit_error('permit_moderate')) {
+	if ($userlevel < QA_USER_LEVEL_EXPERT && ilya_user_permit_error('permit_moderate')) {
 		// experts and above aren't moderated; if the user can approve posts, no point in moderating theirs
-		$userid = qa_get_logged_in_userid();
+		$userid = ilya_get_logged_in_userid();
 
 		if (isset($userid)) {
-			if (qa_opt('moderate_users') && qa_opt('moderate_unapproved') && ($userlevel < QA_USER_LEVEL_APPROVED))
+			if (ilya_opt('moderate_users') && ilya_opt('moderate_unapproved') && ($userlevel < QA_USER_LEVEL_APPROVED))
 				$reason = 'approve';
-			elseif (qa_opt('confirm_user_emails') && qa_opt('moderate_unconfirmed') && !(qa_get_logged_in_flags() & QA_USER_FLAGS_EMAIL_CONFIRMED))
+			elseif (ilya_opt('confirm_user_emails') && ilya_opt('moderate_unconfirmed') && !(ilya_get_logged_in_flags() & QA_USER_FLAGS_EMAIL_CONFIRMED))
 				$reason = 'confirm';
-			elseif (qa_opt('moderate_by_points') && (qa_get_logged_in_points() < qa_opt('moderate_points_limit')))
+			elseif (ilya_opt('moderate_by_points') && (ilya_get_logged_in_points() < ilya_opt('moderate_points_limit')))
 				$reason = 'points';
 
-		} elseif (qa_opt('moderate_anon_post'))
+		} elseif (ilya_opt('moderate_anon_post'))
 			$reason = 'login';
 	}
 
@@ -1241,7 +1241,7 @@ function qa_user_moderation_reason($userlevel = null)
  * @param $userfield
  * @return string
  */
-function qa_user_userfield_label($userfield)
+function ilya_user_userfield_label($userfield)
 {
 	if (isset($userfield['content']))
 		return $userfield['content'];
@@ -1255,7 +1255,7 @@ function qa_user_userfield_label($userfield)
 		);
 
 		if (isset($defaultlabels[$userfield['title']]))
-			return qa_lang($defaultlabels[$userfield['title']]);
+			return ilya_lang($defaultlabels[$userfield['title']]);
 	}
 
 	return '';
@@ -1265,21 +1265,21 @@ function qa_user_userfield_label($userfield)
 /**
  * Set or extend the cookie in browser of non logged-in users which identifies them for the purposes of form security (anti-CSRF protection)
  */
-function qa_set_form_security_key()
+function ilya_set_form_security_key()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_form_key_cookie_set;
+	global $ilya_form_key_cookie_set;
 
-	if (!qa_is_logged_in() && !@$qa_form_key_cookie_set) {
-		$qa_form_key_cookie_set = true;
+	if (!ilya_is_logged_in() && !@$ilya_form_key_cookie_set) {
+		$ilya_form_key_cookie_set = true;
 
-		if (strlen(@$_COOKIE['qa_key']) != QA_FORM_KEY_LENGTH) {
+		if (strlen(@$_COOKIE['ilya_key']) != QA_FORM_KEY_LENGTH) {
 			require_once QA_INCLUDE_DIR . 'util/string.php';
-			$_COOKIE['qa_key'] = qa_random_alphanum(QA_FORM_KEY_LENGTH);
+			$_COOKIE['ilya_key'] = ilya_random_alphanum(QA_FORM_KEY_LENGTH);
 		}
 
-		setcookie('qa_key', $_COOKIE['qa_key'], time() + 2 * QA_FORM_EXPIRY_SECS, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true); // extend on every page request
+		setcookie('ilya_key', $_COOKIE['ilya_key'], time() + 2 * QA_FORM_EXPIRY_SECS, '/', QA_COOKIE_DOMAIN, (bool)ini_get('session.cookie_secure'), true); // extend on every page request
 	}
 }
 
@@ -1291,16 +1291,16 @@ function qa_set_form_security_key()
  * @param $timestamp
  * @return mixed|string
  */
-function qa_calc_form_security_hash($action, $timestamp)
+function ilya_calc_form_security_hash($action, $timestamp)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$salt = qa_opt('form_security_salt');
+	$salt = ilya_opt('form_security_salt');
 
-	if (qa_is_logged_in())
-		return sha1($salt . '/' . $action . '/' . $timestamp . '/' . qa_get_logged_in_userid() . '/' . qa_get_logged_in_user_field('passsalt'));
+	if (ilya_is_logged_in())
+		return sha1($salt . '/' . $action . '/' . $timestamp . '/' . ilya_get_logged_in_userid() . '/' . ilya_get_logged_in_user_field('passsalt'));
 	else
-		return sha1($salt . '/' . $action . '/' . $timestamp . '/' . @$_COOKIE['qa_key']); // lower security for non logged in users - code+cookie can be transferred
+		return sha1($salt . '/' . $action . '/' . $timestamp . '/' . @$_COOKIE['ilya_key']); // lower security for non logged in users - code+cookie can be transferred
 }
 
 
@@ -1310,15 +1310,15 @@ function qa_calc_form_security_hash($action, $timestamp)
  * @param $action
  * @return mixed|string
  */
-function qa_get_form_security_code($action)
+function ilya_get_form_security_code($action)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	qa_set_form_security_key();
+	ilya_set_form_security_key();
 
-	$timestamp = qa_opt('db_time');
+	$timestamp = ilya_opt('db_time');
 
-	return (int)qa_is_logged_in() . '-' . $timestamp . '-' . qa_calc_form_security_hash($action, $timestamp);
+	return (int)ilya_is_logged_in() . '-' . $timestamp . '-' . ilya_calc_form_security_hash($action, $timestamp);
 }
 
 
@@ -1329,9 +1329,9 @@ function qa_get_form_security_code($action)
  * @param $value
  * @return bool
  */
-function qa_check_form_security_code($action, $value)
+function ilya_check_form_security_code($action, $value)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$reportproblems = array();
 	$silentproblems = array();
@@ -1349,7 +1349,7 @@ function qa_check_form_security_code($action, $value)
 			$loggedin = $parts[0];
 			$timestamp = $parts[1];
 			$hash = $parts[2];
-			$timenow = qa_opt('db_time');
+			$timenow = ilya_opt('db_time');
 
 			if ($timestamp > $timenow) {
 				$reportproblems[] = 'time ' . ($timestamp - $timenow) . 's in future';
@@ -1357,7 +1357,7 @@ function qa_check_form_security_code($action, $value)
 				$silentproblems[] = 'timeout after ' . ($timenow - $timestamp) . 's';
 			}
 
-			if (qa_is_logged_in()) {
+			if (ilya_is_logged_in()) {
 				if (!$loggedin) {
 					$silentproblems[] = 'now logged in';
 				}
@@ -1365,7 +1365,7 @@ function qa_check_form_security_code($action, $value)
 				if ($loggedin) {
 					$silentproblems[] = 'now logged out';
 				} else {
-					$key = @$_COOKIE['qa_key'];
+					$key = @$_COOKIE['ilya_key'];
 
 					if (!isset($key)) {
 						$silentproblems[] = 'key cookie missing';
@@ -1378,7 +1378,7 @@ function qa_check_form_security_code($action, $value)
 			}
 
 			if (empty($silentproblems) && empty($reportproblems)) {
-				if (!hash_equals(strtolower(qa_calc_form_security_hash($action, $timestamp)), strtolower($hash))) {
+				if (!hash_equals(strtolower(ilya_calc_form_security_hash($action, $timestamp)), strtolower($hash))) {
 					$reportproblems[] = 'code mismatch';
 				}
 			}
@@ -1391,7 +1391,7 @@ function qa_check_form_security_code($action, $value)
 	if (!empty($reportproblems) && QA_DEBUG_PERFORMANCE) {
 		@error_log(
 			'PHP Question2Answer form security violation for ' . $action .
-			' by ' . (qa_is_logged_in() ? ('userid ' . qa_get_logged_in_userid()) : 'anonymous') .
+			' by ' . (ilya_is_logged_in() ? ('userid ' . ilya_get_logged_in_userid()) : 'anonymous') .
 			' (' . implode(', ', array_merge($reportproblems, $silentproblems)) . ')' .
 			' on ' . @$_SERVER['REQUEST_URI'] .
 			' via ' . @$_SERVER['HTTP_REFERER']
@@ -1410,9 +1410,9 @@ function qa_check_form_security_code($action, $value)
  * @param int|null $size The size of the Gravatar to return. If omitted the default size will be used
  * @return string The URL to the Gravatar of the user
  */
-function qa_get_gravatar_url($email, $size = null)
+function ilya_get_gravatar_url($email, $size = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$link = 'https://www.gravatar.com/avatar/%s';
 

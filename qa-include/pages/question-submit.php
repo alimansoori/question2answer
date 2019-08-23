@@ -40,35 +40,35 @@ require_once QA_INCLUDE_DIR . 'app/post-update.php';
  * @param $error
  * @return bool
  */
-function qa_page_q_single_click_q($question, $answers, $commentsfollows, $closepost, &$error)
+function ilya_page_q_single_click_q($question, $answers, $commentsfollows, $closepost, &$error)
 {
 	require_once QA_INCLUDE_DIR . 'app/post-update.php';
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 
-	$userid = qa_get_logged_in_userid();
-	$handle = qa_get_logged_in_handle();
-	$cookieid = qa_cookie_get();
+	$userid = ilya_get_logged_in_userid();
+	$handle = ilya_get_logged_in_handle();
+	$cookieid = ilya_cookie_get();
 
-	if (qa_clicked('q_doreopen') && $question['reopenable'] && qa_page_q_click_check_form_code($question, $error)) {
-		qa_question_close_clear($question, $closepost, $userid, $handle, $cookieid);
+	if (ilya_clicked('q_doreopen') && $question['reopenable'] && ilya_page_q_click_check_form_code($question, $error)) {
+		ilya_question_close_clear($question, $closepost, $userid, $handle, $cookieid);
 		return true;
 	}
 
-	if ((qa_clicked('q_dohide') && $question['hideable']) || (qa_clicked('q_doreject') && $question['moderatable'])) {
-		if (qa_page_q_click_check_form_code($question, $error)) {
-			qa_question_set_status($question, QA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
+	if ((ilya_clicked('q_dohide') && $question['hideable']) || (ilya_clicked('q_doreject') && $question['moderatable'])) {
+		if (ilya_page_q_click_check_form_code($question, $error)) {
+			ilya_question_set_status($question, QA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
 			return true;
 		}
 	}
 
-	if ((qa_clicked('q_doreshow') && $question['reshowable']) || (qa_clicked('q_doapprove') && $question['moderatable'])) {
-		if (qa_page_q_click_check_form_code($question, $error)) {
+	if ((ilya_clicked('q_doreshow') && $question['reshowable']) || (ilya_clicked('q_doapprove') && $question['moderatable'])) {
+		if (ilya_page_q_click_check_form_code($question, $error)) {
 			if ($question['moderatable'] || $question['reshowimmed']) {
 				$status = QA_POST_STATUS_NORMAL;
 
 			} else {
-				$in = qa_page_q_prepare_post_for_filters($question);
-				$filtermodules = qa_load_modules_with('filter', 'filter_question'); // run through filters but only for queued status
+				$in = ilya_page_q_prepare_post_for_filters($question);
+				$filtermodules = ilya_load_modules_with('filter', 'filter_question'); // run through filters but only for queued status
 
 				foreach ($filtermodules as $filtermodule) {
 					$tempin = $in; // always pass original question in because we aren't modifying anything else
@@ -79,42 +79,42 @@ function qa_page_q_single_click_q($question, $answers, $commentsfollows, $closep
 				$status = $in['queued'] ? QA_POST_STATUS_QUEUED : QA_POST_STATUS_NORMAL;
 			}
 
-			qa_question_set_status($question, $status, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
+			ilya_question_set_status($question, $status, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
 			return true;
 		}
 	}
 
-	if (qa_clicked('q_doclaim') && $question['claimable'] && qa_page_q_click_check_form_code($question, $error)) {
-		if (qa_user_limits_remaining(QA_LIMIT_QUESTIONS)) { // already checked 'permit_post_q'
-			qa_question_set_userid($question, $userid, $handle, $cookieid);
+	if (ilya_clicked('q_doclaim') && $question['claimable'] && ilya_page_q_click_check_form_code($question, $error)) {
+		if (ilya_user_limits_remaining(QA_LIMIT_QUESTIONS)) { // already checked 'permit_post_q'
+			ilya_question_set_userid($question, $userid, $handle, $cookieid);
 			return true;
 
 		} else
-			$error = qa_lang_html('question/ask_limit');
+			$error = ilya_lang_html('question/ask_limit');
 	}
 
-	if (qa_clicked('q_doflag') && $question['flagbutton'] && qa_page_q_click_check_form_code($question, $error)) {
+	if (ilya_clicked('q_doflag') && $question['flagbutton'] && ilya_page_q_click_check_form_code($question, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		$error = qa_flag_error_html($question, $userid, qa_request());
+		$error = ilya_flag_error_html($question, $userid, ilya_request());
 		if (!$error) {
-			if (qa_flag_set_tohide($question, $userid, $handle, $cookieid, $question))
-				qa_question_set_status($question, QA_POST_STATUS_HIDDEN, null, null, null, $answers, $commentsfollows, $closepost); // hiding not really by this user so pass nulls
+			if (ilya_flag_set_tohide($question, $userid, $handle, $cookieid, $question))
+				ilya_question_set_status($question, QA_POST_STATUS_HIDDEN, null, null, null, $answers, $commentsfollows, $closepost); // hiding not really by this user so pass nulls
 			return true;
 		}
 	}
 
-	if (qa_clicked('q_dounflag') && $question['unflaggable'] && qa_page_q_click_check_form_code($question, $error)) {
+	if (ilya_clicked('q_dounflag') && $question['unflaggable'] && ilya_page_q_click_check_form_code($question, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		qa_flag_clear($question, $userid, $handle, $cookieid);
+		ilya_flag_clear($question, $userid, $handle, $cookieid);
 		return true;
 	}
 
-	if (qa_clicked('q_doclearflags') && $question['clearflaggable'] && qa_page_q_click_check_form_code($question, $error)) {
+	if (ilya_clicked('q_doclearflags') && $question['clearflaggable'] && ilya_page_q_click_check_form_code($question, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		qa_flags_clear_all($question, $userid, $handle, $cookieid);
+		ilya_flags_clear_all($question, $userid, $handle, $cookieid);
 		return true;
 	}
 
@@ -135,39 +135,39 @@ function qa_page_q_single_click_q($question, $answers, $commentsfollows, $closep
  * @param $error
  * @return bool
  */
-function qa_page_q_single_click_a($answer, $question, $answers, $commentsfollows, $allowselectmove, &$error)
+function ilya_page_q_single_click_a($answer, $question, $answers, $commentsfollows, $allowselectmove, &$error)
 {
-	$userid = qa_get_logged_in_userid();
-	$handle = qa_get_logged_in_handle();
-	$cookieid = qa_cookie_get();
+	$userid = ilya_get_logged_in_userid();
+	$handle = ilya_get_logged_in_handle();
+	$cookieid = ilya_cookie_get();
 
 	$prefix = 'a' . $answer['postid'] . '_';
 
-	if (qa_clicked($prefix . 'doselect') && $question['aselectable'] && ($allowselectmove || ((!isset($question['selchildid'])) && !qa_opt('do_close_on_select'))) && qa_page_q_click_check_form_code($answer, $error)) {
-		qa_question_set_selchildid($userid, $handle, $cookieid, $question, $answer['postid'], $answers);
+	if (ilya_clicked($prefix . 'doselect') && $question['aselectable'] && ($allowselectmove || ((!isset($question['selchildid'])) && !ilya_opt('do_close_on_select'))) && ilya_page_q_click_check_form_code($answer, $error)) {
+		ilya_question_set_selchildid($userid, $handle, $cookieid, $question, $answer['postid'], $answers);
 		return true;
 	}
 
-	if (qa_clicked($prefix . 'dounselect') && $question['aselectable'] && ($question['selchildid'] == $answer['postid']) && ($allowselectmove || !qa_opt('do_close_on_select')) && qa_page_q_click_check_form_code($answer, $error)) {
-		qa_question_set_selchildid($userid, $handle, $cookieid, $question, null, $answers);
+	if (ilya_clicked($prefix . 'dounselect') && $question['aselectable'] && ($question['selchildid'] == $answer['postid']) && ($allowselectmove || !ilya_opt('do_close_on_select')) && ilya_page_q_click_check_form_code($answer, $error)) {
+		ilya_question_set_selchildid($userid, $handle, $cookieid, $question, null, $answers);
 		return true;
 	}
 
-	if ((qa_clicked($prefix . 'dohide') && $answer['hideable']) || (qa_clicked($prefix . 'doreject') && $answer['moderatable'])) {
-		if (qa_page_q_click_check_form_code($answer, $error)) {
-			qa_answer_set_status($answer, QA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $question, $commentsfollows);
+	if ((ilya_clicked($prefix . 'dohide') && $answer['hideable']) || (ilya_clicked($prefix . 'doreject') && $answer['moderatable'])) {
+		if (ilya_page_q_click_check_form_code($answer, $error)) {
+			ilya_answer_set_status($answer, QA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $question, $commentsfollows);
 			return true;
 		}
 	}
 
-	if ((qa_clicked($prefix . 'doreshow') && $answer['reshowable']) || (qa_clicked($prefix . 'doapprove') && $answer['moderatable'])) {
-		if (qa_page_q_click_check_form_code($answer, $error)) {
+	if ((ilya_clicked($prefix . 'doreshow') && $answer['reshowable']) || (ilya_clicked($prefix . 'doapprove') && $answer['moderatable'])) {
+		if (ilya_page_q_click_check_form_code($answer, $error)) {
 			if ($answer['moderatable'] || $answer['reshowimmed']) {
 				$status = QA_POST_STATUS_NORMAL;
 
 			} else {
-				$in = qa_page_q_prepare_post_for_filters($answer);
-				$filtermodules = qa_load_modules_with('filter', 'filter_answer'); // run through filters but only for queued status
+				$in = ilya_page_q_prepare_post_for_filters($answer);
+				$filtermodules = ilya_load_modules_with('filter', 'filter_answer'); // run through filters but only for queued status
 
 				foreach ($filtermodules as $filtermodule) {
 					$tempin = $in; // always pass original answer in because we aren't modifying anything else
@@ -178,48 +178,48 @@ function qa_page_q_single_click_a($answer, $question, $answers, $commentsfollows
 				$status = $in['queued'] ? QA_POST_STATUS_QUEUED : QA_POST_STATUS_NORMAL;
 			}
 
-			qa_answer_set_status($answer, $status, $userid, $handle, $cookieid, $question, $commentsfollows);
+			ilya_answer_set_status($answer, $status, $userid, $handle, $cookieid, $question, $commentsfollows);
 			return true;
 		}
 	}
 
-	if (qa_clicked($prefix . 'dodelete') && $answer['deleteable'] && qa_page_q_click_check_form_code($answer, $error)) {
-		qa_answer_delete($answer, $question, $userid, $handle, $cookieid);
+	if (ilya_clicked($prefix . 'dodelete') && $answer['deleteable'] && ilya_page_q_click_check_form_code($answer, $error)) {
+		ilya_answer_delete($answer, $question, $userid, $handle, $cookieid);
 		return true;
 	}
 
-	if (qa_clicked($prefix . 'doclaim') && $answer['claimable'] && qa_page_q_click_check_form_code($answer, $error)) {
-		if (qa_user_limits_remaining(QA_LIMIT_ANSWERS)) { // already checked 'permit_post_a'
-			qa_answer_set_userid($answer, $userid, $handle, $cookieid);
+	if (ilya_clicked($prefix . 'doclaim') && $answer['claimable'] && ilya_page_q_click_check_form_code($answer, $error)) {
+		if (ilya_user_limits_remaining(QA_LIMIT_ANSWERS)) { // already checked 'permit_post_a'
+			ilya_answer_set_userid($answer, $userid, $handle, $cookieid);
 			return true;
 
 		} else
-			$error = qa_lang_html('question/answer_limit');
+			$error = ilya_lang_html('question/answer_limit');
 	}
 
-	if (qa_clicked($prefix . 'doflag') && $answer['flagbutton'] && qa_page_q_click_check_form_code($answer, $error)) {
+	if (ilya_clicked($prefix . 'doflag') && $answer['flagbutton'] && ilya_page_q_click_check_form_code($answer, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		$error = qa_flag_error_html($answer, $userid, qa_request());
+		$error = ilya_flag_error_html($answer, $userid, ilya_request());
 		if (!$error) {
-			if (qa_flag_set_tohide($answer, $userid, $handle, $cookieid, $question))
-				qa_answer_set_status($answer, QA_POST_STATUS_HIDDEN, null, null, null, $question, $commentsfollows); // hiding not really by this user so pass nulls
+			if (ilya_flag_set_tohide($answer, $userid, $handle, $cookieid, $question))
+				ilya_answer_set_status($answer, QA_POST_STATUS_HIDDEN, null, null, null, $question, $commentsfollows); // hiding not really by this user so pass nulls
 
 			return true;
 		}
 	}
 
-	if (qa_clicked($prefix . 'dounflag') && $answer['unflaggable'] && qa_page_q_click_check_form_code($answer, $error)) {
+	if (ilya_clicked($prefix . 'dounflag') && $answer['unflaggable'] && ilya_page_q_click_check_form_code($answer, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		qa_flag_clear($answer, $userid, $handle, $cookieid);
+		ilya_flag_clear($answer, $userid, $handle, $cookieid);
 		return true;
 	}
 
-	if (qa_clicked($prefix . 'doclearflags') && $answer['clearflaggable'] && qa_page_q_click_check_form_code($answer, $error)) {
+	if (ilya_clicked($prefix . 'doclearflags') && $answer['clearflaggable'] && ilya_page_q_click_check_form_code($answer, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		qa_flags_clear_all($answer, $userid, $handle, $cookieid);
+		ilya_flags_clear_all($answer, $userid, $handle, $cookieid);
 		return true;
 	}
 
@@ -237,29 +237,29 @@ function qa_page_q_single_click_a($answer, $question, $answers, $commentsfollows
  * @param $error
  * @return bool
  */
-function qa_page_q_single_click_c($comment, $question, $parent, &$error)
+function ilya_page_q_single_click_c($comment, $question, $parent, &$error)
 {
-	$userid = qa_get_logged_in_userid();
-	$handle = qa_get_logged_in_handle();
-	$cookieid = qa_cookie_get();
+	$userid = ilya_get_logged_in_userid();
+	$handle = ilya_get_logged_in_handle();
+	$cookieid = ilya_cookie_get();
 
 	$prefix = 'c' . $comment['postid'] . '_';
 
-	if ((qa_clicked($prefix . 'dohide') && $comment['hideable']) || (qa_clicked($prefix . 'doreject') && $comment['moderatable'])) {
-		if (qa_page_q_click_check_form_code($parent, $error)) {
-			qa_comment_set_status($comment, QA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $question, $parent);
+	if ((ilya_clicked($prefix . 'dohide') && $comment['hideable']) || (ilya_clicked($prefix . 'doreject') && $comment['moderatable'])) {
+		if (ilya_page_q_click_check_form_code($parent, $error)) {
+			ilya_comment_set_status($comment, QA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $question, $parent);
 			return true;
 		}
 	}
 
-	if ((qa_clicked($prefix . 'doreshow') && $comment['reshowable']) || (qa_clicked($prefix . 'doapprove') && $comment['moderatable'])) {
-		if (qa_page_q_click_check_form_code($parent, $error)) {
+	if ((ilya_clicked($prefix . 'doreshow') && $comment['reshowable']) || (ilya_clicked($prefix . 'doapprove') && $comment['moderatable'])) {
+		if (ilya_page_q_click_check_form_code($parent, $error)) {
 			if ($comment['moderatable'] || $comment['reshowimmed']) {
 				$status = QA_POST_STATUS_NORMAL;
 
 			} else {
-				$in = qa_page_q_prepare_post_for_filters($comment);
-				$filtermodules = qa_load_modules_with('filter', 'filter_comment'); // run through filters but only for queued status
+				$in = ilya_page_q_prepare_post_for_filters($comment);
+				$filtermodules = ilya_load_modules_with('filter', 'filter_comment'); // run through filters but only for queued status
 
 				foreach ($filtermodules as $filtermodule) {
 					$tempin = $in; // always pass original comment in because we aren't modifying anything else
@@ -270,48 +270,48 @@ function qa_page_q_single_click_c($comment, $question, $parent, &$error)
 				$status = $in['queued'] ? QA_POST_STATUS_QUEUED : QA_POST_STATUS_NORMAL;
 			}
 
-			qa_comment_set_status($comment, $status, $userid, $handle, $cookieid, $question, $parent);
+			ilya_comment_set_status($comment, $status, $userid, $handle, $cookieid, $question, $parent);
 			return true;
 		}
 	}
 
-	if (qa_clicked($prefix . 'dodelete') && $comment['deleteable'] && qa_page_q_click_check_form_code($parent, $error)) {
-		qa_comment_delete($comment, $question, $parent, $userid, $handle, $cookieid);
+	if (ilya_clicked($prefix . 'dodelete') && $comment['deleteable'] && ilya_page_q_click_check_form_code($parent, $error)) {
+		ilya_comment_delete($comment, $question, $parent, $userid, $handle, $cookieid);
 		return true;
 	}
 
-	if (qa_clicked($prefix . 'doclaim') && $comment['claimable'] && qa_page_q_click_check_form_code($parent, $error)) {
-		if (qa_user_limits_remaining(QA_LIMIT_COMMENTS)) {
-			qa_comment_set_userid($comment, $userid, $handle, $cookieid);
+	if (ilya_clicked($prefix . 'doclaim') && $comment['claimable'] && ilya_page_q_click_check_form_code($parent, $error)) {
+		if (ilya_user_limits_remaining(QA_LIMIT_COMMENTS)) {
+			ilya_comment_set_userid($comment, $userid, $handle, $cookieid);
 			return true;
 
 		} else
-			$error = qa_lang_html('question/comment_limit');
+			$error = ilya_lang_html('question/comment_limit');
 	}
 
-	if (qa_clicked($prefix . 'doflag') && $comment['flagbutton'] && qa_page_q_click_check_form_code($parent, $error)) {
+	if (ilya_clicked($prefix . 'doflag') && $comment['flagbutton'] && ilya_page_q_click_check_form_code($parent, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		$error = qa_flag_error_html($comment, $userid, qa_request());
+		$error = ilya_flag_error_html($comment, $userid, ilya_request());
 		if (!$error) {
-			if (qa_flag_set_tohide($comment, $userid, $handle, $cookieid, $question))
-				qa_comment_set_status($comment, QA_POST_STATUS_HIDDEN, null, null, null, $question, $parent); // hiding not really by this user so pass nulls
+			if (ilya_flag_set_tohide($comment, $userid, $handle, $cookieid, $question))
+				ilya_comment_set_status($comment, QA_POST_STATUS_HIDDEN, null, null, null, $question, $parent); // hiding not really by this user so pass nulls
 
 			return true;
 		}
 	}
 
-	if (qa_clicked($prefix . 'dounflag') && $comment['unflaggable'] && qa_page_q_click_check_form_code($parent, $error)) {
+	if (ilya_clicked($prefix . 'dounflag') && $comment['unflaggable'] && ilya_page_q_click_check_form_code($parent, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		qa_flag_clear($comment, $userid, $handle, $cookieid);
+		ilya_flag_clear($comment, $userid, $handle, $cookieid);
 		return true;
 	}
 
-	if (qa_clicked($prefix . 'doclearflags') && $comment['clearflaggable'] && qa_page_q_click_check_form_code($parent, $error)) {
+	if (ilya_clicked($prefix . 'doclearflags') && $comment['clearflaggable'] && ilya_page_q_click_check_form_code($parent, $error)) {
 		require_once QA_INCLUDE_DIR . 'app/votes.php';
 
-		qa_flags_clear_all($comment, $userid, $handle, $cookieid);
+		ilya_flags_clear_all($comment, $userid, $handle, $cookieid);
 		return true;
 	}
 
@@ -326,12 +326,12 @@ function qa_page_q_single_click_c($comment, $question, $parent, &$error)
  * @param $error
  * @return bool
  */
-function qa_page_q_click_check_form_code($post, &$error)
+function ilya_page_q_click_check_form_code($post, &$error)
 {
-	$result = qa_check_form_security_code('buttons-' . $post['postid'], qa_post_text('code'));
+	$result = ilya_check_form_security_code('buttons-' . $post['postid'], ilya_post_text('code'));
 
 	if (!$result)
-		$error = qa_lang_html('misc/form_security_again');
+		$error = ilya_lang_html('misc/form_security_again');
 
 	return $result;
 }
@@ -348,55 +348,55 @@ function qa_page_q_click_check_form_code($post, &$error)
  * @param $errors
  * @return mixed|null
  */
-function qa_page_q_add_a_submit($question, $answers, $usecaptcha, &$in, &$errors)
+function ilya_page_q_add_a_submit($question, $answers, $usecaptcha, &$in, &$errors)
 {
 	$in = array(
-		'name' => qa_opt('allow_anonymous_naming') ? qa_post_text('a_name') : null,
-		'notify' => qa_post_text('a_notify') !== null,
-		'email' => qa_post_text('a_email'),
-		'queued' => qa_user_moderation_reason(qa_user_level_for_post($question)) !== false,
+		'name' => ilya_opt('allow_anonymous_naming') ? ilya_post_text('a_name') : null,
+		'notify' => ilya_post_text('a_notify') !== null,
+		'email' => ilya_post_text('a_email'),
+		'queued' => ilya_user_moderation_reason(ilya_user_level_for_post($question)) !== false,
 	);
 
-	qa_get_post_content('a_editor', 'a_content', $in['editor'], $in['content'], $in['format'], $in['text']);
+	ilya_get_post_content('a_editor', 'a_content', $in['editor'], $in['content'], $in['format'], $in['text']);
 
 	$errors = array();
 
-	if (!qa_check_form_security_code('answer-' . $question['postid'], qa_post_text('code')))
-		$errors['content'] = qa_lang_html('misc/form_security_again');
+	if (!ilya_check_form_security_code('answer-' . $question['postid'], ilya_post_text('code')))
+		$errors['content'] = ilya_lang_html('misc/form_security_again');
 
 	else {
 		// call any filter plugins
-		$filtermodules = qa_load_modules_with('filter', 'filter_answer');
+		$filtermodules = ilya_load_modules_with('filter', 'filter_answer');
 		foreach ($filtermodules as $filtermodule) {
 			$oldin = $in;
 			$filtermodule->filter_answer($in, $errors, $question, null);
-			qa_update_post_text($in, $oldin);
+			ilya_update_post_text($in, $oldin);
 		}
 
 		// check CAPTCHA
 		if ($usecaptcha)
-			qa_captcha_validate_post($errors);
+			ilya_captcha_validate_post($errors);
 
 		// check for duplicate posts
 		if (empty($errors)) {
-			$testwords = implode(' ', qa_string_to_words($in['content']));
+			$testwords = implode(' ', ilya_string_to_words($in['content']));
 
 			foreach ($answers as $answer) {
 				if (!$answer['hidden']) {
-					if (implode(' ', qa_string_to_words($answer['content'])) == $testwords) {
-						$errors['content'] = qa_lang_html('question/duplicate_content');
+					if (implode(' ', ilya_string_to_words($answer['content'])) == $testwords) {
+						$errors['content'] = ilya_lang_html('question/duplicate_content');
 						break;
 					}
 				}
 			}
 		}
 
-		$userid = qa_get_logged_in_userid();
+		$userid = ilya_get_logged_in_userid();
 
 		// if this is an additional answer, check we can add it
-		if (empty($errors) && !qa_opt('allow_multi_answers')) {
+		if (empty($errors) && !ilya_opt('allow_multi_answers')) {
 			foreach ($answers as $answer) {
-				if (qa_post_is_by_user($answer, $userid, qa_cookie_get())) {
+				if (ilya_post_is_by_user($answer, $userid, ilya_cookie_get())) {
 					$errors[] = '';
 					break;
 				}
@@ -405,10 +405,10 @@ function qa_page_q_add_a_submit($question, $answers, $usecaptcha, &$in, &$errors
 
 		// create the answer
 		if (empty($errors)) {
-			$handle = qa_get_logged_in_handle();
-			$cookieid = isset($userid) ? qa_cookie_get() : qa_cookie_get_create(); // create a new cookie if necessary
+			$handle = ilya_get_logged_in_handle();
+			$cookieid = isset($userid) ? ilya_cookie_get() : ilya_cookie_get_create(); // create a new cookie if necessary
 
-			$answerid = qa_answer_create($userid, $handle, $cookieid, $in['content'], $in['format'], $in['text'], $in['notify'], $in['email'],
+			$answerid = ilya_answer_create($userid, $handle, $cookieid, $in['content'], $in['format'], $in['text'], $in['notify'], $in['email'],
 				$question, $in['queued'], $in['name']);
 
 			return $answerid;
@@ -432,44 +432,44 @@ function qa_page_q_add_a_submit($question, $answers, $usecaptcha, &$in, &$errors
  * @param $errors
  * @return mixed|null
  */
-function qa_page_q_add_c_submit($question, $parent, $commentsfollows, $usecaptcha, &$in, &$errors)
+function ilya_page_q_add_c_submit($question, $parent, $commentsfollows, $usecaptcha, &$in, &$errors)
 {
 	$parentid = $parent['postid'];
 
 	$prefix = 'c' . $parentid . '_';
 
 	$in = array(
-		'name' => qa_opt('allow_anonymous_naming') ? qa_post_text($prefix . 'name') : null,
-		'notify' => qa_post_text($prefix . 'notify') !== null,
-		'email' => qa_post_text($prefix . 'email'),
-		'queued' => qa_user_moderation_reason(qa_user_level_for_post($parent)) !== false,
+		'name' => ilya_opt('allow_anonymous_naming') ? ilya_post_text($prefix . 'name') : null,
+		'notify' => ilya_post_text($prefix . 'notify') !== null,
+		'email' => ilya_post_text($prefix . 'email'),
+		'queued' => ilya_user_moderation_reason(ilya_user_level_for_post($parent)) !== false,
 	);
 
-	qa_get_post_content($prefix . 'editor', $prefix . 'content', $in['editor'], $in['content'], $in['format'], $in['text']);
+	ilya_get_post_content($prefix . 'editor', $prefix . 'content', $in['editor'], $in['content'], $in['format'], $in['text']);
 
 	$errors = array();
 
-	if (!qa_check_form_security_code('comment-' . $parent['postid'], qa_post_text($prefix . 'code')))
-		$errors['content'] = qa_lang_html('misc/form_security_again');
+	if (!ilya_check_form_security_code('comment-' . $parent['postid'], ilya_post_text($prefix . 'code')))
+		$errors['content'] = ilya_lang_html('misc/form_security_again');
 
 	else {
-		$filtermodules = qa_load_modules_with('filter', 'filter_comment');
+		$filtermodules = ilya_load_modules_with('filter', 'filter_comment');
 		foreach ($filtermodules as $filtermodule) {
 			$oldin = $in;
 			$filtermodule->filter_comment($in, $errors, $question, $parent, null);
-			qa_update_post_text($in, $oldin);
+			ilya_update_post_text($in, $oldin);
 		}
 
 		if ($usecaptcha)
-			qa_captcha_validate_post($errors);
+			ilya_captcha_validate_post($errors);
 
 		if (empty($errors)) {
-			$testwords = implode(' ', qa_string_to_words($in['content']));
+			$testwords = implode(' ', ilya_string_to_words($in['content']));
 
 			foreach ($commentsfollows as $comment) {
 				if ($comment['basetype'] == 'C' && $comment['parentid'] == $parentid && !$comment['hidden']) {
-					if (implode(' ', qa_string_to_words($comment['content'])) == $testwords) {
-						$errors['content'] = qa_lang_html('question/duplicate_content');
+					if (implode(' ', ilya_string_to_words($comment['content'])) == $testwords) {
+						$errors['content'] = ilya_lang_html('question/duplicate_content');
 						break;
 					}
 				}
@@ -477,11 +477,11 @@ function qa_page_q_add_c_submit($question, $parent, $commentsfollows, $usecaptch
 		}
 
 		if (empty($errors)) {
-			$userid = qa_get_logged_in_userid();
-			$handle = qa_get_logged_in_handle();
-			$cookieid = isset($userid) ? qa_cookie_get() : qa_cookie_get_create(); // create a new cookie if necessary
+			$userid = ilya_get_logged_in_userid();
+			$handle = ilya_get_logged_in_handle();
+			$cookieid = isset($userid) ? ilya_cookie_get() : ilya_cookie_get_create(); // create a new cookie if necessary
 
-			$commentid = qa_comment_create($userid, $handle, $cookieid, $in['content'], $in['format'], $in['text'], $in['notify'], $in['email'],
+			$commentid = ilya_comment_create($userid, $handle, $cookieid, $in['content'], $in['format'], $in['text'], $in['notify'], $in['email'],
 				$question, $parent, $commentsfollows, $in['queued'], $in['name']);
 
 			return $commentid;
@@ -497,20 +497,20 @@ function qa_page_q_add_c_submit($question, $parent, $commentsfollows, $usecaptch
  * @param $post
  * @return array
  */
-function qa_page_q_prepare_post_for_filters($post)
+function ilya_page_q_prepare_post_for_filters($post)
 {
 	$in = array(
 		'content' => $post['content'],
 		'format' => $post['format'],
-		'text' => qa_viewer_text($post['content'], $post['format']),
+		'text' => ilya_viewer_text($post['content'], $post['format']),
 		'notify' => isset($post['notify']),
-		'email' => qa_email_validate($post['notify']) ? $post['notify'] : null,
-		'queued' => qa_user_moderation_reason(qa_user_level_for_post($post)) !== false,
+		'email' => ilya_email_validate($post['notify']) ? $post['notify'] : null,
+		'queued' => ilya_user_moderation_reason(ilya_user_level_for_post($post)) !== false,
 	);
 
 	if ($post['basetype'] == 'Q') {
 		$in['title'] = $post['title'];
-		$in['tags'] = qa_tagstring_to_tags($post['tags']);
+		$in['tags'] = ilya_tagstring_to_tags($post['tags']);
 		$in['categoryid'] = $post['categoryid'];
 		$in['extra'] = $post['extra'];
 	}

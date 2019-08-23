@@ -40,4 +40,4 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 }
 
 
-qa_register_plugin_module('event', 'ilya-event-logger.php', 'qa_event_logger', 'Event Logger');
+ilya_register_plugin_module('event', 'ilya-event-logger.php', 'ilya_event_logger', 'Event Logger');

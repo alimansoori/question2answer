@@ -26,14 +26,14 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 
 /**
- * Set the metadata for user $userid with $key to $value. Keys beginning qa_ are reserved for the Q2A core.
+ * Set the metadata for user $userid with $key to $value. Keys beginning ilya_ are reserved for the Q2A core.
  * @param $userid
  * @param $key
  * @param $value
  */
-function qa_db_usermeta_set($userid, $key, $value)
+function ilya_db_usermeta_set($userid, $key, $value)
 {
-	qa_db_meta_set('usermetas', 'userid', $userid, $key, $value);
+	ilya_db_meta_set('usermetas', 'userid', $userid, $key, $value);
 }
 
 
@@ -42,9 +42,9 @@ function qa_db_usermeta_set($userid, $key, $value)
  * @param $userid
  * @param $key
  */
-function qa_db_usermeta_clear($userid, $key)
+function ilya_db_usermeta_clear($userid, $key)
 {
-	qa_db_meta_clear('usermetas', 'userid', $userid, $key);
+	ilya_db_meta_clear('usermetas', 'userid', $userid, $key);
 }
 
 
@@ -55,21 +55,21 @@ function qa_db_usermeta_clear($userid, $key)
  * @param $key
  * @return array|mixed|null
  */
-function qa_db_usermeta_get($userid, $key)
+function ilya_db_usermeta_get($userid, $key)
 {
-	return qa_db_meta_get('usermetas', 'userid', $userid, $key);
+	return ilya_db_meta_get('usermetas', 'userid', $userid, $key);
 }
 
 
 /**
- * Set the metadata for post $postid with $key to $value. Keys beginning qa_ are reserved for the Q2A core.
+ * Set the metadata for post $postid with $key to $value. Keys beginning ilya_ are reserved for the Q2A core.
  * @param $postid
  * @param $key
  * @param $value
  */
-function qa_db_postmeta_set($postid, $key, $value)
+function ilya_db_postmeta_set($postid, $key, $value)
 {
-	qa_db_meta_set('postmetas', 'postid', $postid, $key, $value);
+	ilya_db_meta_set('postmetas', 'postid', $postid, $key, $value);
 }
 
 
@@ -78,9 +78,9 @@ function qa_db_postmeta_set($postid, $key, $value)
  * @param $postid
  * @param $key
  */
-function qa_db_postmeta_clear($postid, $key)
+function ilya_db_postmeta_clear($postid, $key)
 {
-	qa_db_meta_clear('postmetas', 'postid', $postid, $key);
+	ilya_db_meta_clear('postmetas', 'postid', $postid, $key);
 }
 
 
@@ -91,21 +91,21 @@ function qa_db_postmeta_clear($postid, $key)
  * @param $key
  * @return array|mixed|null
  */
-function qa_db_postmeta_get($postid, $key)
+function ilya_db_postmeta_get($postid, $key)
 {
-	return qa_db_meta_get('postmetas', 'postid', $postid, $key);
+	return ilya_db_meta_get('postmetas', 'postid', $postid, $key);
 }
 
 
 /**
- * Set the metadata for category $categoryid with $key to $value. Keys beginning qa_ are reserved for the Q2A core.
+ * Set the metadata for category $categoryid with $key to $value. Keys beginning ilya_ are reserved for the Q2A core.
  * @param $categoryid
  * @param $key
  * @param $value
  */
-function qa_db_categorymeta_set($categoryid, $key, $value)
+function ilya_db_categorymeta_set($categoryid, $key, $value)
 {
-	qa_db_meta_set('categorymetas', 'categoryid', $categoryid, $key, $value);
+	ilya_db_meta_set('categorymetas', 'categoryid', $categoryid, $key, $value);
 }
 
 
@@ -114,9 +114,9 @@ function qa_db_categorymeta_set($categoryid, $key, $value)
  * @param $categoryid
  * @param $key
  */
-function qa_db_categorymeta_clear($categoryid, $key)
+function ilya_db_categorymeta_clear($categoryid, $key)
 {
-	qa_db_meta_clear('categorymetas', 'categoryid', $categoryid, $key);
+	ilya_db_meta_clear('categorymetas', 'categoryid', $categoryid, $key);
 }
 
 
@@ -127,21 +127,21 @@ function qa_db_categorymeta_clear($categoryid, $key)
  * @param $key
  * @return array|mixed|null
  */
-function qa_db_categorymeta_get($categoryid, $key)
+function ilya_db_categorymeta_get($categoryid, $key)
 {
-	return qa_db_meta_get('categorymetas', 'categoryid', $categoryid, $key);
+	return ilya_db_meta_get('categorymetas', 'categoryid', $categoryid, $key);
 }
 
 
 /**
- * Set the metadata for tag $tag with $key to $value. Keys beginning qa_ are reserved for the Q2A core.
+ * Set the metadata for tag $tag with $key to $value. Keys beginning ilya_ are reserved for the Q2A core.
  * @param $tag
  * @param $key
  * @param $value
  */
-function qa_db_tagmeta_set($tag, $key, $value)
+function ilya_db_tagmeta_set($tag, $key, $value)
 {
-	qa_db_meta_set('tagmetas', 'tag', $tag, $key, $value);
+	ilya_db_meta_set('tagmetas', 'tag', $tag, $key, $value);
 }
 
 
@@ -150,9 +150,9 @@ function qa_db_tagmeta_set($tag, $key, $value)
  * @param $tag
  * @param $key
  */
-function qa_db_tagmeta_clear($tag, $key)
+function ilya_db_tagmeta_clear($tag, $key)
 {
-	qa_db_meta_clear('tagmetas', 'tag', $tag, $key);
+	ilya_db_meta_clear('tagmetas', 'tag', $tag, $key);
 }
 
 
@@ -163,9 +163,9 @@ function qa_db_tagmeta_clear($tag, $key)
  * @param $key
  * @return array|mixed|null
  */
-function qa_db_tagmeta_get($tag, $key)
+function ilya_db_tagmeta_get($tag, $key)
 {
-	return qa_db_meta_get('tagmetas', 'tag', $tag, $key);
+	return ilya_db_meta_get('tagmetas', 'tag', $tag, $key);
 }
 
 
@@ -177,9 +177,9 @@ function qa_db_tagmeta_get($tag, $key)
  * @param $title
  * @param $content
  */
-function qa_db_meta_set($metatable, $idcolumn, $idvalue, $title, $content)
+function ilya_db_meta_set($metatable, $idcolumn, $idvalue, $title, $content)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'INSERT INTO ^' . $metatable . ' (' . $idcolumn . ', title, content) VALUES ($, $, $) ' .
 		'ON DUPLICATE KEY UPDATE content = VALUES(content)',
 		$idvalue, $title, $content
@@ -194,17 +194,17 @@ function qa_db_meta_set($metatable, $idcolumn, $idvalue, $title, $content)
  * @param $idvalue
  * @param $title
  */
-function qa_db_meta_clear($metatable, $idcolumn, $idvalue, $title)
+function ilya_db_meta_clear($metatable, $idcolumn, $idvalue, $title)
 {
 	if (is_array($title)) {
 		if (count($title)) {
-			qa_db_query_sub(
+			ilya_db_query_sub(
 				'DELETE FROM ^' . $metatable . ' WHERE ' . $idcolumn . '=$ AND title IN ($)',
 				$idvalue, $title
 			);
 		}
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'DELETE FROM ^' . $metatable . ' WHERE ' . $idcolumn . '=$ AND title=$',
 			$idvalue, $title
 		);
@@ -220,11 +220,11 @@ function qa_db_meta_clear($metatable, $idcolumn, $idvalue, $title)
  * @param $title
  * @return array|mixed|null
  */
-function qa_db_meta_get($metatable, $idcolumn, $idvalue, $title)
+function ilya_db_meta_get($metatable, $idcolumn, $idvalue, $title)
 {
 	if (is_array($title)) {
 		if (count($title)) {
-			return qa_db_read_all_assoc(qa_db_query_sub(
+			return ilya_db_read_all_assoc(ilya_db_query_sub(
 				'SELECT title, content FROM ^' . $metatable . ' WHERE ' . $idcolumn . '=$ AND title IN($)',
 				$idvalue, $title
 			), 'title', 'content');
@@ -233,7 +233,7 @@ function qa_db_meta_get($metatable, $idcolumn, $idvalue, $title)
 		}
 
 	} else {
-		return qa_db_read_one_value(qa_db_query_sub(
+		return ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT content FROM ^' . $metatable . ' WHERE ' . $idcolumn . '=$ AND title=$',
 			$idvalue, $title
 		), true);

@@ -21,10 +21,10 @@
 /**
  * Snow theme extends
  *
- * Extends the core theme class <code>qa_html_theme_base</code>
+ * Extends the core theme class <code>ilya_html_theme_base</code>
  *
- * @package qa_html_theme_base
- * @subpackage qa_html_theme
+ * @package ilya_html_theme_base
+ * @subpackage ilya_html_theme
  * @category Theme
  * @since Snow 1.0
  * @version 1.4
@@ -32,7 +32,7 @@
  * @copyright (c) 2014, Q2A Market
  * @license http://www.gnu.org/copyleft/gpl.html
  */
-class qa_html_theme extends qa_html_theme_base
+class ilya_html_theme extends ilya_html_theme_base
 {
 	protected $theme = 'snowflat';
 
@@ -133,11 +133,11 @@ class qa_html_theme extends qa_html_theme_base
 	public function logged_in()
 	{
 		parent::logged_in();
-		if (qa_is_logged_in()) {
-			$userpoints = qa_get_logged_in_points();
+		if (ilya_is_logged_in()) {
+			$userpoints = ilya_get_logged_in_points();
 			$pointshtml = $userpoints == 1
-				? qa_lang_html_sub('main/1_point', '1', '1')
-				: qa_html(qa_format_number($userpoints))
+				? ilya_lang_html_sub('main/1_point', '1', '1')
+				: ilya_html(ilya_format_number($userpoints))
 			;
 			$this->output('<div class="qam-logged-in-points">' . $pointshtml . '</div>');
 		}
@@ -150,17 +150,17 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function body_tags()
 	{
-		$class = 'ilya-template-' . qa_html($this->template);
-		$class .= empty($this->theme) ? '' : ' ilya-theme-' . qa_html($this->theme);
+		$class = 'ilya-template-' . ilya_html($this->template);
+		$class .= empty($this->theme) ? '' : ' ilya-theme-' . ilya_html($this->theme);
 
 		if (isset($this->content['categoryids'])) {
 			foreach ($this->content['categoryids'] as $categoryid) {
-				$class .= ' ilya-category-' . qa_html($categoryid);
+				$class .= ' ilya-category-' . ilya_html($categoryid);
 			}
 		}
 
 		// add class if admin/approve-users page
-		if ($this->template === 'admin' && qa_request_part(1) === 'approve')
+		if ($this->template === 'admin' && ilya_request_part(1) === 'approve')
 			$class .= ' qam-approve-users';
 
 		if ($this->fixed_topbar)
@@ -183,16 +183,16 @@ class qa_html_theme extends qa_html_theme_base
 
 		$this->output('<div class="qam-account-items clearfix">');
 
-		if (!qa_is_logged_in()) {
+		if (!ilya_is_logged_in()) {
 			if (isset($this->content['navigation']['user']['login']) && !QA_FINAL_EXTERNAL_USERS) {
 				$login = $this->content['navigation']['user']['login'];
 				$this->output(
 					'<form action="' . $login['url'] . '" method="post">',
-						'<input type="text" name="emailhandle" dir="auto" placeholder="' . trim(qa_lang_html(qa_opt('allow_login_email_only') ? 'users/email_label' : 'users/email_handle_label'), ':') . '"/>',
-						'<input type="password" name="password" dir="auto" placeholder="' . trim(qa_lang_html('users/password_label'), ':') . '"/>',
+						'<input type="text" name="emailhandle" dir="auto" placeholder="' . trim(ilya_lang_html(ilya_opt('allow_login_email_only') ? 'users/email_label' : 'users/email_handle_label'), ':') . '"/>',
+						'<input type="password" name="password" dir="auto" placeholder="' . trim(ilya_lang_html('users/password_label'), ':') . '"/>',
 						'<div><input type="checkbox" name="remember" id="qam-rememberme" value="1"/>',
-						'<label for="qam-rememberme">' . qa_lang_html('users/remember') . '</label></div>',
-						'<input type="hidden" name="code" value="' . qa_html(qa_get_form_security_code('login')) . '"/>',
+						'<label for="qam-rememberme">' . ilya_lang_html('users/remember') . '</label></div>',
+						'<input type="hidden" name="code" value="' . ilya_html(ilya_get_form_security_code('login')) . '"/>',
 						'<input type="submit" value="' . $login['label'] . '" class="ilya-form-tall-button ilya-form-tall-button-login" name="dologin"/>',
 					'</form>'
 				);
@@ -358,7 +358,7 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	public function q_item_title($q_item)
 	{
-		$closedText = qa_lang('main/closed');
+		$closedText = ilya_lang('main/closed');
 		$imgHtml = empty($q_item['closed'])
 			? ''
 			: '<img src="' . $this->rooturl . $this->icon_url . '/closed-q-list.png" class="qam-q-list-close-icon" alt="' . $closedText . '" title="' . $closedText . '"/>';
@@ -400,7 +400,7 @@ class qa_html_theme extends qa_html_theme_base
 		$url = isset($q_view['url']) ? $q_view['url'] : false;
 
 		// add closed image
-		$closedText = qa_lang('main/closed');
+		$closedText = ilya_lang('main/closed');
 		$imgHtml = empty($q_view['closed'])
 			? ''
 			: '<img src="' . $this->rooturl . $this->icon_url . '/closed-q-view.png" class="qam-q-view-close-icon" alt="' . $closedText . '" width="24" height="24" title="' . $closedText . '"/>';
@@ -638,21 +638,21 @@ class qa_html_theme extends qa_html_theme_base
 	 */
 	private function qam_user_account()
 	{
-		if (qa_is_logged_in()) {
+		if (ilya_is_logged_in()) {
 			// get logged-in user avatar
-			$handle = qa_get_logged_in_user_field('handle');
+			$handle = ilya_get_logged_in_user_field('handle');
 			$toggleClass = 'qam-logged-in';
 
 			if (QA_FINAL_EXTERNAL_USERS)
-				$tobar_avatar = qa_get_external_avatar_html(qa_get_logged_in_user_field('userid'), $this->nav_bar_avatar_size, true);
+				$tobar_avatar = ilya_get_external_avatar_html(ilya_get_logged_in_user_field('userid'), $this->nav_bar_avatar_size, true);
 			else {
-				$tobar_avatar = qa_get_user_avatar_html(
-					qa_get_logged_in_user_field('flags'),
-					qa_get_logged_in_user_field('email'),
+				$tobar_avatar = ilya_get_user_avatar_html(
+					ilya_get_logged_in_user_field('flags'),
+					ilya_get_logged_in_user_field('email'),
 					$handle,
-					qa_get_logged_in_user_field('avatarblobid'),
-					qa_get_logged_in_user_field('avatarwidth'),
-					qa_get_logged_in_user_field('avatarheight'),
+					ilya_get_logged_in_user_field('avatarblobid'),
+					ilya_get_logged_in_user_field('avatarwidth'),
+					ilya_get_logged_in_user_field('avatarheight'),
 					$this->nav_bar_avatar_size,
 					false
 				);
@@ -670,7 +670,7 @@ class qa_html_theme extends qa_html_theme_base
 		}
 
 		// finally output avatar with div tag
-		$handleBlock = empty($handle) ? '' : '<div class="qam-account-handle">' . qa_html($handle) . '</div>';
+		$handleBlock = empty($handle) ? '' : '<div class="qam-account-handle">' . ilya_html($handle) . '</div>';
 		$this->output(
 			'<div id="qam-account-toggle" class="' . $toggleClass . '">',
 			$avatar,
@@ -708,10 +708,10 @@ class qa_html_theme extends qa_html_theme_base
 	{
 		$css = array('<style>');
 
-		if (!qa_is_logged_in())
+		if (!ilya_is_logged_in())
 			$css[] = '.ilya-nav-user { margin: 0 !important; }';
 
-		if (qa_request_part(1) !== qa_get_logged_in_handle()) {
+		if (ilya_request_part(1) !== ilya_get_logged_in_handle()) {
 			$css[] = '@media (max-width: 979px) {';
 			$css[] = ' body.ilya-template-user.fixed, body[class*="ilya-template-user-"].fixed { padding-top: 118px !important; }';
 			$css[] = ' body.ilya-template-users.fixed { padding-top: 95px !important; }';
@@ -739,8 +739,8 @@ class qa_html_theme extends qa_html_theme_base
 		return
 			'<div class="qam-ask-search-box">' .
 			'<div class="qam-ask-mobile">' .
-			'<a href="' . qa_path('ask', null, qa_path_to_root()) . '" class="' . $this->ask_search_box_class . '">' .
-			qa_lang_html('main/nav_ask') .
+			'<a href="' . ilya_path('ask', null, ilya_path_to_root()) . '" class="' . $this->ask_search_box_class . '">' .
+			ilya_lang_html('main/nav_ask') .
 			'</a>' .
 			'</div>' .
 			'<div class="qam-search-mobile ' . $this->ask_search_box_class . '" id="qam-search-mobile">' .

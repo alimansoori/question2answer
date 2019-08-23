@@ -32,9 +32,9 @@ require_once QA_INCLUDE_DIR . 'db/post-create.php';
 /**
  * Return the number of custom pages currently in the database
  */
-function qa_db_count_pages()
+function ilya_db_count_pages()
 {
-	return qa_db_read_one_value(qa_db_query_sub(
+	return ilya_db_read_one_value(ilya_db_query_sub(
 		'SELECT COUNT(*) FROM ^pages'
 	));
 }
@@ -46,9 +46,9 @@ function qa_db_count_pages()
  * @param $count
  * @return array
  */
-function qa_db_pages_get_for_reindexing($startpageid, $count)
+function ilya_db_pages_get_for_reindexing($startpageid, $count)
 {
-	return qa_db_read_all_assoc(qa_db_query_sub(
+	return ilya_db_read_all_assoc(ilya_db_query_sub(
 		'SELECT pageid, flags, tags, heading, content FROM ^pages WHERE pageid>=# ORDER BY pageid LIMIT #',
 		$startpageid, $count
 	), 'pageid');
@@ -63,9 +63,9 @@ function qa_db_pages_get_for_reindexing($startpageid, $count)
  * @param $count
  * @return array
  */
-function qa_db_posts_get_for_reindexing($startpostid, $count)
+function ilya_db_posts_get_for_reindexing($startpostid, $count)
 {
-	return qa_db_read_all_assoc(qa_db_query_sub(
+	return ilya_db_read_all_assoc(ilya_db_query_sub(
 		"SELECT ^posts.postid, ^posts.title, ^posts.content, ^posts.format, ^posts.tags, ^posts.categoryid, ^posts.type, IF (^posts.type='Q', ^posts.postid, IF(parent.type='Q', parent.postid, grandparent.postid)) AS questionid, ^posts.parentid FROM ^posts LEFT JOIN ^posts AS parent ON ^posts.parentid=parent.postid LEFT JOIN ^posts as grandparent ON parent.parentid=grandparent.postid WHERE ^posts.postid>=# AND ( (^posts.type='Q') OR (^posts.type='A' AND parent.type<=>'Q') OR (^posts.type='C' AND parent.type<=>'Q') OR (^posts.type='C' AND parent.type<=>'A' AND grandparent.type<=>'Q') ) ORDER BY postid LIMIT #",
 		$startpostid, $count
 	), 'postid');
@@ -77,24 +77,24 @@ function qa_db_posts_get_for_reindexing($startpostid, $count)
  * @param $firstpostid
  * @param $lastpostid
  */
-function qa_db_prepare_for_reindexing($firstpostid, $lastpostid)
+function ilya_db_prepare_for_reindexing($firstpostid, $lastpostid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^titlewords WHERE postid>=# AND postid<=#',
 		$firstpostid, $lastpostid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^contentwords WHERE postid>=# AND postid<=#',
 		$firstpostid, $lastpostid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^tagwords WHERE postid>=# AND postid<=#',
 		$firstpostid, $lastpostid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^posttags WHERE postid>=# AND postid<=#',
 		$firstpostid, $lastpostid
 	);
@@ -105,24 +105,24 @@ function qa_db_prepare_for_reindexing($firstpostid, $lastpostid)
  * Remove any rows in the database word indexes with postid from $firstpostid upwards
  * @param $firstpostid
  */
-function qa_db_truncate_indexes($firstpostid)
+function ilya_db_truncate_indexes($firstpostid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^titlewords WHERE postid>=#',
 		$firstpostid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^contentwords WHERE postid>=#',
 		$firstpostid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^tagwords WHERE postid>=#',
 		$firstpostid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^posttags WHERE postid>=#',
 		$firstpostid
 	);
@@ -132,9 +132,9 @@ function qa_db_truncate_indexes($firstpostid)
 /**
  * Return the number of words currently referenced in the database
  */
-function qa_db_count_words()
+function ilya_db_count_words()
 {
-	return qa_db_read_one_value(qa_db_query_sub(
+	return ilya_db_read_one_value(ilya_db_query_sub(
 		'SELECT COUNT(*) FROM ^words'
 	));
 }
@@ -146,9 +146,9 @@ function qa_db_count_words()
  * @param $count
  * @return array
  */
-function qa_db_words_prepare_for_recounting($startwordid, $count)
+function ilya_db_words_prepare_for_recounting($startwordid, $count)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		'SELECT wordid FROM ^words WHERE wordid>=# ORDER BY wordid LIMIT #',
 		$startwordid, $count
 	));
@@ -160,29 +160,29 @@ function qa_db_words_prepare_for_recounting($startwordid, $count)
  * @param $firstwordid
  * @param $lastwordid
  */
-function qa_db_words_recount($firstwordid, $lastwordid)
+function ilya_db_words_recount($firstwordid, $lastwordid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^words AS x, (SELECT ^words.wordid, COUNT(^titlewords.wordid) AS titlecount FROM ^words LEFT JOIN ^titlewords ON ^titlewords.wordid=^words.wordid WHERE ^words.wordid>=# AND ^words.wordid<=# GROUP BY wordid) AS a SET x.titlecount=a.titlecount WHERE x.wordid=a.wordid',
 		$firstwordid, $lastwordid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^words AS x, (SELECT ^words.wordid, COUNT(^contentwords.wordid) AS contentcount FROM ^words LEFT JOIN ^contentwords ON ^contentwords.wordid=^words.wordid WHERE ^words.wordid>=# AND ^words.wordid<=# GROUP BY wordid) AS a SET x.contentcount=a.contentcount WHERE x.wordid=a.wordid',
 		$firstwordid, $lastwordid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^words AS x, (SELECT ^words.wordid, COUNT(^tagwords.wordid) AS tagwordcount FROM ^words LEFT JOIN ^tagwords ON ^tagwords.wordid=^words.wordid WHERE ^words.wordid>=# AND ^words.wordid<=# GROUP BY wordid) AS a SET x.tagwordcount=a.tagwordcount WHERE x.wordid=a.wordid',
 		$firstwordid, $lastwordid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^words AS x, (SELECT ^words.wordid, COUNT(^posttags.wordid) AS tagcount FROM ^words LEFT JOIN ^posttags ON ^posttags.wordid=^words.wordid WHERE ^words.wordid>=# AND ^words.wordid<=# GROUP BY wordid) AS a SET x.tagcount=a.tagcount WHERE x.wordid=a.wordid',
 		$firstwordid, $lastwordid
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^words WHERE wordid>=# AND wordid<=# AND titlecount=0 AND contentcount=0 AND tagwordcount=0 AND tagcount=0',
 		$firstwordid, $lastwordid
 	);
@@ -197,9 +197,9 @@ function qa_db_words_recount($firstwordid, $lastwordid)
  * @param $count
  * @return array
  */
-function qa_db_posts_get_for_recounting($startpostid, $count)
+function ilya_db_posts_get_for_recounting($startpostid, $count)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		'SELECT postid FROM ^posts WHERE postid>=# ORDER BY postid LIMIT #',
 		$startpostid, $count
 	));
@@ -211,14 +211,14 @@ function qa_db_posts_get_for_recounting($startpostid, $count)
  * @param $firstpostid
  * @param $lastpostid
  */
-function qa_db_posts_votes_recount($firstpostid, $lastpostid)
+function ilya_db_posts_votes_recount($firstpostid, $lastpostid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^posts AS x, (SELECT ^posts.postid, COALESCE(SUM(GREATEST(0,^uservotes.vote)),0) AS upvotes, -COALESCE(SUM(LEAST(0,^uservotes.vote)),0) AS downvotes, COALESCE(SUM(IF(^uservotes.flag, 1, 0)),0) AS flagcount FROM ^posts LEFT JOIN ^uservotes ON ^uservotes.postid=^posts.postid WHERE ^posts.postid>=# AND ^posts.postid<=# GROUP BY postid) AS a SET x.upvotes=a.upvotes, x.downvotes=a.downvotes, x.netvotes=a.upvotes-a.downvotes, x.flagcount=a.flagcount WHERE x.postid=a.postid',
 		$firstpostid, $lastpostid
 	);
 
-	qa_db_hotness_update($firstpostid, $lastpostid);
+	ilya_db_hotness_update($firstpostid, $lastpostid);
 }
 
 
@@ -227,16 +227,16 @@ function qa_db_posts_votes_recount($firstpostid, $lastpostid)
  * @param $firstpostid
  * @param $lastpostid
  */
-function qa_db_posts_answers_recount($firstpostid, $lastpostid)
+function ilya_db_posts_answers_recount($firstpostid, $lastpostid)
 {
 	require_once QA_INCLUDE_DIR . 'db/hotness.php';
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^posts AS x, (SELECT parents.postid, COUNT(children.postid) AS acount, COALESCE(GREATEST(MAX(children.netvotes), 0), 0) AS amaxvote FROM ^posts AS parents LEFT JOIN ^posts AS children ON parents.postid=children.parentid AND children.type=\'A\' WHERE parents.postid>=# AND parents.postid<=# GROUP BY postid) AS a SET x.acount=a.acount, x.amaxvote=a.amaxvote WHERE x.postid=a.postid',
 		$firstpostid, $lastpostid
 	);
 
-	qa_db_hotness_update($firstpostid, $lastpostid);
+	ilya_db_hotness_update($firstpostid, $lastpostid);
 }
 
 
@@ -249,15 +249,15 @@ function qa_db_posts_answers_recount($firstpostid, $lastpostid)
  * @param $count
  * @return array
  */
-function qa_db_users_get_for_recalc_points($startuserid, $count)
+function ilya_db_users_get_for_recalc_points($startuserid, $count)
 {
 	if (QA_FINAL_EXTERNAL_USERS) {
-		return qa_db_read_all_values(qa_db_query_sub(
+		return ilya_db_read_all_values(ilya_db_query_sub(
 			'SELECT userid FROM ((SELECT DISTINCT userid FROM ^posts WHERE userid>=# ORDER BY userid LIMIT #) UNION (SELECT DISTINCT userid FROM ^uservotes WHERE userid>=# ORDER BY userid LIMIT #)) x ORDER BY userid LIMIT #',
 			$startuserid, $count, $startuserid, $count, $count
 		));
 	} else {
-		return qa_db_read_all_values(qa_db_query_sub(
+		return ilya_db_read_all_values(ilya_db_query_sub(
 			'SELECT DISTINCT userid FROM ^users WHERE userid>=# ORDER BY userid LIMIT #',
 			$startuserid, $count
 		));
@@ -270,43 +270,43 @@ function qa_db_users_get_for_recalc_points($startuserid, $count)
  * @param $firstuserid
  * @param $lastuserid
  */
-function qa_db_users_recalc_points($firstuserid, $lastuserid)
+function ilya_db_users_recalc_points($firstuserid, $lastuserid)
 {
 	require_once QA_INCLUDE_DIR . 'db/points.php';
 
-	$qa_userpoints_calculations = qa_db_points_calculations();
+	$ilya_userpoints_calculations = ilya_db_points_calculations();
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^userpoints WHERE userid>=# AND userid<=# AND bonus=0', // delete those with no bonus
 		$firstuserid, $lastuserid
 	);
 
 	$zeropoints = 'points=0';
-	foreach ($qa_userpoints_calculations as $field => $calculation) {
+	foreach ($ilya_userpoints_calculations as $field => $calculation) {
 		$zeropoints .= ', ' . $field . '=0';
 	}
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^userpoints SET ' . $zeropoints . ' WHERE userid>=# AND userid<=#', // zero out the rest
 		$firstuserid, $lastuserid
 	);
 
 	if (QA_FINAL_EXTERNAL_USERS) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT IGNORE INTO ^userpoints (userid) SELECT DISTINCT userid FROM ^posts WHERE userid>=# AND userid<=# UNION SELECT DISTINCT userid FROM ^uservotes WHERE userid>=# AND userid<=#',
 			$firstuserid, $lastuserid, $firstuserid, $lastuserid
 		);
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'INSERT IGNORE INTO ^userpoints (userid) SELECT DISTINCT userid FROM ^users WHERE userid>=# AND userid<=#',
 			$firstuserid, $lastuserid
 		);
 	}
 
-	$updatepoints = (int)qa_opt('points_base');
+	$updatepoints = (int)ilya_opt('points_base');
 
-	foreach ($qa_userpoints_calculations as $field => $calculation) {
-		qa_db_query_sub(
+	foreach ($ilya_userpoints_calculations as $field => $calculation) {
+		ilya_db_query_sub(
 			'UPDATE ^userpoints, (SELECT userid_src.userid, ' . str_replace('~', ' BETWEEN # AND #', $calculation['formula']) . ' GROUP BY userid) AS results ' .
 			'SET ^userpoints.' . $field . '=results.' . $field . ' WHERE ^userpoints.userid=results.userid',
 			$firstuserid, $lastuserid
@@ -315,7 +315,7 @@ function qa_db_users_recalc_points($firstuserid, $lastuserid)
 		$updatepoints .= '+(' . ((int)$calculation['multiple']) . '*' . $field . ')';
 	}
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^userpoints SET points=' . $updatepoints . '+bonus WHERE userid>=# AND userid<=#',
 		$firstuserid, $lastuserid
 	);
@@ -326,9 +326,9 @@ function qa_db_users_recalc_points($firstuserid, $lastuserid)
  * Remove any rows in the userpoints table where userid is greater than $lastuserid
  * @param $lastuserid
  */
-function qa_db_truncate_userpoints($lastuserid)
+function ilya_db_truncate_userpoints($lastuserid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^userpoints WHERE userid>#',
 		$lastuserid
 	);
@@ -343,9 +343,9 @@ function qa_db_truncate_userpoints($lastuserid)
  * @param $count
  * @return array
  */
-function qa_db_qs_get_for_event_refilling($startpostid, $count)
+function ilya_db_qs_get_for_event_refilling($startpostid, $count)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		"SELECT postid FROM ^posts WHERE postid>=# AND LEFT(type, 1)='Q' ORDER BY postid LIMIT #",
 		$startpostid, $count
 	));
@@ -360,9 +360,9 @@ function qa_db_qs_get_for_event_refilling($startpostid, $count)
  * @param $count
  * @return array
  */
-function qa_db_posts_get_for_recategorizing($startpostid, $count)
+function ilya_db_posts_get_for_recategorizing($startpostid, $count)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		"SELECT postid FROM ^posts WHERE postid>=# ORDER BY postid LIMIT #",
 		$startpostid, $count
 	));
@@ -375,9 +375,9 @@ function qa_db_posts_get_for_recategorizing($startpostid, $count)
  * @param $firstpostid
  * @param $lastpostid
  */
-function qa_db_posts_recalc_categoryid($firstpostid, $lastpostid)
+function ilya_db_posts_recalc_categoryid($firstpostid, $lastpostid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		"UPDATE ^posts AS x, (SELECT ^posts.postid, IF(LEFT(parent.type, 1)='Q', parent.categoryid, grandparent.categoryid) AS categoryid FROM ^posts LEFT JOIN ^posts AS parent ON ^posts.parentid=parent.postid LEFT JOIN ^posts AS grandparent ON parent.parentid=grandparent.postid WHERE ^posts.postid BETWEEN # AND # AND LEFT(^posts.type, 1)!='Q') AS a SET x.categoryid=a.categoryid WHERE x.postid=a.postid",
 		$firstpostid, $lastpostid
 	);
@@ -390,9 +390,9 @@ function qa_db_posts_recalc_categoryid($firstpostid, $lastpostid)
  * @param $count
  * @return array
  */
-function qa_db_categories_get_for_recalcs($startcategoryid, $count)
+function ilya_db_categories_get_for_recalcs($startcategoryid, $count)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		"SELECT categoryid FROM ^categories WHERE categoryid>=# ORDER BY categoryid LIMIT #",
 		$startcategoryid, $count
 	));
@@ -408,11 +408,11 @@ function qa_db_categories_get_for_recalcs($startcategoryid, $count)
  * @param $limit
  * @return array
  */
-function qa_db_posts_get_for_deleting($type, $startpostid = 0, $limit = null)
+function ilya_db_posts_get_for_deleting($type, $startpostid = 0, $limit = null)
 {
 	$limitsql = isset($limit) ? (' ORDER BY ^posts.postid LIMIT ' . (int)$limit) : '';
 
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		"SELECT ^posts.postid FROM ^posts LEFT JOIN ^posts AS child ON child.parentid=^posts.postid LEFT JOIN ^posts AS dupe ON dupe.closedbyid=^posts.postid WHERE ^posts.type=$ AND ^posts.postid>=# AND child.postid IS NULL AND dupe.postid IS NULL" . $limitsql,
 		$type . '_HIDDEN', $startpostid
 	));
@@ -424,9 +424,9 @@ function qa_db_posts_get_for_deleting($type, $startpostid = 0, $limit = null)
 /**
  * Return the number of blobs whose content is stored in the database, rather than on disk
  */
-function qa_db_count_blobs_in_db()
+function ilya_db_count_blobs_in_db()
 {
-	return qa_db_read_one_value(qa_db_query_sub('SELECT COUNT(*) FROM ^blobs WHERE content IS NOT NULL'));
+	return ilya_db_read_one_value(ilya_db_query_sub('SELECT COUNT(*) FROM ^blobs WHERE content IS NOT NULL'));
 }
 
 
@@ -435,9 +435,9 @@ function qa_db_count_blobs_in_db()
  * @param $startblobid
  * @return array|null
  */
-function qa_db_get_next_blob_in_db($startblobid)
+function ilya_db_get_next_blob_in_db($startblobid)
 {
-	return qa_db_read_one_assoc(qa_db_query_sub(
+	return ilya_db_read_one_assoc(ilya_db_query_sub(
 		'SELECT blobid, content, format FROM ^blobs WHERE blobid>=# AND content IS NOT NULL LIMIT 1',
 		$startblobid
 	), true);
@@ -447,9 +447,9 @@ function qa_db_get_next_blob_in_db($startblobid)
 /**
  * Return the number of blobs whose content is stored on disk, rather than in the database
  */
-function qa_db_count_blobs_on_disk()
+function ilya_db_count_blobs_on_disk()
 {
-	return qa_db_read_one_value(qa_db_query_sub('SELECT COUNT(*) FROM ^blobs WHERE content IS NULL'));
+	return ilya_db_read_one_value(ilya_db_query_sub('SELECT COUNT(*) FROM ^blobs WHERE content IS NULL'));
 }
 
 
@@ -458,9 +458,9 @@ function qa_db_count_blobs_on_disk()
  * @param $startblobid
  * @return array|null
  */
-function qa_db_get_next_blob_on_disk($startblobid)
+function ilya_db_get_next_blob_on_disk($startblobid)
 {
-	return qa_db_read_one_assoc(qa_db_query_sub(
+	return ilya_db_read_one_assoc(ilya_db_query_sub(
 		'SELECT blobid, format FROM ^blobs WHERE blobid>=# AND content IS NULL LIMIT 1',
 		$startblobid
 	), true);

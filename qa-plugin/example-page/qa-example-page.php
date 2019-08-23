@@ -20,7 +20,7 @@
 	More about this license: http://www.question2answer.org/license.php
 */
 
-class qa_example_page
+class ilya_example_page
 {
 	private $directory;
 	private $urltoroot;
@@ -53,18 +53,18 @@ class qa_example_page
 
 	public function process_request($request)
 	{
-		$qa_content = qa_content_prepare();
+		$ilya_content = ilya_content_prepare();
 
-		$qa_content['title'] = qa_lang_html('example_page/page_title');
-		$qa_content['error'] = 'An example error';
-		$qa_content['custom'] = 'Some <b>custom html</b>';
+		$ilya_content['title'] = ilya_lang_html('example_page/page_title');
+		$ilya_content['error'] = 'An example error';
+		$ilya_content['custom'] = 'Some <b>custom html</b>';
 
-		$qa_content['form'] = array(
-			'tags' => 'method="post" action="' . qa_self_html() . '"',
+		$ilya_content['form'] = array(
+			'tags' => 'method="post" action="' . ilya_self_html() . '"',
 
 			'style' => 'wide',
 
-			'ok' => qa_post_text('okthen') ? 'You clicked OK then!' : null,
+			'ok' => ilya_post_text('okthen') ? 'You clicked OK then!' : null,
 
 			'title' => 'Form title',
 
@@ -72,8 +72,8 @@ class qa_example_page
 				'request' => array(
 					'label' => 'The request',
 					'tags' => 'name="request"',
-					'value' => qa_html($request),
-					'error' => qa_html('Another error'),
+					'value' => ilya_html($request),
+					'error' => ilya_html('Another error'),
 				),
 
 			),
@@ -91,8 +91,8 @@ class qa_example_page
 			),
 		);
 
-		$qa_content['custom_2'] = '<p><br>More <i>custom html</i></p>';
+		$ilya_content['custom_2'] = '<p><br>More <i>custom html</i></p>';
 
-		return $qa_content;
+		return $ilya_content;
 	}
 }

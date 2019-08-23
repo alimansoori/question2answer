@@ -35,22 +35,22 @@ require_once QA_INCLUDE_DIR . 'app/updates.php';
  * @param $lastuserid
  * @param $lastip
  */
-function qa_db_post_set_selchildid($questionid, $selchildid, $lastuserid = null, $lastip = null)
+function ilya_db_post_set_selchildid($questionid, $selchildid, $lastuserid = null, $lastip = null)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		"UPDATE ^posts AS x, (SELECT selchildid FROM ^posts WHERE postid=#) AS a " .
 		"SET x.updated=NULL, x.updatetype=NULL, x.lastuserid=NULL, x.lastip=NULL WHERE " . // if previous answer's last edit was to be selected, remove that
 		"x.postid=a.selchildid AND x.updatetype=$",
 		$questionid, QA_UPDATE_SELECTED
 	);
 
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^posts SET selchildid=# WHERE postid=#',
 		$selchildid, $questionid
 	);
 
 	if (isset($selchildid) && isset($lastuserid) && isset($lastip)) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			"UPDATE ^posts SET updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#",
 			QA_UPDATE_SELECTED, $lastuserid, bin2hex(@inet_pton($lastip)), $selchildid
 		);
@@ -66,15 +66,15 @@ function qa_db_post_set_selchildid($questionid, $selchildid, $lastuserid = null,
  * @param $lastuserid
  * @param $lastip
  */
-function qa_db_post_set_closed($questionid, $closedbyid, $lastuserid = null, $lastip = null)
+function ilya_db_post_set_closed($questionid, $closedbyid, $lastuserid = null, $lastip = null)
 {
 	if (isset($lastuserid) || isset($lastip)) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			"UPDATE ^posts SET closedbyid=#, updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#",
 			$closedbyid, QA_UPDATE_CLOSED, $lastuserid, bin2hex(@inet_pton($lastip)), $questionid
 		);
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET closedbyid=# WHERE postid=#',
 			$closedbyid, $questionid
 		);
@@ -90,15 +90,15 @@ function qa_db_post_set_closed($questionid, $closedbyid, $lastuserid = null, $la
  * @param $lastip
  * @param string $updatetype
  */
-function qa_db_post_set_type($postid, $type, $lastuserid = null, $lastip = null, $updatetype = QA_UPDATE_TYPE)
+function ilya_db_post_set_type($postid, $type, $lastuserid = null, $lastip = null, $updatetype = QA_UPDATE_TYPE)
 {
 	if (isset($lastuserid) || isset($lastip)) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET type=$, updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#',
 			$type, $updatetype, $lastuserid, bin2hex(@inet_pton($lastip)), $postid
 		);
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET type=$ WHERE postid=#',
 			$type, $postid
 		);
@@ -114,15 +114,15 @@ function qa_db_post_set_type($postid, $type, $lastuserid = null, $lastip = null,
  * @param $lastuserid
  * @param $lastip
  */
-function qa_db_post_set_parent($postid, $parentid, $lastuserid = null, $lastip = null)
+function ilya_db_post_set_parent($postid, $parentid, $lastuserid = null, $lastip = null)
 {
 	if (isset($lastuserid) || isset($lastip)) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			"UPDATE ^posts SET parentid=#, updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#",
 			$parentid, QA_UPDATE_PARENT, $lastuserid, bin2hex(@inet_pton($lastip)), $postid
 		);
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET parentid=# WHERE postid=#',
 			$parentid, $postid
 		);
@@ -145,16 +145,16 @@ function qa_db_post_set_parent($postid, $parentid, $lastuserid = null, $lastip =
  * @param string $updatetype
  * @param $name
  */
-function qa_db_post_set_content($postid, $title, $content, $format, $tagstring, $notify, $lastuserid = null, $lastip = null, $updatetype = QA_UPDATE_CONTENT, $name = null)
+function ilya_db_post_set_content($postid, $title, $content, $format, $tagstring, $notify, $lastuserid = null, $lastip = null, $updatetype = QA_UPDATE_CONTENT, $name = null)
 {
 	if (isset($lastuserid) || isset($lastip)) {
 		// use COALESCE() for name since $name=null means it should not be modified (for backwards compatibility)
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET title=$, content=$, format=$, tags=$, name=COALESCE($, name), notify=$, updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#',
 			$title, $content, $format, $tagstring, $name, $notify, $updatetype, $lastuserid, bin2hex(@inet_pton($lastip)), $postid
 		);
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET title=$, content=$, format=$, tags=$, name=COALESCE($, name), notify=$ WHERE postid=#',
 			$title, $content, $format, $tagstring, $name, $notify, $postid
 		);
@@ -167,9 +167,9 @@ function qa_db_post_set_content($postid, $title, $content, $format, $tagstring, 
  * @param $postid
  * @param $userid
  */
-function qa_db_post_set_userid($postid, $userid)
+function ilya_db_post_set_userid($postid, $userid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'UPDATE ^posts SET userid=$, lastuserid=IF(updated IS NULL, lastuserid, COALESCE(lastuserid,$)) WHERE postid=#',
 		$userid, $userid, $postid
 	);
@@ -184,15 +184,15 @@ function qa_db_post_set_userid($postid, $userid)
  * @param $lastuserid
  * @param $lastip
  */
-function qa_db_post_set_category($postid, $categoryid, $lastuserid = null, $lastip = null)
+function ilya_db_post_set_category($postid, $categoryid, $lastuserid = null, $lastip = null)
 {
 	if (isset($lastuserid) || isset($lastip)) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			"UPDATE ^posts SET categoryid=#, updated=NOW(), updatetype=$, lastuserid=$, lastip=UNHEX($) WHERE postid=#",
 			$categoryid, QA_UPDATE_CATEGORY, $lastuserid, bin2hex(@inet_pton($lastip)), $postid
 		);
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET categoryid=# WHERE postid=#',
 			$categoryid, $postid
 		);
@@ -201,15 +201,15 @@ function qa_db_post_set_category($postid, $categoryid, $lastuserid = null, $last
 
 
 /**
- * Set the category path in the database of each of $postids to $path retrieved via qa_db_post_get_category_path()
+ * Set the category path in the database of each of $postids to $path retrieved via ilya_db_post_get_category_path()
  * @param $postids
  * @param $path
  */
-function qa_db_posts_set_category_path($postids, $path)
+function ilya_db_posts_set_category_path($postids, $path)
 {
 	if (count($postids)) {
 		// requires QA_CATEGORY_DEPTH=4
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET categoryid=#, catidpath1=#, catidpath2=#, catidpath3=# WHERE postid IN (#)',
 			$path['categoryid'], $path['catidpath1'], $path['catidpath2'], $path['catidpath3'], $postids
 		);
@@ -222,15 +222,15 @@ function qa_db_posts_set_category_path($postids, $path)
  * @param $postid
  * @param $created
  */
-function qa_db_post_set_created($postid, $created)
+function ilya_db_post_set_created($postid, $created)
 {
 	if (isset($created)) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET created=FROM_UNIXTIME(#) WHERE postid=#',
 			$created, $postid
 		);
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET created=NOW() WHERE postid=#',
 			$postid
 		);
@@ -243,15 +243,15 @@ function qa_db_post_set_created($postid, $created)
  * @param $postid
  * @param $updated
  */
-function qa_db_post_set_updated($postid, $updated)
+function ilya_db_post_set_updated($postid, $updated)
 {
 	if (isset($updated)) {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET updated=FROM_UNIXTIME(#) WHERE postid=#',
 			$updated, $postid
 		);
 	} else {
-		qa_db_query_sub(
+		ilya_db_query_sub(
 			'UPDATE ^posts SET updated=NOW() WHERE postid=#',
 			$postid
 		);
@@ -263,9 +263,9 @@ function qa_db_post_set_updated($postid, $updated)
  * Deletes post $postid from the database (will also delete any votes on the post due to foreign key cascading)
  * @param $postid
  */
-function qa_db_post_delete($postid)
+function ilya_db_post_delete($postid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^posts WHERE postid=#',
 		$postid
 	);
@@ -277,9 +277,9 @@ function qa_db_post_delete($postid)
  * @param $postid
  * @return array
  */
-function qa_db_titlewords_get_post_wordids($postid)
+function ilya_db_titlewords_get_post_wordids($postid)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		'SELECT wordid FROM ^titlewords WHERE postid=#',
 		$postid
 	));
@@ -290,9 +290,9 @@ function qa_db_titlewords_get_post_wordids($postid)
  * Remove all entries in the database index of title words for $postid
  * @param $postid
  */
-function qa_db_titlewords_delete_post($postid)
+function ilya_db_titlewords_delete_post($postid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^titlewords WHERE postid=#',
 		$postid
 	);
@@ -304,9 +304,9 @@ function qa_db_titlewords_delete_post($postid)
  * @param $postid
  * @return array
  */
-function qa_db_contentwords_get_post_wordids($postid)
+function ilya_db_contentwords_get_post_wordids($postid)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		'SELECT wordid FROM ^contentwords WHERE postid=#',
 		$postid
 	));
@@ -317,9 +317,9 @@ function qa_db_contentwords_get_post_wordids($postid)
  * Remove all entries in the database index of content words for $postid
  * @param $postid
  */
-function qa_db_contentwords_delete_post($postid)
+function ilya_db_contentwords_delete_post($postid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^contentwords WHERE postid=#',
 		$postid
 	);
@@ -331,9 +331,9 @@ function qa_db_contentwords_delete_post($postid)
  * @param $postid
  * @return array
  */
-function qa_db_tagwords_get_post_wordids($postid)
+function ilya_db_tagwords_get_post_wordids($postid)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		'SELECT wordid FROM ^tagwords WHERE postid=#',
 		$postid
 	));
@@ -344,9 +344,9 @@ function qa_db_tagwords_get_post_wordids($postid)
  * Remove all entries in the database index of individual words in tags of $postid
  * @param $postid
  */
-function qa_db_tagwords_delete_post($postid)
+function ilya_db_tagwords_delete_post($postid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^tagwords WHERE postid=#',
 		$postid
 	);
@@ -358,9 +358,9 @@ function qa_db_tagwords_delete_post($postid)
  * @param $postid
  * @return array
  */
-function qa_db_posttags_get_post_wordids($postid)
+function ilya_db_posttags_get_post_wordids($postid)
 {
-	return qa_db_read_all_values(qa_db_query_sub(
+	return ilya_db_read_all_values(ilya_db_query_sub(
 		'SELECT wordid FROM ^posttags WHERE postid=#',
 		$postid
 	));
@@ -371,9 +371,9 @@ function qa_db_posttags_get_post_wordids($postid)
  * Remove all entries in the database index of whole tags for $postid
  * @param $postid
  */
-function qa_db_posttags_delete_post($postid)
+function ilya_db_posttags_delete_post($postid)
 {
-	qa_db_query_sub(
+	ilya_db_query_sub(
 		'DELETE FROM ^posttags WHERE postid=#',
 		$postid
 	);
@@ -385,10 +385,10 @@ function qa_db_posttags_delete_post($postid)
  * @param $postids
  * @return array
  */
-function qa_db_posts_filter_q_postids($postids)
+function ilya_db_posts_filter_q_postids($postids)
 {
 	if (count($postids)) {
-		return qa_db_read_all_values(qa_db_query_sub(
+		return ilya_db_read_all_values(ilya_db_query_sub(
 			"SELECT postid FROM ^posts WHERE type='Q' AND postid IN (#)",
 			$postids
 		));
@@ -403,10 +403,10 @@ function qa_db_posts_filter_q_postids($postids)
  * @param $postids
  * @return array
  */
-function qa_db_posts_get_userids($postids)
+function ilya_db_posts_get_userids($postids)
 {
 	if (count($postids)) {
-		return qa_db_read_all_values(qa_db_query_sub(
+		return ilya_db_read_all_values(ilya_db_query_sub(
 			"SELECT DISTINCT userid FROM ^posts WHERE postid IN (#) AND userid IS NOT NULL",
 			$postids
 		));
@@ -419,10 +419,10 @@ function qa_db_posts_get_userids($postids)
 /**
  * Update the cached count of the number of flagged posts in the database
  */
-function qa_db_flaggedcount_update()
+function ilya_db_flaggedcount_update()
 {
-	if (qa_should_update_counts()) {
-		qa_db_query_sub(
+	if (ilya_should_update_counts()) {
+		ilya_db_query_sub(
 			"INSERT INTO ^options (title, content) " .
 			"SELECT 'cache_flaggedcount', COUNT(*) FROM ^posts " .
 			"WHERE flagcount > 0 AND type IN ('Q', 'A', 'C') " .

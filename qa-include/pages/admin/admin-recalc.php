@@ -30,8 +30,8 @@ require_once QA_INCLUDE_DIR . 'app/recalc.php';
 
 // Check we have administrative privileges
 
-if (!qa_admin_check_privileges($qa_content))
-	return $qa_content;
+if (!ilya_admin_check_privileges($ilya_content))
+	return $ilya_content;
 
 
 // Find out the operation
@@ -50,11 +50,11 @@ $allowstates = array(
 $recalcnow = false;
 
 foreach ($allowstates as $allowstate) {
-	if (qa_post_text($allowstate) || qa_get($allowstate)) {
+	if (ilya_post_text($allowstate) || ilya_get($allowstate)) {
 		$state = $allowstate;
-		$code = qa_post_text('code');
+		$code = ilya_post_text('code');
 
-		if (isset($code) && qa_check_form_security_code('admin/recalc', $code))
+		if (isset($code) && ilya_check_form_security_code('admin/recalc', $code))
 			$recalcnow = true;
 	}
 }
@@ -76,10 +76,10 @@ if ($recalcnow) {
 
 		$stoptime = time() + 2; // run in lumps of two seconds...
 
-		while (qa_recalc_perform_step($state) && time() < $stoptime)
+		while (ilya_recalc_perform_step($state) && time() < $stoptime)
 			;
 
-		echo qa_html(qa_recalc_get_message($state)) . str_repeat('    ', 1024) . "<br>\n";
+		echo ilya_html(ilya_recalc_get_message($state)) . str_repeat('    ', 1024) . "<br>\n";
 
 		flush();
 		sleep(1); // ... then rest for one
@@ -88,45 +88,45 @@ if ($recalcnow) {
 	?>
 			</code>
 
-			<a href="<?php echo qa_path_html('admin/stats')?>"><?php echo qa_lang_html('admin/admin_title').' - '.qa_lang_html('admin/stats_title')?></a>
+			<a href="<?php echo ilya_path_html('admin/stats')?>"><?php echo ilya_lang_html('admin/admin_title').' - '.ilya_lang_html('admin/stats_title')?></a>
 		</body>
 	</html>
 
 	<?php
-	qa_exit();
+	ilya_exit();
 
 } elseif (isset($state)) {
-	$qa_content = qa_content_prepare();
+	$ilya_content = ilya_content_prepare();
 
-	$qa_content['title'] = qa_lang_html('admin/admin_title');
-	$qa_content['error'] = qa_lang_html('misc/form_security_again');
+	$ilya_content['title'] = ilya_lang_html('admin/admin_title');
+	$ilya_content['error'] = ilya_lang_html('misc/form_security_again');
 
-	$qa_content['form'] = array(
-		'tags' => 'method="post" action="' . qa_self_html() . '"',
+	$ilya_content['form'] = array(
+		'tags' => 'method="post" action="' . ilya_self_html() . '"',
 
 		'style' => 'wide',
 
 		'buttons' => array(
 			'recalc' => array(
-				'tags' => 'name="' . qa_html($state) . '"',
-				'label' => qa_lang_html('misc/form_security_again'),
+				'tags' => 'name="' . ilya_html($state) . '"',
+				'label' => ilya_lang_html('misc/form_security_again'),
 			),
 		),
 
 		'hidden' => array(
-			'code' => qa_get_form_security_code('admin/recalc'),
+			'code' => ilya_get_form_security_code('admin/recalc'),
 		),
 	);
 
-	return $qa_content;
+	return $ilya_content;
 
 } else {
 	require_once QA_INCLUDE_DIR . 'app/format.php';
 
-	$qa_content = qa_content_prepare();
+	$ilya_content = ilya_content_prepare();
 
-	$qa_content['title'] = qa_lang_html('admin/admin_title');
-	$qa_content['error'] = qa_lang_html('main/page_not_found');
+	$ilya_content['title'] = ilya_lang_html('admin/admin_title');
+	$ilya_content['error'] = ilya_lang_html('main/page_not_found');
 
-	return $qa_content;
+	return $ilya_content;
 }

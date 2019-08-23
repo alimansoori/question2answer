@@ -21,7 +21,7 @@
 */
 
 
-class qa_wysiwyg_upload
+class ilya_wysiwyg_upload
 {
 	public function match_request($request)
 	{
@@ -34,13 +34,13 @@ class qa_wysiwyg_upload
 		$url = '';
 
 		if (is_array($_FILES) && count($_FILES)) {
-			if (qa_opt('wysiwyg_editor_upload_images')) {
+			if (ilya_opt('wysiwyg_editor_upload_images')) {
 				require_once QA_INCLUDE_DIR . 'app/upload.php';
 
-				$onlyImage = qa_get('qa_only_image');
-				$upload = qa_upload_file_one(
-					qa_opt('wysiwyg_editor_upload_max_size'),
-					$onlyImage || !qa_opt('wysiwyg_editor_upload_all'),
+				$onlyImage = ilya_get('ilya_only_image');
+				$upload = ilya_upload_file_one(
+					ilya_opt('wysiwyg_editor_upload_max_size'),
+					$onlyImage || !ilya_opt('wysiwyg_editor_upload_all'),
 					$onlyImage ? 600 : null, // max width if it's an image upload
 					null // no max height
 				);
@@ -51,15 +51,15 @@ class qa_wysiwyg_upload
 					$url = $upload['bloburl'];
 				}
 			} else {
-				$message = qa_lang('users/no_permission');
+				$message = ilya_lang('users/no_permission');
 			}
 		}
 
 		echo sprintf(
 			'<script>window.parent.CKEDITOR.tools.callFunction(%s, %s, %s);</script>',
-			qa_js(qa_get('CKEditorFuncNum')),
-			qa_js($url),
-			qa_js($message)
+			ilya_js(ilya_get('CKEditorFuncNum')),
+			ilya_js($url),
+			ilya_js($message)
 		);
 
 		return null;

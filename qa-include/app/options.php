@@ -46,21 +46,21 @@ define('QA_PERMIT_SUPERS', 0);
  * @param $names
  * @return array
  */
-function qa_get_options($names)
+function ilya_get_options($names)
 {
-	global $qa_options_cache, $qa_options_loaded;
+	global $ilya_options_cache, $ilya_options_loaded;
 
 	// If any options not cached, retrieve them from database via standard pending mechanism
 
-	if (!$qa_options_loaded)
-		qa_preload_options();
+	if (!$ilya_options_loaded)
+		ilya_preload_options();
 
-	if (!$qa_options_loaded) {
+	if (!$ilya_options_loaded) {
 		require_once QA_INCLUDE_DIR . 'db/selects.php';
 
-		qa_load_options_results(array(
-			qa_db_get_pending_result('options'),
-			qa_db_get_pending_result('time'),
+		ilya_load_options_results(array(
+			ilya_db_get_pending_result('options'),
+			ilya_db_get_pending_result('time'),
 		));
 	}
 
@@ -68,7 +68,7 @@ function qa_get_options($names)
 
 	$options = array();
 	foreach ($names as $name) {
-		if (!isset($qa_options_cache[$name])) {
+		if (!isset($ilya_options_cache[$name])) {
 			$todatabase = true;
 
 			switch ($name) { // don't write default to database if option was deprecated, or depends on site language (which could be changed)
@@ -83,10 +83,10 @@ function qa_get_options($names)
 					break;
 			}
 
-			qa_set_option($name, qa_default_option($name), $todatabase);
+			ilya_set_option($name, ilya_default_option($name), $todatabase);
 		}
 
-		$options[$name] = $qa_options_cache[$name];
+		$options[$name] = $ilya_options_cache[$name];
 	}
 
 	return $options;
@@ -99,11 +99,11 @@ function qa_get_options($names)
  * @param $name
  * @return
  */
-function qa_opt_if_loaded($name)
+function ilya_opt_if_loaded($name)
 {
-	global $qa_options_cache;
+	global $ilya_options_cache;
 
-	return @$qa_options_cache[$name];
+	return @$ilya_options_cache[$name];
 }
 
 
@@ -111,11 +111,11 @@ function qa_opt_if_loaded($name)
  * Load all of the Q2A options from the database.
  * From Q2A 1.8 we always load the options in a separate query regardless of QA_OPTIMIZE_DISTANT_DB.
  */
-function qa_preload_options()
+function ilya_preload_options()
 {
-	global $qa_options_loaded;
+	global $ilya_options_loaded;
 
-	if (!@$qa_options_loaded) {
+	if (!@$ilya_options_loaded) {
 		$selectspecs = array(
 			'options' => array(
 				'columns' => array('title', 'content'),
@@ -132,29 +132,29 @@ function qa_preload_options()
 		);
 
 		// fetch options in a separate query before everything else
-		qa_load_options_results(qa_db_multi_select($selectspecs));
+		ilya_load_options_results(ilya_db_multi_select($selectspecs));
 	}
 }
 
 
 /**
- * Load the options from the $results of the database selectspecs defined in qa_preload_options()
+ * Load the options from the $results of the database selectspecs defined in ilya_preload_options()
  * @param $results
  * @return mixed
  */
-function qa_load_options_results($results)
+function ilya_load_options_results($results)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_options_cache, $qa_options_loaded;
+	global $ilya_options_cache, $ilya_options_loaded;
 
 	foreach ($results as $result) {
 		foreach ($result as $name => $value) {
-			$qa_options_cache[$name] = $value;
+			$ilya_options_cache[$name] = $value;
 		}
 	}
 
-	$qa_options_loaded = true;
+	$ilya_options_loaded = true;
 }
 
 
@@ -166,16 +166,16 @@ function qa_load_options_results($results)
  * @param bool $todatabase
  * @return mixed
  */
-function qa_set_option($name, $value, $todatabase = true)
+function ilya_set_option($name, $value, $todatabase = true)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_options_cache;
+	global $ilya_options_cache;
 
 	if ($todatabase && isset($value))
-		qa_db_set_option($name, $value);
+		ilya_db_set_option($name, $value);
 
-	$qa_options_cache[$name] = $value;
+	$ilya_options_cache[$name] = $value;
 }
 
 
@@ -184,12 +184,12 @@ function qa_set_option($name, $value, $todatabase = true)
  * @param $names
  * @return mixed
  */
-function qa_reset_options($names)
+function ilya_reset_options($names)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	foreach ($names as $name) {
-		qa_set_option($name, qa_default_option($name));
+		ilya_set_option($name, ilya_default_option($name));
 	}
 }
 
@@ -199,9 +199,9 @@ function qa_reset_options($names)
  * @param $name
  * @return bool|mixed|string
  */
-function qa_default_option($name)
+function ilya_default_option($name)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$fixed_defaults = array(
 		'allow_anonymous_naming' => 1,
@@ -295,7 +295,7 @@ function qa_default_option($name)
 		'moderate_points_limit' => 150,
 		'moderate_update_time' => 1,
 		'nav_ask' => 1,
-		'nav_qa_not_home' => 1,
+		'nav_ilya_not_home' => 1,
 		'nav_questions' => 1,
 		'nav_tags' => 1,
 		'nav_unanswered' => 1,
@@ -399,11 +399,11 @@ function qa_default_option($name)
 			break;
 
 		case 'site_title':
-			$value = qa_default_site_title();
+			$value = ilya_default_site_title();
 			break;
 
 		case 'site_theme_mobile':
-			$value = qa_opt('site_theme');
+			$value = ilya_opt('site_theme');
 			break;
 
 		case 'from_email': // heuristic to remove short prefix (e.g. www. or qa.)
@@ -416,35 +416,35 @@ function qa_default_option($name)
 			break;
 
 		case 'email_privacy':
-			$value = qa_lang_html('options/default_privacy');
+			$value = ilya_lang_html('options/default_privacy');
 			break;
 
 		case 'show_custom_sidebar':
-			$value = strlen(qa_opt('custom_sidebar')) > 0;
+			$value = strlen(ilya_opt('custom_sidebar')) > 0;
 			break;
 
 		case 'show_custom_header':
-			$value = strlen(qa_opt('custom_header')) > 0;
+			$value = strlen(ilya_opt('custom_header')) > 0;
 			break;
 
 		case 'show_custom_footer':
-			$value = strlen(qa_opt('custom_footer')) > 0;
+			$value = strlen(ilya_opt('custom_footer')) > 0;
 			break;
 
 		case 'show_custom_in_head':
-			$value = strlen(qa_opt('custom_in_head')) > 0;
+			$value = strlen(ilya_opt('custom_in_head')) > 0;
 			break;
 
 		case 'register_terms':
-			$value = qa_lang_html_sub('options/default_terms', qa_html(qa_opt('site_title')));
+			$value = ilya_lang_html_sub('options/default_terms', ilya_html(ilya_opt('site_title')));
 			break;
 
 		case 'block_bad_usernames':
-			$value = qa_lang_html('main/anonymous');
+			$value = ilya_lang_html('main/anonymous');
 			break;
 
 		case 'custom_sidebar':
-			$value = qa_lang_html_sub('options/default_sidebar', qa_html(qa_opt('site_title')));
+			$value = ilya_lang_html_sub('options/default_sidebar', ilya_html(ilya_opt('site_title')));
 			break;
 
 		case 'editor_for_qs':
@@ -452,51 +452,51 @@ function qa_default_option($name)
 			require_once QA_INCLUDE_DIR . 'app/format.php';
 
 			$value = '-'; // to match none by default, i.e. choose based on who is best at editing HTML
-			qa_load_editor('', 'html', $value);
+			ilya_load_editor('', 'html', $value);
 			break;
 
 		case 'permit_post_q': // convert from deprecated option if available
-			$value = qa_opt('ask_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
+			$value = ilya_opt('ask_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
 			break;
 
 		case 'permit_post_a': // convert from deprecated option if available
-			$value = qa_opt('answer_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
+			$value = ilya_opt('answer_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
 			break;
 
 		case 'permit_post_c': // convert from deprecated option if available
-			$value = qa_opt('comment_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
+			$value = ilya_opt('comment_needs_login') ? QA_PERMIT_USERS : QA_PERMIT_ALL;
 			break;
 
 		case 'permit_retag_cat': // convert from previous option that used to contain it too
-			$value = qa_opt('permit_edit_q');
+			$value = ilya_opt('permit_edit_q');
 			break;
 
 		case 'points_vote_up_q':
 		case 'points_vote_down_q':
-			$oldvalue = qa_opt('points_vote_on_q');
+			$oldvalue = ilya_opt('points_vote_on_q');
 			$value = is_numeric($oldvalue) ? $oldvalue : 1;
 			break;
 
 		case 'points_vote_up_a':
 		case 'points_vote_down_a':
-			$oldvalue = qa_opt('points_vote_on_a');
+			$oldvalue = ilya_opt('points_vote_on_a');
 			$value = is_numeric($oldvalue) ? $oldvalue : 1;
 			break;
 
 		case 'points_per_q_voted_up':
 		case 'points_per_q_voted_down':
-			$oldvalue = qa_opt('points_per_q_voted');
+			$oldvalue = ilya_opt('points_per_q_voted');
 			$value = is_numeric($oldvalue) ? $oldvalue : 1;
 			break;
 
 		case 'points_per_a_voted_up':
 		case 'points_per_a_voted_down':
-			$oldvalue = qa_opt('points_per_a_voted');
+			$oldvalue = ilya_opt('points_per_a_voted');
 			$value = is_numeric($oldvalue) ? $oldvalue : 2;
 			break;
 
 		case 'captcha_module':
-			$captchamodules = qa_list_modules('captcha');
+			$captchamodules = ilya_list_modules('captcha');
 			if (count($captchamodules))
 				$value = reset($captchamodules);
 			else
@@ -504,28 +504,28 @@ function qa_default_option($name)
 			break;
 
 		case 'mailing_from_name':
-			$value = qa_opt('site_title');
+			$value = ilya_opt('site_title');
 			break;
 
 		case 'mailing_from_email':
-			$value = qa_opt('from_email');
+			$value = ilya_opt('from_email');
 			break;
 
 		case 'mailing_subject':
-			$value = qa_lang_sub('options/default_subject', qa_opt('site_title'));
+			$value = ilya_lang_sub('options/default_subject', ilya_opt('site_title'));
 			break;
 
 		case 'mailing_body':
-			$value = "\n\n\n--\n" . qa_opt('site_title') . "\n" . qa_opt('site_url');
+			$value = "\n\n\n--\n" . ilya_opt('site_title') . "\n" . ilya_opt('site_url');
 			break;
 
 		case 'form_security_salt':
 			require_once QA_INCLUDE_DIR . 'util/string.php';
-			$value = qa_random_alphanum(32);
+			$value = ilya_random_alphanum(32);
 			break;
 
 		default: // call option_default method in any registered modules
-			$modules = qa_load_all_modules_with('option_default');  // Loads all modules with the 'option_default' method
+			$modules = ilya_load_all_modules_with('option_default');  // Loads all modules with the 'option_default' method
 
 			foreach ($modules as $module) {
 				$value = $module->option_default($name);
@@ -544,7 +544,7 @@ function qa_default_option($name)
 /**
  * Return a heuristic guess at the name of the site from the HTTP HOST
  */
-function qa_default_site_title()
+function ilya_default_site_title()
 {
 	$parts = explode('.', @$_SERVER['HTTP_HOST']);
 
@@ -554,93 +554,93 @@ function qa_default_site_title()
 			$longestpart = $part;
 	}
 
-	return ((strlen($longestpart) > 3) ? (ucfirst($longestpart) . ' ') : '') . qa_lang('options/default_suffix');
+	return ((strlen($longestpart) > 3) ? (ucfirst($longestpart) . ' ') : '') . ilya_lang('options/default_suffix');
 }
 
 
 /**
- * Return an array of defaults for the $options parameter passed to qa_post_html_fields() and its ilk for posts of $basetype='Q'/'A'/'C'
+ * Return an array of defaults for the $options parameter passed to ilya_post_html_fields() and its ilk for posts of $basetype='Q'/'A'/'C'
  * Set $full to true if these posts will be viewed in full, i.e. on a question page rather than a question listing
  * @param $basetype
  * @param bool $full
  * @return array|mixed
  */
-function qa_post_html_defaults($basetype, $full = false)
+function ilya_post_html_defaults($basetype, $full = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 
 	return array(
-		'tagsview' => $basetype == 'Q' && qa_using_tags(),
-		'categoryview' => $basetype == 'Q' && qa_using_categories(),
+		'tagsview' => $basetype == 'Q' && ilya_using_tags(),
+		'categoryview' => $basetype == 'Q' && ilya_using_categories(),
 		'contentview' => $full,
-		'voteview' => qa_get_vote_view($basetype, $full),
-		'flagsview' => qa_opt('flagging_of_posts') && $full,
+		'voteview' => ilya_get_vote_view($basetype, $full),
+		'flagsview' => ilya_opt('flagging_of_posts') && $full,
 		'favoritedview' => true,
 		'answersview' => $basetype == 'Q',
-		'viewsview' => $basetype == 'Q' && qa_opt('do_count_q_views') && ($full ? qa_opt('show_view_count_q_page') : qa_opt('show_view_counts')),
+		'viewsview' => $basetype == 'Q' && ilya_opt('do_count_q_views') && ($full ? ilya_opt('show_view_count_q_page') : ilya_opt('show_view_counts')),
 		'whatview' => true,
-		'whatlink' => qa_opt('show_a_c_links'),
-		'whenview' => qa_opt('show_when_created'),
-		'ipview' => !qa_user_permit_error('permit_anon_view_ips'),
+		'whatlink' => ilya_opt('show_a_c_links'),
+		'whenview' => ilya_opt('show_when_created'),
+		'ipview' => !ilya_user_permit_error('permit_anon_view_ips'),
 		'whoview' => true,
-		'avatarsize' => qa_opt('avatar_q_list_size'),
-		'pointsview' => qa_opt('show_user_points'),
-		'pointstitle' => qa_opt('show_user_titles') ? qa_get_points_to_titles() : array(),
-		'updateview' => qa_opt('show_post_update_meta'),
-		'blockwordspreg' => qa_get_block_words_preg(),
-		'showurllinks' => qa_opt('show_url_links'),
-		'linksnewwindow' => qa_opt('links_in_new_window'),
-		'fulldatedays' => qa_opt('show_full_date_days'),
+		'avatarsize' => ilya_opt('avatar_q_list_size'),
+		'pointsview' => ilya_opt('show_user_points'),
+		'pointstitle' => ilya_opt('show_user_titles') ? ilya_get_points_to_titles() : array(),
+		'updateview' => ilya_opt('show_post_update_meta'),
+		'blockwordspreg' => ilya_get_block_words_preg(),
+		'showurllinks' => ilya_opt('show_url_links'),
+		'linksnewwindow' => ilya_opt('links_in_new_window'),
+		'fulldatedays' => ilya_opt('show_full_date_days'),
 	);
 }
 
 
 /**
- * Return an array of options for post $post to pass in the $options parameter to qa_post_html_fields() and its ilk. Preferably,
- * call qa_post_html_defaults() previously and pass its output in $defaults, to save excessive recalculation for each item in a
+ * Return an array of options for post $post to pass in the $options parameter to ilya_post_html_fields() and its ilk. Preferably,
+ * call ilya_post_html_defaults() previously and pass its output in $defaults, to save excessive recalculation for each item in a
  * list. Set $full to true if these posts will be viewed in full, i.e. on a question page rather than a question listing.
  * @param $post
  * @param $defaults
  * @param bool $full
  * @return array|mixed|null
  */
-function qa_post_html_options($post, $defaults = null, $full = false)
+function ilya_post_html_options($post, $defaults = null, $full = false)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (!isset($defaults))
-		$defaults = qa_post_html_defaults($post['basetype'], $full);
+		$defaults = ilya_post_html_defaults($post['basetype'], $full);
 
-	$defaults['voteview'] = qa_get_vote_view($post, $full);
-	$defaults['ipview'] = !qa_user_post_permit_error('permit_anon_view_ips', $post);
+	$defaults['voteview'] = ilya_get_vote_view($post, $full);
+	$defaults['ipview'] = !ilya_user_post_permit_error('permit_anon_view_ips', $post);
 
 	return $defaults;
 }
 
 
 /**
- * Return an array of defaults for the $options parameter passed to qa_message_html_fields()
+ * Return an array of defaults for the $options parameter passed to ilya_message_html_fields()
  */
-function qa_message_html_defaults()
+function ilya_message_html_defaults()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	return array(
-		'whenview' => qa_opt('show_when_created'),
+		'whenview' => ilya_opt('show_when_created'),
 		'whoview' => true,
-		'avatarsize' => qa_opt('avatar_message_list_size'),
-		'blockwordspreg' => qa_get_block_words_preg(),
-		'showurllinks' => qa_opt('show_url_links'),
-		'linksnewwindow' => qa_opt('links_in_new_window'),
-		'fulldatedays' => qa_opt('show_full_date_days'),
+		'avatarsize' => ilya_opt('avatar_message_list_size'),
+		'blockwordspreg' => ilya_get_block_words_preg(),
+		'showurllinks' => ilya_opt('show_url_links'),
+		'linksnewwindow' => ilya_opt('links_in_new_window'),
+		'fulldatedays' => ilya_opt('show_full_date_days'),
 	);
 }
 
 
 /**
- * Return $voteview parameter to pass to qa_post_html_fields() in /ilya-include/app/format.php.
+ * Return $voteview parameter to pass to ilya_post_html_fields() in /ilya-include/app/format.php.
  * @param array|string $postorbasetype The post, or for compatibility just a basetype, i.e. 'Q', 'A' or 'C'
  * @param bool $full Whether full post is shown
  * @param bool $enabledif Whether to do checks for voting buttons (i.e. will always disable voting if false)
@@ -648,12 +648,12 @@ function qa_message_html_defaults()
  *   updown, updown-disabled-page, updown-disabled-level, updown-uponly-level, updown-disabled-approve, updown-uponly-approve
  *   net, net-disabled-page, net-disabled-level, net-uponly-level, net-disabled-approve, net-uponly-approve
  */
-function qa_get_vote_view($postorbasetype, $full = false, $enabledif = true)
+function ilya_get_vote_view($postorbasetype, $full = false, $enabledif = true)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	// The 'level' and 'approve' permission errors are taken care of by disabling the voting buttons.
-	// Others are reported to the user after they click, in qa_vote_error_html(...)
+	// Others are reported to the user after they click, in ilya_vote_error_html(...)
 
 	// deal with dual-use parameter
 	if (is_array($postorbasetype)) {
@@ -669,15 +669,15 @@ function qa_get_vote_view($postorbasetype, $full = false, $enabledif = true)
 	switch($basetype)
 	{
 		case 'Q':
-			$view = qa_opt('voting_on_qs');
+			$view = ilya_opt('voting_on_qs');
 			$permitOpt = 'permit_vote_q';
 			break;
 		case 'A':
-			$view = qa_opt('voting_on_as');
+			$view = ilya_opt('voting_on_as');
 			$permitOpt = 'permit_vote_a';
 			break;
 		case 'C':
-			$view = qa_opt('voting_on_cs');
+			$view = ilya_opt('voting_on_cs');
 			$permitOpt = 'permit_vote_c';
 			break;
 		default:
@@ -689,18 +689,18 @@ function qa_get_vote_view($postorbasetype, $full = false, $enabledif = true)
 		return false;
 	}
 
-	if (!$enabledif || ($basetype == 'Q' && !$full && qa_opt('voting_on_q_page_only'))) {
+	if (!$enabledif || ($basetype == 'Q' && !$full && ilya_opt('voting_on_q_page_only'))) {
 		$disabledsuffix = '-disabled-page';
 	}
 	else {
-		$permiterror = isset($post) ? qa_user_post_permit_error($permitOpt, $post) : qa_user_permit_error($permitOpt);
+		$permiterror = isset($post) ? ilya_user_post_permit_error($permitOpt, $post) : ilya_user_permit_error($permitOpt);
 
 		if ($permiterror == 'level')
 			$disabledsuffix = '-disabled-level';
 		elseif ($permiterror == 'approve')
 			$disabledsuffix = '-disabled-approve';
 		else {
-			$permiterrordown = isset($post) ? qa_user_post_permit_error('permit_vote_down', $post) : qa_user_permit_error('permit_vote_down');
+			$permiterrordown = isset($post) ? ilya_user_post_permit_error('permit_vote_down', $post) : ilya_user_permit_error('permit_vote_down');
 
 			if ($permiterrordown == 'level')
 				$disabledsuffix = '-uponly-level';
@@ -709,74 +709,74 @@ function qa_get_vote_view($postorbasetype, $full = false, $enabledif = true)
 		}
 	}
 
-	return (qa_opt('votes_separated') ? 'updown' : 'net') . $disabledsuffix;
+	return (ilya_opt('votes_separated') ? 'updown' : 'net') . $disabledsuffix;
 }
 
 
 /**
  * Returns true if the home page has been customized, either due to admin setting, or $QA_CONST_PATH_MAP
  */
-function qa_has_custom_home()
+function ilya_has_custom_home()
 {
-	return qa_opt('show_custom_home') || (array_search('', qa_get_request_map()) !== false);
+	return ilya_opt('show_custom_home') || (array_search('', ilya_get_request_map()) !== false);
 }
 
 
 /**
  * Return whether the option is set to classify questions by tags
  */
-function qa_using_tags()
+function ilya_using_tags()
 {
-	return strpos(qa_opt('tags_or_categories'), 't') !== false;
+	return strpos(ilya_opt('tags_or_categories'), 't') !== false;
 }
 
 
 /**
  * Return whether the option is set to classify questions by categories
  */
-function qa_using_categories()
+function ilya_using_categories()
 {
-	return strpos(qa_opt('tags_or_categories'), 'c') !== false;
+	return strpos(ilya_opt('tags_or_categories'), 'c') !== false;
 }
 
 
 /**
  * Return the regular expression fragment to match the blocked words options set in the database
  */
-function qa_get_block_words_preg()
+function ilya_get_block_words_preg()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	global $qa_blockwordspreg, $qa_blockwordspreg_set;
+	global $ilya_blockwordspreg, $ilya_blockwordspreg_set;
 
-	if (!@$qa_blockwordspreg_set) {
-		$blockwordstring = qa_opt('block_bad_words');
+	if (!@$ilya_blockwordspreg_set) {
+		$blockwordstring = ilya_opt('block_bad_words');
 
 		if (strlen($blockwordstring)) {
 			require_once QA_INCLUDE_DIR . 'util/string.php';
-			$qa_blockwordspreg = qa_block_words_to_preg($blockwordstring);
+			$ilya_blockwordspreg = ilya_block_words_to_preg($blockwordstring);
 
 		} else
-			$qa_blockwordspreg = null;
+			$ilya_blockwordspreg = null;
 
-		$qa_blockwordspreg_set = true;
+		$ilya_blockwordspreg_set = true;
 	}
 
-	return $qa_blockwordspreg;
+	return $ilya_blockwordspreg;
 }
 
 
 /**
- * Return an array of [points] => [user title] from the 'points_to_titles' option, to pass to qa_get_points_title_html()
+ * Return an array of [points] => [user title] from the 'points_to_titles' option, to pass to ilya_get_points_title_html()
  */
-function qa_get_points_to_titles()
+function ilya_get_points_to_titles()
 {
-	global $qa_points_title_cache;
+	global $ilya_points_title_cache;
 
-	if (!is_array($qa_points_title_cache)) {
-		$qa_points_title_cache = array();
+	if (!is_array($ilya_points_title_cache)) {
+		$ilya_points_title_cache = array();
 
-		$pairs = explode(',', qa_opt('points_to_titles'));
+		$pairs = explode(',', ilya_opt('points_to_titles'));
 		foreach ($pairs as $pair) {
 			$spacepos = strpos($pair, ' ');
 			if (is_numeric($spacepos)) {
@@ -784,67 +784,67 @@ function qa_get_points_to_titles()
 				$title = trim(substr($pair, $spacepos));
 
 				if (is_numeric($points) && strlen($title))
-					$qa_points_title_cache[(int)$points] = $title;
+					$ilya_points_title_cache[(int)$points] = $title;
 			}
 		}
 
-		krsort($qa_points_title_cache, SORT_NUMERIC);
+		krsort($ilya_points_title_cache, SORT_NUMERIC);
 	}
 
-	return $qa_points_title_cache;
+	return $ilya_points_title_cache;
 }
 
 
 /**
  * Return an array of relevant permissions settings, based on other options
  */
-function qa_get_permit_options()
+function ilya_get_permit_options()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$permits = array('permit_view_q_page', 'permit_post_q', 'permit_post_a');
 
-	if (qa_opt('comment_on_qs') || qa_opt('comment_on_as'))
+	if (ilya_opt('comment_on_qs') || ilya_opt('comment_on_as'))
 		$permits[] = 'permit_post_c';
 
-	if (qa_opt('voting_on_qs'))
+	if (ilya_opt('voting_on_qs'))
 		$permits[] = 'permit_vote_q';
 
-	if (qa_opt('voting_on_as'))
+	if (ilya_opt('voting_on_as'))
 		$permits[] = 'permit_vote_a';
 
-	if (qa_opt('voting_on_cs'))
+	if (ilya_opt('voting_on_cs'))
 		$permits[] = 'permit_vote_c';
 
-	if (qa_opt('voting_on_qs') || qa_opt('voting_on_as') || qa_opt('voting_on_cs'))
+	if (ilya_opt('voting_on_qs') || ilya_opt('voting_on_as') || ilya_opt('voting_on_cs'))
 		$permits[] = 'permit_vote_down';
 
-	if (qa_using_tags() || qa_using_categories())
+	if (ilya_using_tags() || ilya_using_categories())
 		$permits[] = 'permit_retag_cat';
 
 	array_push($permits, 'permit_edit_q', 'permit_edit_a');
 
-	if (qa_opt('comment_on_qs') || qa_opt('comment_on_as'))
+	if (ilya_opt('comment_on_qs') || ilya_opt('comment_on_as'))
 		$permits[] = 'permit_edit_c';
 
 	$permits[] = 'permit_edit_silent';
 
-	if (qa_opt('allow_close_questions'))
+	if (ilya_opt('allow_close_questions'))
 		$permits[] = 'permit_close_q';
 
 	array_push($permits, 'permit_select_a', 'permit_anon_view_ips');
 
-	if (qa_opt('voting_on_qs') || qa_opt('voting_on_as') || qa_opt('voting_on_cs') || qa_opt('flagging_of_posts'))
+	if (ilya_opt('voting_on_qs') || ilya_opt('voting_on_as') || ilya_opt('voting_on_cs') || ilya_opt('flagging_of_posts'))
 		$permits[] = 'permit_view_voters_flaggers';
 
-	if (qa_opt('flagging_of_posts'))
+	if (ilya_opt('flagging_of_posts'))
 		$permits[] = 'permit_flag';
 
 	$permits[] = 'permit_moderate';
 
 	array_push($permits, 'permit_hide_show', 'permit_delete_hidden');
 
-	if (qa_opt('allow_user_walls'))
+	if (ilya_opt('allow_user_walls'))
 		$permits[] = 'permit_post_wall';
 
 	array_push($permits, 'permit_view_new_users_page', 'permit_view_special_users_page');

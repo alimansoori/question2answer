@@ -28,9 +28,9 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 /**
  * Return the maximum size of file that can be uploaded, based on database and PHP limits
  */
-function qa_get_max_upload_size()
+function ilya_get_max_upload_size()
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$mindb = 16777215; // from MEDIUMBLOB column type
 
@@ -63,9 +63,9 @@ function qa_get_max_upload_size()
  * @param $imagemaxheight
  * @return array
  */
-function qa_upload_file($localfilename, $sourcefilename, $maxfilesize = null, $onlyimage = false, $imagemaxwidth = null, $imagemaxheight = null)
+function ilya_upload_file($localfilename, $sourcefilename, $maxfilesize = null, $onlyimage = false, $imagemaxwidth = null, $imagemaxheight = null)
 {
-	if (qa_to_override(__FUNCTION__)) { $args=func_get_args(); return qa_call_override(__FUNCTION__, $args); }
+	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$result = array();
 
@@ -74,17 +74,17 @@ function qa_upload_file($localfilename, $sourcefilename, $maxfilesize = null, $o
 	require_once QA_INCLUDE_DIR . 'app/users.php';
 	require_once QA_INCLUDE_DIR . 'app/limits.php';
 
-	switch (qa_user_permit_error(null, QA_LIMIT_UPLOADS)) {
+	switch (ilya_user_permit_error(null, QA_LIMIT_UPLOADS)) {
 		case 'limit':
-			$result['error'] = qa_lang('main/upload_limit');
+			$result['error'] = ilya_lang('main/upload_limit');
 			return $result;
 
 		case false:
-			qa_limits_increment(qa_get_logged_in_userid(), QA_LIMIT_UPLOADS);
+			ilya_limits_increment(ilya_get_logged_in_userid(), QA_LIMIT_UPLOADS);
 			break;
 
 		default:
-			$result['error'] = qa_lang('users/no_permission');
+			$result['error'] = ilya_lang('users/no_permission');
 			return $result;
 	}
 
@@ -92,12 +92,12 @@ function qa_upload_file($localfilename, $sourcefilename, $maxfilesize = null, $o
 
 	$filesize = filesize($localfilename);
 	if (isset($maxfilesize))
-		$maxfilesize = min($maxfilesize, qa_get_max_upload_size());
+		$maxfilesize = min($maxfilesize, ilya_get_max_upload_size());
 	else
-		$maxfilesize = qa_get_max_upload_size();
+		$maxfilesize = ilya_get_max_upload_size();
 
 	if ($filesize <= 0 || $filesize > $maxfilesize) { // if file was too big for PHP, $filesize will be zero
-		$result['error'] = qa_lang_sub('main/max_upload_size_x', qa_format_number($maxfilesize / pow(1024, 2), 1) . 'MB');
+		$result['error'] = ilya_lang_sub('main/max_upload_size_x', ilya_format_number($maxfilesize / pow(1024, 2), 1) . 'MB');
 		return $result;
 	}
 
@@ -134,7 +134,7 @@ function qa_upload_file($localfilename, $sourcefilename, $maxfilesize = null, $o
 
 	if ($onlyimage) {
 		if (!$isimage || !is_array($imagesize)) {
-			$result['error'] = qa_lang_sub('main/image_not_read', 'GIF, JPG, PNG');
+			$result['error'] = ilya_lang_sub('main/image_not_read', 'GIF, JPG, PNG');
 			return $result;
 		}
 	}
@@ -147,7 +147,7 @@ function qa_upload_file($localfilename, $sourcefilename, $maxfilesize = null, $o
 
 	require_once QA_INCLUDE_DIR . 'util/image.php';
 
-	if ($isimage && qa_has_gd_image()) {
+	if ($isimage && ilya_has_gd_image()) {
 		$image = @imagecreatefromstring($content);
 
 		if (is_resource($image)) {
@@ -155,15 +155,15 @@ function qa_upload_file($localfilename, $sourcefilename, $maxfilesize = null, $o
 			$result['height'] = $height = imagesy($image);
 
 			if (isset($imagemaxwidth) || isset($imagemaxheight)) {
-				if (qa_image_constrain(
+				if (ilya_image_constrain(
 					$width, $height,
 					isset($imagemaxwidth) ? $imagemaxwidth : $width,
 					isset($imagemaxheight) ? $imagemaxheight : $height
 				)) {
-					qa_gd_image_resize($image, $width, $height);
+					ilya_gd_image_resize($image, $width, $height);
 
 					if (is_resource($image)) {
-						$content = qa_gd_image_jpeg($image);
+						$content = ilya_gd_image_jpeg($image);
 						$result['format'] = $format = 'jpg';
 						$result['width'] = $width;
 						$result['height'] = $height;
@@ -180,32 +180,32 @@ function qa_upload_file($localfilename, $sourcefilename, $maxfilesize = null, $o
 
 	require_once QA_INCLUDE_DIR . 'app/blobs.php';
 
-	$userid = qa_get_logged_in_userid();
-	$cookieid = isset($userid) ? qa_cookie_get() : qa_cookie_get_create();
-	$result['blobid'] = qa_create_blob($content, $format, $sourcefilename, $userid, $cookieid, qa_remote_ip_address());
+	$userid = ilya_get_logged_in_userid();
+	$cookieid = isset($userid) ? ilya_cookie_get() : ilya_cookie_get_create();
+	$result['blobid'] = ilya_create_blob($content, $format, $sourcefilename, $userid, $cookieid, ilya_remote_ip_address());
 
 	if (!isset($result['blobid'])) {
-		$result['error'] = qa_lang('main/general_error');
+		$result['error'] = ilya_lang('main/general_error');
 		return $result;
 	}
 
-	$result['bloburl'] = qa_get_blob_url($result['blobid'], true);
+	$result['bloburl'] = ilya_get_blob_url($result['blobid'], true);
 
 	return $result;
 }
 
 
 /**
- * In response to a file upload, move the first uploaded file into blob storage. Other parameters are as for qa_upload_file(...)
+ * In response to a file upload, move the first uploaded file into blob storage. Other parameters are as for ilya_upload_file(...)
  * @param $maxfilesize
  * @param bool $onlyimage
  * @param $imagemaxwidth
  * @param $imagemaxheight
  * @return array
  */
-function qa_upload_file_one($maxfilesize = null, $onlyimage = false, $imagemaxwidth = null, $imagemaxheight = null)
+function ilya_upload_file_one($maxfilesize = null, $onlyimage = false, $imagemaxwidth = null, $imagemaxheight = null)
 {
 	$file = reset($_FILES);
 
-	return qa_upload_file($file['tmp_name'], $file['name'], $maxfilesize, $onlyimage, $imagemaxwidth, $imagemaxheight);
+	return ilya_upload_file($file['tmp_name'], $file['name'], $maxfilesize, $onlyimage, $imagemaxwidth, $imagemaxheight);
 }

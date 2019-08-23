@@ -24,29 +24,29 @@
 
 @ini_set('display_errors', 0);
 
-function qa_blob_db_fail_handler()
+function ilya_blob_db_fail_handler()
 {
 	header('HTTP/1.1 500 Internal Server Error');
-	qa_exit('error');
+	ilya_exit('error');
 }
 
 
 // Load the Q2A base file which sets up a bunch of crucial stuff
 
-$qa_autoconnect = false;
+$ilya_autoconnect = false;
 require 'ilya-base.php';
 
-qa_report_process_stage('init_blob');
+ilya_report_process_stage('init_blob');
 
 
 // Output the blob in question
 
 require_once QA_INCLUDE_DIR . 'app/blobs.php';
 
-qa_db_connect('qa_blob_db_fail_handler');
-qa_initialize_postdb_plugins();
+ilya_db_connect('ilya_blob_db_fail_handler');
+ilya_initialize_postdb_plugins();
 
-$blob = qa_read_blob(qa_get('qa_blobid'));
+$blob = ilya_read_blob(ilya_get('ilya_blobid'));
 
 if (isset($blob) && isset($blob['content'])) {
 	// allows browsers and proxies to cache the blob (30 days)
@@ -92,4 +92,4 @@ if (isset($blob) && isset($blob['content'])) {
 	header('HTTP/1.0 404 Not Found');
 }
 
-qa_db_disconnect();
+ilya_db_disconnect();
