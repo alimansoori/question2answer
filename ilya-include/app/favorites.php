@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -31,18 +31,18 @@ if (!defined('ILYA__VERSION')) { // don't allow this page to be requested direct
  * @param int $userid ID of user assigned to the favorite
  * @param string $handle Username of user
  * @param string $cookieid Cookie ID of user
- * @param string $entitytype Entity type code (one of ILYA__ENTITY_* constants)
+ * @param string $entitytype Entity type code (one of ILYA_ENTITY_* constants)
  * @param string $entityid ID of the entity being favorited (e.g. postid for questions)
  * @param bool $favorite Whether to add favorite (true) or remove favorite (false)
  */
 function ilya_user_favorite_set($userid, $handle, $cookieid, $entitytype, $entityid, $favorite)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/favorites.php';
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
-	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA_INCLUDE_DIR . 'db/favorites.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'app/updates.php';
 
 	// Make sure the user is not favoriting themselves
-	if ($entitytype == ILYA__ENTITY_USER && $userid == $entityid) {
+	if ($entitytype == ILYA_ENTITY_USER && $userid == $entityid) {
 		return;
 	}
 
@@ -52,22 +52,22 @@ function ilya_user_favorite_set($userid, $handle, $cookieid, $entitytype, $entit
 		ilya_db_favorite_delete($userid, $entitytype, $entityid);
 
 	switch ($entitytype) {
-		case ILYA__ENTITY_QUESTION:
+		case ILYA_ENTITY_QUESTION:
 			$action = $favorite ? 'q_favorite' : 'q_unfavorite';
 			$params = array('postid' => $entityid);
 			break;
 
-		case ILYA__ENTITY_USER:
+		case ILYA_ENTITY_USER:
 			$action = $favorite ? 'u_favorite' : 'u_unfavorite';
 			$params = array('userid' => $entityid);
 			break;
 
-		case ILYA__ENTITY_TAG:
+		case ILYA_ENTITY_TAG:
 			$action = $favorite ? 'tag_favorite' : 'tag_unfavorite';
 			$params = array('wordid' => $entityid);
 			break;
 
-		case ILYA__ENTITY_CATEGORY:
+		case ILYA_ENTITY_CATEGORY:
 			$action = $favorite ? 'cat_favorite' : 'cat_unfavorite';
 			$params = array('categoryid' => $entityid);
 			break;
@@ -124,11 +124,11 @@ function ilya_favorite_q_list_view($questions, $usershtml)
  */
 function ilya_favorite_users_view($users, $usershtml)
 {
-	if (ILYA__FINAL_EXTERNAL_USERS)
+	if (ILYA_FINAL_EXTERNAL_USERS)
 		return null;
 
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 	$ranking = array(
 		'items' => array(),
@@ -159,7 +159,7 @@ function ilya_favorite_users_view($users, $usershtml)
  */
 function ilya_favorite_tags_view($tags)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 	$ranking = array(
 		'items' => array(),
@@ -185,7 +185,7 @@ function ilya_favorite_tags_view($tags)
  */
 function ilya_favorite_categories_view($categories)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 	$nav_list_categories = array(
 		'nav' => array(),

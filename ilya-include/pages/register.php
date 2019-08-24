@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/captcha.php';
-require_once ILYA__INCLUDE_DIR . 'db/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/captcha.php';
+require_once ILYA_INCLUDE_DIR . 'db/users.php';
 
 
 if (ilya_is_logged_in()) {
@@ -33,7 +33,7 @@ if (ilya_is_logged_in()) {
 }
 
 // Check we're not using single-sign on integration, that we're not logged in, and we're not blocked
-if (ILYA__FINAL_EXTERNAL_USERS) {
+if (ILYA_FINAL_EXTERNAL_USERS) {
 	$request = ilya_request();
 	$topath = ilya_get('to'); // lets user switch between login and register without losing destination page
 	$userlinks = ilya_get_login_links(ilya_path_to_root(), isset($topath) ? $topath : ilya_path($request, $_GET, ''));
@@ -54,7 +54,7 @@ $userfields = ilya_db_select_with_pending(
 );
 
 foreach ($userfields as $index => $userfield) {
-	if (!($userfield['flags'] & ILYA__FIELD_FLAGS_ON_REGISTER))
+	if (!($userfield['flags'] & ILYA_FIELD_FLAGS_ON_REGISTER))
 		unset($userfields[$index]);
 }
 
@@ -77,10 +77,10 @@ if (ilya_user_permit_error()) {
 // Process submitted form
 
 if (ilya_clicked('doregister')) {
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
 
-	if (ilya_user_limits_remaining(ILYA__LIMIT_REGISTRATIONS)) {
-		require_once ILYA__INCLUDE_DIR . 'app/users-edit.php';
+	if (ilya_user_limits_remaining(ILYA_LIMIT_REGISTRATIONS)) {
+		require_once ILYA_INCLUDE_DIR . 'app/users-edit.php';
 
 		$inemail = ilya_post_text('email');
 		$inpassword = ilya_post_text('password');
@@ -116,7 +116,7 @@ if (ilya_clicked('doregister')) {
 
 			if (empty($errors)) {
 				// register and redirect
-				ilya_limits_increment(null, ILYA__LIMIT_REGISTRATIONS);
+				ilya_limits_increment(null, ILYA_LIMIT_REGISTRATIONS);
 
 				$userid = ilya_create_new_user($inemail, $inpassword, $inhandle);
 
@@ -211,7 +211,7 @@ foreach ($userfields as $userfield) {
 		'tags' => 'name="field_' . $userfield['fieldid'] . '"',
 		'value' => ilya_html($value),
 		'error' => ilya_html(@$errors[$userfield['fieldid']]),
-		'rows' => ($userfield['flags'] & ILYA__FIELD_FLAGS_MULTI_LINE) ? 8 : null,
+		'rows' => ($userfield['flags'] & ILYA_FIELD_FLAGS_MULTI_LINE) ? 8 : null,
 	);
 }
 

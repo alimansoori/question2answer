@@ -19,14 +19,14 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 
-require_once ILYA__INCLUDE_DIR . 'app/post-create.php';
-require_once ILYA__INCLUDE_DIR . 'app/post-update.php';
+require_once ILYA_INCLUDE_DIR . 'app/post-create.php';
+require_once ILYA_INCLUDE_DIR . 'app/post-update.php';
 
 
 /**
@@ -42,8 +42,8 @@ require_once ILYA__INCLUDE_DIR . 'app/post-update.php';
  */
 function ilya_page_q_single_click_q($question, $answers, $commentsfollows, $closepost, &$error)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/post-update.php';
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'app/post-update.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
 
 	$userid = ilya_get_logged_in_userid();
 	$handle = ilya_get_logged_in_handle();
@@ -56,7 +56,7 @@ function ilya_page_q_single_click_q($question, $answers, $commentsfollows, $clos
 
 	if ((ilya_clicked('q_dohide') && $question['hideable']) || (ilya_clicked('q_doreject') && $question['moderatable'])) {
 		if (ilya_page_q_click_check_form_code($question, $error)) {
-			ilya_question_set_status($question, ILYA__POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
+			ilya_question_set_status($question, ILYA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
 			return true;
 		}
 	}
@@ -64,7 +64,7 @@ function ilya_page_q_single_click_q($question, $answers, $commentsfollows, $clos
 	if ((ilya_clicked('q_doreshow') && $question['reshowable']) || (ilya_clicked('q_doapprove') && $question['moderatable'])) {
 		if (ilya_page_q_click_check_form_code($question, $error)) {
 			if ($question['moderatable'] || $question['reshowimmed']) {
-				$status = ILYA__POST_STATUS_NORMAL;
+				$status = ILYA_POST_STATUS_NORMAL;
 
 			} else {
 				$in = ilya_page_q_prepare_post_for_filters($question);
@@ -76,7 +76,7 @@ function ilya_page_q_single_click_q($question, $answers, $commentsfollows, $clos
 					$in['queued'] = $tempin['queued']; // only preserve queued status in loop
 				}
 
-				$status = $in['queued'] ? ILYA__POST_STATUS_QUEUED : ILYA__POST_STATUS_NORMAL;
+				$status = $in['queued'] ? ILYA_POST_STATUS_QUEUED : ILYA_POST_STATUS_NORMAL;
 			}
 
 			ilya_question_set_status($question, $status, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
@@ -85,7 +85,7 @@ function ilya_page_q_single_click_q($question, $answers, $commentsfollows, $clos
 	}
 
 	if (ilya_clicked('q_doclaim') && $question['claimable'] && ilya_page_q_click_check_form_code($question, $error)) {
-		if (ilya_user_limits_remaining(ILYA__LIMIT_QUESTIONS)) { // already checked 'permit_post_q'
+		if (ilya_user_limits_remaining(ILYA_LIMIT_QUESTIONS)) { // already checked 'permit_post_q'
 			ilya_question_set_userid($question, $userid, $handle, $cookieid);
 			return true;
 
@@ -94,25 +94,25 @@ function ilya_page_q_single_click_q($question, $answers, $commentsfollows, $clos
 	}
 
 	if (ilya_clicked('q_doflag') && $question['flagbutton'] && ilya_page_q_click_check_form_code($question, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		$error = ilya_flag_error_html($question, $userid, ilya_request());
 		if (!$error) {
 			if (ilya_flag_set_tohide($question, $userid, $handle, $cookieid, $question))
-				ilya_question_set_status($question, ILYA__POST_STATUS_HIDDEN, null, null, null, $answers, $commentsfollows, $closepost); // hiding not really by this user so pass nulls
+				ilya_question_set_status($question, ILYA_POST_STATUS_HIDDEN, null, null, null, $answers, $commentsfollows, $closepost); // hiding not really by this user so pass nulls
 			return true;
 		}
 	}
 
 	if (ilya_clicked('q_dounflag') && $question['unflaggable'] && ilya_page_q_click_check_form_code($question, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		ilya_flag_clear($question, $userid, $handle, $cookieid);
 		return true;
 	}
 
 	if (ilya_clicked('q_doclearflags') && $question['clearflaggable'] && ilya_page_q_click_check_form_code($question, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		ilya_flags_clear_all($question, $userid, $handle, $cookieid);
 		return true;
@@ -155,7 +155,7 @@ function ilya_page_q_single_click_a($answer, $question, $answers, $commentsfollo
 
 	if ((ilya_clicked($prefix . 'dohide') && $answer['hideable']) || (ilya_clicked($prefix . 'doreject') && $answer['moderatable'])) {
 		if (ilya_page_q_click_check_form_code($answer, $error)) {
-			ilya_answer_set_status($answer, ILYA__POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $question, $commentsfollows);
+			ilya_answer_set_status($answer, ILYA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $question, $commentsfollows);
 			return true;
 		}
 	}
@@ -163,7 +163,7 @@ function ilya_page_q_single_click_a($answer, $question, $answers, $commentsfollo
 	if ((ilya_clicked($prefix . 'doreshow') && $answer['reshowable']) || (ilya_clicked($prefix . 'doapprove') && $answer['moderatable'])) {
 		if (ilya_page_q_click_check_form_code($answer, $error)) {
 			if ($answer['moderatable'] || $answer['reshowimmed']) {
-				$status = ILYA__POST_STATUS_NORMAL;
+				$status = ILYA_POST_STATUS_NORMAL;
 
 			} else {
 				$in = ilya_page_q_prepare_post_for_filters($answer);
@@ -175,7 +175,7 @@ function ilya_page_q_single_click_a($answer, $question, $answers, $commentsfollo
 					$in['queued'] = $tempin['queued']; // only preserve queued status in loop
 				}
 
-				$status = $in['queued'] ? ILYA__POST_STATUS_QUEUED : ILYA__POST_STATUS_NORMAL;
+				$status = $in['queued'] ? ILYA_POST_STATUS_QUEUED : ILYA_POST_STATUS_NORMAL;
 			}
 
 			ilya_answer_set_status($answer, $status, $userid, $handle, $cookieid, $question, $commentsfollows);
@@ -189,7 +189,7 @@ function ilya_page_q_single_click_a($answer, $question, $answers, $commentsfollo
 	}
 
 	if (ilya_clicked($prefix . 'doclaim') && $answer['claimable'] && ilya_page_q_click_check_form_code($answer, $error)) {
-		if (ilya_user_limits_remaining(ILYA__LIMIT_ANSWERS)) { // already checked 'permit_post_a'
+		if (ilya_user_limits_remaining(ILYA_LIMIT_ANSWERS)) { // already checked 'permit_post_a'
 			ilya_answer_set_userid($answer, $userid, $handle, $cookieid);
 			return true;
 
@@ -198,26 +198,26 @@ function ilya_page_q_single_click_a($answer, $question, $answers, $commentsfollo
 	}
 
 	if (ilya_clicked($prefix . 'doflag') && $answer['flagbutton'] && ilya_page_q_click_check_form_code($answer, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		$error = ilya_flag_error_html($answer, $userid, ilya_request());
 		if (!$error) {
 			if (ilya_flag_set_tohide($answer, $userid, $handle, $cookieid, $question))
-				ilya_answer_set_status($answer, ILYA__POST_STATUS_HIDDEN, null, null, null, $question, $commentsfollows); // hiding not really by this user so pass nulls
+				ilya_answer_set_status($answer, ILYA_POST_STATUS_HIDDEN, null, null, null, $question, $commentsfollows); // hiding not really by this user so pass nulls
 
 			return true;
 		}
 	}
 
 	if (ilya_clicked($prefix . 'dounflag') && $answer['unflaggable'] && ilya_page_q_click_check_form_code($answer, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		ilya_flag_clear($answer, $userid, $handle, $cookieid);
 		return true;
 	}
 
 	if (ilya_clicked($prefix . 'doclearflags') && $answer['clearflaggable'] && ilya_page_q_click_check_form_code($answer, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		ilya_flags_clear_all($answer, $userid, $handle, $cookieid);
 		return true;
@@ -247,7 +247,7 @@ function ilya_page_q_single_click_c($comment, $question, $parent, &$error)
 
 	if ((ilya_clicked($prefix . 'dohide') && $comment['hideable']) || (ilya_clicked($prefix . 'doreject') && $comment['moderatable'])) {
 		if (ilya_page_q_click_check_form_code($parent, $error)) {
-			ilya_comment_set_status($comment, ILYA__POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $question, $parent);
+			ilya_comment_set_status($comment, ILYA_POST_STATUS_HIDDEN, $userid, $handle, $cookieid, $question, $parent);
 			return true;
 		}
 	}
@@ -255,7 +255,7 @@ function ilya_page_q_single_click_c($comment, $question, $parent, &$error)
 	if ((ilya_clicked($prefix . 'doreshow') && $comment['reshowable']) || (ilya_clicked($prefix . 'doapprove') && $comment['moderatable'])) {
 		if (ilya_page_q_click_check_form_code($parent, $error)) {
 			if ($comment['moderatable'] || $comment['reshowimmed']) {
-				$status = ILYA__POST_STATUS_NORMAL;
+				$status = ILYA_POST_STATUS_NORMAL;
 
 			} else {
 				$in = ilya_page_q_prepare_post_for_filters($comment);
@@ -267,7 +267,7 @@ function ilya_page_q_single_click_c($comment, $question, $parent, &$error)
 					$in['queued'] = $tempin['queued']; // only preserve queued status in loop
 				}
 
-				$status = $in['queued'] ? ILYA__POST_STATUS_QUEUED : ILYA__POST_STATUS_NORMAL;
+				$status = $in['queued'] ? ILYA_POST_STATUS_QUEUED : ILYA_POST_STATUS_NORMAL;
 			}
 
 			ilya_comment_set_status($comment, $status, $userid, $handle, $cookieid, $question, $parent);
@@ -281,7 +281,7 @@ function ilya_page_q_single_click_c($comment, $question, $parent, &$error)
 	}
 
 	if (ilya_clicked($prefix . 'doclaim') && $comment['claimable'] && ilya_page_q_click_check_form_code($parent, $error)) {
-		if (ilya_user_limits_remaining(ILYA__LIMIT_COMMENTS)) {
+		if (ilya_user_limits_remaining(ILYA_LIMIT_COMMENTS)) {
 			ilya_comment_set_userid($comment, $userid, $handle, $cookieid);
 			return true;
 
@@ -290,26 +290,26 @@ function ilya_page_q_single_click_c($comment, $question, $parent, &$error)
 	}
 
 	if (ilya_clicked($prefix . 'doflag') && $comment['flagbutton'] && ilya_page_q_click_check_form_code($parent, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		$error = ilya_flag_error_html($comment, $userid, ilya_request());
 		if (!$error) {
 			if (ilya_flag_set_tohide($comment, $userid, $handle, $cookieid, $question))
-				ilya_comment_set_status($comment, ILYA__POST_STATUS_HIDDEN, null, null, null, $question, $parent); // hiding not really by this user so pass nulls
+				ilya_comment_set_status($comment, ILYA_POST_STATUS_HIDDEN, null, null, null, $question, $parent); // hiding not really by this user so pass nulls
 
 			return true;
 		}
 	}
 
 	if (ilya_clicked($prefix . 'dounflag') && $comment['unflaggable'] && ilya_page_q_click_check_form_code($parent, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		ilya_flag_clear($comment, $userid, $handle, $cookieid);
 		return true;
 	}
 
 	if (ilya_clicked($prefix . 'doclearflags') && $comment['clearflaggable'] && ilya_page_q_click_check_form_code($parent, $error)) {
-		require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+		require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 		ilya_flags_clear_all($comment, $userid, $handle, $cookieid);
 		return true;

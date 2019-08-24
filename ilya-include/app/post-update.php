@@ -19,22 +19,22 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/post-create.php';
-require_once ILYA__INCLUDE_DIR . 'app/updates.php';
-require_once ILYA__INCLUDE_DIR . 'db/post-create.php';
-require_once ILYA__INCLUDE_DIR . 'db/post-update.php';
-require_once ILYA__INCLUDE_DIR . 'db/points.php';
-require_once ILYA__INCLUDE_DIR . 'db/hotness.php';
+require_once ILYA_INCLUDE_DIR . 'app/post-create.php';
+require_once ILYA_INCLUDE_DIR . 'app/updates.php';
+require_once ILYA_INCLUDE_DIR . 'db/post-create.php';
+require_once ILYA_INCLUDE_DIR . 'db/post-update.php';
+require_once ILYA_INCLUDE_DIR . 'db/points.php';
+require_once ILYA_INCLUDE_DIR . 'db/hotness.php';
 
 
-define('ILYA__POST_STATUS_NORMAL', 0);
-define('ILYA__POST_STATUS_HIDDEN', 1);
-define('ILYA__POST_STATUS_QUEUED', 2);
+define('ILYA_POST_STATUS_NORMAL', 0);
+define('ILYA_POST_STATUS_HIDDEN', 1);
+define('ILYA_POST_STATUS_QUEUED', 2);
 
 
 /**
@@ -71,15 +71,15 @@ function ilya_question_set_content($oldquestion, $title, $content, $format, $tex
 
 	ilya_db_post_set_content($oldquestion['postid'], $title, $content, $format, $tagstring, $notify,
 		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null,
-		($titlechanged || $contentchanged) ? ILYA__UPDATE_CONTENT : ILYA__UPDATE_TAGS, $name);
+		($titlechanged || $contentchanged) ? ILYA_UPDATE_CONTENT : ILYA_UPDATE_TAGS, $name);
 
 	if (isset($extravalue)) {
-		require_once ILYA__INCLUDE_DIR . 'db/metas.php';
+		require_once ILYA_INCLUDE_DIR . 'db/metas.php';
 		ilya_db_postmeta_set($oldquestion['postid'], 'ilya_q_extra', $extravalue);
 	}
 
 	if ($setupdated && $remoderate) {
-		require_once ILYA__INCLUDE_DIR . 'app/posts.php';
+		require_once ILYA_INCLUDE_DIR . 'app/posts.php';
 
 		$answers = ilya_post_get_question_answers($oldquestion['postid']);
 		$commentsfollows = ilya_post_get_question_commentsfollows($oldquestion['postid']);
@@ -307,12 +307,12 @@ function ilya_question_close_other($oldquestion, $oldclosepost, $note, $userid, 
  */
 function ilya_question_set_hidden($oldquestion, $hidden, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost = null)
 {
-	ilya_question_set_status($oldquestion, $hidden ? ILYA__POST_STATUS_HIDDEN : ILYA__POST_STATUS_NORMAL, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
+	ilya_question_set_status($oldquestion, $hidden ? ILYA_POST_STATUS_HIDDEN : ILYA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost);
 }
 
 
 /**
- * Set the status (application level) of $oldquestion to $status, one of the ILYA__POST_STATUS_* constants above. Pass
+ * Set the status (application level) of $oldquestion to $status, one of the ILYA_POST_STATUS_* constants above. Pass
  * details of the user doing this in $userid, $handle and $cookieid, the database records for all answers to the
  * question in $answers, the database records for all comments on the question or the question's answers in
  * $commentsfollows ($commentsfollows can also contain records for follow-on questions which are ignored), and
@@ -329,8 +329,8 @@ function ilya_question_set_hidden($oldquestion, $hidden, $userid, $handle, $cook
  */
 function ilya_question_set_status($oldquestion, $status, $userid, $handle, $cookieid, $answers, $commentsfollows, $closepost = null)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
-	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/updates.php';
 
 	$washidden = ($oldquestion['type'] == 'Q_HIDDEN');
 	$wasqueued = ($oldquestion['type'] == 'Q_QUEUED');
@@ -353,12 +353,12 @@ function ilya_question_set_status($oldquestion, $status, $userid, $handle, $cook
 	$setupdated = false;
 	$event = null;
 
-	if ($status == ILYA__POST_STATUS_QUEUED) {
+	if ($status == ILYA_POST_STATUS_QUEUED) {
 		$newtype = 'Q_QUEUED';
 		if (!$wasqueued)
 			$event = 'q_requeue'; // same event whether it was hidden or shown before
 
-	} elseif ($status == ILYA__POST_STATUS_HIDDEN) {
+	} elseif ($status == ILYA_POST_STATUS_HIDDEN) {
 		$newtype = 'Q_HIDDEN';
 		if (!$washidden) {
 			$event = $wasqueued ? 'q_reject' : 'q_hide';
@@ -366,7 +366,7 @@ function ilya_question_set_status($oldquestion, $status, $userid, $handle, $cook
 				$setupdated = true;
 		}
 
-	} elseif ($status == ILYA__POST_STATUS_NORMAL) {
+	} elseif ($status == ILYA_POST_STATUS_NORMAL) {
 		$newtype = 'Q';
 		if ($wasqueued)
 			$event = 'q_approve';
@@ -378,9 +378,9 @@ function ilya_question_set_status($oldquestion, $status, $userid, $handle, $cook
 	} else
 		ilya_fatal_error('Unknown status in ilya_question_set_status(): ' . $status);
 
-	ilya_db_post_set_type($oldquestion['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA__UPDATE_VISIBLE);
+	ilya_db_post_set_type($oldquestion['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA_UPDATE_VISIBLE);
 
-	if ($wasqueued && $status == ILYA__POST_STATUS_NORMAL && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
+	if ($wasqueued && $status == ILYA_POST_STATUS_NORMAL && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
 		if ($wasrequeued) // reset edit time to now if there was one, since we're approving the edit...
 			ilya_db_post_set_updated($oldquestion['postid'], null);
 
@@ -393,13 +393,13 @@ function ilya_question_set_status($oldquestion, $status, $userid, $handle, $cook
 	ilya_update_counts_for_q($oldquestion['postid']);
 	ilya_db_points_update_ifuser($oldquestion['userid'], array('qposts', 'aselects'));
 
-	if ($wasqueued || ($status == ILYA__POST_STATUS_QUEUED))
+	if ($wasqueued || ($status == ILYA_POST_STATUS_QUEUED))
 		ilya_db_queuedcount_update();
 
 	if ($oldquestion['flagcount'])
 		ilya_db_flaggedcount_update();
 
-	if ($status == ILYA__POST_STATUS_NORMAL) {
+	if ($status == ILYA_POST_STATUS_NORMAL) {
 		ilya_post_index($oldquestion['postid'], 'Q', $oldquestion['postid'], $oldquestion['parentid'], $oldquestion['title'], $oldquestion['content'],
 			$oldquestion['format'], ilya_viewer_text($oldquestion['content'], $oldquestion['format']), $oldquestion['tags'], $oldquestion['categoryid']);
 
@@ -448,9 +448,9 @@ function ilya_question_set_status($oldquestion, $status, $userid, $handle, $cook
 			));
 	}
 
-	if ($wasqueued && ($status == ILYA__POST_STATUS_NORMAL) && !$wasrequeued) {
-		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-		require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	if ($wasqueued && ($status == ILYA_POST_STATUS_NORMAL) && !$wasrequeued) {
+		require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+		require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 		ilya_report_event('q_post', $oldquestion['userid'], $oldquestion['handle'], $oldquestion['cookieid'], $eventparams + array(
 			'notify' => isset($oldquestion['notify']),
@@ -535,7 +535,7 @@ function ilya_question_set_category($oldquestion, $categoryid, $userid, $handle,
  */
 function ilya_question_delete($oldquestion, $userid, $handle, $cookieid, $oldclosepost = null)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
 
 	if ($oldquestion['type'] != 'Q_HIDDEN')
 		ilya_fatal_error('Tried to delete a non-hidden question');
@@ -581,7 +581,7 @@ function ilya_question_delete($oldquestion, $userid, $handle, $cookieid, $oldclo
  */
 function ilya_question_set_userid($oldquestion, $userid, $handle, $cookieid)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
 
 	$postid = $oldquestion['postid'];
 
@@ -660,10 +660,10 @@ function ilya_answer_set_content($oldanswer, $content, $format, $text, $notify, 
 	$setupdated = $contentchanged && (!$wasqueued) && !$silent;
 
 	ilya_db_post_set_content($oldanswer['postid'], $oldanswer['title'], $content, $format, $oldanswer['tags'], $notify,
-		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA__UPDATE_CONTENT, $name);
+		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA_UPDATE_CONTENT, $name);
 
 	if ($setupdated && $remoderate) {
-		require_once ILYA__INCLUDE_DIR . 'app/posts.php';
+		require_once ILYA_INCLUDE_DIR . 'app/posts.php';
 
 		$commentsfollows = ilya_post_get_answer_commentsfollows($oldanswer['postid']);
 
@@ -720,12 +720,12 @@ function ilya_answer_set_content($oldanswer, $content, $format, $text, $notify, 
  */
 function ilya_answer_set_hidden($oldanswer, $hidden, $userid, $handle, $cookieid, $question, $commentsfollows)
 {
-	ilya_answer_set_status($oldanswer, $hidden ? ILYA__POST_STATUS_HIDDEN : ILYA__POST_STATUS_NORMAL, $userid, $handle, $cookieid, $question, $commentsfollows);
+	ilya_answer_set_status($oldanswer, $hidden ? ILYA_POST_STATUS_HIDDEN : ILYA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $question, $commentsfollows);
 }
 
 
 /**
- * Set the status (application level) of $oldanswer to $status, one of the ILYA__POST_STATUS_* constants above. Pass
+ * Set the status (application level) of $oldanswer to $status, one of the ILYA_POST_STATUS_* constants above. Pass
  * details of the user doing this in $userid, $handle and $cookieid, the database record for the question in $question,
  * and the database records for all comments on the answer in $commentsfollows ($commentsfollows can also contain other
  * records which are ignored). Handles indexing, user points, cached counts and event reports. See /ilya-include/app/posts.php for
@@ -740,7 +740,7 @@ function ilya_answer_set_hidden($oldanswer, $hidden, $userid, $handle, $cookieid
  */
 function ilya_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid, $question, $commentsfollows)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 	$washidden = ($oldanswer['type'] == 'A_HIDDEN');
 	$wasqueued = ($oldanswer['type'] == 'A_QUEUED');
@@ -756,12 +756,12 @@ function ilya_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid
 	$setupdated = false;
 	$event = null;
 
-	if ($status == ILYA__POST_STATUS_QUEUED) {
+	if ($status == ILYA_POST_STATUS_QUEUED) {
 		$newtype = 'A_QUEUED';
 		if (!$wasqueued)
 			$event = 'a_requeue'; // same event whether it was hidden or shown before
 
-	} elseif ($status == ILYA__POST_STATUS_HIDDEN) {
+	} elseif ($status == ILYA_POST_STATUS_HIDDEN) {
 		$newtype = 'A_HIDDEN';
 		if (!$washidden) {
 			$event = $wasqueued ? 'a_reject' : 'a_hide';
@@ -773,7 +773,7 @@ function ilya_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid
 			ilya_question_set_selchildid(null, null, null, $question, null, array($oldanswer['postid'] => $oldanswer));
 		}
 
-	} elseif ($status == ILYA__POST_STATUS_NORMAL) {
+	} elseif ($status == ILYA_POST_STATUS_NORMAL) {
 		$newtype = 'A';
 		if ($wasqueued)
 			$event = 'a_approve';
@@ -785,9 +785,9 @@ function ilya_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid
 	} else
 		ilya_fatal_error('Unknown status in ilya_answer_set_status(): ' . $status);
 
-	ilya_db_post_set_type($oldanswer['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA__UPDATE_VISIBLE);
+	ilya_db_post_set_type($oldanswer['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA_UPDATE_VISIBLE);
 
-	if ($wasqueued && ($status == ILYA__POST_STATUS_NORMAL) && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
+	if ($wasqueued && ($status == ILYA_POST_STATUS_NORMAL) && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
 		if ($wasrequeued)
 			ilya_db_post_set_updated($oldanswer['postid'], null);
 		else
@@ -797,13 +797,13 @@ function ilya_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid
 	ilya_update_q_counts_for_a($question['postid']);
 	ilya_db_points_update_ifuser($oldanswer['userid'], array('aposts', 'aselecteds'));
 
-	if ($wasqueued || $status == ILYA__POST_STATUS_QUEUED)
+	if ($wasqueued || $status == ILYA_POST_STATUS_QUEUED)
 		ilya_db_queuedcount_update();
 
 	if ($oldanswer['flagcount'])
 		ilya_db_flaggedcount_update();
 
-	if ($question['type'] == 'Q' && $status == ILYA__POST_STATUS_NORMAL) { // even if answer visible, don't index if question is hidden or queued
+	if ($question['type'] == 'Q' && $status == ILYA_POST_STATUS_NORMAL) { // even if answer visible, don't index if question is hidden or queued
 		ilya_post_index($oldanswer['postid'], 'A', $question['postid'], $oldanswer['parentid'], null, $oldanswer['content'],
 			$oldanswer['format'], ilya_viewer_text($oldanswer['content'], $oldanswer['format']), null, $oldanswer['categoryid']);
 
@@ -834,8 +834,8 @@ function ilya_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid
 			));
 	}
 
-	if ($wasqueued && ($status == ILYA__POST_STATUS_NORMAL) && !$wasrequeued) {
-		require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	if ($wasqueued && ($status == ILYA_POST_STATUS_NORMAL) && !$wasrequeued) {
+		require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 		ilya_report_event('a_post', $oldanswer['userid'], $oldanswer['handle'], $oldanswer['cookieid'], $eventparams + array(
 			'notify' => isset($oldanswer['notify']),
@@ -859,7 +859,7 @@ function ilya_answer_set_status($oldanswer, $status, $userid, $handle, $cookieid
  */
 function ilya_answer_delete($oldanswer, $question, $userid, $handle, $cookieid)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
 
 	if ($oldanswer['type'] != 'A_HIDDEN')
 		ilya_fatal_error('Tried to delete a non-hidden answer');
@@ -905,7 +905,7 @@ function ilya_answer_delete($oldanswer, $question, $userid, $handle, $cookieid)
  */
 function ilya_answer_set_userid($oldanswer, $userid, $handle, $cookieid)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
 
 	$postid = $oldanswer['postid'];
 
@@ -958,7 +958,7 @@ function ilya_comment_set_content($oldcomment, $content, $format, $text, $notify
 	$setupdated = $contentchanged && (!$wasqueued) && !$silent;
 
 	ilya_db_post_set_content($oldcomment['postid'], $oldcomment['title'], $content, $format, $oldcomment['tags'], $notify,
-		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA__UPDATE_CONTENT, $name);
+		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA_UPDATE_CONTENT, $name);
 
 	if ($setupdated && $remoderate) {
 		ilya_db_post_set_type($oldcomment['postid'], 'C_QUEUED');
@@ -1026,7 +1026,7 @@ function ilya_comment_set_content($oldcomment, $content, $format, $text, $notify
  */
 function ilya_answer_to_comment($oldanswer, $parentid, $content, $format, $text, $notify, $userid, $handle, $cookieid, $question, $answers, $commentsfollows, $name = null, $remoderate = false, $silent = false)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
 
 	$parent = isset($answers[$parentid]) ? $answers[$parentid] : $question;
 
@@ -1042,10 +1042,10 @@ function ilya_answer_to_comment($oldanswer, $parentid, $content, $format, $text,
 		$newtype = substr_replace($oldanswer['type'], 'C', 0, 1);
 
 	ilya_db_post_set_type($oldanswer['postid'], $newtype, ($wasqueued || $silent) ? null : $userid,
-		($wasqueued || $silent) ? null : ilya_remote_ip_address(), ILYA__UPDATE_TYPE);
+		($wasqueued || $silent) ? null : ilya_remote_ip_address(), ILYA_UPDATE_TYPE);
 	ilya_db_post_set_parent($oldanswer['postid'], $parentid);
 	ilya_db_post_set_content($oldanswer['postid'], $oldanswer['title'], $content, $format, $oldanswer['tags'], $notify,
-		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA__UPDATE_CONTENT, $name);
+		$setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA_UPDATE_CONTENT, $name);
 
 	foreach ($commentsfollows as $commentfollow) {
 		if ($commentfollow['parentid'] == $oldanswer['postid']) // do same thing for comments and follows
@@ -1116,12 +1116,12 @@ function ilya_answer_to_comment($oldanswer, $parentid, $content, $format, $text,
  */
 function ilya_comment_set_hidden($oldcomment, $hidden, $userid, $handle, $cookieid, $question, $parent)
 {
-	ilya_comment_set_status($oldcomment, $hidden ? ILYA__POST_STATUS_HIDDEN : ILYA__POST_STATUS_NORMAL, $userid, $handle, $cookieid, $question, $parent);
+	ilya_comment_set_status($oldcomment, $hidden ? ILYA_POST_STATUS_HIDDEN : ILYA_POST_STATUS_NORMAL, $userid, $handle, $cookieid, $question, $parent);
 }
 
 
 /**
- * Set the status (application level) of $oldcomment to $status, one of the ILYA__POST_STATUS_* constants above. Pass the
+ * Set the status (application level) of $oldcomment to $status, one of the ILYA_POST_STATUS_* constants above. Pass the
  * antecedent question's record in $question, details of the user doing this in $userid, $handle and $cookieid, and the
  * answer's database record in $answer if this is a comment on an answer, otherwise null. Handles indexing, user
  * points, cached counts and event reports. See /ilya-include/app/posts.php for a higher-level function which is easier to use.
@@ -1135,7 +1135,7 @@ function ilya_comment_set_hidden($oldcomment, $hidden, $userid, $handle, $cookie
  */
 function ilya_comment_set_status($oldcomment, $status, $userid, $handle, $cookieid, $question, $parent)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 	if (!isset($parent))
 		$parent = $question; // for backwards compatibility with old answer parameter
@@ -1149,12 +1149,12 @@ function ilya_comment_set_status($oldcomment, $status, $userid, $handle, $cookie
 	$setupdated = false;
 	$event = null;
 
-	if ($status == ILYA__POST_STATUS_QUEUED) {
+	if ($status == ILYA_POST_STATUS_QUEUED) {
 		$newtype = 'C_QUEUED';
 		if (!$wasqueued)
 			$event = 'c_requeue'; // same event whether it was hidden or shown before
 
-	} elseif ($status == ILYA__POST_STATUS_HIDDEN) {
+	} elseif ($status == ILYA_POST_STATUS_HIDDEN) {
 		$newtype = 'C_HIDDEN';
 		if (!$washidden) {
 			$event = $wasqueued ? 'c_reject' : 'c_hide';
@@ -1162,7 +1162,7 @@ function ilya_comment_set_status($oldcomment, $status, $userid, $handle, $cookie
 				$setupdated = true;
 		}
 
-	} elseif ($status == ILYA__POST_STATUS_NORMAL) {
+	} elseif ($status == ILYA_POST_STATUS_NORMAL) {
 		$newtype = 'C';
 		if ($wasqueued)
 			$event = 'c_approve';
@@ -1174,9 +1174,9 @@ function ilya_comment_set_status($oldcomment, $status, $userid, $handle, $cookie
 	} else
 		ilya_fatal_error('Unknown status in ilya_comment_set_status(): ' . $status);
 
-	ilya_db_post_set_type($oldcomment['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA__UPDATE_VISIBLE);
+	ilya_db_post_set_type($oldcomment['postid'], $newtype, $setupdated ? $userid : null, $setupdated ? ilya_remote_ip_address() : null, ILYA_UPDATE_VISIBLE);
 
-	if ($wasqueued && ($status == ILYA__POST_STATUS_NORMAL) && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
+	if ($wasqueued && ($status == ILYA_POST_STATUS_NORMAL) && ilya_opt('moderate_update_time')) { // ... for approval of a post, can set time to now instead
 		if ($wasrequeued)
 			ilya_db_post_set_updated($oldcomment['postid'], null);
 		else
@@ -1186,13 +1186,13 @@ function ilya_comment_set_status($oldcomment, $status, $userid, $handle, $cookie
 	ilya_db_ccount_update();
 	ilya_db_points_update_ifuser($oldcomment['userid'], array('cposts'));
 
-	if ($wasqueued || $status == ILYA__POST_STATUS_QUEUED)
+	if ($wasqueued || $status == ILYA_POST_STATUS_QUEUED)
 		ilya_db_queuedcount_update();
 
 	if ($oldcomment['flagcount'])
 		ilya_db_flaggedcount_update();
 
-	if ($question['type'] == 'Q' && ($parent['type'] == 'Q' || $parent['type'] == 'A') && $status == ILYA__POST_STATUS_NORMAL) {
+	if ($question['type'] == 'Q' && ($parent['type'] == 'Q' || $parent['type'] == 'A') && $status == ILYA_POST_STATUS_NORMAL) {
 		// only index if none of the things it depends on are hidden or queued
 		ilya_post_index($oldcomment['postid'], 'C', $question['postid'], $oldcomment['parentid'], null, $oldcomment['content'],
 			$oldcomment['format'], ilya_viewer_text($oldcomment['content'], $oldcomment['format']), null, $oldcomment['categoryid']);
@@ -1220,9 +1220,9 @@ function ilya_comment_set_status($oldcomment, $status, $userid, $handle, $cookie
 		));
 	}
 
-	if ($wasqueued && $status == ILYA__POST_STATUS_NORMAL && !$wasrequeued) {
-		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-		require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	if ($wasqueued && $status == ILYA_POST_STATUS_NORMAL && !$wasrequeued) {
+		require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+		require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 		$commentsfollows = ilya_db_single_select(ilya_db_full_child_posts_selectspec(null, $oldcomment['parentid']));
 		$thread = array();
@@ -1291,7 +1291,7 @@ function ilya_comment_delete($oldcomment, $question, $parent, $userid, $handle, 
  */
 function ilya_comment_set_userid($oldcomment, $userid, $handle, $cookieid)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
 
 	$postid = $oldcomment['postid'];
 

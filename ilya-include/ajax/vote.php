@@ -19,12 +19,12 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
-require_once ILYA__INCLUDE_DIR . 'app/votes.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
-require_once ILYA__INCLUDE_DIR . 'app/options.php';
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA_INCLUDE_DIR . 'app/votes.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'app/options.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 
 $postid = ilya_post_text('postid');
@@ -53,11 +53,11 @@ if ($voteerror === false) {
 	$themeclass = ilya_load_theme_class(ilya_get_site_theme(), 'voting', null, null);
 	$themeclass->initialize();
 
-	echo "ILYA__AJAX_RESPONSE\n1\n";
+	echo "ILYA_AJAX_RESPONSE\n1\n";
 	$themeclass->voting_inner_html($fields);
 
 	return;
 
 }
 
-echo "ILYA__AJAX_RESPONSE\n0\n" . $voteerror;
+echo "ILYA_AJAX_RESPONSE\n0\n" . $voteerror;

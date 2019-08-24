@@ -19,14 +19,14 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
-require_once ILYA__INCLUDE_DIR . 'app/options.php';
-require_once ILYA__INCLUDE_DIR . 'app/search.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'app/options.php';
+require_once ILYA_INCLUDE_DIR . 'app/search.php';
 
 
 // Perform the search if appropriate
@@ -38,7 +38,7 @@ if (strlen(ilya_get('q'))) {
 	$start = ilya_get_start();
 
 	$display = ilya_opt_if_loaded('page_size_search');
-	$count = 2 * (isset($display) ? $display : ILYA__DB_RETRIEVE_QS_AS) + 1;
+	$count = 2 * (isset($display) ? $display : ILYA_DB_RETRIEVE_QS_AS) + 1;
 	// get enough results to be able to give some idea of how many pages of search results there are
 
 	// Perform the search using appropriate module

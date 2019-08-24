@@ -48,7 +48,7 @@ class ilya_activity_count
 
 	public function output_count($themeobject, $value, $langsingular, $langplural)
 	{
-		require_once ILYA__INCLUDE_DIR . 'app/format.php';
+		require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 		$themeobject->output('<p class="ilya-activity-count-item">');
 

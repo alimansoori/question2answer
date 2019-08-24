@@ -37,14 +37,14 @@ class ilya_xml_sitemap
 
 	public function admin_form()
 	{
-		require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+		require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 		$saved = false;
 
 		if (ilya_clicked('xml_sitemap_save_button')) {
 			ilya_opt('xml_sitemap_show_questions', (int)ilya_post_text('xml_sitemap_show_questions_field'));
 
-			if (!ILYA__FINAL_EXTERNAL_USERS)
+			if (!ILYA_FINAL_EXTERNAL_USERS)
 				ilya_opt('xml_sitemap_show_users', (int)ilya_post_text('xml_sitemap_show_users_field'));
 
 			if (ilya_using_tags())
@@ -78,7 +78,7 @@ class ilya_xml_sitemap
 			),
 		);
 
-		if (!ILYA__FINAL_EXTERNAL_USERS) {
+		if (!ILYA_FINAL_EXTERNAL_USERS) {
 			$form['fields']['users'] = array(
 				'label' => 'Include user pages',
 				'type' => 'checkbox',
@@ -173,7 +173,7 @@ class ilya_xml_sitemap
 
 		// User pages
 
-		if (!ILYA__FINAL_EXTERNAL_USERS && ilya_opt('xml_sitemap_show_users')) {
+		if (!ILYA_FINAL_EXTERNAL_USERS && ilya_opt('xml_sitemap_show_users')) {
 			$nextuserid = 0;
 
 			while (1) {

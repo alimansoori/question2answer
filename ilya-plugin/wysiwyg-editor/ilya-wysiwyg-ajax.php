@@ -31,7 +31,7 @@ class ilya_wysiwyg_ajax
 	// Fix path to WYSIWYG editor smileys
 	public function process_request($request)
 	{
-		require_once ILYA__INCLUDE_DIR.'ilya-app-posts.php';
+		require_once ILYA_INCLUDE_DIR.'ilya-app-posts.php';
 
 		// smiley replacement regexes
 		$rxSearch = '<(img|a)([^>]+)(src|href)="([^"]+)/wysiwyg-editor/plugins/smiley/images/([^"]+)"';

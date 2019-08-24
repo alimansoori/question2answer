@@ -19,9 +19,9 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/limits.php';
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/limits.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 
 // Load relevant information about this question and the comment parent
@@ -40,15 +40,15 @@ list($question, $parent, $children) = ilya_db_select_with_pending(
 // Check if the question and parent exist, and whether the user has permission to do this
 
 if (@$question['basetype'] == 'Q' && (@$parent['basetype'] == 'Q' || @$parent['basetype'] == 'A') &&
-	!ilya_user_post_permit_error('permit_post_c', $parent, ILYA__LIMIT_COMMENTS)
+	!ilya_user_post_permit_error('permit_post_c', $parent, ILYA_LIMIT_COMMENTS)
 ) {
-	require_once ILYA__INCLUDE_DIR . 'app/captcha.php';
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
-	require_once ILYA__INCLUDE_DIR . 'app/post-create.php';
-	require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
-	require_once ILYA__INCLUDE_DIR . 'pages/question-view.php';
-	require_once ILYA__INCLUDE_DIR . 'pages/question-submit.php';
-	require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+	require_once ILYA_INCLUDE_DIR . 'app/captcha.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/post-create.php';
+	require_once ILYA_INCLUDE_DIR . 'app/cookies.php';
+	require_once ILYA_INCLUDE_DIR . 'pages/question-view.php';
+	require_once ILYA_INCLUDE_DIR . 'pages/question-submit.php';
+	require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 
 	// Try to create the new comment
@@ -78,7 +78,7 @@ if (@$question['basetype'] == 'Q' && (@$parent['basetype'] == 'Q' || @$parent['b
 		$themeclass = ilya_load_theme_class(ilya_get_site_theme(), 'ajax-comments', null, null);
 		$themeclass->initialize();
 
-		echo "ILYA__AJAX_RESPONSE\n1\n";
+		echo "ILYA_AJAX_RESPONSE\n1\n";
 
 
 		// send back the ID of the new comment
@@ -92,4 +92,4 @@ if (@$question['basetype'] == 'Q' && (@$parent['basetype'] == 'Q' || @$parent['b
 	}
 }
 
-echo "ILYA__AJAX_RESPONSE\n0\n"; // fall back to non-Ajax submission if there were any problems
+echo "ILYA_AJAX_RESPONSE\n0\n"; // fall back to non-Ajax submission if there were any problems

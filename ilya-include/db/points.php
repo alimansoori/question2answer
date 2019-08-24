@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -54,7 +54,7 @@ function ilya_db_points_calculations()
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'app/options.php';
+	require_once ILYA_INCLUDE_DIR . 'app/options.php';
 
 	$options = ilya_get_options(ilya_db_points_option_names());
 
@@ -167,8 +167,8 @@ function ilya_db_points_update_ifuser($userid, $columns)
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	if (ilya_should_update_counts() && isset($userid)) {
-		require_once ILYA__INCLUDE_DIR . 'app/options.php';
-		require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
+		require_once ILYA_INCLUDE_DIR . 'app/options.php';
+		require_once ILYA_INCLUDE_DIR . 'app/cookies.php';
 
 		$calculations = ilya_db_points_calculations();
 

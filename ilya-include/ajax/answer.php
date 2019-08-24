@@ -19,10 +19,10 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'app/posts.php';
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/limits.php';
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/posts.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/limits.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 
 // Load relevant information about this question
@@ -38,13 +38,13 @@ list($question, $childposts) = ilya_db_select_with_pending(
 
 // Check if the question exists, is not closed, and whether the user has permission to do this
 
-if (@$question['basetype'] == 'Q' && !ilya_post_is_closed($question) && !ilya_user_post_permit_error('permit_post_a', $question, ILYA__LIMIT_ANSWERS)) {
-	require_once ILYA__INCLUDE_DIR . 'app/captcha.php';
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
-	require_once ILYA__INCLUDE_DIR . 'app/post-create.php';
-	require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
-	require_once ILYA__INCLUDE_DIR . 'pages/question-view.php';
-	require_once ILYA__INCLUDE_DIR . 'pages/question-submit.php';
+if (@$question['basetype'] == 'Q' && !ilya_post_is_closed($question) && !ilya_user_post_permit_error('permit_post_a', $question, ILYA_LIMIT_ANSWERS)) {
+	require_once ILYA_INCLUDE_DIR . 'app/captcha.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/post-create.php';
+	require_once ILYA_INCLUDE_DIR . 'app/cookies.php';
+	require_once ILYA_INCLUDE_DIR . 'pages/question-view.php';
+	require_once ILYA_INCLUDE_DIR . 'pages/question-submit.php';
 
 
 	// Try to create the new answer
@@ -68,7 +68,7 @@ if (@$question['basetype'] == 'Q' && !ilya_post_is_closed($question) && !ilya_us
 		$themeclass = ilya_load_theme_class(ilya_get_site_theme(), 'ajax-answer', null, null);
 		$themeclass->initialize();
 
-		echo "ILYA__AJAX_RESPONSE\n1\n";
+		echo "ILYA_AJAX_RESPONSE\n1\n";
 
 
 		// Send back whether the 'answer' button should still be visible
@@ -96,4 +96,4 @@ if (@$question['basetype'] == 'Q' && !ilya_post_is_closed($question) && !ilya_us
 }
 
 
-echo "ILYA__AJAX_RESPONSE\n0\n"; // fall back to non-Ajax submission if there were any problems
+echo "ILYA_AJAX_RESPONSE\n0\n"; // fall back to non-Ajax submission if there were any problems

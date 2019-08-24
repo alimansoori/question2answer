@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -34,7 +34,7 @@ if (!defined('ILYA__VERSION')) { // don't allow this page to be requested direct
 function ilya_admin_check_privileges(&$ilya_content)
 {
 	if (!ilya_is_logged_in()) {
-		require_once ILYA__INCLUDE_DIR . 'app/format.php';
+		require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 		$ilya_content = ilya_content_prepare();
 
@@ -43,7 +43,7 @@ function ilya_admin_check_privileges(&$ilya_content)
 
 		return false;
 
-	} elseif (ilya_get_logged_in_level() < ILYA__USER_LEVEL_ADMIN) {
+	} elseif (ilya_get_logged_in_level() < ILYA_USER_LEVEL_ADMIN) {
 		$ilya_content = ilya_content_prepare();
 
 		$ilya_content['title'] = ilya_lang_html('admin/admin_title');
@@ -122,7 +122,7 @@ function ilya_admin_language_options()
 
 	// find all language folders
 	$metadataUtil = new ILYA_Util_Metadata();
-	foreach (glob(ILYA__LANG_DIR . '*', GLOB_ONLYDIR) as $directory) {
+	foreach (glob(ILYA_LANG_DIR . '*', GLOB_ONLYDIR) as $directory) {
 		$code = basename($directory);
 		$metadata = $metadataUtil->fetchFromAddonPath($directory);
 		if (isset($metadata['name'])) {
@@ -146,7 +146,7 @@ function ilya_admin_theme_options()
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$metadataUtil = new ILYA_Util_Metadata();
-	foreach (glob(ILYA__THEME_DIR . '*', GLOB_ONLYDIR) as $directory) {
+	foreach (glob(ILYA_THEME_DIR . '*', GLOB_ONLYDIR) as $directory) {
 		$theme = basename($directory);
 		$metadata = $metadataUtil->fetchFromAddonPath($directory);
 		if (empty($metadata)) {
@@ -231,21 +231,21 @@ function ilya_admin_match_options()
  */
 function ilya_admin_permit_options($widest, $narrowest, $doconfirms = true, $dopoints = true)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/options.php';
+	require_once ILYA_INCLUDE_DIR . 'app/options.php';
 
 	$options = array(
-		ILYA__PERMIT_ALL => ilya_lang_html('options/permit_all'),
-		ILYA__PERMIT_USERS => ilya_lang_html('options/permit_users'),
-		ILYA__PERMIT_CONFIRMED => ilya_lang_html('options/permit_confirmed'),
-		ILYA__PERMIT_POINTS => ilya_lang_html('options/permit_points'),
-		ILYA__PERMIT_POINTS_CONFIRMED => ilya_lang_html('options/permit_points_confirmed'),
-		ILYA__PERMIT_APPROVED => ilya_lang_html('options/permit_approved'),
-		ILYA__PERMIT_APPROVED_POINTS => ilya_lang_html('options/permit_approved_points'),
-		ILYA__PERMIT_EXPERTS => ilya_lang_html('options/permit_experts'),
-		ILYA__PERMIT_EDITORS => ilya_lang_html('options/permit_editors'),
-		ILYA__PERMIT_MODERATORS => ilya_lang_html('options/permit_moderators'),
-		ILYA__PERMIT_ADMINS => ilya_lang_html('options/permit_admins'),
-		ILYA__PERMIT_SUPERS => ilya_lang_html('options/permit_supers'),
+		ILYA_PERMIT_ALL => ilya_lang_html('options/permit_all'),
+		ILYA_PERMIT_USERS => ilya_lang_html('options/permit_users'),
+		ILYA_PERMIT_CONFIRMED => ilya_lang_html('options/permit_confirmed'),
+		ILYA_PERMIT_POINTS => ilya_lang_html('options/permit_points'),
+		ILYA_PERMIT_POINTS_CONFIRMED => ilya_lang_html('options/permit_points_confirmed'),
+		ILYA_PERMIT_APPROVED => ilya_lang_html('options/permit_approved'),
+		ILYA_PERMIT_APPROVED_POINTS => ilya_lang_html('options/permit_approved_points'),
+		ILYA_PERMIT_EXPERTS => ilya_lang_html('options/permit_experts'),
+		ILYA_PERMIT_EDITORS => ilya_lang_html('options/permit_editors'),
+		ILYA_PERMIT_MODERATORS => ilya_lang_html('options/permit_moderators'),
+		ILYA_PERMIT_ADMINS => ilya_lang_html('options/permit_admins'),
+		ILYA_PERMIT_SUPERS => ilya_lang_html('options/permit_supers'),
 	);
 
 	foreach ($options as $key => $label) {
@@ -254,19 +254,19 @@ function ilya_admin_permit_options($widest, $narrowest, $doconfirms = true, $dop
 	}
 
 	if (!$doconfirms) {
-		unset($options[ILYA__PERMIT_CONFIRMED]);
-		unset($options[ILYA__PERMIT_POINTS_CONFIRMED]);
+		unset($options[ILYA_PERMIT_CONFIRMED]);
+		unset($options[ILYA_PERMIT_POINTS_CONFIRMED]);
 	}
 
 	if (!$dopoints) {
-		unset($options[ILYA__PERMIT_POINTS]);
-		unset($options[ILYA__PERMIT_POINTS_CONFIRMED]);
-		unset($options[ILYA__PERMIT_APPROVED_POINTS]);
+		unset($options[ILYA_PERMIT_POINTS]);
+		unset($options[ILYA_PERMIT_POINTS_CONFIRMED]);
+		unset($options[ILYA_PERMIT_APPROVED_POINTS]);
 	}
 
-	if (ILYA__FINAL_EXTERNAL_USERS || !ilya_opt('moderate_users')) {
-		unset($options[ILYA__PERMIT_APPROVED]);
-		unset($options[ILYA__PERMIT_APPROVED_POINTS]);
+	if (ILYA_FINAL_EXTERNAL_USERS || !ilya_opt('moderate_users')) {
+		unset($options[ILYA_PERMIT_APPROVED]);
+		unset($options[ILYA_PERMIT_APPROVED_POINTS]);
 	}
 
 	return $options;
@@ -283,7 +283,7 @@ function ilya_admin_sub_navigation()
 	$navigation = array();
 	$level = ilya_get_logged_in_level();
 
-	if ($level >= ILYA__USER_LEVEL_ADMIN) {
+	if ($level >= ILYA_USER_LEVEL_ADMIN) {
 		$navigation['admin/general'] = array(
 			'label' => ilya_lang_html('admin/general_title'),
 			'url' => ilya_path_html('admin/general'),
@@ -361,7 +361,7 @@ function ilya_admin_sub_navigation()
 			'url' => ilya_path_html('admin/stats'),
 		);
 
-		if (!ILYA__FINAL_EXTERNAL_USERS)
+		if (!ILYA_FINAL_EXTERNAL_USERS)
 			$navigation['admin/mailing'] = array(
 				'label' => ilya_lang_html('admin/mailing_title'),
 				'url' => ilya_path_html('admin/mailing'),
@@ -398,7 +398,7 @@ function ilya_admin_sub_navigation()
 		);
 	}
 
-	if (!ILYA__FINAL_EXTERNAL_USERS && ilya_opt('moderate_users') && $level >= ILYA__USER_LEVEL_MODERATOR) {
+	if (!ILYA_FINAL_EXTERNAL_USERS && ilya_opt('moderate_users') && $level >= ILYA_USER_LEVEL_MODERATOR) {
 		$count = ilya_opt('cache_uapprovecount');
 
 		$navigation['admin/approve'] = array(
@@ -416,10 +416,10 @@ function ilya_admin_sub_navigation()
  */
 function ilya_admin_page_error()
 {
-	if (file_exists(ILYA__INCLUDE_DIR . 'db/install.php')) // file can be removed for extra security
-		include_once ILYA__INCLUDE_DIR . 'db/install.php';
+	if (file_exists(ILYA_INCLUDE_DIR . 'db/install.php')) // file can be removed for extra security
+		include_once ILYA_INCLUDE_DIR . 'db/install.php';
 
-	if (defined('ILYA__DB_VERSION_CURRENT') && ilya_opt('db_version') < ILYA__DB_VERSION_CURRENT && ilya_get_logged_in_level() >= ILYA__USER_LEVEL_ADMIN) {
+	if (defined('ILYA_DB_VERSION_CURRENT') && ilya_opt('db_version') < ILYA_DB_VERSION_CURRENT && ilya_get_logged_in_level() >= ILYA_USER_LEVEL_ADMIN) {
 		return strtr(
 			ilya_lang_html('admin/upgrade_db'),
 
@@ -429,8 +429,8 @@ function ilya_admin_page_error()
 			)
 		);
 
-	} elseif (defined('ILYA__BLOBS_DIRECTORY') && !is_writable(ILYA__BLOBS_DIRECTORY)) {
-		return ilya_lang_html_sub('admin/blobs_directory_error', ilya_html(ILYA__BLOBS_DIRECTORY));
+	} elseif (defined('ILYA_BLOBS_DIRECTORY') && !is_writable(ILYA_BLOBS_DIRECTORY)) {
+		return ilya_lang_html_sub('admin/blobs_directory_error', ilya_html(ILYA_BLOBS_DIRECTORY));
 	}
 
 	return null;
@@ -498,23 +498,23 @@ function ilya_admin_single_click($entityid, $action)
 {
 	$userid = ilya_get_logged_in_userid();
 
-	if (!ILYA__FINAL_EXTERNAL_USERS && ($action == 'userapprove' || $action == 'userblock')) { // approve/block moderated users
-		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+	if (!ILYA_FINAL_EXTERNAL_USERS && ($action == 'userapprove' || $action == 'userblock')) { // approve/block moderated users
+		require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 		$useraccount = ilya_db_select_with_pending(ilya_db_user_account_selectspec($entityid, true));
 
-		if (isset($useraccount) && ilya_get_logged_in_level() >= ILYA__USER_LEVEL_MODERATOR) {
+		if (isset($useraccount) && ilya_get_logged_in_level() >= ILYA_USER_LEVEL_MODERATOR) {
 			switch ($action) {
 				case 'userapprove':
-					if ($useraccount['level'] <= ILYA__USER_LEVEL_APPROVED) { // don't demote higher level users
-						require_once ILYA__INCLUDE_DIR . 'app/users-edit.php';
-						ilya_set_user_level($useraccount['userid'], $useraccount['handle'], ILYA__USER_LEVEL_APPROVED, $useraccount['level']);
+					if ($useraccount['level'] <= ILYA_USER_LEVEL_APPROVED) { // don't demote higher level users
+						require_once ILYA_INCLUDE_DIR . 'app/users-edit.php';
+						ilya_set_user_level($useraccount['userid'], $useraccount['handle'], ILYA_USER_LEVEL_APPROVED, $useraccount['level']);
 						return true;
 					}
 					break;
 
 				case 'userblock':
-					require_once ILYA__INCLUDE_DIR . 'app/users-edit.php';
+					require_once ILYA_INCLUDE_DIR . 'app/users-edit.php';
 					ilya_set_user_blocked($useraccount['userid'], $useraccount['handle'], true);
 					return true;
 					break;
@@ -522,7 +522,7 @@ function ilya_admin_single_click($entityid, $action)
 		}
 
 	} else { // something to do with a post
-		require_once ILYA__INCLUDE_DIR . 'app/posts.php';
+		require_once ILYA_INCLUDE_DIR . 'app/posts.php';
 
 		$post = ilya_post_get_full($entityid);
 
@@ -532,28 +532,28 @@ function ilya_admin_single_click($entityid, $action)
 			switch ($action) {
 				case 'approve':
 					if ($queued && !ilya_user_post_permit_error('permit_moderate', $post)) {
-						ilya_post_set_status($entityid, ILYA__POST_STATUS_NORMAL, $userid);
+						ilya_post_set_status($entityid, ILYA_POST_STATUS_NORMAL, $userid);
 						return true;
 					}
 					break;
 
 				case 'reject':
 					if ($queued && !ilya_user_post_permit_error('permit_moderate', $post)) {
-						ilya_post_set_status($entityid, ILYA__POST_STATUS_HIDDEN, $userid);
+						ilya_post_set_status($entityid, ILYA_POST_STATUS_HIDDEN, $userid);
 						return true;
 					}
 					break;
 
 				case 'hide':
 					if (!$queued && !ilya_user_post_permit_error('permit_hide_show', $post)) {
-						ilya_post_set_status($entityid, ILYA__POST_STATUS_HIDDEN, $userid);
+						ilya_post_set_status($entityid, ILYA_POST_STATUS_HIDDEN, $userid);
 						return true;
 					}
 					break;
 
 				case 'reshow':
 					if ($post['hidden'] && !ilya_user_post_permit_error('permit_hide_show', $post)) {
-						ilya_post_set_status($entityid, ILYA__POST_STATUS_NORMAL, $userid);
+						ilya_post_set_status($entityid, ILYA_POST_STATUS_NORMAL, $userid);
 						return true;
 					}
 					break;
@@ -566,7 +566,7 @@ function ilya_admin_single_click($entityid, $action)
 					break;
 
 				case 'clearflags':
-					require_once ILYA__INCLUDE_DIR . 'app/votes.php';
+					require_once ILYA_INCLUDE_DIR . 'app/votes.php';
 
 					if (!ilya_user_post_permit_error('permit_hide_show', $post)) {
 						ilya_flags_clear_all($post, $userid, ilya_get_logged_in_handle(), null);

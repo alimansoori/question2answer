@@ -19,12 +19,12 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
-require_once ILYA__INCLUDE_DIR . 'pages/question-view.php';
-require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'pages/question-view.php';
+require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 
 // Load relevant information about this question and check it exists
@@ -61,7 +61,7 @@ if (isset($parent)) {
 	$themeclass = ilya_load_theme_class(ilya_get_site_theme(), 'ajax-comments', null, null);
 	$themeclass->initialize();
 
-	echo "ILYA__AJAX_RESPONSE\n1\n";
+	echo "ILYA_AJAX_RESPONSE\n1\n";
 
 
 	// Send back the HTML
@@ -72,4 +72,4 @@ if (isset($parent)) {
 }
 
 
-echo "ILYA__AJAX_RESPONSE\n0\n";
+echo "ILYA_AJAX_RESPONSE\n0\n";

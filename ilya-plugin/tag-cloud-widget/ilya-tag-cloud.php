@@ -112,7 +112,7 @@ class ilya_tag_cloud
 
 	public function output_widget($region, $place, $themeobject, $template, $request, $ilya_content)
 	{
-		require_once ILYA__INCLUDE_DIR.'db/selects.php';
+		require_once ILYA_INCLUDE_DIR.'db/selects.php';
 
 		$populartags = ilya_db_single_select(ilya_db_popular_tags_selectspec(0, (int) ilya_opt('tag_cloud_count_tags')));
 

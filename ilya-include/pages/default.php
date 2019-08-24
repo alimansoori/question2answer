@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 
 // Determine whether path begins with ilya or not (question and answer listing can be accessed either way)
@@ -59,7 +59,7 @@ list($questions1, $questions2, $categories, $categoryid, $custompage) = ilya_db_
 
 // First, if this matches a custom page, return immediately with that page's content
 
-if (isset($custompage) && !($custompage['flags'] & ILYA__PAGE_FLAGS_EXTERNAL)) {
+if (isset($custompage) && !($custompage['flags'] & ILYA_PAGE_FLAGS_EXTERNAL)) {
 	ilya_set_template('custom-' . $custompage['pageid']);
 
 	$ilya_content = ilya_content_prepare();
@@ -70,7 +70,7 @@ if (isset($custompage) && !($custompage['flags'] & ILYA__PAGE_FLAGS_EXTERNAL)) {
 		$ilya_content['title'] = ilya_html($custompage['heading']);
 		$ilya_content['custom'] = $custompage['content'];
 
-		if ($level >= ILYA__USER_LEVEL_ADMIN) {
+		if ($level >= ILYA_USER_LEVEL_ADMIN) {
 			$ilya_content['navigation']['sub'] = array(
 				'admin/pages' => array(
 					'label' => ilya_lang('admin/edit_custom_page'),
@@ -123,7 +123,7 @@ if (!$explicitqa && !$countslugs && ilya_opt('show_custom_home')) {
 
 // If we got this far, it's a good old-fashioned Q&A listing page
 
-require_once ILYA__INCLUDE_DIR . 'app/q-list.php';
+require_once ILYA_INCLUDE_DIR . 'app/q-list.php';
 
 ilya_set_template('ilya');
 $questions = ilya_any_sort_and_dedupe(array_merge($questions1, $questions2));
@@ -131,7 +131,7 @@ $pagesize = ilya_opt('page_size_home');
 
 if ($countslugs) {
 	if (!isset($categoryid)) {
-		return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
+		return include ILYA_INCLUDE_DIR . 'ilya-page-not-found.php';
 	}
 
 	$categorytitlehtml = ilya_html($categories[$categoryid]['title']);

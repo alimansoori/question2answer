@@ -19,8 +19,8 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (ilya_gpc_to_string(@$_GET['param']) == ILYA__URL_TEST_STRING) {
-	require_once ILYA__INCLUDE_DIR . 'app/admin.php';
+if (ilya_gpc_to_string(@$_GET['param']) == ILYA_URL_TEST_STRING) {
+	require_once ILYA_INCLUDE_DIR . 'app/admin.php';
 
 	echo '<html><body style="margin:0; padding:0;">';
 	echo '<table width="100%" height="100%" cellspacing="0" cellpadding="0">';

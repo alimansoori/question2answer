@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -60,9 +60,9 @@ function ilya_q_list_page_content($questions, $pagesize, $start, $count, $someti
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
-	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
-	require_once ILYA__INCLUDE_DIR . 'app/posts.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA_INCLUDE_DIR . 'app/posts.php';
 
 	$userid = ilya_get_logged_in_userid();
 
@@ -117,7 +117,7 @@ function ilya_q_list_page_content($questions, $pagesize, $start, $count, $someti
 		$favoritemap = ilya_get_favorite_non_qs_map();
 		$categoryisfavorite = @$favoritemap['category'][$navcategories[$categoryid]['backpath']];
 
-		$ilya_content['favorite'] = ilya_favorite_form(ILYA__ENTITY_CATEGORY, $categoryid, $categoryisfavorite,
+		$ilya_content['favorite'] = ilya_favorite_form(ILYA_ENTITY_CATEGORY, $categoryid, $categoryisfavorite,
 			ilya_lang_sub($categoryisfavorite ? 'main/remove_x_favorites' : 'main/add_category_x_favorites', $navcategories[$categoryid]['title']));
 	}
 

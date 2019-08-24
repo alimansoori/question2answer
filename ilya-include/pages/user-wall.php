@@ -19,18 +19,18 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/messages.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/messages.php';
 
 
 // Check we're not using single-sign on integration, which doesn't allow walls
 
-if (ILYA__FINAL_EXTERNAL_USERS)
+if (ILYA_FINAL_EXTERNAL_USERS)
 	ilya_fatal_error('User accounts are handled by external code');
 
 
@@ -47,7 +47,7 @@ list($useraccount, $usermessages) = ilya_db_select_with_pending(
 );
 
 if (!is_array($useraccount)) // check the user exists
-	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
+	return include ILYA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 
 // Perform pagination
@@ -146,7 +146,7 @@ $ilya_content['page_links'] = ilya_html_page_links(ilya_request(), $start, $page
 
 // Sub menu for navigation in user pages
 
-$ismyuser = isset($loginuserid) && $loginuserid == (ILYA__FINAL_EXTERNAL_USERS ? $userid : $useraccount['userid']);
+$ismyuser = isset($loginuserid) && $loginuserid == (ILYA_FINAL_EXTERNAL_USERS ? $userid : $useraccount['userid']);
 $ilya_content['navigation']['sub'] = ilya_user_sub_navigation($handle, 'wall', $ismyuser);
 
 

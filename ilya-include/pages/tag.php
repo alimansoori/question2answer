@@ -19,14 +19,14 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
-require_once ILYA__INCLUDE_DIR . 'app/updates.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'app/updates.php';
 
 $tag = ilya_request_part(1); // picked up from ilya-page.php
 $start = ilya_get_start();
@@ -59,7 +59,7 @@ if (isset($userid) && isset($tagword)) {
 	$favoritemap = ilya_get_favorite_non_qs_map();
 	$favorite = @$favoritemap['tag'][ilya_strtolower($tagword['word'])];
 
-	$ilya_content['favorite'] = ilya_favorite_form(ILYA__ENTITY_TAG, $tagword['wordid'], $favorite,
+	$ilya_content['favorite'] = ilya_favorite_form(ILYA_ENTITY_TAG, $tagword['wordid'], $favorite,
 		ilya_lang_sub($favorite ? 'main/remove_x_favorites' : 'main/add_tag_x_favorites', $tagword['word']));
 }
 

@@ -19,12 +19,12 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/page.php';
+require_once ILYA_INCLUDE_DIR . 'app/page.php';
 
 
 // Below are the steps that actually execute for this file - all the above are function definitions
@@ -39,7 +39,7 @@ ilya_page_queue_pending();
 ilya_load_state();
 ilya_check_login_modules();
 
-if (ILYA__DEBUG_PERFORMANCE)
+if (ILYA_DEBUG_PERFORMANCE)
 	$ilya_usage->mark('setup');
 
 ilya_check_page_clicks();
@@ -47,18 +47,18 @@ ilya_check_page_clicks();
 $ilya_content = ilya_get_request_content();
 
 if (is_array($ilya_content)) {
-	if (ILYA__DEBUG_PERFORMANCE)
+	if (ILYA_DEBUG_PERFORMANCE)
 		$ilya_usage->mark('view');
 
 	ilya_output_content($ilya_content);
 
-	if (ILYA__DEBUG_PERFORMANCE)
+	if (ILYA_DEBUG_PERFORMANCE)
 		$ilya_usage->mark('theme');
 
-	if (ilya_do_content_stats($ilya_content) && ILYA__DEBUG_PERFORMANCE)
+	if (ilya_do_content_stats($ilya_content) && ILYA_DEBUG_PERFORMANCE)
 		$ilya_usage->mark('stats');
 
-	if (ILYA__DEBUG_PERFORMANCE)
+	if (ILYA_DEBUG_PERFORMANCE)
 		$ilya_usage->output();
 }
 

@@ -19,16 +19,16 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/recalc.php';
-require_once ILYA__INCLUDE_DIR . 'db/points.php';
-require_once ILYA__INCLUDE_DIR . 'app/options.php';
-require_once ILYA__INCLUDE_DIR . 'app/admin.php';
-require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+require_once ILYA_INCLUDE_DIR . 'db/recalc.php';
+require_once ILYA_INCLUDE_DIR . 'db/points.php';
+require_once ILYA_INCLUDE_DIR . 'app/options.php';
+require_once ILYA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 
 // Check admin privileges
@@ -110,7 +110,7 @@ if (ilya_clicked('doshowdefaults')) {
 		$ilya_content['form']['ok'] = '<span id="recalc_ok"></span>';
 		$ilya_content['form']['hidden']['code_recalc'] = ilya_get_form_security_code('admin/recalc');
 
-		$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
+		$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA_VERSION;
 		$ilya_content['script_var']['ilya_warning_recalc'] = ilya_lang('admin/stop_recalc_warning');
 
 		$ilya_content['script_onloads'][] = array(

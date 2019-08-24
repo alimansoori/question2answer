@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/admin.php';
-require_once ILYA__INCLUDE_DIR . 'app/recalc.php';
+require_once ILYA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA_INCLUDE_DIR . 'app/recalc.php';
 
 
 // Check we have administrative privileges
@@ -121,7 +121,7 @@ if ($recalcnow) {
 	return $ilya_content;
 
 } else {
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 	$ilya_content = ilya_content_prepare();
 

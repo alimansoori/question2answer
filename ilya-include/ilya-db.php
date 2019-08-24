@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../');
 	exit;
 }
@@ -60,28 +60,28 @@ function ilya_db_connect($failhandler = null)
 	if ($ilya_db_connection instanceof mysqli)
 		return;
 
-	$host = ILYA__FINAL_MYSQL_HOSTNAME;
+	$host = ILYA_FINAL_MYSQL_HOSTNAME;
 	$port = null;
 
-	if (defined('ILYA__FINAL_WORDPRESS_INTEGRATE_PATH')) {
+	if (defined('ILYA_FINAL_WORDPRESS_INTEGRATE_PATH')) {
 		// Wordpress allows setting port inside DB_HOST constant, like 127.0.0.1:3306
 		$host_and_port = explode(':', $host);
 		if (count($host_and_port) >= 2) {
 			$host = $host_and_port[0];
 			$port = $host_and_port[1];
 		}
-	} elseif (defined('ILYA__FINAL_MYSQL_PORT')) {
-		$port = ILYA__FINAL_MYSQL_PORT;
+	} elseif (defined('ILYA_FINAL_MYSQL_PORT')) {
+		$port = ILYA_FINAL_MYSQL_PORT;
 	}
 
-	if (ILYA__PERSISTENT_CONN_DB)
+	if (ILYA_PERSISTENT_CONN_DB)
 		$host = 'p:' . $host;
 
 	// in mysqli we connect and select database in constructor
 	if ($port !== null)
-		$db = new mysqli($host, ILYA__FINAL_MYSQL_USERNAME, ILYA__FINAL_MYSQL_PASSWORD, ILYA__FINAL_MYSQL_DATABASE, $port);
+		$db = new mysqli($host, ILYA_FINAL_MYSQL_USERNAME, ILYA_FINAL_MYSQL_PASSWORD, ILYA_FINAL_MYSQL_DATABASE, $port);
 	else
-		$db = new mysqli($host, ILYA__FINAL_MYSQL_USERNAME, ILYA__FINAL_MYSQL_PASSWORD, ILYA__FINAL_MYSQL_DATABASE);
+		$db = new mysqli($host, ILYA_FINAL_MYSQL_USERNAME, ILYA_FINAL_MYSQL_PASSWORD, ILYA_FINAL_MYSQL_DATABASE);
 
 	// must use procedural `mysqli_connect_error` here prior to 5.2.9
 	$conn_error = mysqli_connect_error();
@@ -162,7 +162,7 @@ function ilya_db_disconnect()
 	if ($ilya_db_connection instanceof mysqli) {
 		ilya_report_process_stage('db_disconnect');
 
-		if (!ILYA__PERSISTENT_CONN_DB) {
+		if (!ILYA_PERSISTENT_CONN_DB) {
 			if (!$ilya_db_connection->close())
 				ilya_fatal_error('Database disconnect failed');
 		}
@@ -182,7 +182,7 @@ function ilya_db_query_raw($query)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	if (ILYA__DEBUG_PERFORMANCE) {
+	if (ILYA_DEBUG_PERFORMANCE) {
 		global $ilya_usage;
 
 		// time the query
@@ -292,9 +292,9 @@ function ilya_db_add_table_prefix($rawname)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	$prefix = ILYA__MYSQL_TABLE_PREFIX;
+	$prefix = ILYA_MYSQL_TABLE_PREFIX;
 
-	if (defined('ILYA__MYSQL_USERS_PREFIX')) {
+	if (defined('ILYA_MYSQL_USERS_PREFIX')) {
 		switch (strtolower($rawname)) {
 			case 'users':
 			case 'userlogins':
@@ -306,7 +306,7 @@ function ilya_db_add_table_prefix($rawname)
 			case 'cache':
 			case 'userlogins_ibfk_1': // also special cases for constraint names
 			case 'userprofile_ibfk_1':
-				$prefix = ILYA__MYSQL_USERS_PREFIX;
+				$prefix = ILYA_MYSQL_USERS_PREFIX;
 				break;
 		}
 	}
@@ -462,7 +462,7 @@ function ilya_db_list_tables_lc()
  * Return an array of the names of all tables in the ILYA database.
  *
  * @param bool $onlyTablesWithPrefix Determine if the result should only include tables with the
- * ILYA__MYSQL_TABLE_PREFIX or if it should include all tables in the database.
+ * ILYA_MYSQL_TABLE_PREFIX or if it should include all tables in the database.
  * @return array
  */
 function ilya_db_list_tables($onlyTablesWithPrefix = false)
@@ -470,10 +470,10 @@ function ilya_db_list_tables($onlyTablesWithPrefix = false)
 	$query = 'SHOW TABLES';
 
 	if ($onlyTablesWithPrefix) {
-		$col = 'Tables_in_' . ILYA__FINAL_MYSQL_DATABASE;
-		$query .= ' WHERE `' . $col . '` LIKE "' . str_replace('_', '\\_', ILYA__MYSQL_TABLE_PREFIX) . '%"';
-		if (defined('ILYA__MYSQL_USERS_PREFIX')) {
-			$query .= ' OR `' . $col . '` LIKE "' . str_replace('_', '\\_', ILYA__MYSQL_USERS_PREFIX) . '%"';
+		$col = 'Tables_in_' . ILYA_FINAL_MYSQL_DATABASE;
+		$query .= ' WHERE `' . $col . '` LIKE "' . str_replace('_', '\\_', ILYA_MYSQL_TABLE_PREFIX) . '%"';
+		if (defined('ILYA_MYSQL_USERS_PREFIX')) {
+			$query .= ' OR `' . $col . '` LIKE "' . str_replace('_', '\\_', ILYA_MYSQL_USERS_PREFIX) . '%"';
 		}
 	}
 
@@ -522,7 +522,7 @@ function ilya_db_list_tables($onlyTablesWithPrefix = false)
 
 	For writes we worry less, since the user is more likely to be expecting a delay.
 
-	If ILYA__OPTIMIZE_DISTANT_DB is set to false in ilya-config.php, we assume zero latency and go back to
+	If ILYA_OPTIMIZE_DISTANT_DB is set to false in ilya-config.php, we assume zero latency and go back to
 	simple queries, since this will allow both MySQL and PHP to provide quicker results.
 */
 
@@ -583,7 +583,7 @@ function ilya_db_multi_select($selectspecs)
 
 	// Perform simple queries if the database is local or there are only 0 or 1 selectspecs
 
-	if (!ILYA__OPTIMIZE_DISTANT_DB || (count($selectspecs) <= 1)) {
+	if (!ILYA_OPTIMIZE_DISTANT_DB || (count($selectspecs) <= 1)) {
 		$outresults = array();
 
 		foreach ($selectspecs as $selectkey => $selectspec)
@@ -694,7 +694,7 @@ function ilya_db_post_select(&$outresult, $selectspec)
 	// By contrast, MySQL's ORDER BY does seem to give the results in a reliable order.
 
 	if (isset($selectspec['sortasc'])) {
-		require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+		require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 		$index = 0;
 		foreach ($outresult as $key => $value)
@@ -703,7 +703,7 @@ function ilya_db_post_select(&$outresult, $selectspec)
 		ilya_sort_by($outresult, $selectspec['sortasc'], '_order_');
 
 	} elseif (isset($selectspec['sortdesc'])) {
-		require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+		require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 		if (isset($selectspec['sortdesc_2']))
 			ilya_sort_by($outresult, $selectspec['sortdesc'], $selectspec['sortdesc_2']);

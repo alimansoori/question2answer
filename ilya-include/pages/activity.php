@@ -19,15 +19,15 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
-require_once ILYA__INCLUDE_DIR . 'app/q-list.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'app/q-list.php';
 
 $categoryslugs = ilya_request_parts(1);
 $countslugs = count($categoryslugs);
@@ -47,7 +47,7 @@ list($questions1, $questions2, $questions3, $questions4, $categories, $categoryi
 
 if ($countslugs) {
 	if (!isset($categoryid))
-		return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
+		return include ILYA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 	$categorytitlehtml = ilya_html($categories[$categoryid]['title']);
 	$sometitle = ilya_lang_html_sub('main/recent_activity_in_x', $categorytitlehtml);

@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -30,7 +30,7 @@ if (!defined('ILYA__VERSION')) { // don't allow this page to be requested direct
  */
 function ilya_mailing_start()
 {
-	require_once ILYA__INCLUDE_DIR . 'db/admin.php';
+	require_once ILYA_INCLUDE_DIR . 'db/admin.php';
 
 	if (strlen(ilya_opt('mailing_last_userid')) == 0) {
 		ilya_opt('mailing_last_timestamp', time());
@@ -58,8 +58,8 @@ function ilya_mailing_stop()
  */
 function ilya_mailing_perform_step()
 {
-	require_once ILYA__INCLUDE_DIR . 'db/users.php';
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'db/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
 
 	$lastuserid = ilya_opt('mailing_last_userid');
 
@@ -99,9 +99,9 @@ function ilya_mailing_perform_step()
 		$isModeratingUsers = ilya_opt('moderate_users');
 
 		foreach ($users as $user) {
-			if (($user['flags'] & ILYA__USER_FLAGS_NO_MAILINGS) || // exclude users who don't want to get the mailings
-				($user['flags'] & ILYA__USER_FLAGS_USER_BLOCKED) || // exclude blocked users
-				($isModeratingUsers && ($user['level'] < ILYA__USER_LEVEL_APPROVED))) { // if moderating users exclude unapproved users
+			if (($user['flags'] & ILYA_USER_FLAGS_NO_MAILINGS) || // exclude users who don't want to get the mailings
+				($user['flags'] & ILYA_USER_FLAGS_USER_BLOCKED) || // exclude blocked users
+				($isModeratingUsers && ($user['level'] < ILYA_USER_LEVEL_APPROVED))) { // if moderating users exclude unapproved users
 				continue;
 			}
 
@@ -128,8 +128,8 @@ function ilya_mailing_perform_step()
  */
 function ilya_mailing_send_one($userid, $handle, $email, $emailcode)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/emails.php';
-	require_once ILYA__INCLUDE_DIR . 'db/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/emails.php';
+	require_once ILYA_INCLUDE_DIR . 'db/users.php';
 
 	if (!strlen(trim($emailcode))) {
 		$emailcode = ilya_db_user_rand_emailcode();
@@ -155,7 +155,7 @@ function ilya_mailing_send_one($userid, $handle, $email, $emailcode)
  */
 function ilya_mailing_progress_message()
 {
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 	if (strlen(ilya_opt('mailing_last_userid'))) {
 		return strtr(ilya_lang('admin/mailing_progress'), array(

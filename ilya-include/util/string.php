@@ -20,7 +20,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -439,19 +439,19 @@ function ilya_string_to_words($string, $tolowercase = true, $delimiters = false,
 
 	$string = strtr($string, $ilya_utf8punctuation);
 
-	$separator = ILYA__PREG_INDEX_WORD_SEPARATOR;
+	$separator = ILYA_PREG_INDEX_WORD_SEPARATOR;
 	if ($splithyphens)
 		$separator .= '|\-';
 
 	if ($delimiters) {
 		if ($splitideographs)
-			$separator .= '|' . ILYA__PREG_CJK_IDEOGRAPHS_UTF8;
+			$separator .= '|' . ILYA_PREG_CJK_IDEOGRAPHS_UTF8;
 
 	} else {
 		$string = preg_replace("/(\S)'(\S)/", '\1\2', $string); // remove apostrophes in words
 
 		if ($splitideographs) // put spaces around CJK ideographs so they're treated as separate words
-			$string = preg_replace('/' . ILYA__PREG_CJK_IDEOGRAPHS_UTF8 . '/', ' \0 ', $string);
+			$string = preg_replace('/' . ILYA_PREG_CJK_IDEOGRAPHS_UTF8 . '/', ' \0 ', $string);
 	}
 
 	return preg_split('/(' . $separator . '+)/', $string, -1, PREG_SPLIT_NO_EMPTY | ($delimiters ? PREG_SPLIT_DELIM_CAPTURE : 0));
@@ -618,7 +618,7 @@ function ilya_block_words_explode($wordstring)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return preg_split('/' . ILYA__PREG_BLOCK_WORD_SEPARATOR . '+/', $wordstring, -1, PREG_SPLIT_NO_EMPTY);
+	return preg_split('/' . ILYA_PREG_BLOCK_WORD_SEPARATOR . '+/', $wordstring, -1, PREG_SPLIT_NO_EMPTY);
 }
 
 
@@ -637,10 +637,10 @@ function ilya_block_words_to_preg($wordsstring)
 	foreach ($blockwords as $blockword) { // * in rule maps to [^ ]* in regular expression
 		$pattern = str_replace('\\*', '[^ ]*', preg_quote(ilya_strtolower($blockword), '/'));
 
-		if (!preg_match('/^(' . ILYA__PREG_CJK_IDEOGRAPHS_UTF8 . ')/', $blockword))
+		if (!preg_match('/^(' . ILYA_PREG_CJK_IDEOGRAPHS_UTF8 . ')/', $blockword))
 			$pattern = '(?<= )' . $pattern; // assert leading word delimiter if pattern does not start with CJK
 
-		if (!preg_match('/(' . ILYA__PREG_CJK_IDEOGRAPHS_UTF8 . ')$/', $blockword))
+		if (!preg_match('/(' . ILYA_PREG_CJK_IDEOGRAPHS_UTF8 . ')$/', $blockword))
 			$pattern = $pattern . '(?= )'; // assert trailing word delimiter if pattern does not end with CJK
 
 		$patterns[] = $pattern;
@@ -673,7 +673,7 @@ function ilya_block_words_match_all($string, $wordspreg)
 
 		// assumes UTF-8 case conversion in ilya_strtolower does not change byte length
 		$string = strtr(ilya_strtolower($string), $ilya_utf8punctuation_keeplength);
-		$string = preg_replace('/' . ILYA__PREG_BLOCK_WORD_SEPARATOR . '/', ' ', $string);
+		$string = preg_replace('/' . ILYA_PREG_BLOCK_WORD_SEPARATOR . '/', ' ', $string);
 
 		preg_match_all('/' . $wordspreg . '/', ' ' . $string . ' ', $pregmatches, PREG_OFFSET_CAPTURE);
 
@@ -812,18 +812,18 @@ function ilya_string_matches_one($string, $matches)
 // Some static definitions and initialization
 
 // Notable exclusions here: $ & - _ # % @
-if (!defined('ILYA__PREG_INDEX_WORD_SEPARATOR')) {
-	define('ILYA__PREG_INDEX_WORD_SEPARATOR', '[\n\r\t\ \!\"\\\'\(\)\*\+\,\.\/\:\;\<\=\>\?\[\\\\\]\^\`\{\|\}\~]');
+if (!defined('ILYA_PREG_INDEX_WORD_SEPARATOR')) {
+	define('ILYA_PREG_INDEX_WORD_SEPARATOR', '[\n\r\t\ \!\"\\\'\(\)\*\+\,\.\/\:\;\<\=\>\?\[\\\\\]\^\`\{\|\}\~]');
 }
 
 // Asterisk (*) excluded here because it's used to match anything
-if (!defined('ILYA__PREG_BLOCK_WORD_SEPARATOR')) {
-	define('ILYA__PREG_BLOCK_WORD_SEPARATOR', '[\n\r\t\ \!\"\\\'\(\)\+\,\.\/\:\;\<\=\>\?\[\\\\\]\^\`\{\|\}\~\$\&\-\_\#\%\@]');
+if (!defined('ILYA_PREG_BLOCK_WORD_SEPARATOR')) {
+	define('ILYA_PREG_BLOCK_WORD_SEPARATOR', '[\n\r\t\ \!\"\\\'\(\)\+\,\.\/\:\;\<\=\>\?\[\\\\\]\^\`\{\|\}\~\$\&\-\_\#\%\@]');
 }
 
 // Pattern to match Thai/Chinese/Japanese/Korean ideographic symbols in UTF-8 encoding
-if (!defined('ILYA__PREG_CJK_IDEOGRAPHS_UTF8')) {
-	define('ILYA__PREG_CJK_IDEOGRAPHS_UTF8', '\xE0[\xB8-\xB9][\x80-\xBF]|\xE2[\xBA-\xBF][\x80-\xBF]|\xE3[\x80\x88-\xBF][\x80-\xBF]|[\xE4-\xE9][\x80-\xBF][\x80-\xBF]|\xEF[\xA4-\xAB][\x80-\xBF]|\xF0[\xA0-\xAF][\x80-\xBF][\x80-\xBF]');
+if (!defined('ILYA_PREG_CJK_IDEOGRAPHS_UTF8')) {
+	define('ILYA_PREG_CJK_IDEOGRAPHS_UTF8', '\xE0[\xB8-\xB9][\x80-\xBF]|\xE2[\xBA-\xBF][\x80-\xBF]|\xE3[\x80\x88-\xBF][\x80-\xBF]|[\xE4-\xE9][\x80-\xBF][\x80-\xBF]|\xEF[\xA4-\xAB][\x80-\xBF]|\xF0[\xA0-\xAF][\x80-\xBF][\x80-\xBF]');
 }
 
 ilya_string_initialize();

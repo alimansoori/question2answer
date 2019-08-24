@@ -48,7 +48,7 @@ $_GET = array(); // for ilya_self_html()
 
 function ilya_ajax_db_fail_handler()
 {
-	echo "ILYA__AJAX_RESPONSE\n0\nA database error occurred.";
+	echo "ILYA_AJAX_RESPONSE\n0\nA database error occurred.";
 	ilya_exit('error');
 }
 
@@ -82,7 +82,7 @@ if (isset($routing[$operation])) {
 	ilya_initialize_postdb_plugins();
 
 	ilya_initialize_buffering();
-	require ILYA__INCLUDE_DIR . 'ajax/' . $routing[$operation];
+	require ILYA_INCLUDE_DIR . 'ajax/' . $routing[$operation];
 
 	ilya_db_disconnect();
 }

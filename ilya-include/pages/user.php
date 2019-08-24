@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -37,10 +37,10 @@ if (!strlen($handle)) {
 
 // Get the HTML to display for the handle, and if we're using external users, determine the userid
 
-if (ILYA__FINAL_EXTERNAL_USERS) {
+if (ILYA_FINAL_EXTERNAL_USERS) {
 	$userid = ilya_handle_to_userid($handle);
 	if (!isset($userid))
-		return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
+		return include ILYA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 	$usershtml = ilya_get_users_html(array($userid), false, ilya_path_to_root(), true);
 	$userhtml = @$usershtml[$userid];
@@ -54,30 +54,30 @@ if (ILYA__FINAL_EXTERNAL_USERS) {
 switch (ilya_request_part(2)) {
 	case 'wall':
 		ilya_set_template('user-wall');
-		$ilya_content = include ILYA__INCLUDE_DIR . 'pages/user-wall.php';
+		$ilya_content = include ILYA_INCLUDE_DIR . 'pages/user-wall.php';
 		break;
 
 	case 'activity':
 		ilya_set_template('user-activity');
-		$ilya_content = include ILYA__INCLUDE_DIR . 'pages/user-activity.php';
+		$ilya_content = include ILYA_INCLUDE_DIR . 'pages/user-activity.php';
 		break;
 
 	case 'questions':
 		ilya_set_template('user-questions');
-		$ilya_content = include ILYA__INCLUDE_DIR . 'pages/user-questions.php';
+		$ilya_content = include ILYA_INCLUDE_DIR . 'pages/user-questions.php';
 		break;
 
 	case 'answers':
 		ilya_set_template('user-answers');
-		$ilya_content = include ILYA__INCLUDE_DIR . 'pages/user-answers.php';
+		$ilya_content = include ILYA_INCLUDE_DIR . 'pages/user-answers.php';
 		break;
 
 	case null:
-		$ilya_content = include ILYA__INCLUDE_DIR . 'pages/user-profile.php';
+		$ilya_content = include ILYA_INCLUDE_DIR . 'pages/user-profile.php';
 		break;
 
 	default:
-		$ilya_content = include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
+		$ilya_content = include ILYA_INCLUDE_DIR . 'ilya-page-not-found.php';
 		break;
 }
 

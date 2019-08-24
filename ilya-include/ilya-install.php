@@ -19,12 +19,12 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR.'db/install.php';
+require_once ILYA_INCLUDE_DIR.'db/install.php';
 
 ilya_report_process_stage('init_install');
 
@@ -49,7 +49,7 @@ if (!function_exists('ilya_install_db_fail_handler')) {
 		$pass_failure_query = $query;
 		$pass_failure_from_install = true;
 
-		require ILYA__INCLUDE_DIR.'ilya-install.php';
+		require ILYA_INCLUDE_DIR.'ilya-install.php';
 
 		ilya_exit('error');
 	}
@@ -75,9 +75,9 @@ $hidden = array();
 // Process user handling higher up to avoid 'headers already sent' warning
 
 if (!isset($pass_failure_type) && ilya_clicked('super')) {
-	require_once ILYA__INCLUDE_DIR.'db/admin.php';
-	require_once ILYA__INCLUDE_DIR.'db/users.php';
-	require_once ILYA__INCLUDE_DIR.'app/users-edit.php';
+	require_once ILYA_INCLUDE_DIR.'db/admin.php';
+	require_once ILYA_INCLUDE_DIR.'db/users.php';
+	require_once ILYA_INCLUDE_DIR.'app/users-edit.php';
 
 	if (ilya_db_count_users() == 0) { // prevent creating multiple accounts
 		$inemail = ilya_post_text('email');
@@ -90,9 +90,9 @@ if (!isset($pass_failure_type) && ilya_clicked('super')) {
 		);
 
 		if (empty($fielderrors)) {
-			require_once ILYA__INCLUDE_DIR.'app/users.php';
+			require_once ILYA_INCLUDE_DIR.'app/users.php';
 
-			$userid = ilya_create_new_user($inemail, $inpassword, $inhandle, ILYA__USER_LEVEL_SUPER);
+			$userid = ilya_create_new_user($inemail, $inpassword, $inhandle, ILYA_USER_LEVEL_SUPER);
 			ilya_set_logged_in_user($userid, $inhandle);
 
 			ilya_set_option('feedback_email', $inemail);
@@ -151,24 +151,24 @@ else {
 	if (ilya_clicked('create')) {
 		ilya_db_install_tables();
 
-		if (ILYA__FINAL_EXTERNAL_USERS) {
-			if (defined('ILYA__FINAL_WORDPRESS_INTEGRATE_PATH')) {
-				require_once ILYA__INCLUDE_DIR.'db/admin.php';
-				require_once ILYA__INCLUDE_DIR.'app/format.php';
+		if (ILYA_FINAL_EXTERNAL_USERS) {
+			if (defined('ILYA_FINAL_WORDPRESS_INTEGRATE_PATH')) {
+				require_once ILYA_INCLUDE_DIR.'db/admin.php';
+				require_once ILYA_INCLUDE_DIR.'app/format.php';
 
 				// create link back to WordPress home page
-				ilya_db_page_move(ilya_db_page_create(get_option('blogname'), ILYA__PAGE_FLAGS_EXTERNAL, get_option('home'), null, null, null), 'O', 1);
+				ilya_db_page_move(ilya_db_page_create(get_option('blogname'), ILYA_PAGE_FLAGS_EXTERNAL, get_option('home'), null, null, null), 'O', 1);
 
 				$success .= 'Your IlyaIdea database has been created and integrated with your WordPress site.';
 
 			}
-			elseif (defined('ILYA__FINAL_JOOMLA_INTEGRATE_PATH')) {
-				require_once ILYA__INCLUDE_DIR.'db/admin.php';
-				require_once ILYA__INCLUDE_DIR.'app/format.php';
+			elseif (defined('ILYA_FINAL_JOOMLA_INTEGRATE_PATH')) {
+				require_once ILYA_INCLUDE_DIR.'db/admin.php';
+				require_once ILYA_INCLUDE_DIR.'app/format.php';
 				$jconfig = new JConfig();
 
 				// create link back to Joomla! home page (Joomla doesn't have a 'home' config setting we can use like WP does, so we'll just assume that the Joomla home is the parent of the ILYA site. If it isn't, the user can fix the link for themselves later)
-				ilya_db_page_move(ilya_db_page_create($jconfig->sitename, ILYA__PAGE_FLAGS_EXTERNAL, '../', null, null, null), 'O', 1);
+				ilya_db_page_move(ilya_db_page_create($jconfig->sitename, ILYA_PAGE_FLAGS_EXTERNAL, '../', null, null, null), 'O', 1);
 				$success .= 'Your IlyaIdea database has been created and integrated with your Joomla! site.';
 			}
 			else {
@@ -227,11 +227,11 @@ if (ilya_db_connection(false) !== null && !@$pass_failure_from_install) {
 
 			$errorhtml .= 'Welcome to IlyaIdea. It\'s time to set up your database!';
 
-			if (ILYA__FINAL_EXTERNAL_USERS) {
-				if (defined('ILYA__FINAL_WORDPRESS_INTEGRATE_PATH')) {
+			if (ILYA_FINAL_EXTERNAL_USERS) {
+				if (defined('ILYA_FINAL_WORDPRESS_INTEGRATE_PATH')) {
 					$errorhtml .= "\n\nWhen you click below, your IlyaIdea site will be set up to integrate with the users of your WordPress site <a href=\"".ilya_html(get_option('home'))."\" target=\"_blank\">".ilya_html(get_option('blogname'))."</a>. Please consult the online documentation for more information.";
 				}
-				elseif (defined('ILYA__FINAL_JOOMLA_INTEGRATE_PATH')) {
+				elseif (defined('ILYA_FINAL_JOOMLA_INTEGRATE_PATH')) {
 					$jconfig = new JConfig();
 					$errorhtml .= "\n\nWhen you click below, your IlyaIdea site will be set up to integrate with the users of your Joomla! site <a href=\"../\" target=\"_blank\">".$jconfig->sitename."</a>. It's also recommended to install the Joomla QAIntegration plugin for additional user-access control. Please consult the online documentation for more information.";
 				}
@@ -273,9 +273,9 @@ if (ilya_db_connection(false) !== null && !@$pass_failure_from_install) {
 			break;
 
 		default:
-			require_once ILYA__INCLUDE_DIR.'db/admin.php';
+			require_once ILYA_INCLUDE_DIR.'db/admin.php';
 
-			if (!ILYA__FINAL_EXTERNAL_USERS && ilya_db_count_users() == 0) {
+			if (!ILYA_FINAL_EXTERNAL_USERS && ilya_db_count_users() == 0) {
 				$errorhtml .= "There are currently no users in the IlyaIdea database.\n\nPlease enter your details below to create the super administrator:";
 				$fields = array(
 					'handle' => array('label' => 'Username:', 'type' => 'text'),
@@ -320,12 +320,12 @@ if (empty($errorhtml)) {
 	if (empty($success))
 		$success = 'Your IlyaIdea database has been checked with no problems.';
 
-	$suggest = '<a href="'.ilya_path_html('admin', null, null, ILYA__URL_FORMAT_SAFEST).'">Go to admin center</a>';
+	$suggest = '<a href="'.ilya_path_html('admin', null, null, ILYA_URL_FORMAT_SAFEST).'">Go to admin center</a>';
 }
 
 ?>
 
-		<form method="post" action="<?php echo ilya_path_html('install', null, null, ILYA__URL_FORMAT_SAFEST)?>">
+		<form method="post" action="<?php echo ilya_path_html('install', null, null, ILYA_URL_FORMAT_SAFEST)?>">
 
 <?php
 

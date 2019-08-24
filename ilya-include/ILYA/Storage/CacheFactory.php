@@ -36,8 +36,8 @@ class ILYA_Storage_CacheFactory
 		if (self::$cacheDriver === null) {
 			$config = array(
 				'enabled' => (int) ilya_opt('caching_enabled') === 1,
-				'keyprefix' => ILYA__FINAL_MYSQL_DATABASE . '.' . ILYA__MYSQL_TABLE_PREFIX . '.',
-				'dir' => defined('ILYA__CACHE_DIRECTORY') ? ILYA__CACHE_DIRECTORY : null,
+				'keyprefix' => ILYA_FINAL_MYSQL_DATABASE . '.' . ILYA_MYSQL_TABLE_PREFIX . '.',
+				'dir' => defined('ILYA_CACHE_DIRECTORY') ? ILYA_CACHE_DIRECTORY : null,
 			);
 
 			$driver = ilya_opt('caching_driver');

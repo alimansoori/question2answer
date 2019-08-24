@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -50,22 +50,22 @@ function ilya_get_logged_in_user()
 
 	if ($user && !$user->guest) {
 		$access = $jhelper->trigger_access_event($user);
-		$level = ILYA__USER_LEVEL_BASIC;
+		$level = ILYA_USER_LEVEL_BASIC;
 
 		if ($access['post']) {
-			$level = ILYA__USER_LEVEL_APPROVED;
+			$level = ILYA_USER_LEVEL_APPROVED;
 		}
 		if ($access['edit']) {
-			$level = ILYA__USER_LEVEL_EDITOR;
+			$level = ILYA_USER_LEVEL_EDITOR;
 		}
 		if ($access['mod']) {
-			$level = ILYA__USER_LEVEL_MODERATOR;
+			$level = ILYA_USER_LEVEL_MODERATOR;
 		}
 		if ($access['admin']) {
-			$level = ILYA__USER_LEVEL_ADMIN;
+			$level = ILYA_USER_LEVEL_ADMIN;
 		}
 		if ($access['super'] || $user->get('isRoot')) {
-			$level = ILYA__USER_LEVEL_SUPER;
+			$level = ILYA_USER_LEVEL_SUPER;
 		}
 
 		$teamGroup = $jhelper->trigger_team_group_event($user);
@@ -184,7 +184,7 @@ class ilya_joomla_helper
 	{
 		// JPATH_BASE must be defined for Joomla to work
 		if (!defined('JPATH_BASE')) {
-			define('JPATH_BASE', ILYA__FINAL_JOOMLA_INTEGRATE_PATH);
+			define('JPATH_BASE', ILYA_FINAL_JOOMLA_INTEGRATE_PATH);
 		}
 	}
 

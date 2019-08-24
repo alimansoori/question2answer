@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -50,13 +50,13 @@ function ilya_get_logged_in_user()
 
 	else {
 		if (current_user_can('administrator'))
-			$level = ILYA__USER_LEVEL_ADMIN;
+			$level = ILYA_USER_LEVEL_ADMIN;
 		elseif (current_user_can('editor'))
-			$level = ILYA__USER_LEVEL_EDITOR;
+			$level = ILYA_USER_LEVEL_EDITOR;
 		elseif (current_user_can('contributor'))
-			$level = ILYA__USER_LEVEL_EXPERT;
+			$level = ILYA_USER_LEVEL_EXPERT;
 		else
-			$level = ILYA__USER_LEVEL_BASIC;
+			$level = ILYA_USER_LEVEL_BASIC;
 
 		return array(
 			'userid' => $wordpressuser->ID,
@@ -144,7 +144,7 @@ function ilya_get_users_html($userids, $should_include_link, $relative_url_prefi
 
 function ilya_avatar_html_from_userid($userid, $size, $padding)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/format.php';
+	require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 	global $ilya_cache_wp_user_emails;
 

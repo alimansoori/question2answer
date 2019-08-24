@@ -33,7 +33,7 @@ class ilya_related_qs
 
 	public function output_widget($region, $place, $themeobject, $template, $request, $ilya_content)
 	{
-		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+		require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 		if (!isset($ilya_content['q_view']['raw']['type']) || $ilya_content['q_view']['raw']['type'] != 'Q') // question might not be visible, etc...
 			return;

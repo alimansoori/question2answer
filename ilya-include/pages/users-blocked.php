@@ -19,19 +19,19 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 
 // Check we're not using single-sign on integration
 
-if (ILYA__FINAL_EXTERNAL_USERS) {
+if (ILYA_FINAL_EXTERNAL_USERS) {
 	ilya_fatal_error('User accounts are handled by external code');
 }
 
@@ -41,8 +41,8 @@ if (ILYA__FINAL_EXTERNAL_USERS) {
 $start = ilya_get_start();
 $pagesize = ilya_opt('page_size_users');
 
-$userSpecCount = ilya_db_selectspec_count(ilya_db_users_with_flag_selectspec(ILYA__USER_FLAGS_USER_BLOCKED));
-$userSpec = ilya_db_users_with_flag_selectspec(ILYA__USER_FLAGS_USER_BLOCKED, $start, $pagesize);
+$userSpecCount = ilya_db_selectspec_count(ilya_db_users_with_flag_selectspec(ILYA_USER_FLAGS_USER_BLOCKED));
+$userSpec = ilya_db_users_with_flag_selectspec(ILYA_USER_FLAGS_USER_BLOCKED, $start, $pagesize);
 
 list($numUsers, $users) = ilya_db_select_with_pending($userSpecCount, $userSpec);
 $count = $numUsers['count'];
@@ -50,7 +50,7 @@ $count = $numUsers['count'];
 
 // Check we have permission to view this page (moderator or above)
 
-if (ilya_get_logged_in_level() < ILYA__USER_LEVEL_MODERATOR) {
+if (ilya_get_logged_in_level() < ILYA_USER_LEVEL_MODERATOR) {
 	$ilya_content = ilya_content_prepare();
 	$ilya_content['error'] = ilya_lang_html('users/no_permission');
 	return $ilya_content;

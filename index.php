@@ -37,6 +37,6 @@ function dump($val = null)
     die(print_r($val));
 }
 
-define('ILYA__BASE_DIR', dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME']) . '/');
+define('ILYA_BASE_DIR', dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME']) . '/');
 
 require 'ilya-include/ilya-index.php';

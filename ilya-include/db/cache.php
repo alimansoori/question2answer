@@ -19,12 +19,12 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/maxima.php';
+require_once ILYA_INCLUDE_DIR . 'db/maxima.php';
 
 
 /**
@@ -40,7 +40,7 @@ function ilya_db_cache_set($type, $cacheid, $content)
 
 	ilya_db_query_sub(
 		'DELETE FROM ^cache WHERE lastread<NOW()-INTERVAL # SECOND',
-		ILYA__DB_MAX_CACHE_AGE
+		ILYA_DB_MAX_CACHE_AGE
 	);
 
 	ilya_db_query_sub(

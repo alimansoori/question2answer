@@ -19,12 +19,12 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-define('ILYA__DB_VERSION_CURRENT', 67);
+define('ILYA_DB_VERSION_CURRENT', 67);
 
 
 /**
@@ -64,8 +64,8 @@ function ilya_db_table_definitions()
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/maxima.php';
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'db/maxima.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
 
 	/*
 		Important note on character encoding in database and PHP connection to MySQL
@@ -100,8 +100,8 @@ function ilya_db_table_definitions()
 			'userid' => $useridcoltype . ' NOT NULL AUTO_INCREMENT',
 			'created' => 'DATETIME NOT NULL',
 			'createip' => 'VARBINARY(16) NOT NULL', // INET6_ATON of IP address when created
-			'email' => 'VARCHAR(' . ILYA__DB_MAX_EMAIL_LENGTH . ') NOT NULL',
-			'handle' => 'VARCHAR(' . ILYA__DB_MAX_HANDLE_LENGTH . ') NOT NULL', // username
+			'email' => 'VARCHAR(' . ILYA_DB_MAX_EMAIL_LENGTH . ') NOT NULL',
+			'handle' => 'VARCHAR(' . ILYA_DB_MAX_HANDLE_LENGTH . ') NOT NULL', // username
 			'avatarblobid' => 'BIGINT UNSIGNED', // blobid of stored avatar
 			'avatarwidth' => 'SMALLINT UNSIGNED', // pixel width of stored avatar
 			'avatarheight' => 'SMALLINT UNSIGNED', // pixel height of stored avatar
@@ -145,18 +145,18 @@ function ilya_db_table_definitions()
 
 		'userprofile' => array(
 			'userid' => $useridcoltype . ' NOT NULL',
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_PROFILE_TITLE_LENGTH . ') NOT NULL', // profile field name
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_PROFILE_CONTENT_LENGTH . ') NOT NULL', // profile field value
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_PROFILE_TITLE_LENGTH . ') NOT NULL', // profile field name
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_PROFILE_CONTENT_LENGTH . ') NOT NULL', // profile field value
 			'UNIQUE userid (userid,title)',
 		),
 
 		'userfields' => array(
 			'fieldid' => 'SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT',
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_PROFILE_TITLE_LENGTH . ') NOT NULL', // to match title column in userprofile table
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_PROFILE_TITLE_LENGTH . ')', // label for display on user profile pages - NULL means use default
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_PROFILE_TITLE_LENGTH . ') NOT NULL', // to match title column in userprofile table
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_PROFILE_TITLE_LENGTH . ')', // label for display on user profile pages - NULL means use default
 			'position' => 'SMALLINT UNSIGNED NOT NULL',
-			'flags' => 'TINYINT UNSIGNED NOT NULL', // ILYA__FIELD_FLAGS_* at top of /ilya-include/app/users.php
-			'permit' => 'TINYINT UNSIGNED', // minimum user level required to view (uses ILYA__PERMIT_* constants), null means no restriction
+			'flags' => 'TINYINT UNSIGNED NOT NULL', // ILYA_FIELD_FLAGS_* at top of /ilya-include/app/users.php
+			'permit' => 'TINYINT UNSIGNED', // minimum user level required to view (uses ILYA_PERMIT_* constants), null means no restriction
 			'PRIMARY KEY (fieldid)',
 		),
 
@@ -167,8 +167,8 @@ function ilya_db_table_definitions()
 			'touserid' => $useridcoltype,
 			'fromhidden' => 'TINYINT(1) UNSIGNED NOT NULL DEFAULT 0',
 			'tohidden' => 'TINYINT(1) UNSIGNED NOT NULL DEFAULT 0',
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_CONTENT_LENGTH . ') NOT NULL',
-			'format' => 'VARCHAR(' . ILYA__DB_MAX_FORMAT_LENGTH . ') CHARACTER SET ascii NOT NULL',
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_CONTENT_LENGTH . ') NOT NULL',
+			'format' => 'VARCHAR(' . ILYA_DB_MAX_FORMAT_LENGTH . ') CHARACTER SET ascii NOT NULL',
 			'created' => 'DATETIME NOT NULL',
 			'PRIMARY KEY (messageid)',
 			'KEY type (type, fromuserid, touserid, created)',
@@ -190,9 +190,9 @@ function ilya_db_table_definitions()
 		'usernotices' => array(
 			'noticeid' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
 			'userid' => $useridcoltype . ' NOT NULL', // the user to whom the notice is directed
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_CONTENT_LENGTH . ') NOT NULL',
-			'format' => 'VARCHAR(' . ILYA__DB_MAX_FORMAT_LENGTH . ') CHARACTER SET ascii NOT NULL',
-			'tags' => 'VARCHAR(' . ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH . ')', // any additional information for a plugin to access
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_CONTENT_LENGTH . ') NOT NULL',
+			'format' => 'VARCHAR(' . ILYA_DB_MAX_FORMAT_LENGTH . ') CHARACTER SET ascii NOT NULL',
+			'tags' => 'VARCHAR(' . ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH . ')', // any additional information for a plugin to access
 			'created' => 'DATETIME NOT NULL',
 			'PRIMARY KEY (noticeid)',
 			'KEY userid (userid, created)',
@@ -235,28 +235,28 @@ function ilya_db_table_definitions()
 		'categories' => array(
 			'categoryid' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
 			'parentid' => 'INT UNSIGNED',
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_CAT_PAGE_TITLE_LENGTH . ') NOT NULL', // category name
-			'tags' => 'VARCHAR(' . ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH . ') NOT NULL', // slug (url fragment) used to identify category
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_CAT_CONTENT_LENGTH . ') NOT NULL DEFAULT \'\'', // description of category
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_CAT_PAGE_TITLE_LENGTH . ') NOT NULL', // category name
+			'tags' => 'VARCHAR(' . ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH . ') NOT NULL', // slug (url fragment) used to identify category
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_CAT_CONTENT_LENGTH . ') NOT NULL DEFAULT \'\'', // description of category
 			'qcount' => 'INT UNSIGNED NOT NULL DEFAULT 0',
 			'position' => 'SMALLINT UNSIGNED NOT NULL',
 			// full slug path for category, with forward slash separators, in reverse order to make index from effective
-			'backpath' => 'VARCHAR(' . (ILYA__CATEGORY_DEPTH * (ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH + 1)) . ') NOT NULL DEFAULT \'\'',
+			'backpath' => 'VARCHAR(' . (ILYA_CATEGORY_DEPTH * (ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH + 1)) . ') NOT NULL DEFAULT \'\'',
 			'PRIMARY KEY (categoryid)',
 			'UNIQUE parentid (parentid, tags)',
 			'UNIQUE parentid_2 (parentid, position)',
-			'KEY backpath (backpath(' . ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH . '))',
+			'KEY backpath (backpath(' . ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH . '))',
 		),
 
 		'pages' => array(
 			'pageid' => 'SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT',
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_CAT_PAGE_TITLE_LENGTH . ') NOT NULL', // title for navigation
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_CAT_PAGE_TITLE_LENGTH . ') NOT NULL', // title for navigation
 			'nav' => 'CHAR(1) CHARACTER SET ascii NOT NULL', // which navigation does it go in (M=main, F=footer, B=before main, O=opposite main, other=none)
 			'position' => 'SMALLINT UNSIGNED NOT NULL', // global ordering, which allows links to be ordered within each nav area
 			'flags' => 'TINYINT UNSIGNED NOT NULL', // local or external, open in new window?
-			'permit' => 'TINYINT UNSIGNED', // is there a minimum user level required for it (uses ILYA__PERMIT_* constants), null means no restriction
-			'tags' => 'VARCHAR(' . ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH . ') NOT NULL', // slug (url fragment) for page, or url for external pages
-			'heading' => 'VARCHAR(' . ILYA__DB_MAX_TITLE_LENGTH . ')', // for display within <h1> tags
+			'permit' => 'TINYINT UNSIGNED', // is there a minimum user level required for it (uses ILYA_PERMIT_* constants), null means no restriction
+			'tags' => 'VARCHAR(' . ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH . ') NOT NULL', // slug (url fragment) for page, or url for external pages
+			'heading' => 'VARCHAR(' . ILYA_DB_MAX_TITLE_LENGTH . ')', // for display within <h1> tags
 			'content' => 'MEDIUMTEXT', // remainder of page HTML
 			'PRIMARY KEY (pageid)',
 			'KEY tags (tags)',
@@ -270,8 +270,8 @@ function ilya_db_table_definitions()
 			// main region: MT=top of main, MH=below page title, ML=above links, MB=very bottom of main region
 			'place' => 'CHAR(2) CHARACTER SET ascii NOT NULL',
 			'position' => 'SMALLINT UNSIGNED NOT NULL', // global ordering, which allows widgets to be ordered within each place
-			'tags' => 'VARCHAR(' . ILYA__DB_MAX_WIDGET_TAGS_LENGTH . ') CHARACTER SET ascii NOT NULL', // comma-separated list of templates to display on
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_WIDGET_TITLE_LENGTH . ') NOT NULL', // name of widget module that should be displayed
+			'tags' => 'VARCHAR(' . ILYA_DB_MAX_WIDGET_TAGS_LENGTH . ') CHARACTER SET ascii NOT NULL', // comma-separated list of templates to display on
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_WIDGET_TITLE_LENGTH . ') NOT NULL', // name of widget module that should be displayed
 			'PRIMARY KEY (widgetid)',
 			'UNIQUE `position` (position)',
 		),
@@ -282,7 +282,7 @@ function ilya_db_table_definitions()
 			'parentid' => 'INT UNSIGNED', // for follow on questions, all answers and comments
 			'categoryid' => 'INT UNSIGNED', // this is the canonical final category id
 			'catidpath1' => 'INT UNSIGNED', // the catidpath* columns are calculated from categoryid, for the full hierarchy of that category
-			'catidpath2' => 'INT UNSIGNED', // note that ILYA__CATEGORY_DEPTH=4
+			'catidpath2' => 'INT UNSIGNED', // note that ILYA_CATEGORY_DEPTH=4
 			'catidpath3' => 'INT UNSIGNED',
 			'acount' => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0', // number of answers (for questions)
 			'amaxvote' => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0', // highest netvotes of child answers (for questions)
@@ -302,15 +302,15 @@ function ilya_db_table_definitions()
 			'views' => 'INT UNSIGNED NOT NULL DEFAULT 0',
 			'hotness' => 'FLOAT',
 			'flagcount' => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
-			'format' => 'VARCHAR(' . ILYA__DB_MAX_FORMAT_LENGTH . ') CHARACTER SET ascii NOT NULL DEFAULT \'\'', // format of content, e.g. 'html'
+			'format' => 'VARCHAR(' . ILYA_DB_MAX_FORMAT_LENGTH . ') CHARACTER SET ascii NOT NULL DEFAULT \'\'', // format of content, e.g. 'html'
 			'created' => 'DATETIME NOT NULL',
 			'updated' => 'DATETIME', // time of last update
 			'updatetype' => 'CHAR(1) CHARACTER SET ascii', // see /ilya-include/app/updates.php
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_TITLE_LENGTH . ')',
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_CONTENT_LENGTH . ')',
-			'tags' => 'VARCHAR(' . ILYA__DB_MAX_TAGS_LENGTH . ')', // string of tags separated by commas
-			'name' => 'VARCHAR(' . ILYA__DB_MAX_NAME_LENGTH . ')', // name of author if post anonymonus
-			'notify' => 'VARCHAR(' . ILYA__DB_MAX_EMAIL_LENGTH . ')', // email address, or @ to get from user, or NULL for none
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_TITLE_LENGTH . ')',
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_CONTENT_LENGTH . ')',
+			'tags' => 'VARCHAR(' . ILYA_DB_MAX_TAGS_LENGTH . ')', // string of tags separated by commas
+			'name' => 'VARCHAR(' . ILYA_DB_MAX_NAME_LENGTH . ')', // name of author if post anonymonus
+			'notify' => 'VARCHAR(' . ILYA_DB_MAX_EMAIL_LENGTH . ')', // email address, or @ to get from user, or NULL for none
 			'PRIMARY KEY (postid)',
 			'KEY type (type, created)', // for getting recent questions, answers, comments
 			'KEY type_2 (type, acount, created)', // for getting unanswered questions
@@ -323,14 +323,14 @@ function ilya_db_table_definitions()
 			'KEY selchildid (selchildid, type, created)', // for counting how many of a user's answers have been selected, unselected qs
 			'KEY closedbyid (closedbyid)', // for the foreign key constraint
 			'KEY catidpath1 (catidpath1, type, created)', // for getting question, answers or comments in a specific level category
-			'KEY catidpath2 (catidpath2, type, created)', // note that ILYA__CATEGORY_DEPTH=4
+			'KEY catidpath2 (catidpath2, type, created)', // note that ILYA_CATEGORY_DEPTH=4
 			'KEY catidpath3 (catidpath3, type, created)',
 			'KEY categoryid (categoryid, type, created)', // this can also be used for searching the equivalent of catidpath4
 			'KEY createip (createip, created)', // for getting posts created by a specific IP address
 			'KEY updated (updated, type)', // for getting recent edits across all categories
 			'KEY flagcount (flagcount, created, type)', // for getting posts with the most flags
 			'KEY catidpath1_2 (catidpath1, updated, type)', // for getting recent edits in a specific level category
-			'KEY catidpath2_2 (catidpath2, updated, type)', // note that ILYA__CATEGORY_DEPTH=4
+			'KEY catidpath2_2 (catidpath2, updated, type)', // note that ILYA_CATEGORY_DEPTH=4
 			'KEY catidpath3_2 (catidpath3, updated, type)',
 			'KEY categoryid_2 (categoryid, updated, type)',
 			'KEY lastuserid (lastuserid, updated, type)', // for getting posts edited by a specific user
@@ -342,9 +342,9 @@ function ilya_db_table_definitions()
 
 		'blobs' => array(
 			'blobid' => 'BIGINT UNSIGNED NOT NULL',
-			'format' => 'VARCHAR(' . ILYA__DB_MAX_FORMAT_LENGTH . ') CHARACTER SET ascii NOT NULL', // format e.g. 'jpeg', 'gif', 'png'
-			'content' => 'MEDIUMBLOB', // null means it's stored on disk in ILYA__BLOBS_DIRECTORY
-			'filename' => 'VARCHAR(' . ILYA__DB_MAX_BLOB_FILE_NAME_LENGTH . ')', // name of source file (if appropriate)
+			'format' => 'VARCHAR(' . ILYA_DB_MAX_FORMAT_LENGTH . ') CHARACTER SET ascii NOT NULL', // format e.g. 'jpeg', 'gif', 'png'
+			'content' => 'MEDIUMBLOB', // null means it's stored on disk in ILYA_BLOBS_DIRECTORY
+			'filename' => 'VARCHAR(' . ILYA_DB_MAX_BLOB_FILE_NAME_LENGTH . ')', // name of source file (if appropriate)
 			'userid' => $useridcoltype, // which user created it
 			'cookieid' => 'BIGINT UNSIGNED', // which cookie created it
 			'createip' => 'VARBINARY(16)', // INET6_ATON of IP address that created it
@@ -354,7 +354,7 @@ function ilya_db_table_definitions()
 
 		'words' => array(
 			'wordid' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
-			'word' => 'VARCHAR(' . ILYA__DB_MAX_WORD_LENGTH . ') NOT NULL',
+			'word' => 'VARCHAR(' . ILYA_DB_MAX_WORD_LENGTH . ') NOT NULL',
 			'titlecount' => 'INT UNSIGNED NOT NULL DEFAULT 0', // only counts one per post
 			'contentcount' => 'INT UNSIGNED NOT NULL DEFAULT 0', // only counts one per post
 			'tagwordcount' => 'INT UNSIGNED NOT NULL DEFAULT 0', // for words in tags - only counts one per post
@@ -462,8 +462,8 @@ function ilya_db_table_definitions()
 		),
 
 		'options' => array(
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_OPTION_TITLE_LENGTH . ') NOT NULL', // name of option
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_CONTENT_LENGTH . ') NOT NULL', // value of option
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_OPTION_TITLE_LENGTH . ') NOT NULL', // name of option
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_CONTENT_LENGTH . ') NOT NULL', // value of option
 			'PRIMARY KEY (title)',
 		),
 
@@ -479,37 +479,37 @@ function ilya_db_table_definitions()
 
 		'usermetas' => array(
 			'userid' => $useridcoltype . ' NOT NULL',
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_META_TITLE_LENGTH . ') NOT NULL',
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_META_CONTENT_LENGTH . ') NOT NULL',
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_META_TITLE_LENGTH . ') NOT NULL',
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_META_CONTENT_LENGTH . ') NOT NULL',
 			'PRIMARY KEY (userid, title)',
 		),
 
 		'postmetas' => array(
 			'postid' => 'INT UNSIGNED NOT NULL',
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_META_TITLE_LENGTH . ') NOT NULL',
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_META_CONTENT_LENGTH . ') NOT NULL',
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_META_TITLE_LENGTH . ') NOT NULL',
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_META_CONTENT_LENGTH . ') NOT NULL',
 			'PRIMARY KEY (postid, title)',
 			'CONSTRAINT ^postmetas_ibfk_1 FOREIGN KEY (postid) REFERENCES ^posts(postid) ON DELETE CASCADE',
 		),
 
 		'categorymetas' => array(
 			'categoryid' => 'INT UNSIGNED NOT NULL',
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_META_TITLE_LENGTH . ') NOT NULL',
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_META_CONTENT_LENGTH . ') NOT NULL',
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_META_TITLE_LENGTH . ') NOT NULL',
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_META_CONTENT_LENGTH . ') NOT NULL',
 			'PRIMARY KEY (categoryid, title)',
 			'CONSTRAINT ^categorymetas_ibfk_1 FOREIGN KEY (categoryid) REFERENCES ^categories(categoryid) ON DELETE CASCADE',
 		),
 
 		'tagmetas' => array(
-			'tag' => 'VARCHAR(' . ILYA__DB_MAX_WORD_LENGTH . ') NOT NULL',
-			'title' => 'VARCHAR(' . ILYA__DB_MAX_META_TITLE_LENGTH . ') NOT NULL',
-			'content' => 'VARCHAR(' . ILYA__DB_MAX_META_CONTENT_LENGTH . ') NOT NULL',
+			'tag' => 'VARCHAR(' . ILYA_DB_MAX_WORD_LENGTH . ') NOT NULL',
+			'title' => 'VARCHAR(' . ILYA_DB_MAX_META_TITLE_LENGTH . ') NOT NULL',
+			'content' => 'VARCHAR(' . ILYA_DB_MAX_META_CONTENT_LENGTH . ') NOT NULL',
 			'PRIMARY KEY (tag, title)',
 		),
 
 	);
 
-	if (ILYA__FINAL_EXTERNAL_USERS) {
+	if (ILYA_FINAL_EXTERNAL_USERS) {
 		unset($tables['users']);
 		unset($tables['userlogins']);
 		unset($tables['userprofile']);
@@ -611,7 +611,7 @@ function ilya_db_get_db_version()
  */
 function ilya_db_set_db_version($version)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/options.php';
+	require_once ILYA_INCLUDE_DIR . 'db/options.php';
 
 	ilya_db_set_option('db_version', $version);
 }
@@ -639,17 +639,17 @@ function ilya_db_check_tables()
 		if (!isset($missing['options'])) {
 			$version = ilya_db_get_db_version();
 
-			if (isset($version) && ($version < ILYA__DB_VERSION_CURRENT))
+			if (isset($version) && ($version < ILYA_DB_VERSION_CURRENT))
 				return 'old-version';
 		}
 
 		if (count($missing)) {
-			if (defined('ILYA__MYSQL_USERS_PREFIX')) { // special case if two installations sharing users
+			if (defined('ILYA_MYSQL_USERS_PREFIX')) { // special case if two installations sharing users
 				$datacount = 0;
 				$datamissing = 0;
 
 				foreach ($definitions as $rawname => $definition) {
-					if (ilya_db_add_table_prefix($rawname) == (ILYA__MYSQL_TABLE_PREFIX . $rawname)) {
+					if (ilya_db_add_table_prefix($rawname) == (ILYA_MYSQL_TABLE_PREFIX . $rawname)) {
 						$datacount++;
 
 						if (isset($missing[$rawname]))
@@ -697,7 +697,7 @@ function ilya_db_install_tables()
 			ilya_db_query_sub('ALTER TABLE ^' . $table . ' ADD COLUMN ' . $colname . ' ' . $coldefn);
 	}
 
-	ilya_db_set_db_version(ILYA__DB_VERSION_CURRENT);
+	ilya_db_set_db_version(ILYA_DB_VERSION_CURRENT);
 }
 
 
@@ -723,32 +723,32 @@ function ilya_db_create_table_sql($rawname, $definition)
  */
 function ilya_db_default_userfields_sql()
 {
-	require_once ILYA__INCLUDE_DIR . 'app/options.php';
+	require_once ILYA_INCLUDE_DIR . 'app/options.php';
 
 	$profileFields = array(
 		array(
 			'title' => 'name',
 			'position' => 1,
 			'flags' => 0,
-			'permit' => ILYA__PERMIT_ALL,
+			'permit' => ILYA_PERMIT_ALL,
 		),
 		array(
 			'title' => 'location',
 			'position' => 2,
 			'flags' => 0,
-			'permit' => ILYA__PERMIT_ALL,
+			'permit' => ILYA_PERMIT_ALL,
 		),
 		array(
 			'title' => 'website',
 			'position' => 3,
-			'flags' => ILYA__FIELD_FLAGS_LINK_URL,
-			'permit' => ILYA__PERMIT_ALL,
+			'flags' => ILYA_FIELD_FLAGS_LINK_URL,
+			'permit' => ILYA_PERMIT_ALL,
 		),
 		array(
 			'title' => 'about',
 			'position' => 4,
-			'flags' => ILYA__FIELD_FLAGS_MULTI_LINE,
-			'permit' => ILYA__PERMIT_ALL,
+			'flags' => ILYA_FIELD_FLAGS_MULTI_LINE,
+			'permit' => ILYA_PERMIT_ALL,
 		),
 	);
 
@@ -769,7 +769,7 @@ function ilya_db_default_userfields_sql()
  */
 function ilya_db_upgrade_tables()
 {
-	require_once ILYA__INCLUDE_DIR . 'app/recalc.php';
+	require_once ILYA_INCLUDE_DIR . 'app/recalc.php';
 
 	$definitions = ilya_db_table_definitions();
 	$keyrecalc = array();
@@ -794,12 +794,12 @@ function ilya_db_upgrade_tables()
 	while (1) {
 		$version = ilya_db_get_db_version();
 
-		if ($version >= ILYA__DB_VERSION_CURRENT)
+		if ($version >= ILYA_DB_VERSION_CURRENT)
 			break;
 
 		$newversion = $version + 1;
 
-		ilya_db_upgrade_progress(ILYA__DB_VERSION_CURRENT - $version . ' upgrade step/s remaining...');
+		ilya_db_upgrade_progress(ILYA_DB_VERSION_CURRENT - $version . ' upgrade step/s remaining...');
 
 		switch ($newversion) {
 			// Up to here: Version 1.0 beta 1
@@ -839,7 +839,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 7:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN sessioncode ' . $definitions['users']['sessioncode'] . ' AFTER writeip');
 					ilya_db_upgrade_query($locktablesquery);
 				}
@@ -854,7 +854,7 @@ function ilya_db_upgrade_tables()
 			// Up to here: Version 1.0 beta 3, 1.0, 1.0.1 beta, 1.0.1
 
 			case 9:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					ilya_db_upgrade_query('ALTER TABLE ^users CHANGE COLUMN resetcode emailcode ' . $definitions['users']['emailcode'] . ', ADD COLUMN flags ' . $definitions['users']['flags'] . ' AFTER sessioncode');
 					ilya_db_upgrade_query($locktablesquery);
 					ilya_db_upgrade_query('UPDATE ^users SET flags=1');
@@ -917,7 +917,7 @@ function ilya_db_upgrade_tables()
 			// Up to here: Version 1.2 beta 1
 
 			case 15:
-				if (!ILYA__FINAL_EXTERNAL_USERS)
+				if (!ILYA_FINAL_EXTERNAL_USERS)
 					ilya_db_upgrade_table_columns($definitions, 'users', array('emailcode', 'sessioncode', 'flags'));
 
 				ilya_db_upgrade_table_columns($definitions, 'posts', array('acount', 'upvotes', 'downvotes', 'format'));
@@ -947,7 +947,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 19:
-				if (!ILYA__FINAL_EXTERNAL_USERS)
+				if (!ILYA_FINAL_EXTERNAL_USERS)
 					ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN avatarblobid ' . $definitions['users']['avatarblobid'] . ' AFTER handle, ADD COLUMN avatarwidth ' . $definitions['users']['avatarwidth'] . ' AFTER avatarblobid, ADD COLUMN avatarheight ' . $definitions['users']['avatarheight'] . ' AFTER avatarwidth');
 
 				// hard-code list of columns and indexes to ensure we ignore any added at a later stage
@@ -976,7 +976,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 20:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					ilya_db_upgrade_query('UNLOCK TABLES');
 
 					ilya_db_upgrade_query(ilya_db_create_table_sql('userlogins', array(
@@ -997,7 +997,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 21:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					ilya_db_upgrade_query('UNLOCK TABLES');
 
 					ilya_db_upgrade_query(ilya_db_create_table_sql('userfields', array(
@@ -1019,7 +1019,7 @@ function ilya_db_upgrade_tables()
 			// Up to here: Version 1.3 beta 1
 
 			case 22:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					ilya_db_upgrade_query('ALTER TABLE ^users ADD COLUMN sessionsource ' . $definitions['users']['sessionsource'] . ' AFTER sessioncode');
 					ilya_db_upgrade_query($locktablesquery);
 				}
@@ -1115,10 +1115,10 @@ function ilya_db_upgrade_tables()
 				ilya_db_upgrade_query('ALTER TABLE ^posts DROP KEY categoryid, DROP KEY categoryid_2');
 				ilya_db_upgrade_query($locktablesquery);
 
-				ilya_db_upgrade_query('ALTER TABLE ^categories CHANGE COLUMN categoryid categoryid ' . $definitions['categories']['categoryid'] . ', ADD COLUMN parentid ' . $definitions['categories']['parentid'] . ' AFTER categoryid, ADD COLUMN backpath ' . $definitions['categories']['backpath'] . ' AFTER position, ADD COLUMN content ' . $definitions['categories']['content'] . ' AFTER tags, DROP INDEX tags, DROP INDEX position, ADD UNIQUE parentid (parentid, tags), ADD UNIQUE parentid_2 (parentid, position), ADD KEY backpath (backpath(' . ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH . '))');
+				ilya_db_upgrade_query('ALTER TABLE ^categories CHANGE COLUMN categoryid categoryid ' . $definitions['categories']['categoryid'] . ', ADD COLUMN parentid ' . $definitions['categories']['parentid'] . ' AFTER categoryid, ADD COLUMN backpath ' . $definitions['categories']['backpath'] . ' AFTER position, ADD COLUMN content ' . $definitions['categories']['content'] . ' AFTER tags, DROP INDEX tags, DROP INDEX position, ADD UNIQUE parentid (parentid, tags), ADD UNIQUE parentid_2 (parentid, position), ADD KEY backpath (backpath(' . ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH . '))');
 				ilya_db_upgrade_query($locktablesquery);
 
-				ilya_db_upgrade_query('ALTER TABLE ^posts CHANGE COLUMN categoryid categoryid ' . $definitions['posts']['categoryid'] . ', ADD COLUMN catidpath1 ' . $definitions['posts']['catidpath1'] . ' AFTER categoryid, ADD COLUMN catidpath2 ' . $definitions['posts']['catidpath2'] . ' AFTER catidpath1, ADD COLUMN catidpath3 ' . $definitions['posts']['catidpath3'] . ' AFTER catidpath2'); // ILYA__CATEGORY_DEPTH=4
+				ilya_db_upgrade_query('ALTER TABLE ^posts CHANGE COLUMN categoryid categoryid ' . $definitions['posts']['categoryid'] . ', ADD COLUMN catidpath1 ' . $definitions['posts']['catidpath1'] . ' AFTER categoryid, ADD COLUMN catidpath2 ' . $definitions['posts']['catidpath2'] . ' AFTER catidpath1, ADD COLUMN catidpath3 ' . $definitions['posts']['catidpath3'] . ' AFTER catidpath2'); // ILYA_CATEGORY_DEPTH=4
 				ilya_db_upgrade_query($locktablesquery);
 
 				ilya_db_upgrade_query('ALTER TABLE ^posts ADD KEY catidpath1 (catidpath1, type, created), ADD KEY catidpath2 (catidpath2, type, created), ADD KEY catidpath3 (catidpath3, type, created), ADD KEY categoryid (categoryid, type, created), ADD KEY catidpath1_2 (catidpath1, updated, type), ADD KEY catidpath2_2 (catidpath2, updated, type), ADD KEY catidpath3_2 (catidpath3, updated, type), ADD KEY categoryid_2 (categoryid, updated, type)');
@@ -1147,7 +1147,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 34:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					$keytables = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW TABLES')));
 					// might be using messages table shared with another installation, so check if we need to upgrade
 
@@ -1185,7 +1185,7 @@ function ilya_db_upgrade_tables()
 					'PRIMARY KEY (userid, entitytype, entityid)',
 					'KEY userid (userid, nouserevents)',
 					'KEY entitytype (entitytype, entityid, nouserevents)',
-					ILYA__FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^userfavorites_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
+					ILYA_FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^userfavorites_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
 				)));
 
 				$locktablesquery .= ', ^userfavorites WRITE';
@@ -1206,7 +1206,7 @@ function ilya_db_upgrade_tables()
 					'updated' => $definitions['userevents']['updated'],
 					'KEY userid (userid, updated)',
 					'KEY questionid (questionid, userid)',
-					ILYA__FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^userevents_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
+					ILYA_FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^userevents_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
 				)));
 
 				$locktablesquery .= ', ^userevents WRITE';
@@ -1264,7 +1264,7 @@ function ilya_db_upgrade_tables()
 					'title' => $definitions['usermetas']['title'],
 					'content' => $definitions['usermetas']['content'],
 					'PRIMARY KEY (userid, title)',
-					ILYA__FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^usermetas_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
+					ILYA_FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^usermetas_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
 				)));
 
 				$locktablesquery .= ', ^usermetas WRITE';
@@ -1334,7 +1334,7 @@ function ilya_db_upgrade_tables()
 					'created' => $definitions['usernotices']['created'],
 					'PRIMARY KEY (noticeid)',
 					'KEY userid (userid, created)',
-					ILYA__FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^usernotices_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
+					ILYA_FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^usernotices_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
 				)));
 
 				$locktablesquery .= ', ^usernotices WRITE';
@@ -1344,7 +1344,7 @@ function ilya_db_upgrade_tables()
 			// Up to here: Version 1.5.x
 
 			case 48:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^messages')));
 					// might be using messages table shared with another installation, so check if we need to upgrade
 
@@ -1359,7 +1359,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 49:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					ilya_db_upgrade_query('ALTER TABLE ^users CHANGE COLUMN flags flags ' . $definitions['users']['flags']);
 					ilya_db_upgrade_query($locktablesquery);
 				}
@@ -1371,7 +1371,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 51:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					// might be using userfields table shared with another installation, so check if we need to upgrade
 					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^userfields')));
 
@@ -1386,7 +1386,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 52:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					$keyindexes = ilya_array_to_keys(ilya_db_read_all_assoc(ilya_db_query_sub('SHOW INDEX FROM ^users'), null, 'Key_name'));
 
 					if (isset($keyindexes['created']))
@@ -1416,7 +1416,7 @@ function ilya_db_upgrade_tables()
 					'level' => $definitions['userlevels']['level'],
 					'UNIQUE userid (userid, entitytype, entityid)',
 					'KEY entitytype (entitytype, entityid)',
-					ILYA__FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^userlevels_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
+					ILYA_FINAL_EXTERNAL_USERS ? null : 'CONSTRAINT ^userlevels_ibfk_1 FOREIGN KEY (userid) REFERENCES ^users(userid) ON DELETE CASCADE',
 				)));
 
 				$locktablesquery .= ', ^userlevels WRITE';
@@ -1426,7 +1426,7 @@ function ilya_db_upgrade_tables()
 			// Up to here: Version 1.6 beta 1
 
 			case 55:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					// might be using users table shared with another installation, so check if we need to upgrade
 					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^users')));
 
@@ -1450,7 +1450,7 @@ function ilya_db_upgrade_tables()
 			// Up to here: Version 1.6 (release)
 
 			case 57:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					// might be using messages table shared with another installation, so check if we need to upgrade
 					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^messages')));
 
@@ -1494,10 +1494,10 @@ function ilya_db_upgrade_tables()
 
 			case 61:
 				// upgrade length of ilya_posts.content field to 12000
-				$newlength = ILYA__DB_MAX_CONTENT_LENGTH;
+				$newlength = ILYA_DB_MAX_CONTENT_LENGTH;
 				$query = 'SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS WHERE table_schema=$ AND table_name=$ AND column_name="content"';
 				$tablename = ilya_db_add_table_prefix('posts');
-				$oldlength = ilya_db_read_one_value(ilya_db_query_sub($query, ILYA__FINAL_MYSQL_DATABASE, $tablename));
+				$oldlength = ilya_db_read_one_value(ilya_db_query_sub($query, ILYA_FINAL_MYSQL_DATABASE, $tablename));
 
 				if ($oldlength < $newlength) {
 					ilya_db_upgrade_query('ALTER TABLE ^posts MODIFY content ' . $definitions['posts']['content']);
@@ -1506,7 +1506,7 @@ function ilya_db_upgrade_tables()
 				break;
 
 			case 62:
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					// might be using users table shared with another installation, so check if we need to upgrade
 					$keycolumns = ilya_array_to_keys(ilya_db_read_all_values(ilya_db_query_sub('SHOW COLUMNS FROM ^users')));
 
@@ -1545,7 +1545,7 @@ function ilya_db_upgrade_tables()
 				ilya_db_upgrade_query('ALTER TABLE ^posts MODIFY lastviewip ' . $definitions['posts']['lastviewip'] . ', MODIFY lastip ' . $definitions['posts']['lastip'] . ', MODIFY createip ' . $definitions['posts']['createip']);
 				ilya_db_upgrade_query('UPDATE ^posts SET lastviewip = UNHEX(HEX(CAST(lastviewip AS UNSIGNED))), lastip = UNHEX(HEX(CAST(lastip AS UNSIGNED))), createip = UNHEX(HEX(CAST(createip AS UNSIGNED)))');
 
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					// check for shared users table
 					$fieldDef = ilya_db_read_one_assoc(ilya_db_query_sub('SHOW COLUMNS FROM ^users WHERE Field="createip"'));
 					if (strtolower($fieldDef['Type']) === 'varbinary(16)')
@@ -1587,7 +1587,7 @@ function ilya_db_upgrade_tables()
 
 			case 67:
 				// ensure we don't have old userids lying around
-				if (!ILYA__FINAL_EXTERNAL_USERS) {
+				if (!ILYA_FINAL_EXTERNAL_USERS) {
 					ilya_db_upgrade_query('ALTER TABLE ^messages MODIFY fromuserid ' . $definitions['messages']['fromuserid']);
 					ilya_db_upgrade_query('ALTER TABLE ^messages MODIFY touserid ' . $definitions['messages']['touserid']);
 					ilya_db_upgrade_query('UPDATE ^messages SET fromuserid=NULL WHERE fromuserid NOT IN (SELECT userid FROM ^users)');

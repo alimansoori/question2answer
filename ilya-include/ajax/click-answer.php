@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'pages/question-view.php';
-require_once ILYA__INCLUDE_DIR . 'pages/question-submit.php';
-require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+require_once ILYA_INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'pages/question-view.php';
+require_once ILYA_INCLUDE_DIR . 'pages/question-submit.php';
+require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 
 // Load relevant information about this answer
@@ -60,7 +60,7 @@ if (@$answer['basetype'] == 'A' && @$question['basetype'] == 'Q') {
 
 		// If so, page content to be updated via Ajax
 
-		echo "ILYA__AJAX_RESPONSE\n1\n";
+		echo "ILYA_AJAX_RESPONSE\n1\n";
 
 
 		// Send back new count of answers
@@ -109,4 +109,4 @@ if (@$answer['basetype'] == 'A' && @$question['basetype'] == 'Q') {
 }
 
 
-echo "ILYA__AJAX_RESPONSE\n0\n"; // fall back to non-Ajax submission if something failed
+echo "ILYA_AJAX_RESPONSE\n0\n"; // fall back to non-Ajax submission if something failed

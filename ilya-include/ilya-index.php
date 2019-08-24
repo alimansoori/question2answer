@@ -21,8 +21,8 @@
 
 // Try our best to set base path here just in case it wasn't set in index.php (pre version 1.0.1)
 
-if (!defined('ILYA__BASE_DIR')) {
-	define('ILYA__BASE_DIR', dirname(empty($_SERVER['SCRIPT_FILENAME']) ? dirname(__FILE__) : $_SERVER['SCRIPT_FILENAME']) . '/');
+if (!defined('ILYA_BASE_DIR')) {
+	define('ILYA_BASE_DIR', dirname(empty($_SERVER['SCRIPT_FILENAME']) ? dirname(__FILE__) : $_SERVER['SCRIPT_FILENAME']) . '/');
 }
 
 
@@ -59,7 +59,7 @@ else {
 		$relativedepth = 0;
 
 		if (isset($_GET['ilya-rewrite'])) { // URLs rewritten by .htaccess or Nginx
-			$urlformat = ILYA__URL_FORMAT_NEAT;
+			$urlformat = ILYA_URL_FORMAT_NEAT;
 			$ilya_rewrite = strtr(ilya_gpc_to_string($_GET['ilya-rewrite']), '+', ' '); // strtr required by Nginx
 			$requestparts = explode('/', $ilya_rewrite);
 			unset($_GET['ilya-rewrite']);
@@ -106,7 +106,7 @@ else {
 		} elseif (isset($_GET['ilya'])) {
 			if (strpos($_GET['ilya'], '/') === false) {
 				$urlformat = (empty($_SERVER['REQUEST_URI']) || strpos($_SERVER['REQUEST_URI'], '/index.php') !== false)
-					? ILYA__URL_FORMAT_SAFEST : ILYA__URL_FORMAT_PARAMS;
+					? ILYA_URL_FORMAT_SAFEST : ILYA_URL_FORMAT_PARAMS;
 				$requestparts = array(ilya_gpc_to_string($_GET['ilya']));
 
 				for ($part = 1; $part < 10; $part++) {
@@ -116,7 +116,7 @@ else {
 					}
 				}
 			} else {
-				$urlformat = ILYA__URL_FORMAT_PARAM;
+				$urlformat = ILYA_URL_FORMAT_PARAM;
 				$requestparts = explode('/', ilya_gpc_to_string($_GET['ilya']));
 			}
 
@@ -138,7 +138,7 @@ else {
 			}
 
 			if (is_numeric($indexpos)) {
-				$urlformat = ILYA__URL_FORMAT_INDEX;
+				$urlformat = ILYA_URL_FORMAT_INDEX;
 				$requestparts = explode('/', substr($normalizedpath, $indexpos + strlen($indexpath)));
 				$relativedepth = 1 + count($requestparts);
 			} else {
@@ -175,17 +175,17 @@ else {
 	$requestlower = strtolower(ilya_request());
 
 	if ($requestlower == 'install') {
-		require ILYA__INCLUDE_DIR . 'ilya-install.php';
-	} elseif ($requestlower == 'url/test/' . ILYA__URL_TEST_STRING) {
-		require ILYA__INCLUDE_DIR . 'ilya-url-test.php';
+		require ILYA_INCLUDE_DIR . 'ilya-install.php';
+	} elseif ($requestlower == 'url/test/' . ILYA_URL_TEST_STRING) {
+		require ILYA_INCLUDE_DIR . 'ilya-url-test.php';
 	} else {
 		// enable gzip compression for output (needs to come early)
 		ilya_initialize_buffering($requestlower);
 
 		if (substr($requestlower, 0, 5) == 'feed/') {
-			require ILYA__INCLUDE_DIR . 'ilya-feed.php';
+			require ILYA_INCLUDE_DIR . 'ilya-feed.php';
 		} else {
-			require ILYA__INCLUDE_DIR . 'ilya-page.php';
+			require ILYA_INCLUDE_DIR . 'ilya-page.php';
 		}
 	}
 }

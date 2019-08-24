@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -27,27 +27,27 @@ if (!defined('ILYA__VERSION')) { // don't allow this page to be requested direct
 
 // Character codes for the different types of entity that can be followed (entitytype columns)
 
-define('ILYA__ENTITY_QUESTION', 'Q');
-define('ILYA__ENTITY_USER', 'U');
-define('ILYA__ENTITY_TAG', 'T');
-define('ILYA__ENTITY_CATEGORY', 'C');
-define('ILYA__ENTITY_NONE', '-');
+define('ILYA_ENTITY_QUESTION', 'Q');
+define('ILYA_ENTITY_USER', 'U');
+define('ILYA_ENTITY_TAG', 'T');
+define('ILYA_ENTITY_CATEGORY', 'C');
+define('ILYA_ENTITY_NONE', '-');
 
 
 // Character codes for the different types of updates on a post (updatetype columns)
 
-define('ILYA__UPDATE_CATEGORY', 'A'); // questions only, category changed
-define('ILYA__UPDATE_CLOSED', 'C'); // questions only, closed or reopened
-define('ILYA__UPDATE_CONTENT', 'E'); // title or content edited
-define('ILYA__UPDATE_PARENT', 'M'); // e.g. comment moved when converting its parent answer to a comment
-define('ILYA__UPDATE_SELECTED', 'S'); // answers only, removed if unselected
-define('ILYA__UPDATE_TAGS', 'T'); // questions only
-define('ILYA__UPDATE_TYPE', 'Y'); // e.g. answer to comment
-define('ILYA__UPDATE_VISIBLE', 'H'); // hidden or reshown
+define('ILYA_UPDATE_CATEGORY', 'A'); // questions only, category changed
+define('ILYA_UPDATE_CLOSED', 'C'); // questions only, closed or reopened
+define('ILYA_UPDATE_CONTENT', 'E'); // title or content edited
+define('ILYA_UPDATE_PARENT', 'M'); // e.g. comment moved when converting its parent answer to a comment
+define('ILYA_UPDATE_SELECTED', 'S'); // answers only, removed if unselected
+define('ILYA_UPDATE_TAGS', 'T'); // questions only
+define('ILYA_UPDATE_TYPE', 'Y'); // e.g. answer to comment
+define('ILYA_UPDATE_VISIBLE', 'H'); // hidden or reshown
 
 
 // Character codes for types of update that only appear in the streams tables, not on the posts themselves
 
-define('ILYA__UPDATE_FOLLOWS', 'F'); // if a new question was asked related to one of its answers, or for a comment that follows another
-define('ILYA__UPDATE_C_FOR_Q', 'U'); // if comment created was on a question of the user whose stream this appears in
-define('ILYA__UPDATE_C_FOR_A', 'N'); // if comment created was on an answer of the user whose stream this appears in
+define('ILYA_UPDATE_FOLLOWS', 'F'); // if a new question was asked related to one of its answers, or for a comment that follows another
+define('ILYA_UPDATE_C_FOR_Q', 'U'); // if comment created was on a question of the user whose stream this appears in
+define('ILYA_UPDATE_C_FOR_A', 'N'); // if comment created was on an answer of the user whose stream this appears in

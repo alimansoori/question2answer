@@ -19,14 +19,14 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/admin.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 
 // Get current list of pages and determine the state of this admin page
@@ -45,7 +45,7 @@ if ((ilya_clicked('doaddpage') || ilya_clicked('doaddlink') || ilya_get('doaddli
 	$isexternal = ilya_clicked('doaddlink') || ilya_get('doaddlink') || ilya_post_text('external');
 
 } elseif (isset($editpage))
-	$isexternal = $editpage['flags'] & ILYA__PAGE_FLAGS_EXTERNAL;
+	$isexternal = $editpage['flags'] & ILYA_PAGE_FLAGS_EXTERNAL;
 
 
 // Check admin privileges (do late to allow one DB query)
@@ -109,8 +109,8 @@ elseif (ilya_clicked('dosaveoptions') || ilya_clicked('doaddpage') || ilya_click
 		ilya_set_option($optionname, (int)ilya_post_text('option_' . $optionname));
 
 } elseif (ilya_clicked('dosavepage')) {
-	require_once ILYA__INCLUDE_DIR . 'db/admin.php';
-	require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	require_once ILYA_INCLUDE_DIR . 'db/admin.php';
+	require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 	if (!ilya_check_form_security_code('admin/pages', ilya_post_text('code')))
 		$securityexpired = true;
@@ -142,22 +142,22 @@ elseif (ilya_clicked('dosaveoptions') || ilya_clicked('doaddpage') || ilya_click
 
 			if (empty($inname))
 				$errors['name'] = ilya_lang('main/field_required');
-			elseif (ilya_strlen($inname) > ILYA__DB_MAX_CAT_PAGE_TITLE_LENGTH)
-				$errors['name'] = ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_CAT_PAGE_TITLE_LENGTH);
+			elseif (ilya_strlen($inname) > ILYA_DB_MAX_CAT_PAGE_TITLE_LENGTH)
+				$errors['name'] = ilya_lang_sub('main/max_length_x', ILYA_DB_MAX_CAT_PAGE_TITLE_LENGTH);
 
 			if ($isexternal) {
 				// Verify the url is legitimate (vaguely)
 
 				if (empty($inurl))
 					$errors['url'] = ilya_lang('main/field_required');
-				elseif (ilya_strlen($inurl) > ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH)
-					$errors['url'] = ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH);
+				elseif (ilya_strlen($inurl) > ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH)
+					$errors['url'] = ilya_lang_sub('main/max_length_x', ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH);
 
 			} else {
 				// Verify the heading is legitimate
 
-				if (ilya_strlen($inheading) > ILYA__DB_MAX_TITLE_LENGTH)
-					$errors['heading'] = ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_TITLE_LENGTH);
+				if (ilya_strlen($inheading) > ILYA_DB_MAX_TITLE_LENGTH)
+					$errors['heading'] = ilya_lang_sub('main/max_length_x', ILYA_DB_MAX_TITLE_LENGTH);
 
 				// Verify the slug is legitimate (and try some defaults if we're creating a new page, and it's not)
 
@@ -185,8 +185,8 @@ elseif (ilya_clicked('dosaveoptions') || ilya_clicked('doaddpage') || ilya_click
 
 					if (empty($inslug))
 						$errors['slug'] = ilya_lang('main/field_required');
-					elseif (ilya_strlen($inslug) > ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH)
-						$errors['slug'] = ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_CAT_PAGE_TAGS_LENGTH);
+					elseif (ilya_strlen($inslug) > ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH)
+						$errors['slug'] = ilya_lang_sub('main/max_length_x', ILYA_DB_MAX_CAT_PAGE_TAGS_LENGTH);
 					elseif (preg_match('/[\\+\\/]/', $inslug))
 						$errors['slug'] = ilya_lang_sub('admin/slug_bad_chars', '+ /');
 					elseif (ilya_admin_is_slug_reserved($inslug))
@@ -209,7 +209,7 @@ elseif (ilya_clicked('dosaveoptions') || ilya_clicked('doaddpage') || ilya_click
 				if ($isexternal) {
 					ilya_db_page_set_fields($editpage['pageid'],
 						isset($errors['name']) ? $editpage['title'] : $inname,
-						ILYA__PAGE_FLAGS_EXTERNAL | ($innewwindow ? ILYA__PAGE_FLAGS_NEW_WINDOW : 0),
+						ILYA_PAGE_FLAGS_EXTERNAL | ($innewwindow ? ILYA_PAGE_FLAGS_NEW_WINDOW : 0),
 						isset($errors['url']) ? $editpage['tags'] : $inurl,
 						null, null, $inpermit);
 
@@ -246,7 +246,7 @@ elseif (ilya_clicked('dosaveoptions') || ilya_clicked('doaddpage') || ilya_click
 			} else { // creating a new one
 				if (empty($errors)) {
 					if ($isexternal) {
-						$pageid = ilya_db_page_create($inname, ILYA__PAGE_FLAGS_EXTERNAL | ($innewwindow ? ILYA__PAGE_FLAGS_NEW_WINDOW : 0), $inurl, null, null, $inpermit);
+						$pageid = ilya_db_page_create($inname, ILYA_PAGE_FLAGS_EXTERNAL | ($innewwindow ? ILYA_PAGE_FLAGS_NEW_WINDOW : 0), $inurl, null, null, $inpermit);
 					} else {
 						$pageid = ilya_db_page_create($inname, 0, $inslug, $inheading, $incontent, $inpermit);
 
@@ -326,7 +326,7 @@ if (isset($editpage)) {
 
 	$positionvalue = @$positionoptions[$editpage['nav'] . $editpage['position']];
 
-	$permitoptions = ilya_admin_permit_options(ILYA__PERMIT_ALL, ILYA__PERMIT_ADMINS, false, false);
+	$permitoptions = ilya_admin_permit_options(ILYA_PERMIT_ALL, ILYA_PERMIT_ADMINS, false, false);
 	$permitvalue = @$permitoptions[isset($inpermit) ? $inpermit : $editpage['permit']];
 
 	$ilya_content['form'] = array(
@@ -387,7 +387,7 @@ if (isset($editpage)) {
 				'id' => 'newwindow_display',
 				'tags' => 'name="newwindow"',
 				'label' => ilya_lang_html('admin/link_new_window'),
-				'value' => (isset($innewwindow) ? $innewwindow : (@$editpage['flags'] & ILYA__PAGE_FLAGS_NEW_WINDOW)) ? 1 : 0,
+				'value' => (isset($innewwindow) ? $innewwindow : (@$editpage['flags'] & ILYA_PAGE_FLAGS_NEW_WINDOW)) ? 1 : 0,
 				'type' => 'checkbox',
 			),
 
@@ -553,7 +553,7 @@ if (isset($editpage)) {
 	foreach ($pages as $page) {
 		$listhtml .= '<li><b><a href="' . ilya_custom_page_url($page) . '">' . ilya_html($page['title']) . '</a></b>';
 
-		$listhtml .= strtr(ilya_lang_html(($page['flags'] & ILYA__PAGE_FLAGS_EXTERNAL) ? 'admin/edit_link' : 'admin/edit_page'), array(
+		$listhtml .= strtr(ilya_lang_html(($page['flags'] & ILYA_PAGE_FLAGS_EXTERNAL) ? 'admin/edit_link' : 'admin/edit_page'), array(
 			'^1' => '<a href="' . ilya_path_html('admin/pages', array('edit' => $page['pageid'])) . '">',
 			'^2' => '</a>',
 		));

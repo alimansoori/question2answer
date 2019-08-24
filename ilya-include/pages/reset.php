@@ -19,14 +19,14 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 // Check we're not using single-sign on integration and that we're not logged in
 
-if (ILYA__FINAL_EXTERNAL_USERS) {
+if (ILYA_FINAL_EXTERNAL_USERS) {
 	ilya_fatal_error('User login is handled by external code');
 }
 
@@ -79,8 +79,8 @@ $hidden = array(
 );
 
 if (strlen($emailHandle) > 0) {
-	require_once ILYA__INCLUDE_DIR . 'app/users-edit.php';
-	require_once ILYA__INCLUDE_DIR . 'db/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users-edit.php';
+	require_once ILYA_INCLUDE_DIR . 'db/users.php';
 
 	$hidden['emailhandle'] = $emailHandle;
 
@@ -90,7 +90,7 @@ if (strlen($emailHandle) > 0) {
 
 	// Make sure there is only one match
 	if (count($matchingUsers) == 1) {
-		require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+		require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 		// strlen() check is vital otherwise we can reset code for most users by entering the empty string
 		if (strlen($code) > 0) {

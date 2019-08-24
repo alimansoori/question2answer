@@ -41,7 +41,7 @@ ilya_report_process_stage('init_blob');
 
 // Output the blob in question
 
-require_once ILYA__INCLUDE_DIR . 'app/blobs.php';
+require_once ILYA_INCLUDE_DIR . 'app/blobs.php';
 
 ilya_db_connect('ilya_blob_db_fail_handler');
 ilya_initialize_postdb_plugins();

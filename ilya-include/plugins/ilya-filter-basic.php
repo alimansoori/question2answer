@@ -19,8 +19,8 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR.'db/maxima.php';
-require_once ILYA__INCLUDE_DIR.'util/string.php';
+require_once ILYA_INCLUDE_DIR.'db/maxima.php';
+require_once ILYA_INCLUDE_DIR.'util/string.php';
 
 class ilya_filter_basic
 {
@@ -32,8 +32,8 @@ class ilya_filter_basic
 		if (!ilya_email_validate($email)) {
 			return ilya_lang('users/email_invalid');
 		}
-		if (ilya_strlen($email) > ILYA__DB_MAX_EMAIL_LENGTH) {
-			return ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_EMAIL_LENGTH);
+		if (ilya_strlen($email) > ILYA_DB_MAX_EMAIL_LENGTH) {
+			return ilya_lang_sub('main/max_length_x', ILYA_DB_MAX_EMAIL_LENGTH);
 		}
 	}
 
@@ -48,8 +48,8 @@ class ilya_filter_basic
 		if (preg_match('/[\\@\\+\\/]/', $handle)) {
 			return ilya_lang_sub('users/handle_has_bad', '@ + /');
 		}
-		if (ilya_strlen($handle) > ILYA__DB_MAX_HANDLE_LENGTH) {
-			return ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_HANDLE_LENGTH);
+		if (ilya_strlen($handle) > ILYA_DB_MAX_HANDLE_LENGTH) {
+			return ilya_lang_sub('main/max_length_x', ILYA_DB_MAX_HANDLE_LENGTH);
 		}
 		// check for banned usernames (e.g. "anonymous")
 		$wordspreg = ilya_block_words_to_preg(ilya_opt('block_bad_usernames'));
@@ -69,10 +69,10 @@ class ilya_filter_basic
 		}
 
 		$qminlength = ilya_opt('min_len_q_title');
-		$qmaxlength = max($qminlength, min(ilya_opt('max_len_q_title'), ILYA__DB_MAX_TITLE_LENGTH));
+		$qmaxlength = max($qminlength, min(ilya_opt('max_len_q_title'), ILYA_DB_MAX_TITLE_LENGTH));
 		$this->validate_field_length($errors, $question, 'title', $qminlength, $qmaxlength);
 
-		$this->validate_field_length($errors, $question, 'content', 0, ILYA__DB_MAX_CONTENT_LENGTH); // for storage
+		$this->validate_field_length($errors, $question, 'content', 0, ILYA_DB_MAX_CONTENT_LENGTH); // for storage
 		$this->validate_field_length($errors, $question, 'text', ilya_opt('min_len_q_content'), null); // for display
 		// ensure content error is shown
 		if (isset($errors['text'])) {
@@ -90,8 +90,8 @@ class ilya_filter_basic
 				$errors['tags'] = ilya_lang_sub('question/max_tags_x', $maxtags);
 			} else {
 				$tagstring = ilya_tags_to_tagstring($question['tags']);
-				if (ilya_strlen($tagstring) > ILYA__DB_MAX_TAGS_LENGTH) { // for storage
-					$errors['tags'] = ilya_lang_sub('main/max_length_x', ILYA__DB_MAX_TAGS_LENGTH);
+				if (ilya_strlen($tagstring) > ILYA_DB_MAX_TAGS_LENGTH) { // for storage
+					$errors['tags'] = ilya_lang_sub('main/max_length_x', ILYA_DB_MAX_TAGS_LENGTH);
 				}
 			}
 		}
@@ -101,14 +101,14 @@ class ilya_filter_basic
 
 	public function filter_answer(&$answer, &$errors, $question, $oldanswer)
 	{
-		$this->validate_field_length($errors, $answer, 'content', 0, ILYA__DB_MAX_CONTENT_LENGTH); // for storage
+		$this->validate_field_length($errors, $answer, 'content', 0, ILYA_DB_MAX_CONTENT_LENGTH); // for storage
 		$this->validate_field_length($errors, $answer, 'text', ilya_opt('min_len_a_content'), null, 'content'); // for display
 		$this->validate_post_email($errors, $answer);
 	}
 
 	public function filter_comment(&$comment, &$errors, $question, $parent, $oldcomment)
 	{
-		$this->validate_field_length($errors, $comment, 'content', 0, ILYA__DB_MAX_CONTENT_LENGTH); // for storage
+		$this->validate_field_length($errors, $comment, 'content', 0, ILYA_DB_MAX_CONTENT_LENGTH); // for storage
 		$this->validate_field_length($errors, $comment, 'text', ilya_opt('min_len_c_content'), null, 'content'); // for display
 		$this->validate_post_email($errors, $comment);
 	}
@@ -118,7 +118,7 @@ class ilya_filter_basic
 		foreach (array_keys($profile) as $field) {
 			// ensure fields are not NULL
 			$profile[$field] = (string)$profile[$field];
-			$this->validate_field_length($errors, $profile, $field, 0, ILYA__DB_MAX_CONTENT_LENGTH);
+			$this->validate_field_length($errors, $profile, $field, 0, ILYA_DB_MAX_CONTENT_LENGTH);
 		}
 	}
 

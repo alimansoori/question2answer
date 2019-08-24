@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/mailing.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/mailing.php';
 
 
 $continue = false;
 
-if (ilya_get_logged_in_level() >= ILYA__USER_LEVEL_ADMIN) {
+if (ilya_get_logged_in_level() >= ILYA_USER_LEVEL_ADMIN) {
 	$starttime = time();
 
 	ilya_mailing_perform_step();
@@ -44,4 +44,4 @@ if (ilya_get_logged_in_level() >= ILYA__USER_LEVEL_ADMIN) {
 	$message = ilya_lang('admin/no_privileges');
 
 
-echo "ILYA__AJAX_RESPONSE\n" . (int)$continue . "\n" . ilya_html($message);
+echo "ILYA_AJAX_RESPONSE\n" . (int)$continue . "\n" . ilya_html($message);

@@ -19,10 +19,10 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'util/string.php';
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'util/string.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 
 // Collect the information we need from the database
@@ -32,7 +32,7 @@ $doaskcheck = ilya_opt('do_ask_check_qs');
 $doexampletags = ilya_using_tags() && ilya_opt('do_example_tags');
 
 if ($doaskcheck || $doexampletags) {
-	$countqs = max($doexampletags ? ILYA__DB_RETRIEVE_ASK_TAG_QS : 0, $doaskcheck ? ilya_opt('page_size_ask_check_qs') : 0);
+	$countqs = max($doexampletags ? ILYA_DB_RETRIEVE_ASK_TAG_QS : 0, $doaskcheck ? ilya_opt('page_size_ask_check_qs') : 0);
 
 	$relatedquestions = ilya_db_select_with_pending(
 		ilya_db_search_posts_selectspec(null, ilya_string_to_words($intitle), null, null, null, null, 0, false, $countqs)
@@ -73,7 +73,7 @@ if ($doexampletags) {
 
 // Output the response header and example tags
 
-echo "ILYA__AJAX_RESPONSE\n1\n";
+echo "ILYA_AJAX_RESPONSE\n1\n";
 
 echo strtr(ilya_html(implode(',', $exampletags)), "\r\n", '  ') . "\n";
 

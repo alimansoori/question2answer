@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 
 // $handle, $userhtml are already set by /ilya-include/page/user.php - also $userid if using external user integration
@@ -34,18 +34,18 @@ require_once ILYA__INCLUDE_DIR . 'app/format.php';
 // Find the recent activity for this user
 
 $loginuserid = ilya_get_logged_in_userid();
-$identifier = ILYA__FINAL_EXTERNAL_USERS ? $userid : $handle;
+$identifier = ILYA_FINAL_EXTERNAL_USERS ? $userid : $handle;
 
 list($useraccount, $questions, $answerqs, $commentqs, $editqs) = ilya_db_select_with_pending(
-	ILYA__FINAL_EXTERNAL_USERS ? null : ilya_db_user_account_selectspec($handle, false),
+	ILYA_FINAL_EXTERNAL_USERS ? null : ilya_db_user_account_selectspec($handle, false),
 	ilya_db_user_recent_qs_selectspec($loginuserid, $identifier, ilya_opt_if_loaded('page_size_activity')),
 	ilya_db_user_recent_a_qs_selectspec($loginuserid, $identifier),
 	ilya_db_user_recent_c_qs_selectspec($loginuserid, $identifier),
 	ilya_db_user_recent_edit_qs_selectspec($loginuserid, $identifier)
 );
 
-if (!ILYA__FINAL_EXTERNAL_USERS && !is_array($useraccount)) // check the user exists
-	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
+if (!ILYA_FINAL_EXTERNAL_USERS && !is_array($useraccount)) // check the user exists
+	return include ILYA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 
 // Get information on user references
@@ -90,7 +90,7 @@ foreach ($questions as $question) {
 
 // Sub menu for navigation in user pages
 
-$ismyuser = isset($loginuserid) && $loginuserid == (ILYA__FINAL_EXTERNAL_USERS ? $userid : $useraccount['userid']);
+$ismyuser = isset($loginuserid) && $loginuserid == (ILYA_FINAL_EXTERNAL_USERS ? $userid : $useraccount['userid']);
 $ilya_content['navigation']['sub'] = ilya_user_sub_navigation($handle, 'activity', $ismyuser);
 
 

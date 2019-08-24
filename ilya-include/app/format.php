@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-define('ILYA__PAGE_FLAGS_EXTERNAL', 1);
-define('ILYA__PAGE_FLAGS_NEW_WINDOW', 2);
+define('ILYA_PAGE_FLAGS_EXTERNAL', 1);
+define('ILYA_PAGE_FLAGS_NEW_WINDOW', 2);
 
 
 /**
@@ -99,9 +99,9 @@ function ilya_post_is_by_user($post, $userid, $cookieid)
  */
 function ilya_userids_handles_html($useridhandles, $microdata = false)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
 
-	if (ILYA__FINAL_EXTERNAL_USERS) {
+	if (ILYA_FINAL_EXTERNAL_USERS) {
 		$keyuserids = array();
 
 		foreach ($useridhandles as $useridhandle) {
@@ -153,22 +153,22 @@ function ilya_get_favorite_non_qs_map()
 		$loginuserid = ilya_get_logged_in_userid();
 
 		if (isset($loginuserid)) {
-			require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-			require_once ILYA__INCLUDE_DIR . 'util/string.php';
+			require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+			require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 			$favoritenonqs = ilya_db_get_pending_result('favoritenonqs', ilya_db_user_favorite_non_qs_selectspec($loginuserid));
 
 			foreach ($favoritenonqs as $favorite) {
 				switch ($favorite['type']) {
-					case ILYA__ENTITY_USER:
+					case ILYA_ENTITY_USER:
 						$ilya_favorite_non_qs_map['user'][$favorite['userid']] = true;
 						break;
 
-					case ILYA__ENTITY_TAG:
+					case ILYA_ENTITY_TAG:
 						$ilya_favorite_non_qs_map['tag'][ilya_strtolower($favorite['tags'])] = true;
 						break;
 
-					case ILYA__ENTITY_CATEGORY:
+					case ILYA_ENTITY_CATEGORY:
 						$ilya_favorite_non_qs_map['category'][$favorite['categorybackpath']] = true;
 						break;
 				}
@@ -292,11 +292,11 @@ function ilya_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $o
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
-	require_once ILYA__INCLUDE_DIR . 'app/posts.php';
+	require_once ILYA_INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA_INCLUDE_DIR . 'app/posts.php';
 
 	if (isset($options['blockwordspreg']))
-		require_once ILYA__INCLUDE_DIR . 'util/string.php';
+		require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 	$fields = array('raw' => $post);
 
@@ -609,7 +609,7 @@ function ilya_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $o
 	}
 
 	if (@$options['avatarsize'] > 0) {
-		if (ILYA__FINAL_EXTERNAL_USERS)
+		if (ILYA_FINAL_EXTERNAL_USERS)
 			$fields['avatar'] = ilya_get_external_avatar_html($post['userid'], $options['avatarsize'], false);
 		else
 			$fields['avatar'] = ilya_get_user_avatar_html(@$post['flags'], @$post['email'], @$post['handle'],
@@ -619,38 +619,38 @@ function ilya_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $o
 	// Updated when and by whom
 
 	if (@$options['updateview'] && isset($post['updated']) &&
-		($post['updatetype'] != ILYA__UPDATE_SELECTED || $isselected) && // only show selected change if it's still selected
+		($post['updatetype'] != ILYA_UPDATE_SELECTED || $isselected) && // only show selected change if it's still selected
 		( // otherwise check if one of these conditions is fulfilled...
 			(!isset($post['created'])) || // ... we didn't show the created time (should never happen in practice)
-			($post['hidden'] && ($post['updatetype'] == ILYA__UPDATE_VISIBLE)) || // ... the post was hidden as the last action
-			(ilya_post_is_closed($post) && $post['updatetype'] == ILYA__UPDATE_CLOSED) || // ... the post was closed as the last action
+			($post['hidden'] && ($post['updatetype'] == ILYA_UPDATE_VISIBLE)) || // ... the post was hidden as the last action
+			(ilya_post_is_closed($post) && $post['updatetype'] == ILYA_UPDATE_CLOSED) || // ... the post was closed as the last action
 			(abs($post['updated'] - $post['created']) > 300) || // ... or over 5 minutes passed between create and update times
 			($post['lastuserid'] != $post['userid']) // ... or it was updated by a different user
 		)
 	) {
 		switch ($post['updatetype']) {
-			case ILYA__UPDATE_TYPE:
-			case ILYA__UPDATE_PARENT:
+			case ILYA_UPDATE_TYPE:
+			case ILYA_UPDATE_PARENT:
 				$langstring = 'main/moved';
 				break;
 
-			case ILYA__UPDATE_CATEGORY:
+			case ILYA_UPDATE_CATEGORY:
 				$langstring = 'main/recategorized';
 				break;
 
-			case ILYA__UPDATE_VISIBLE:
+			case ILYA_UPDATE_VISIBLE:
 				$langstring = $post['hidden'] ? 'main/hidden' : 'main/reshown';
 				break;
 
-			case ILYA__UPDATE_CLOSED:
+			case ILYA_UPDATE_CLOSED:
 				$langstring = ilya_post_is_closed($post) ? 'main/closed' : 'main/reopened';
 				break;
 
-			case ILYA__UPDATE_TAGS:
+			case ILYA_UPDATE_TAGS:
 				$langstring = 'main/retagged';
 				break;
 
-			case ILYA__UPDATE_SELECTED:
+			case ILYA_UPDATE_SELECTED:
 				$langstring = 'main/selected';
 				break;
 
@@ -690,7 +690,7 @@ function ilya_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $o
  */
 function ilya_message_html_fields($message, $options = array())
 {
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
 
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
@@ -827,7 +827,7 @@ function ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, 
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA_INCLUDE_DIR . 'app/updates.php';
 
 	$fields = ilya_post_html_fields($question, $userid, $cookieid, $usershtml, null, $options);
 
@@ -836,14 +836,14 @@ function ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, 
 			$langstring = 'main/asked';
 			break;
 
-		case 'Q-' . ILYA__UPDATE_VISIBLE:
+		case 'Q-' . ILYA_UPDATE_VISIBLE:
 			if (@$question['opersonal'])
 				$langstring = $question['hidden'] ? 'misc/your_q_hidden' : 'misc/your_q_reshown';
 			else
 				$langstring = $question['hidden'] ? 'main/hidden' : 'main/reshown';
 			break;
 
-		case 'Q-' . ILYA__UPDATE_CLOSED:
+		case 'Q-' . ILYA_UPDATE_CLOSED:
 			$isClosed = ilya_post_is_closed($question);
 			if (@$question['opersonal'])
 				$langstring = $isClosed ? 'misc/your_q_closed' : 'misc/your_q_reopened';
@@ -851,11 +851,11 @@ function ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, 
 				$langstring = $isClosed ? 'main/closed' : 'main/reopened';
 			break;
 
-		case 'Q-' . ILYA__UPDATE_TAGS:
+		case 'Q-' . ILYA_UPDATE_TAGS:
 			$langstring = @$question['opersonal'] ? 'misc/your_q_retagged' : 'main/retagged';
 			break;
 
-		case 'Q-' . ILYA__UPDATE_CATEGORY:
+		case 'Q-' . ILYA_UPDATE_CATEGORY:
 			$langstring = @$question['opersonal'] ? 'misc/your_q_recategorized' : 'main/recategorized';
 			break;
 
@@ -863,22 +863,22 @@ function ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, 
 			$langstring = @$question['opersonal'] ? 'misc/your_q_answered' : 'main/answered';
 			break;
 
-		case 'A-' . ILYA__UPDATE_SELECTED:
+		case 'A-' . ILYA_UPDATE_SELECTED:
 			$langstring = @$question['opersonal'] ? 'misc/your_a_selected' : 'main/answer_selected';
 			break;
 
-		case 'A-' . ILYA__UPDATE_VISIBLE:
+		case 'A-' . ILYA_UPDATE_VISIBLE:
 			if (@$question['opersonal'])
 				$langstring = $question['ohidden'] ? 'misc/your_a_hidden' : 'misc/your_a_reshown';
 			else
 				$langstring = $question['ohidden'] ? 'main/hidden' : 'main/answer_reshown';
 			break;
 
-		case 'A-' . ILYA__UPDATE_CONTENT:
+		case 'A-' . ILYA_UPDATE_CONTENT:
 			$langstring = @$question['opersonal'] ? 'misc/your_a_edited' : 'main/answer_edited';
 			break;
 
-		case 'Q-' . ILYA__UPDATE_FOLLOWS:
+		case 'Q-' . ILYA_UPDATE_FOLLOWS:
 			$langstring = @$question['opersonal'] ? 'misc/your_a_questioned' : 'main/asked_related_q';
 			break;
 
@@ -886,34 +886,34 @@ function ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, 
 			$langstring = 'main/commented';
 			break;
 
-		case 'C-' . ILYA__UPDATE_C_FOR_Q:
+		case 'C-' . ILYA_UPDATE_C_FOR_Q:
 			$langstring = @$question['opersonal'] ? 'misc/your_q_commented' : 'main/commented';
 			break;
 
-		case 'C-' . ILYA__UPDATE_C_FOR_A:
+		case 'C-' . ILYA_UPDATE_C_FOR_A:
 			$langstring = @$question['opersonal'] ? 'misc/your_a_commented' : 'main/commented';
 			break;
 
-		case 'C-' . ILYA__UPDATE_FOLLOWS:
+		case 'C-' . ILYA_UPDATE_FOLLOWS:
 			$langstring = @$question['opersonal'] ? 'misc/your_c_followed' : 'main/commented';
 			break;
 
-		case 'C-' . ILYA__UPDATE_TYPE:
+		case 'C-' . ILYA_UPDATE_TYPE:
 			$langstring = @$question['opersonal'] ? 'misc/your_c_moved' : 'main/comment_moved';
 			break;
 
-		case 'C-' . ILYA__UPDATE_VISIBLE:
+		case 'C-' . ILYA_UPDATE_VISIBLE:
 			if (@$question['opersonal'])
 				$langstring = $question['ohidden'] ? 'misc/your_c_hidden' : 'misc/your_c_reshown';
 			else
 				$langstring = $question['ohidden'] ? 'main/hidden' : 'main/comment_reshown';
 			break;
 
-		case 'C-' . ILYA__UPDATE_CONTENT:
+		case 'C-' . ILYA_UPDATE_CONTENT:
 			$langstring = @$question['opersonal'] ? 'misc/your_c_edited' : 'main/comment_edited';
 			break;
 
-		case 'Q-' . ILYA__UPDATE_CONTENT:
+		case 'Q-' . ILYA_UPDATE_CONTENT:
 		default:
 			$langstring = @$question['opersonal'] ? 'misc/your_q_edited' : 'main/edited';
 			break;
@@ -924,7 +924,7 @@ function ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, 
 	if (@$question['opersonal'])
 		$fields['what_your'] = true;
 
-	if ($question['obasetype'] != 'Q' || @$question['oupdatetype'] == ILYA__UPDATE_FOLLOWS)
+	if ($question['obasetype'] != 'Q' || @$question['oupdatetype'] == ILYA_UPDATE_FOLLOWS)
 		$fields['what_url'] = ilya_q_path_html($question['postid'], $question['title'], false, $question['obasetype'], $question['opostid']);
 
 	if (@$options['contentview'] && !empty($question['ocontent'])) {
@@ -965,7 +965,7 @@ function ilya_other_to_q_html_fields($question, $userid, $cookieid, $usershtml, 
 
 	unset($fields['avatar']);
 	if (@$options['avatarsize'] > 0) {
-		if (ILYA__FINAL_EXTERNAL_USERS)
+		if (ILYA_FINAL_EXTERNAL_USERS)
 			$fields['avatar'] = ilya_get_external_avatar_html($question['ouserid'], $options['avatarsize'], false);
 		else
 			$fields['avatar'] = ilya_get_user_avatar_html($question['oflags'], $question['oemail'], $question['ohandle'],
@@ -1008,7 +1008,7 @@ function ilya_any_sort_by_date($questions)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+	require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 	foreach ($questions as $key => $question) // collect information about action referenced by each $question
 		$questions[$key]['sort'] = -(isset($question['opostid']) ? $question['otime'] : $question['created']);
@@ -1029,7 +1029,7 @@ function ilya_any_sort_and_dedupe($questions)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+	require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 	foreach ($questions as $key => $question) { // collect information about action referenced by each $question
 		if (isset($question['opostid'])) {
@@ -1189,7 +1189,7 @@ function ilya_url_to_html_link($url, $newwindow = false)
  */
 function ilya_insert_login_links($htmlmessage, $topage = null, $params = null)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
 
 	$userlinks = ilya_get_login_links(ilya_path_to_root(), isset($topage) ? ilya_path($topage, $params, '') : null);
 
@@ -1229,7 +1229,7 @@ function ilya_html_page_links($request, $start, $pagesize, $count, $prevnext, $p
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
 	$thispage = 1 + floor($start / $pagesize);
-	$lastpage = ceil(min((int)$count, 1 + ILYA__MAX_LIMIT_START) / $pagesize);
+	$lastpage = ceil(min((int)$count, 1 + ILYA_MAX_LIMIT_START) / $pagesize);
 
 	if ($thispage > 1 || $lastpage > $thispage) {
 		$links = array('label' => ilya_lang_html('main/page_label'), 'items' => array());
@@ -1410,13 +1410,13 @@ function ilya_category_navigation_sub($parentcategories, $parentid, $selecteds, 
  */
 function ilya_users_sub_navigation()
 {
-	if (ILYA__FINAL_EXTERNAL_USERS) {
+	if (ILYA_FINAL_EXTERNAL_USERS) {
 		return null;
 	}
 
 	$menuItems = array();
 
-	$moderatorPlus = ilya_get_logged_in_level() >= ILYA__USER_LEVEL_MODERATOR;
+	$moderatorPlus = ilya_get_logged_in_level() >= ILYA_USER_LEVEL_MODERATOR;
 	$showNewUsersPage = !ilya_user_permit_error('permit_view_new_users_page');
 	$showSpecialUsersPage = !ilya_user_permit_error('permit_view_special_users_page');
 
@@ -1507,16 +1507,16 @@ function ilya_user_sub_navigation($handle, $selected, $ismyuser = false)
 	if (isset($navigation[$selected]))
 		$navigation[$selected]['selected'] = true;
 
-	if (ILYA__FINAL_EXTERNAL_USERS || !ilya_opt('allow_user_walls'))
+	if (ILYA_FINAL_EXTERNAL_USERS || !ilya_opt('allow_user_walls'))
 		unset($navigation['wall']);
 
-	if (ILYA__FINAL_EXTERNAL_USERS || !$ismyuser)
+	if (ILYA_FINAL_EXTERNAL_USERS || !$ismyuser)
 		unset($navigation['account']);
 
 	if (!$ismyuser)
 		unset($navigation['favorites']);
 
-	if (ILYA__FINAL_EXTERNAL_USERS || !$ismyuser || !ilya_opt('allow_private_messages') || !ilya_opt('show_message_history'))
+	if (ILYA_FINAL_EXTERNAL_USERS || !$ismyuser || !ilya_opt('allow_private_messages') || !ilya_opt('show_message_history'))
 		unset($navigation['messages']);
 
 	return $navigation;
@@ -1578,7 +1578,7 @@ function ilya_account_sub_navigation()
  */
 function ilya_custom_page_url($page)
 {
-	return ($page['flags'] & ILYA__PAGE_FLAGS_EXTERNAL)
+	return ($page['flags'] & ILYA_PAGE_FLAGS_EXTERNAL)
 		? (is_numeric(strpos($page['tags'], '://')) ? $page['tags'] : ilya_path_to_root() . $page['tags'])
 		: ilya_path($page['tags']);
 }
@@ -1594,12 +1594,12 @@ function ilya_navigation_add_page(&$navigation, $page)
 	if (!isset($page['permit']) || !ilya_permit_value_error($page['permit'], ilya_get_logged_in_userid(), ilya_get_logged_in_level(), ilya_get_logged_in_flags())) {
 		$url = ilya_custom_page_url($page);
 
-		$navigation[($page['flags'] & ILYA__PAGE_FLAGS_EXTERNAL) ? ('custom-' . $page['pageid']) : ($page['tags'] . '$')] = array(
+		$navigation[($page['flags'] & ILYA_PAGE_FLAGS_EXTERNAL) ? ('custom-' . $page['pageid']) : ($page['tags'] . '$')] = array(
 			'url' => ilya_html($url),
 			'label' => ilya_html($page['title']),
 			'opposite' => ($page['nav'] == 'O'),
-			'target' => ($page['flags'] & ILYA__PAGE_FLAGS_NEW_WINDOW) ? '_blank' : null,
-			'selected' => ($page['flags'] & ILYA__PAGE_FLAGS_EXTERNAL) && (($url == ilya_path(ilya_request())) || ($url == ilya_self_html())),
+			'target' => ($page['flags'] & ILYA_PAGE_FLAGS_NEW_WINDOW) ? '_blank' : null,
+			'selected' => ($page['flags'] & ILYA_PAGE_FLAGS_EXTERNAL) && (($url == ilya_path(ilya_request())) || ($url == ilya_self_html())),
 		);
 	}
 }
@@ -1721,7 +1721,7 @@ function ilya_set_up_tag_field(&$ilya_content, &$field, $fieldname, $tags, $exam
  */
 function ilya_get_tags_field_value($fieldname)
 {
-	require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 	$text = ilya_remove_utf8mb4(ilya_post_text($fieldname));
 
@@ -1757,9 +1757,9 @@ function ilya_set_up_category_field(&$ilya_content, &$field, $fieldname, $navcat
 		$startpath .= '/' . $category['categoryid'];
 
 	if (isset($maxdepth))
-		$maxdepth = min(ILYA__CATEGORY_DEPTH, $maxdepth);
+		$maxdepth = min(ILYA_CATEGORY_DEPTH, $maxdepth);
 	else
-		$maxdepth = ILYA__CATEGORY_DEPTH;
+		$maxdepth = ILYA_CATEGORY_DEPTH;
 
 	$ilya_content['script_onloads'][] = sprintf('ilya_category_select(%s, %s);', ilya_js($fieldname), ilya_js($startpath));
 
@@ -1839,7 +1839,7 @@ function ilya_set_up_category_field(&$ilya_content, &$field, $fieldname, $navcat
  */
 function ilya_get_category_field_value($fieldname)
 {
-	for ($level = ILYA__CATEGORY_DEPTH; $level >= 1; $level--) {
+	for ($level = ILYA_CATEGORY_DEPTH; $level >= 1; $level--) {
 		$levelid = ilya_post_text($fieldname . '_' . $level);
 		if (strlen($levelid))
 			return $levelid;
@@ -1972,19 +1972,19 @@ function ilya_load_theme_class($theme, $template, $content, $request)
 
 	// First load the default class
 
-	require_once ILYA__INCLUDE_DIR . 'ilya-theme-base.php';
+	require_once ILYA_INCLUDE_DIR . 'ilya-theme-base.php';
 
 	$classname = 'ilya_html_theme_base';
 
 	// Then load the selected theme if valid, otherwise load the Classic theme
 
-	if (!file_exists(ILYA__THEME_DIR . $theme . '/ilya-styles.css'))
+	if (!file_exists(ILYA_THEME_DIR . $theme . '/ilya-styles.css'))
 		$theme = 'Classic';
 
 	$themeroothtml = ilya_html(ilya_path_to_root() . 'ilya-theme/' . $theme . '/');
 
-	if (file_exists(ILYA__THEME_DIR . $theme . '/ilya-theme.php')) {
-		require_once ILYA__THEME_DIR . $theme . '/ilya-theme.php';
+	if (file_exists(ILYA_THEME_DIR . $theme . '/ilya-theme.php')) {
+		require_once ILYA_THEME_DIR . $theme . '/ilya-theme.php';
 
 		if (class_exists('ilya_html_theme'))
 			$classname = 'ilya_html_theme';
@@ -1996,7 +1996,7 @@ function ilya_load_theme_class($theme, $template, $content, $request)
 
 	if (!ilya_user_maximum_permit_error('permit_view_voters_flaggers')) {
 		$loadlayers[] = array(
-			'directory' => ILYA__INCLUDE_DIR . 'plugins/',
+			'directory' => ILYA_INCLUDE_DIR . 'plugins/',
 			'include' => 'ilya-layer-voters-flaggers.php',
 			'urltoroot' => null,
 		);
@@ -2022,8 +2022,8 @@ function ilya_load_theme_class($theme, $template, $content, $request)
 				'parent::ilya_html_theme_base' => 'parent::__construct', // PHP5 constructor fix
 				'ilya_html_theme_layer' => $newclassname,
 				'ilya_html_theme_base' => $classname,
-				'ILYA__HTML_THEME_LAYER_DIRECTORY' => "'" . $layer['directory'] . "'",
-				'ILYA__HTML_THEME_LAYER_URLTOROOT' => "'" . ilya_path_to_root() . $layer['urltoroot'] . "'",
+				'ILYA_HTML_THEME_LAYER_DIRECTORY' => "'" . $layer['directory'] . "'",
+				'ILYA_HTML_THEME_LAYER_URLTOROOT' => "'" . ilya_path_to_root() . $layer['urltoroot'] . "'",
 			);
 
 			foreach ($searchwordreplace as $searchword => $replace) {
@@ -2183,7 +2183,7 @@ function ilya_viewer_html($content, $format, $options = array())
  */
 function ilya_get_post_title($fieldname)
 {
-	require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 	return ilya_remove_utf8mb4(ilya_post_text($fieldname));
 }
@@ -2200,7 +2200,7 @@ function ilya_get_post_title($fieldname)
  */
 function ilya_get_post_content($editorfield, $contentfield, &$ineditor, &$incontent, &$informat, &$intext)
 {
-	require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 	$ineditor = ilya_post_text($editorfield);
 	$editor = ilya_load_module('editor', $ineditor);
@@ -2244,8 +2244,8 @@ function ilya_get_avatar_blob_html($blobId, $width, $height, $size, $padding = f
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'util/image.php';
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'util/image.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
 
 	if (strlen($blobId) == 0 || (int)$size <= 0) {
 		return null;
@@ -2284,7 +2284,7 @@ function ilya_get_gravatar_html($email, $size)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
 
 	$avatarLink = ilya_html(ilya_get_gravatar_url($email, $size));
 

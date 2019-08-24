@@ -19,26 +19,26 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 
 // Check we're not using single-sign on integration
 
-if (ILYA__FINAL_EXTERNAL_USERS) {
+if (ILYA_FINAL_EXTERNAL_USERS) {
 	ilya_fatal_error('User accounts are handled by external code');
 }
 
 
 // Get list of special users
 
-$users = ilya_db_select_with_pending(ilya_db_users_from_level_selectspec(ILYA__USER_LEVEL_EXPERT));
+$users = ilya_db_select_with_pending(ilya_db_users_from_level_selectspec(ILYA_USER_LEVEL_EXPERT));
 
 
 // Check we have permission to view this page (moderator or above)

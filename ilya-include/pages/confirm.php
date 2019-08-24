@@ -19,14 +19,14 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
 // Check we're not using single-sign on integration, that we're not already confirmed, and that we're not blocked
 
-if (ILYA__FINAL_EXTERNAL_USERS) {
+if (ILYA_FINAL_EXTERNAL_USERS) {
 	ilya_fatal_error('User login is handled by external code');
 }
 
@@ -57,17 +57,17 @@ if (isset($loggedInUserId) && ilya_clicked('dosendconfirm')) { // A logged in us
 		$pageError = ilya_lang_html('misc/form_security_again');
 	} else {
 		// For ilya_send_new_confirm
-		require_once ILYA__INCLUDE_DIR . 'app/users-edit.php';
+		require_once ILYA_INCLUDE_DIR . 'app/users-edit.php';
 
 		ilya_send_new_confirm($loggedInUserId);
 		$emailConfirmationSent = true;
 	}
 } elseif (strlen($code) > 0) { // If there is a code present in the URL
 	// For ilya_db_select_with_pending, ilya_db_user_account_selectspec
-	require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+	require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 	// For ilya_complete_confirm
-	require_once ILYA__INCLUDE_DIR . 'app/users-edit.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users-edit.php';
 
 	if (strlen($handle) > 0) { // If there is a handle present in the URL
 		$userInfo = ilya_db_select_with_pending(ilya_db_user_account_selectspec($handle, false));
@@ -82,7 +82,7 @@ if (isset($loggedInUserId) && ilya_clicked('dosendconfirm')) { // A logged in us
 		$userInfo = ilya_db_select_with_pending(ilya_db_user_account_selectspec($loggedInUserId, true));
 		$flags = $userInfo['flags'];
 
-		if (($flags & ILYA__USER_FLAGS_EMAIL_CONFIRMED) > 0 && ($flags & ILYA__USER_FLAGS_MUST_CONFIRM) == 0) {
+		if (($flags & ILYA_USER_FLAGS_EMAIL_CONFIRMED) > 0 && ($flags & ILYA_USER_FLAGS_MUST_CONFIRM) == 0) {
 			$userConfirmed = true; // if they confirmed before, just show message as if it happened now
 		} elseif (strtolower(trim($userInfo['emailcode'])) == strtolower($code)) {
 			ilya_complete_confirm($userInfo['userid'], $userInfo['email'], $userInfo['handle']);
@@ -153,7 +153,7 @@ if ($emailConfirmationSent) {
 		);
 	}
 } elseif (isset($loggedInUserId)) { // if logged in, allow sending a fresh link
-	require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 	if (strlen($code) > 0) {
 		$ilya_content['error'] = ilya_lang_html('users/confirm_wrong_resend');

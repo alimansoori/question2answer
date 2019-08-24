@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -41,8 +41,8 @@ if (!defined('ILYA__VERSION')) { // don't allow this page to be requested direct
  */
 function ilya_db_event_create_for_entity($entitytype, $entityid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp = null)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/maxima.php';
-	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA_INCLUDE_DIR . 'db/maxima.php';
+	require_once ILYA_INCLUDE_DIR . 'app/updates.php';
 
 	$updatedsql = isset($timestamp) ? ('FROM_UNIXTIME(' . ilya_db_argument_to_mysql($timestamp, false) . ')') : 'NOW()';
 
@@ -58,10 +58,10 @@ function ilya_db_event_create_for_entity($entitytype, $entityid, $questionid, $l
 
 	$questiontruncated = false;
 
-	if ($entitytype == ILYA__ENTITY_QUESTION) {
+	if ($entitytype == ILYA_ENTITY_QUESTION) {
 		$truncate = ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT updated FROM ^sharedevents WHERE entitytype=$ AND entityid=# AND questionid=# ORDER BY updated DESC LIMIT #,1',
-			$entitytype, $entityid, $questionid, ILYA__DB_MAX_EVENTS_PER_Q
+			$entitytype, $entityid, $questionid, ILYA_DB_MAX_EVENTS_PER_Q
 		), true);
 
 		if (isset($truncate)) {
@@ -125,14 +125,14 @@ function ilya_db_event_create_for_entity($entitytype, $entityid, $questionid, $l
  */
 function ilya_db_event_create_not_entity($userid, $questionid, $lastpostid, $updatetype, $lastuserid, $timestamp = null)
 {
-	require_once ILYA__INCLUDE_DIR . 'app/updates.php';
+	require_once ILYA_INCLUDE_DIR . 'app/updates.php';
 
 	$updatedsql = isset($timestamp) ? ('FROM_UNIXTIME(' . ilya_db_argument_to_mysql($timestamp, false) . ')') : 'NOW()';
 
 	ilya_db_query_sub(
 		"INSERT INTO ^userevents (userid, entitytype, entityid, questionid, lastpostid, updatetype, lastuserid, updated) " .
 		"VALUES ($, $, 0, #, #, $, $, " . $updatedsql . ")",
-		$userid, ILYA__ENTITY_NONE, $questionid, $lastpostid, $updatetype, $lastuserid
+		$userid, ILYA_ENTITY_NONE, $questionid, $lastpostid, $updatetype, $lastuserid
 	);
 
 	ilya_db_user_events_truncate($userid, $questionid);
@@ -154,7 +154,7 @@ function ilya_db_user_events_truncate($userid, $questionid = null)
 	if (isset($questionid)) {
 		$truncate = ilya_db_read_one_value(ilya_db_query_sub(
 			'SELECT updated FROM ^userevents WHERE userid=$ AND questionid=# ORDER BY updated DESC LIMIT #,1',
-			$userid, $questionid, ILYA__DB_MAX_EVENTS_PER_Q
+			$userid, $questionid, ILYA_DB_MAX_EVENTS_PER_Q
 		), true);
 
 		if (isset($truncate)) {

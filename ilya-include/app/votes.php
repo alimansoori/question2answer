@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -41,8 +41,8 @@ function ilya_vote_error_html($post, $vote, $userid, $topage)
 	// The 'login', 'confirm', 'limit', 'userblock' and 'ipblock' permission errors are reported to the user here.
 	// Others ('approve', 'level') prevent the buttons being clickable in the first place, in ilya_get_vote_view(...)
 
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
 
 	if ($post['hidden']) {
 		return ilya_lang_html('main/vote_disabled_hidden');
@@ -72,7 +72,7 @@ function ilya_vote_error_html($post, $vote, $userid, $topage)
 		return ilya_lang_html('main/vote_not_allowed');
 	}
 
-	$permiterror = ilya_user_post_permit_error(($post['basetype'] == 'Q') ? 'permit_vote_q' : 'permit_vote_a', $post, ILYA__LIMIT_VOTES);
+	$permiterror = ilya_user_post_permit_error(($post['basetype'] == 'Q') ? 'permit_vote_q' : 'permit_vote_a', $post, ILYA_LIMIT_VOTES);
 
 	$errordownonly = !$permiterror && $vote < 0;
 	if ($errordownonly) {
@@ -117,11 +117,11 @@ function ilya_vote_set($post, $userid, $handle, $cookieid, $vote)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/points.php';
-	require_once ILYA__INCLUDE_DIR . 'db/hotness.php';
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
-	require_once ILYA__INCLUDE_DIR . 'db/post-create.php';
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'db/points.php';
+	require_once ILYA_INCLUDE_DIR . 'db/hotness.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'db/post-create.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
 
 	$vote = (int)min(1, max(-1, $vote));
 	$oldvote = (int)ilya_db_uservote_get($post['postid'], $userid);
@@ -190,15 +190,15 @@ function ilya_flag_error_html($post, $userid, $topage)
 	// The 'login', 'confirm', 'limit', 'userblock' and 'ipblock' permission errors are reported to the user here.
 	// Others ('approve', 'level') prevent the flag button being shown, in ilya_page_q_post_rules(...)
 
-	require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-	require_once ILYA__INCLUDE_DIR . 'app/options.php';
-	require_once ILYA__INCLUDE_DIR . 'app/users.php';
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+	require_once ILYA_INCLUDE_DIR . 'app/options.php';
+	require_once ILYA_INCLUDE_DIR . 'app/users.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
 
 	if (is_array($post) && ilya_opt('flagging_of_posts') &&
 		(!isset($post['userid']) || !isset($userid) || $post['userid'] != $userid)
 	) {
-		switch (ilya_user_post_permit_error('permit_flag', $post, ILYA__LIMIT_FLAGS)) {
+		switch (ilya_user_post_permit_error('permit_flag', $post, ILYA_LIMIT_FLAGS)) {
 			case 'login':
 				return ilya_insert_login_links(ilya_lang_html('question/flag_must_login'), $topage);
 				break;
@@ -239,9 +239,9 @@ function ilya_flag_set_tohide($oldpost, $userid, $handle, $cookieid, $question)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
-	require_once ILYA__INCLUDE_DIR . 'db/post-update.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'db/post-update.php';
 
 	ilya_db_userflag_set($oldpost['postid'], $userid, true);
 	ilya_db_post_recount_flags($oldpost['postid']);
@@ -288,9 +288,9 @@ function ilya_flag_clear($oldpost, $userid, $handle, $cookieid)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
-	require_once ILYA__INCLUDE_DIR . 'db/post-update.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'db/post-update.php';
 
 	ilya_db_userflag_set($oldpost['postid'], $userid, false);
 	ilya_db_post_recount_flags($oldpost['postid']);
@@ -330,9 +330,9 @@ function ilya_flags_clear_all($oldpost, $userid, $handle, $cookieid)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/votes.php';
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
-	require_once ILYA__INCLUDE_DIR . 'db/post-update.php';
+	require_once ILYA_INCLUDE_DIR . 'db/votes.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'db/post-update.php';
 
 	ilya_db_userflags_clear_all($oldpost['postid']);
 	ilya_db_post_recount_flags($oldpost['postid']);

@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/admin.php';
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 
 // Get current list of widgets and determine the state of this admin page
@@ -115,7 +115,7 @@ if (isset($module) && method_exists($module, 'allow_template')) {
 				}
 			}
 
-			if ($isPagePlugin || !($page['flags'] & ILYA__PAGE_FLAGS_EXTERNAL))
+			if ($isPagePlugin || !($page['flags'] & ILYA_PAGE_FLAGS_EXTERNAL))
 				$templateoptions['custom-' . $page['pageid']] = ilya_html($page['title']);
 		}
 
@@ -131,7 +131,7 @@ if (ilya_clicked('docancel'))
 	ilya_redirect('admin/layout');
 
 elseif (ilya_clicked('dosavewidget')) {
-	require_once ILYA__INCLUDE_DIR . 'db/admin.php';
+	require_once ILYA_INCLUDE_DIR . 'db/admin.php';
 
 	if (!ilya_check_form_security_code('admin/widgets', ilya_post_text('code')))
 		$securityexpired = true;

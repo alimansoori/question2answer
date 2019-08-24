@@ -19,11 +19,11 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'app/admin.php';
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
 
-if (ilya_get_logged_in_level() < ILYA__USER_LEVEL_ADMIN) {
-	echo "ILYA__AJAX_RESPONSE\n0\n" . ilya_lang_html('admin/no_privileges');
+if (ilya_get_logged_in_level() < ILYA_USER_LEVEL_ADMIN) {
+	echo "ILYA_AJAX_RESPONSE\n0\n" . ilya_lang_html('admin/no_privileges');
 	return;
 }
 
@@ -77,4 +77,4 @@ if ($isCore) {
 	}
 }
 
-echo "ILYA__AJAX_RESPONSE\n1\n" . $response;
+echo "ILYA_AJAX_RESPONSE\n1\n" . $response;

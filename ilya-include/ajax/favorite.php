@@ -19,10 +19,10 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'app/users.php';
-require_once ILYA__INCLUDE_DIR . 'app/cookies.php';
-require_once ILYA__INCLUDE_DIR . 'app/favorites.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'app/users.php';
+require_once ILYA_INCLUDE_DIR . 'app/cookies.php';
+require_once ILYA_INCLUDE_DIR . 'app/favorites.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 
 $entitytype = ilya_post_text('entitytype');
@@ -32,7 +32,7 @@ $setfavorite = ilya_post_text('favorite');
 $userid = ilya_get_logged_in_userid();
 
 if (!ilya_check_form_security_code('favorite-' . $entitytype . '-' . $entityid, ilya_post_text('code'))) {
-	echo "ILYA__AJAX_RESPONSE\n0\n" . ilya_lang('misc/form_security_reload');
+	echo "ILYA_AJAX_RESPONSE\n0\n" . ilya_lang('misc/form_security_reload');
 } elseif (isset($userid)) {
 	$cookieid = ilya_cookie_get();
 
@@ -43,7 +43,7 @@ if (!ilya_check_form_security_code('favorite-' . $entitytype . '-' . $entityid, 
 	$themeclass = ilya_load_theme_class(ilya_get_site_theme(), 'ajax-favorite', null, null);
 	$themeclass->initialize();
 
-	echo "ILYA__AJAX_RESPONSE\n1\n";
+	echo "ILYA_AJAX_RESPONSE\n1\n";
 
 	$themeclass->favorite_inner_html($favoriteform);
 }

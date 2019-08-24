@@ -19,12 +19,12 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/post-create.php';
+require_once ILYA_INCLUDE_DIR . 'db/post-create.php';
 
 
 // For reindexing pages...
@@ -229,7 +229,7 @@ function ilya_db_posts_votes_recount($firstpostid, $lastpostid)
  */
 function ilya_db_posts_answers_recount($firstpostid, $lastpostid)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/hotness.php';
+	require_once ILYA_INCLUDE_DIR . 'db/hotness.php';
 
 	ilya_db_query_sub(
 		'UPDATE ^posts AS x, (SELECT parents.postid, COUNT(children.postid) AS acount, COALESCE(GREATEST(MAX(children.netvotes), 0), 0) AS amaxvote FROM ^posts AS parents LEFT JOIN ^posts AS children ON parents.postid=children.parentid AND children.type=\'A\' WHERE parents.postid>=# AND parents.postid<=# GROUP BY postid) AS a SET x.acount=a.acount, x.amaxvote=a.amaxvote WHERE x.postid=a.postid',
@@ -251,7 +251,7 @@ function ilya_db_posts_answers_recount($firstpostid, $lastpostid)
  */
 function ilya_db_users_get_for_recalc_points($startuserid, $count)
 {
-	if (ILYA__FINAL_EXTERNAL_USERS) {
+	if (ILYA_FINAL_EXTERNAL_USERS) {
 		return ilya_db_read_all_values(ilya_db_query_sub(
 			'SELECT userid FROM ((SELECT DISTINCT userid FROM ^posts WHERE userid>=# ORDER BY userid LIMIT #) UNION (SELECT DISTINCT userid FROM ^uservotes WHERE userid>=# ORDER BY userid LIMIT #)) x ORDER BY userid LIMIT #',
 			$startuserid, $count, $startuserid, $count, $count
@@ -272,7 +272,7 @@ function ilya_db_users_get_for_recalc_points($startuserid, $count)
  */
 function ilya_db_users_recalc_points($firstuserid, $lastuserid)
 {
-	require_once ILYA__INCLUDE_DIR . 'db/points.php';
+	require_once ILYA_INCLUDE_DIR . 'db/points.php';
 
 	$ilya_userpoints_calculations = ilya_db_points_calculations();
 
@@ -291,7 +291,7 @@ function ilya_db_users_recalc_points($firstuserid, $lastuserid)
 		$firstuserid, $lastuserid
 	);
 
-	if (ILYA__FINAL_EXTERNAL_USERS) {
+	if (ILYA_FINAL_EXTERNAL_USERS) {
 		ilya_db_query_sub(
 			'INSERT IGNORE INTO ^userpoints (userid) SELECT DISTINCT userid FROM ^posts WHERE userid>=# AND userid<=# UNION SELECT DISTINCT userid FROM ^uservotes WHERE userid>=# AND userid<=#',
 			$firstuserid, $lastuserid, $firstuserid, $lastuserid

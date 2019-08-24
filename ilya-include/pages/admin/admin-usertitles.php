@@ -19,13 +19,13 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/admin.php';
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 
 // Get current list of user titles and determine the state of this admin page
@@ -51,7 +51,7 @@ if (ilya_clicked('docancel'))
 	ilya_redirect('admin/users');
 
 elseif (ilya_clicked('dosavetitle')) {
-	require_once ILYA__INCLUDE_DIR . 'util/string.php';
+	require_once ILYA_INCLUDE_DIR . 'util/string.php';
 
 	if (!ilya_check_form_security_code('admin/usertitles', ilya_post_text('code')))
 		$securityexpired = true;

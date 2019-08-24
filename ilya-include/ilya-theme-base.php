@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../');
 	exit;
 }
@@ -195,7 +195,7 @@ class ilya_html_theme_base
 	 */
 	public function reorder_parts($parts, $beforekey = null, $reorderrelative = true)
 	{
-		require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+		require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 		ilya_array_reorder($this->content, $parts, $beforekey, $reorderrelative);
 	}
@@ -362,7 +362,7 @@ class ilya_html_theme_base
 
 	public function css_name()
 	{
-		return 'ilya-styles.css?' . ILYA__VERSION;
+		return 'ilya-styles.css?' . ILYA_VERSION;
 	}
 
 	public function head_lines()
@@ -1024,7 +1024,7 @@ class ilya_html_theme_base
 	 */
 	public function form_reorder_fields(&$form, $keys, $beforekey = null, $reorderrelative = true)
 	{
-		require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+		require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 		if (is_array($form['fields']))
 			ilya_array_reorder($form['fields'], $keys, $beforekey, $reorderrelative);
@@ -1208,7 +1208,7 @@ class ilya_html_theme_base
 	 */
 	public function form_reorder_buttons(&$form, $keys, $beforekey = null, $reorderrelative = true)
 	{
-		require_once ILYA__INCLUDE_DIR . 'util/sort.php';
+		require_once ILYA_INCLUDE_DIR . 'util/sort.php';
 
 		if (is_array($form['buttons']))
 			ilya_array_reorder($form['buttons'], $keys, $beforekey, $reorderrelative);

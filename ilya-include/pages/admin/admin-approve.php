@@ -19,18 +19,18 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'app/admin.php';
-require_once ILYA__INCLUDE_DIR . 'db/admin.php';
+require_once ILYA_INCLUDE_DIR . 'app/admin.php';
+require_once ILYA_INCLUDE_DIR . 'db/admin.php';
 
 
 // Check we're not using single-sign on integration
 
-if (ILYA__FINAL_EXTERNAL_USERS)
+if (ILYA_FINAL_EXTERNAL_USERS)
 	ilya_fatal_error('User accounts are handled by external code');
 
 
@@ -44,7 +44,7 @@ $userfields = ilya_db_select_with_pending(ilya_db_userfields_selectspec());
 
 // Check admin privileges (do late to allow one DB query)
 
-if (ilya_get_logged_in_level() < ILYA__USER_LEVEL_MODERATOR) {
+if (ilya_get_logged_in_level() < ILYA_USER_LEVEL_MODERATOR) {
 	$ilya_content = ilya_content_prepare();
 	$ilya_content['error'] = ilya_lang_html('users/no_permission');
 	return $ilya_content;
@@ -93,7 +93,7 @@ if (count($users)) {
 		$message['content'] .= ilya_lang_html('users/email_label') . ' <a href="mailto:' . $htmlemail . '">' . $htmlemail . '</a>';
 
 		if (ilya_opt('confirm_user_emails')) {
-			$message['content'] .= '<small> - ' . ilya_lang_html(($user['flags'] & ILYA__USER_FLAGS_EMAIL_CONFIRMED) ? 'users/email_confirmed' : 'users/email_not_confirmed') . '</small>';
+			$message['content'] .= '<small> - ' . ilya_lang_html(($user['flags'] & ILYA_USER_FLAGS_EMAIL_CONFIRMED) ? 'users/email_confirmed' : 'users/email_not_confirmed') . '</small>';
 		}
 
 		foreach ($userfields as $userfield) {
@@ -130,7 +130,7 @@ if (count($users)) {
 
 
 $ilya_content['navigation']['sub'] = ilya_admin_sub_navigation();
-$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA__VERSION;
+$ilya_content['script_rel'][] = 'ilya-content/ilya-admin.js?' . ILYA_VERSION;
 
 
 return $ilya_content;

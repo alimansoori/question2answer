@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
 
 
 $categoryid = ilya_post_text('categoryid');
@@ -31,7 +31,7 @@ list($fullcategory, $categories) = ilya_db_select_with_pending(
 	ilya_db_category_sub_selectspec($categoryid)
 );
 
-echo "ILYA__AJAX_RESPONSE\n1\n";
+echo "ILYA_AJAX_RESPONSE\n1\n";
 
 echo ilya_html(strtr(@$fullcategory['content'], "\r\n", '  ')); // category description
 

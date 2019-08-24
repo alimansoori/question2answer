@@ -19,7 +19,7 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
@@ -35,7 +35,7 @@ function ilya_get_blob_url($blobid, $absolute = false)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return ilya_path('blob', array('ilya_blobid' => $blobid), $absolute ? ilya_opt('site_url') : null, ILYA__URL_FORMAT_PARAMS);
+	return ilya_path('blob', array('ilya_blobid' => $blobid), $absolute ? ilya_opt('site_url') : null, ILYA_URL_FORMAT_PARAMS);
 }
 
 
@@ -48,7 +48,7 @@ function ilya_get_blob_directory($blobid)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	return rtrim(ILYA__BLOBS_DIRECTORY, '/') . '/' . substr(str_pad($blobid, 20, '0', STR_PAD_LEFT), 0, 3);
+	return rtrim(ILYA_BLOBS_DIRECTORY, '/') . '/' . substr(str_pad($blobid, 20, '0', STR_PAD_LEFT), 0, 3);
 }
 
 
@@ -81,11 +81,11 @@ function ilya_create_blob($content, $format, $sourcefilename = null, $userid = n
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/blobs.php';
+	require_once ILYA_INCLUDE_DIR . 'db/blobs.php';
 
-	$blobid = ilya_db_blob_create(defined('ILYA__BLOBS_DIRECTORY') ? null : $content, $format, $sourcefilename, $userid, $cookieid, $ip);
+	$blobid = ilya_db_blob_create(defined('ILYA_BLOBS_DIRECTORY') ? null : $content, $format, $sourcefilename, $userid, $cookieid, $ip);
 
-	if (isset($blobid) && defined('ILYA__BLOBS_DIRECTORY')) {
+	if (isset($blobid) && defined('ILYA_BLOBS_DIRECTORY')) {
 		// still write content to the database if writing to disk failed
 		if (!ilya_write_blob_file($blobid, $content, $format))
 			ilya_db_blob_set_content($blobid, $content);
@@ -109,7 +109,7 @@ function ilya_write_blob_file($blobid, $content, $format)
 	$written = false;
 
 	$directory = ilya_get_blob_directory($blobid);
-	if (is_dir($directory) || mkdir($directory, fileperms(rtrim(ILYA__BLOBS_DIRECTORY, '/')) & 0777)) {
+	if (is_dir($directory) || mkdir($directory, fileperms(rtrim(ILYA_BLOBS_DIRECTORY, '/')) & 0777)) {
 		$filename = ilya_get_blob_filename($blobid, $format);
 
 		$file = fopen($filename, 'xb');
@@ -137,11 +137,11 @@ function ilya_read_blob($blobid)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/blobs.php';
+	require_once ILYA_INCLUDE_DIR . 'db/blobs.php';
 
 	$blob = ilya_db_blob_read($blobid);
 
-	if (isset($blob) && defined('ILYA__BLOBS_DIRECTORY') && !isset($blob['content']))
+	if (isset($blob) && defined('ILYA_BLOBS_DIRECTORY') && !isset($blob['content']))
 		$blob['content'] = ilya_read_blob_file($blobid, $blob['format']);
 
 	return $blob;
@@ -175,9 +175,9 @@ function ilya_delete_blob($blobid)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/blobs.php';
+	require_once ILYA_INCLUDE_DIR . 'db/blobs.php';
 
-	if (defined('ILYA__BLOBS_DIRECTORY')) {
+	if (defined('ILYA_BLOBS_DIRECTORY')) {
 		$blob = ilya_db_blob_read($blobid);
 
 		if (isset($blob) && !isset($blob['content']))
@@ -211,7 +211,7 @@ function ilya_blob_exists($blobid)
 {
 	if (ilya_to_override(__FUNCTION__)) { $args=func_get_args(); return ilya_call_override(__FUNCTION__, $args); }
 
-	require_once ILYA__INCLUDE_DIR . 'db/blobs.php';
+	require_once ILYA_INCLUDE_DIR . 'db/blobs.php';
 
 	return ilya_db_blob_exists($blobid);
 }

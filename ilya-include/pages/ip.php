@@ -19,18 +19,18 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
 
 
 $ip = ilya_request_part(1); // picked up from ilya-page.php
 if (filter_var($ip, FILTER_VALIDATE_IP) === false)
-	return include ILYA__INCLUDE_DIR . 'ilya-page-not-found.php';
+	return include ILYA_INCLUDE_DIR . 'ilya-page-not-found.php';
 
 
 // Find recently (hidden, queued or not) questions, answers, comments and edits for this IP
@@ -60,7 +60,7 @@ if (ilya_user_maximum_permit_error('permit_anon_view_ips')) {
 	return $ilya_content;
 }
 
-$blockable = ilya_user_level_maximum() >= ILYA__USER_LEVEL_MODERATOR; // allow moderator in one category to block across all categories
+$blockable = ilya_user_level_maximum() >= ILYA_USER_LEVEL_MODERATOR; // allow moderator in one category to block across all categories
 
 
 // Perform blocking or unblocking operations as appropriate
@@ -82,7 +82,7 @@ if (ilya_clicked('doblock') || ilya_clicked('dounblock') || ilya_clicked('dohide
 		}
 
 		if (ilya_clicked('dounblock')) {
-			require_once ILYA__INCLUDE_DIR . 'app/limits.php';
+			require_once ILYA_INCLUDE_DIR . 'app/limits.php';
 
 			$blockipclauses = ilya_block_ips_explode(ilya_opt('block_ips_write'));
 
@@ -103,13 +103,13 @@ if (ilya_clicked('doblock') || ilya_clicked('dounblock') || ilya_clicked('dohide
 		if (ilya_clicked('dohideall') && !ilya_user_maximum_permit_error('permit_hide_show')) {
 			// allow moderator in one category to hide posts across all categories if they are identified via IP page
 
-			require_once ILYA__INCLUDE_DIR . 'db/admin.php';
-			require_once ILYA__INCLUDE_DIR . 'app/posts.php';
+			require_once ILYA_INCLUDE_DIR . 'db/admin.php';
+			require_once ILYA_INCLUDE_DIR . 'app/posts.php';
 
 			$postids = ilya_db_get_ip_visible_postids($ip);
 
 			foreach ($postids as $postid)
-				ilya_post_set_status($postid, ILYA__POST_STATUS_HIDDEN, $userid);
+				ilya_post_set_status($postid, ILYA_POST_STATUS_HIDDEN, $userid);
 
 			ilya_redirect(ilya_request());
 		}
@@ -153,7 +153,7 @@ $ilya_content['form'] = array(
 
 
 if ($blockable) {
-	require_once ILYA__INCLUDE_DIR . 'app/limits.php';
+	require_once ILYA_INCLUDE_DIR . 'app/limits.php';
 
 	$blockipclauses = ilya_block_ips_explode(ilya_opt('block_ips_write'));
 	$matchclauses = array();

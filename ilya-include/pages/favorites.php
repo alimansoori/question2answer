@@ -19,14 +19,14 @@
 	More about this license: https://projekt.ir/license.php
 */
 
-if (!defined('ILYA__VERSION')) { // don't allow this page to be requested directly from browser
+if (!defined('ILYA_VERSION')) { // don't allow this page to be requested directly from browser
 	header('Location: ../../');
 	exit;
 }
 
-require_once ILYA__INCLUDE_DIR . 'db/selects.php';
-require_once ILYA__INCLUDE_DIR . 'app/format.php';
-require_once ILYA__INCLUDE_DIR . 'app/favorites.php';
+require_once ILYA_INCLUDE_DIR . 'db/selects.php';
+require_once ILYA_INCLUDE_DIR . 'app/format.php';
+require_once ILYA_INCLUDE_DIR . 'app/favorites.php';
 
 
 // Check that we're logged in
@@ -47,8 +47,8 @@ list($numQs, $questions, $numUsers, $users, $numTags, $tags, $categories) = ilya
 	ilya_db_selectspec_count(ilya_db_user_favorite_qs_selectspec($userid)),
 	ilya_db_user_favorite_qs_selectspec($userid, $pagesize_qs),
 
-	ILYA__FINAL_EXTERNAL_USERS ? null : ilya_db_selectspec_count(ilya_db_user_favorite_users_selectspec($userid)),
-	ILYA__FINAL_EXTERNAL_USERS ? null : ilya_db_user_favorite_users_selectspec($userid, $pagesize_users),
+	ILYA_FINAL_EXTERNAL_USERS ? null : ilya_db_selectspec_count(ilya_db_user_favorite_users_selectspec($userid)),
+	ILYA_FINAL_EXTERNAL_USERS ? null : ilya_db_user_favorite_users_selectspec($userid, $pagesize_users),
 
 	ilya_db_selectspec_count(ilya_db_user_favorite_tags_selectspec($userid)),
 	ilya_db_user_favorite_tags_selectspec($userid, $pagesize_tags),
@@ -56,7 +56,7 @@ list($numQs, $questions, $numUsers, $users, $numTags, $tags, $categories) = ilya
 	ilya_db_user_favorite_categories_selectspec($userid)
 );
 
-$usershtml = ilya_userids_handles_html(ILYA__FINAL_EXTERNAL_USERS ? $questions : array_merge($questions, $users));
+$usershtml = ilya_userids_handles_html(ILYA_FINAL_EXTERNAL_USERS ? $questions : array_merge($questions, $users));
 
 
 // Prepare and return content for theme
@@ -78,7 +78,7 @@ if ($numQs['count'] > count($questions)) {
 
 // Favorite users
 
-if (!ILYA__FINAL_EXTERNAL_USERS) {
+if (!ILYA_FINAL_EXTERNAL_USERS) {
 	$ilya_content['ranking_users'] = ilya_favorite_users_view($users, $usershtml);
 	$ilya_content['ranking_users']['title'] = count($users) ? ilya_lang_html('main/nav_users') : ilya_lang_html('misc/no_favorite_users');
 	if ($numUsers['count'] > count($users)) {
