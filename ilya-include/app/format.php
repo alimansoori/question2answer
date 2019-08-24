@@ -327,7 +327,7 @@ function ilya_post_html_fields($post, $userid, $cookieid, $usershtml, $dummy, $o
 
 	if ($microdata) {
 		if ($isanswer) {
-			$fields['tags'] .= ' itemprop="suggestedAnswer' . ($isselected ? ' acceptedAnswer' : '') . '" itemscope itemtype="https://schema.org/Answer"';
+			$fields['tags'] .= ' itemprop="suggestedAnswer' . ($isselected ? ' acceptedAnswer' : '') . '" itemscope itemtype="https://schema.org/Article"';
 		}
 		if ($iscomment) {
 			$fields['tags'] .= ' itemscope itemtype="https://schema.org/Comment"';

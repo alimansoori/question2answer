@@ -2198,10 +2198,19 @@ class ilya_html_theme_base
 	{
 		$content = isset($q_view['content']) ? $q_view['content'] : '';
 
+		$this->output('<div class="ilya-row">');
+		    $this->q_view_content_top($q_view);;
+		$this->output('</div>');
+
 		$this->output('<div class="ilya-q-view-content ilya-post-content">');
 		$this->output_raw($content);
 		$this->output('</div>');
 	}
+
+	public function q_view_content_top($q_view)
+    {
+
+    }
 
 	public function q_view_follows($q_view)
 	{
