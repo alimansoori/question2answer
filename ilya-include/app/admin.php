@@ -82,6 +82,7 @@ function ilya_admin_language_options()
 		'es' => 'Spanish - Español',
 		'et' => 'Estonian - Eesti',
 		'fa' => 'Persian - فارسی',
+		'fa_ads' => 'Persian - آگهی فارسی',
 		'fi' => 'Finnish - Suomi',
 		'fr' => 'French - Français',
 		'he' => 'Hebrew - עברית',
