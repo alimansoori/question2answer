@@ -70,9 +70,14 @@ class ilya_html_theme extends ilya_html_theme_base
 	 */
 	public function head_css()
 	{
+        $this->output('<link rel="stylesheet" href="' . $this->rooturl . 'assets/css/ilya.css"/>');
+        $this->output('<link rel="stylesheet" href="' . $this->rooturl . $this->css_name() . '"/>');
 		// add RTL CSS file
 		if ($this->isRTL)
-			$this->content['css_src'][] = $this->rooturl . 'ilya-styles-rtl.css?' . ILYA_VERSION;
+        {
+            $this->content['css_src'][] = $this->rooturl . 'assets/css/ilya-rtl.css?' . ILYA_VERSION;
+            $this->content['css_src'][] = $this->rooturl . 'ilya-styles-rtl.css?' . ILYA_VERSION;
+        }
 
 		if ($this->localfonts) {
 			// add Ubuntu font locally (inlined for speed)
@@ -397,9 +402,9 @@ class ilya_html_theme extends ilya_html_theme_base
 		if (isset($this->content['sidebar'])) {
 			$sidebar = $this->content['sidebar'];
 			if (!empty($sidebar)) {
-				$this->output('<div class="ilya-sidebar ' . $this->welcome_widget_class . '">');
+				$this->output('<div class="ilya-sidebar-old ' . $this->welcome_widget_class . '">');
 				$this->output_raw($sidebar);
-				$this->output('</div> <!-- ilya-sidebar -->', '');
+				$this->output('</div> <!-- ilya-sidebar-old -->', '');
 			}
 		}
 	}

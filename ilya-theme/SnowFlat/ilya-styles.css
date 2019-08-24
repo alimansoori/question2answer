@@ -93,11 +93,15 @@ body {
 	background: #ecf0f1 !important;
 	position: relative;
 	font-family: "Ubuntu", "Helvetica", "Arial", "FreeSans", sans-serif;
-	color: #34495e;
+	color: #000;
 }
 body.body-overflow {
 	overflow-y: hidden !important;
 	position: fixed;
+}
+
+body, h1, h2, h3, h4, h5, h6 {
+	font-family: "yekan", "Ubuntu", "Helvetica", "Arial", "FreeSans", sans-serif;
 }
 
 a {
@@ -105,7 +109,7 @@ a {
 	text-decoration: none;
 }
 a:active, a:focus {
-	color: #3498db;
+	color: #2E8B57;
 	text-decoration: none;
 	outline: 0;
 }
@@ -113,7 +117,7 @@ a:visited {
 	text-decoration: none;
 }
 a:hover {
-	color: #3498db;
+	color: #2E8B57;
 	text-decoration: underline;
 }
 
@@ -121,12 +125,12 @@ a:hover {
 	position: relative;
 	margin: 0 0 5px;
 	padding: 8px 52px 8px 20px;
-	background: #3498db;
+	background: #2E8B57;
 	color: #fff;
 }
 h1 {
 	margin: 0;
-	font-size: 1.4em;
+	font-size: 1.5em;
 	line-height: 1.35em;
 	word-wrap: break-word;
 }
@@ -135,7 +139,6 @@ h1 a {
 	line-height: inherit;
 	border: 0;
 	text-decoration: none;
-	opacity: 0.85;
 }
 h1 a:hover {
 	border-bottom: 0;
@@ -204,7 +207,7 @@ th, td {
 
 pre {
 	background-color: #e0e4e5;
-	border-left: 8px solid #3498db;
+	border-left: 8px solid #2E8B57;
 	margin: 1em 0;
 	overflow: auto;
 	padding: 0.4em 0.8em;
@@ -216,14 +219,14 @@ pre code {
 }
 
 code, samp, kbd {
-	color: #34495e;
+	color: #2E8B57;
 	font-family: "Courier New",Courier,monospace,sans-serif;
 	text-align: left;
 }
 
 blockquote {
 	background-color: #e0e4e5;
-	border-left: 11px solid #3498db;
+	border-left: 11px solid #2E8B57;
 	padding: 1em;
 	margin: 1em 0;
 	overflow-x: auto;
@@ -396,7 +399,7 @@ blockquote p {
 }
 
 .qam-main-nav-wrapper {
-	background: #2c3e50;
+	background: rgb(201, 63, 46);
 	color: #bdc3c7;
 	padding: 10px;
 }
@@ -468,7 +471,7 @@ blockquote p {
 }
 @media (min-width: 980px) {
 	.ilya-logo-link {
-		background: #34495e;
+		background: rgba(52, 73, 255, 0.11);
 		padding: 5px 15px;
 	}
 	.ilya-logo-link:hover {
@@ -507,7 +510,6 @@ blockquote p {
 }
 
 .ilya-nav-main-link {
-	background-color: #34495e;
 	display: block;
 	line-height: normal;
 	min-width: 60px;
@@ -541,7 +543,7 @@ blockquote p {
 	}
 }
 .ilya-nav-main-link.ilya-nav-main-selected {
-	background: #3498db;
+	background: #2E8B57;
 }
 
 .ilya-nav-sub {
@@ -592,7 +594,7 @@ blockquote p {
 	color: #000;
 }
 .ilya-nav-sub-link.ilya-nav-sub-selected, .ilya-nav-sub-link:visited.ilya-nav-sub-selected, .ilya-nav-sub-link:hover.ilya-nav-sub-selected {
-	background-color: #3498db;
+	background-color: #2E8B57;
 	color: #fff;
 }
 
@@ -608,7 +610,7 @@ blockquote p {
 	min-height: 55px;
 	max-width: 80px;
 	padding: 2px;
-	background-color: #34495e;
+	background-color: rgba(52, 73, 255, 0.11);
 	text-align: center;
 }
 #qam-account-toggle:hover {
@@ -622,7 +624,7 @@ blockquote p {
 }
 
 .qam-account-items {
-	background-color: #34495e;
+	background-color: #2E8B57;
 	display: none;
 	position: absolute;
 	right: 0;
@@ -816,6 +818,9 @@ blockquote p {
 	word-wrap: break-word;
 }
 
+.ilya-post-content {
+	font-size: 1.2em;
+}
 .ilya-post-content table {
 	width: 100%;
 	border-collapse: collapse;
@@ -929,7 +934,7 @@ blockquote p {
 }
 
 .ilya-a-count {
-	background-color: #3498db;
+	background-color: #2E8B57;
 	color: #fff;
 	text-align: center;
 }
@@ -1154,7 +1159,7 @@ blockquote p {
 	color: #1a6a9b;
 }
 .ilya-q-item-title a:hover, .ilya-q-item-title a:active, .ilya-q-item-title a:focus, .ilya-q-item-title a:visited {
-	color: #3498db;
+	color: #2E8B57;
 }
 .ilya-q-item-title:hover .qam-q-list-close-icon {
 	background-color: #c0392b;
@@ -1162,7 +1167,7 @@ blockquote p {
 }
 
 .qam-q-list-close-icon {
-	background-color: #34495e;
+	background-color: #2E8B57;
 	padding: 3px;
 	border-radius: 18px;
 	float: left;
@@ -1307,7 +1312,7 @@ blockquote p {
 	background: #fff;
 	display: block;
 	text-decoration: none;
-	color: #34495e;
+	color: #2E8B57;
 }
 .ilya-page-links-item a:hover, .ilya-page-links-item a:focus {
 	background: #e67e22;
@@ -1317,7 +1322,7 @@ blockquote p {
 .ilya-page-selected {
 	padding: 5px 10px;
 	margin-bottom: 5px;
-	background: #3498db;
+	background: #2E8B57;
 	color: #fff;
 	display: block;
 }
@@ -1750,7 +1755,7 @@ input, textarea, select {
 }
 input:focus, textarea:focus, select:focus {
 	background-color: #fff;
-	border-color: #3498db;
+	border-color: #2E8B57;
 	outline: 0;
 }
 input::-moz-focus-inner, textarea::-moz-focus-inner, select::-moz-focus-inner {
@@ -1813,7 +1818,7 @@ input[type="submit"], button {
 	font-size: 14px;
 	-webkit-transition-duration: 0s;
 	transition-duration: 0s;
-	background: #3498db none;
+	background: #2E8B57 none;
 	color: #fff;
 }
 .ilya-form-tall-button:hover, .ilya-form-tall-button:focus,
@@ -1907,7 +1912,7 @@ input[type="submit"], button {
 	height: 18px;
 	margin-left: 4px;
 	border-radius: 18px;
-	background-color: #3498db;
+	background-color: #2E8B57;
 	color: #fff;
 	font-size: 11px;
 	line-height: 18px;
@@ -2039,7 +2044,7 @@ input[type="submit"], button {
 .ilya-part-form-activity .ilya-uf-user-c-posts,
 .ilya-part-form-activity .ilya-uf-user-q-votes,
 .ilya-part-form-activity .ilya-uf-user-a-votes {
-	color: #3498db;
+	color: #2E8B57;
 }
 .ilya-part-form-activity .ilya-uf-user-upvotes,
 .ilya-part-form-activity .ilya-uf-user-upvoteds {
@@ -2058,7 +2063,7 @@ input[type="submit"], button {
 .ilya-template-favorites h2 {
 	padding: 10px;
 	margin-bottom: 5px;
-	background: #34495e;
+	background: #2E8B57;
 	color: #fff;
 }
 .ilya-template-favorites h2 a {
@@ -2096,7 +2101,7 @@ input[type="submit"], button {
 .ilya-suggest-next {
 	padding: 10px;
 	margin-bottom: 5px;
-	background: #3498db;
+	background: #2E8B57;
 	color: #fff;
 }
 .ilya-suggest-next a {
@@ -2683,7 +2688,7 @@ input[type="submit"], button {
 .ilya-c-list-item .ilya-form-light-button {
 	padding: 10px 15px;
 	background: #bdc3c7 none center no-repeat;
-	color: #34495e;
+	color: #2E8B57;
 	width: 24px;
 	height: 24px;
 	text-align: center;
@@ -2693,7 +2698,7 @@ input[type="submit"], button {
 	background-color: #d6dadb;
 }
 .ilya-c-list-item .ilya-form-light-button a, .ilya-c-list-item .ilya-form-light-button a:hover {
-	color: #34495e;
+	color: #2E8B57;
 }
 .ilya-c-list-item .ilya-form-light-button-comment {
 	background-image: url('images/icons/comment.png');
@@ -2843,7 +2848,7 @@ input[type="submit"], button {
 	}
 	#qam-sidepanel-toggle.active {
 		opacity: 1;
-		color: #34495e;
+		color: #2E8B57;
 		right: 280px;
 		box-shadow: -5px 0 15px 0 rgba(0, 0, 0, 0.5);
 	}
@@ -2894,7 +2899,7 @@ input[type="submit"], button {
 .ilya-sidebar-old {
 	padding: 20px;
 	margin-bottom: 5px;
-	background: #34495e;
+	background: #2E8B57;
 	color: #fff;
 }
 .ilya-sidebar-old a {
@@ -2926,13 +2931,13 @@ input[type="submit"], button {
 	background: #2ecc71;
 }
 .ilya-sidebar-old.peter-river {
-	background: #3498db;
+	background: #2E8B57;
 }
 .ilya-sidebar-old.amethyst {
 	background: #9b59b6;
 }
 .ilya-sidebar-old.wet-asphalt {
-	background: #34495e;
+	background: #2E8B57;
 }
 
 .ilya-activity-count {
@@ -3089,7 +3094,7 @@ input[type="submit"], button {
 /*------[ footer ]------*/
 .qam-footer-box {
 	padding: 0;
-	background: #34495e;
+	background: #2E8B57;
 	color: #fff;
 	overflow: hidden;
 	margin: 0;
@@ -3215,7 +3220,7 @@ input[type="submit"], button {
 .ilya-ask-box {
 	padding: 10px 20px;
 	margin-bottom: 5px;
-	background: #3498db;
+	background: #2E8B57;
 	color: #fff;
 }
 .ilya-ask-box a {
@@ -3346,7 +3351,7 @@ input[type="submit"], button {
 		border-left-color: #4aa3df;
 	}
 	.qam-search-mobile.peter-river.active {
-		background-color: #3498db;
+		background-color: #2E8B57;
 	}
 	.qam-search-mobile.amethyst {
 		background-color: #954eb1;
@@ -3360,7 +3365,7 @@ input[type="submit"], button {
 		border-left-color: #3d566e;
 	}
 	.qam-search-mobile.wet-asphalt.active {
-		background-color: #34495e;
+		background-color: #2E8B57;
 	}
 }
 
@@ -3576,7 +3581,7 @@ input[type="submit"], button {
 	}
 	#qam-sidenav-toggle.active {
 		opacity: 1;
-		color: #34495e;
+		color: #2E8B57;
 		left: 280px;
 		box-shadow: -5px 0 15px 0 rgba(0, 0, 0, 0.5);
 	}
@@ -3619,10 +3624,3 @@ input[type="submit"], button {
 }
 
 .ilya-nav-cat-selected {color: orangered}
-
-body, h1, h2, h3, h4, h5, h6 {
-}
-
-body, h1, h2, h3, h4, h5, h6 {
-	font-family: "yekan", serif;
-}

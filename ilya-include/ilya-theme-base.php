@@ -343,7 +343,7 @@ class ilya_html_theme_base
 
 	public function head_css()
 	{
-		$this->output('<link rel="stylesheet" href="' . $this->rooturl . $this->css_name() . '"/>');
+//		$this->output('<link rel="stylesheet" href="' . $this->rooturl . $this->css_name() . '"/>');
 
 		if (isset($this->content['css_src'])) {
 			foreach ($this->content['css_src'] as $css_src) {
