@@ -220,7 +220,9 @@ class ilya_html_theme extends ilya_html_theme_base
 		$this->logo();
 		$this->nav('main');
 		$this->output('</div> <!-- END qam-main-nav-wrapper -->');
-		$this->nav('sub');
+
+		if ($this->template !== 'admin')
+		    $this->nav('sub');
 	}
 
 	/**
@@ -339,11 +341,15 @@ class ilya_html_theme extends ilya_html_theme_base
         $this->output('<div id="qam-sidenav-toggle"><i class="icon-right-open-big"></i></div>');
         $this->output('<div class="ilya-sidenav" id="qam-sidenav-mobile">');
         $this->sideCategory();
+        $this->sideSub();
         $this->output('</div> <!-- ilya-sidenav -->', '');
     }
 
     private function sideCategory()
     {
+        if ($this->template == 'admin')
+            return;
+
         if (isset($this->content['navigation']['cat'])) {
             $nav = $this->content['navigation']['cat'];
         } else {
@@ -357,6 +363,24 @@ class ilya_html_theme extends ilya_html_theme_base
         }
 
         $this->output('<h2>' . ilya_lang_html('main/nav_categories') . '</h2>');
+        $this->set_context('nav_type', 'cat');
+        $this->nav_list($nav, 'nav-cat', 1);
+        $this->nav_clear('cat');
+        $this->clear_context('nav_type');
+    }
+
+    private function sideSub()
+    {
+        if ($this->template !== 'admin')
+            return;
+
+        if (!isset($this->content['navigation']['sub'])) {
+            return;
+        }
+
+        $nav = $this->content['navigation']['sub'];
+
+        $this->output('<h2>' . ilya_lang_html('main/nav_categories_admin') . '</h2>');
         $this->set_context('nav_type', 'cat');
         $this->nav_list($nav, 'nav-cat', 1);
         $this->nav_clear('cat');
@@ -651,11 +675,11 @@ class ilya_html_theme extends ilya_html_theme_base
 	public function attribution()
 	{
 		// floated right
-		$this->output(
-			'<div class="ilya-attribution">',
-			'Snow Theme by <a href="http://www.ilyamarket.com">ILYA Market</a>',
-			'</div>'
-		);
+//		$this->output(
+//			'<div class="ilya-attribution">',
+//			'Snow Theme by <a href="http://www.ilyamarket.com">ILYA Market</a>',
+//			'</div>'
+//		);
 		parent::attribution();
 	}
 

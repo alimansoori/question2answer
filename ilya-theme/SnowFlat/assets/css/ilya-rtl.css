@@ -1,0 +1,43 @@
+body {
+    direction: rtl;
+}
+
+.ilya-closebtn {
+    float: left;
+}
+
+.ilya-col,
+.ilya-half,
+.ilya-third,
+.ilya-twothird,
+.ilya-threequarter,
+.ilya-quarter {
+    float: right;
+}
+
+ul.ilya-ul li {
+    padding: 6px 16px 6px 2px;
+}
+
+.ilya-table th:first-child,
+.ilya-table td:first-child,
+.ilya-table-all th:first-child,
+.ilya-table-all td:first-child {
+    padding-left: 8px;
+    padding-right: 16px;
+}
+
+.ilya-table td,
+.ilya-table th,
+.ilya-table-all td,
+.ilya-table-all th {
+    text-align: right;
+}
+
+.ilya-navbar li {
+    float: right;
+}
+
+.ilya-bar .ilya-bar-item {
+    float: right;
+}

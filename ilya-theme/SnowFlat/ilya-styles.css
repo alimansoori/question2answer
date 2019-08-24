@@ -51,6 +51,17 @@
   font-style: normal;
 }
 
+@font-face {
+	font-family: "yekan";
+	src: url("fonts/Yekan.eot") format("embedded-opentype"),
+	url("fonts/Yekan.eot") format("embedded-opentype"),
+	url("fonts/Yekan.woff") format("woff"),
+	url("fonts/Yekan.ttf") format("truetype"),
+	url("fonts/Yekan.svg") format("svg");
+	font-weight: normal;
+	font-style: normal;
+}
+
 /*------[ base css ]------*/
 html {
 	font-size: 16px;
@@ -90,7 +101,7 @@ body.body-overflow {
 }
 
 a {
-	color: #2980b9;
+	color: #000000;
 	text-decoration: none;
 }
 a:active, a:focus {
@@ -99,7 +110,6 @@ a:active, a:focus {
 	outline: 0;
 }
 a:visited {
-	color: #2980b9;
 	text-decoration: none;
 }
 a:hover {
@@ -484,61 +494,16 @@ blockquote p {
 }
 
 .ilya-nav-main-list {
-	margin: 0;
+	margin: 10px 0 0 0;
 	padding: 0;
 	list-style: none;
-}
-
-.ilya-nav-main-activity .ilya-nav-main-link:before {
-	content: '\e804';
-}
-
-.ilya-nav-main-questions .ilya-nav-main-link:before {
-	content: '\e80b';
-}
-
-.ilya-nav-main-hot .ilya-nav-main-link {
-	color: #f39c12;
-}
-.ilya-nav-main-hot .ilya-nav-main-link:before {
-	content: '\e805';
-}
-.ilya-nav-main-hot .ilya-nav-main-link.ilya-nav-main-selected {
-	color: #f5b043;
-}
-
-.ilya-nav-main-unanswered .ilya-nav-main-link:before {
-	content: '\e80c';
-}
-
-.ilya-nav-main-tag .ilya-nav-main-link:before {
-	content: '\e806';
-}
-
-.ilya-nav-main-categories .ilya-nav-main-link:before {
-	content: '\e808';
-}
-
-.ilya-nav-main-user .ilya-nav-main-link:before {
-	content: '\e809';
 }
 
 .ilya-nav-main-ask .ilya-nav-main-link {
 	color: #2ecc71;
 }
-.ilya-nav-main-ask .ilya-nav-main-link:before {
-	content: '\e801';
-}
 .ilya-nav-main-ask .ilya-nav-main-link.ilya-nav-main-selected {
 	color: #54d98c;
-}
-
-.ilya-nav-main-admin .ilya-nav-main-link:before {
-	content: '\e80a';
-}
-
-.ilya-nav-main- .ilya-nav-main-link:before {
-	content: '\e80d';
 }
 
 .ilya-nav-main-link {
@@ -552,11 +517,6 @@ blockquote p {
 .ilya-nav-main-link:hover {
 	text-decoration: none;
 	background: #445f7a;
-}
-.ilya-nav-main-link:before {
-	font-family: "fontello";
-	font-size: 24px;
-	content: '\e80d';
 }
 
 @media (max-width: 979px) {
@@ -819,13 +779,13 @@ blockquote p {
 
 .ilya-body-wrapper {
 	margin: 10px auto;
-	padding: 0 10px;
+	padding: 0 0 0 10px;
 	*zoom: 1;
 }
 
 @media (min-width: 980px) {
 	.ilya-main {
-		width: 59.5%;
+		width: 64.5%;
 		float: left;
 	}
 	.qam-topbar, .ilya-main-wrapper {
@@ -2859,7 +2819,7 @@ input[type="submit"], button {
 
 @media (min-width: 980px) {
 	.ilya-sidepanel {
-		width: 25%;
+		width: 20%;
 		padding: 0;
 		float: right;
 		*zoom: 1;
@@ -3558,7 +3518,6 @@ input[type="submit"], button {
 .icon-docs:before { content: '\e80c'; }
 .icon-infinity:before { content: '\e80d'; }
 .icon-user:before { content: '\e80e'; }
-.icon-key:before { content: '\e80f'; }
 .icon-money:before { content: '\e810'; }
 .icon-wallet:before { content: '\e811'; }
 .icon-arrows-cw:before { content: '\e812'; }
@@ -3657,4 +3616,13 @@ input[type="submit"], button {
 	padding: 20px;
 	margin-bottom: 5px;
 	background: #fff;
+}
+
+.ilya-nav-cat-selected {color: orangered}
+
+body, h1, h2, h3, h4, h5, h6 {
+}
+
+body, h1, h2, h3, h4, h5, h6 {
+	font-family: "yekan", serif;
 }

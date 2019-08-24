@@ -458,28 +458,36 @@ h1 {
 @media (max-width: 979px) {
 	#qam-sidenav-toggle {
 		right: 0;
+		left: auto;
 	}
 	#qam-sidenav-toggle.active {
 		right: 280px;
+		left: auto;
 	}
 	.ilya-sidenav {
 		right: -280px;
+		left: auto;
 	}
 	.ilya-sidenav.open {
 		right: 0 !important;
+		left: auto !important;
 	}
 }
 @media (max-width: 979px) {
 	#qam-sidepanel-toggle {
 		left: 0;
+		right: auto;
 	}
 	#qam-sidepanel-toggle.active {
 		left: 280px;
+		right: auto;
 	}
 	.ilya-sidepanel {
 		left: -280px;
+		right: auto;
 	}
 	.ilya-sidepanel.open {
 		left: 0 !important;
+		right: auto !important;
 	}
 }

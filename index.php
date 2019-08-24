@@ -22,6 +22,21 @@
 
 // Set base path here so this works with symbolic links for multiple installations
 
+function dump($val = null)
+{
+    if (!$val)
+    {
+        die('');
+    }
+
+    if (is_array($val))
+    {
+        die(print_r($val));
+    }
+
+    die(print_r($val));
+}
+
 define('ILYA__BASE_DIR', dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME']) . '/');
 
 require 'ilya-include/ilya-index.php';
