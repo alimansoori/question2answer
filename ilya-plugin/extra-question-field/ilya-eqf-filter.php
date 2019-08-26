@@ -10,9 +10,9 @@ require_once ILYA_PLUGIN_DIR.'extra-question-field/ilya-eqf.php';
 $ilya_extra_question_fields;
 
 class ilya_eqf_filter {
-	function filter_question(&$question, &$errors, $oldquestion) {
+	public function filter_question(&$question, &$errors, $oldquestion) {
 		global $ilya_extra_question_fields;
-		$ilya_extra_question_fields = array();
+		$ilya_extra_question_fields = [];
 		$fb = new ilya_filter_basic();
 		for($key=1; $key<=ilya_eqf::FIELD_COUNT_MAX; $key++) {
 			if(ilya_opt(ilya_eqf::FIELD_ACTIVE.$key)) {
@@ -84,7 +84,8 @@ class ilya_eqf_filter {
 			}
 		}
 	}
-	function file_info($name) {
+
+	public function file_info($name) {
 		if(array_key_exists($name, $_FILES) && $_FILES[$name]['name'] != '')
 			return $_FILES[$name];
 		else

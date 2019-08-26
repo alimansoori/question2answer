@@ -59,16 +59,19 @@ class ilya_html_theme_layer extends ilya_html_theme_base {
 		}
 		ilya_html_theme_base::main();
 	}
-	function q_view_content($q_view) {
+	function q_view_content_top($q_view) {
 		if(!isset($this->content['form_q_edit'])) {
-			$this->ilya_eqf_output($q_view, ilya_eqf::FIELD_PAGE_POS_UPPER);
-			$this->ilya_eqf_output($q_view, ilya_eqf::FIELD_PAGE_POS_INSIDE);
-			$this->ilya_eqf_clearhook($q_view);
-		}
-		ilya_html_theme_base::q_view_content($q_view);
+		    $this->output('<div class="ilya-half">');
+                $this->ilya_eqf_output($q_view, ilya_eqf::FIELD_PAGE_POS_UPPER);
+                $this->ilya_eqf_output($q_view, ilya_eqf::FIELD_PAGE_POS_INSIDE);
+                $this->ilya_eqf_clearhook($q_view);
+            $this->output('</div>');
+        }
+		parent::q_view_content_top($q_view);
 	}
 	function q_view_extra($q_view) {
-		ilya_html_theme_base::q_view_extra($q_view);
+		parent::q_view_extra($q_view);
+
 		if(!isset($this->content['form_q_edit'])) {
 			$this->ilya_eqf_output($q_view, ilya_eqf::FIELD_PAGE_POS_BELOW);
 		}
@@ -207,14 +210,14 @@ class ilya_html_theme_layer extends ilya_html_theme_base {
 				
 				switch ($position) {
 				case ilya_eqf::FIELD_PAGE_POS_UPPER:
-					$outerclass = 'ilya-q-view-extra-upper ilya-q-view-extra-upper'.$key;
-					$innertclass = 'ilya-q-view-extra-upper-title ilya-q-view-extra-upper-title'.$key;
-					$innervclass = 'ilya-q-view-extra-upper-content ilya-q-view-extra-upper-content'.$key;
+					$outerclass  = 'ilya-row ilya-q-view-extra-upper ilya-q-view-extra-upper'.$key;
+					$innertclass = 'ilya-col s6 ilya-q-view-extra-upper-title ilya-q-view-extra-upper-title'.$key;
+					$innervclass = 'ilya-col s6 ilya-left-align ilya-q-view-extra-upper-content ilya-q-view-extra-upper-content'.$key;
 					$inneraclass = 'ilya-q-view-extra-upper-link ilya-q-view-extra-upper-link'.$key;
 					$innericlass = 'ilya-q-view-extra-upper-img ilya-q-view-extra-upper-img'.$key;
 					break;
 				case ilya_eqf::FIELD_PAGE_POS_INSIDE:
-					$outerclass = 'ilya-q-view-extra-inside ilya-q-view-extra-inside'.$key;
+					$outerclass  = 'ilya-q-view-extra-inside ilya-q-view-extra-inside'.$key;
 					$innertclass = 'ilya-q-view-extra-inside-title ilya-q-view-extra-inside-title'.$key;
 					$innervclass = 'ilya-q-view-extra-inside-content ilya-q-view-extra-inside-content'.$key;
 					$inneraclass = 'ilya-q-view-extra-inside-link ilya-q-view-extra-inside-link'.$key;

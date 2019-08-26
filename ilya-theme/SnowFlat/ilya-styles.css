@@ -1159,7 +1159,7 @@ blockquote p {
 	color: #1a6a9b;
 }
 .ilya-q-item-title a:hover, .ilya-q-item-title a:active, .ilya-q-item-title a:focus, .ilya-q-item-title a:visited {
-	color: #2E8B57;
+	color: #000000;
 }
 .ilya-q-item-title:hover .qam-q-list-close-icon {
 	background-color: #c0392b;
@@ -1957,7 +1957,7 @@ input[type="submit"], button {
 
 /*------[ users ]------*/
 .ilya-template-user .ilya-main {
-	width: 100%;
+	width: 84.5%;
 }
 .ilya-part-message-list {
 	padding: 20px;

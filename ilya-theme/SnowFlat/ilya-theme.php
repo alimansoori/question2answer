@@ -226,7 +226,17 @@ class ilya_html_theme extends ilya_html_theme_base
 		$this->nav('main');
 		$this->output('</div> <!-- END qam-main-nav-wrapper -->');
 
-		if ($this->template !== 'admin')
+		if (!(
+		    $this->template === 'admin' ||
+            $this->template === 'account' ||
+            $this->template === 'user' ||
+            $this->template === 'messages' ||
+            $this->template === 'user-answers' ||
+            $this->template === 'user-questions' ||
+            $this->template === 'user-activity' ||
+            $this->template === 'user-wall' ||
+            $this->template === 'favorites'
+        ))
 		    $this->nav('sub');
 	}
 
@@ -352,7 +362,17 @@ class ilya_html_theme extends ilya_html_theme_base
 
     private function sideCategory()
     {
-        if ($this->template == 'admin')
+        if (
+            $this->template == 'admin' ||
+            $this->template == 'account' ||
+            $this->template == 'user' ||
+            $this->template == 'messages' ||
+            $this->template == 'user-answers' ||
+            $this->template == 'user-questions' ||
+            $this->template == 'user-activity' ||
+            $this->template == 'user-wall' ||
+            $this->template == 'favorites'
+        )
             return;
 
         if (isset($this->content['navigation']['cat'])) {
@@ -376,7 +396,17 @@ class ilya_html_theme extends ilya_html_theme_base
 
     private function sideSub()
     {
-        if ($this->template !== 'admin')
+        if (
+            $this->template !== 'admin' &&
+            $this->template !== 'account' &&
+            $this->template !== 'favorites' &&
+            $this->template !== 'messages' &&
+            $this->template !== 'user-answers' &&
+            $this->template !== 'user-questions' &&
+            $this->template !== 'user-activity' &&
+            $this->template !== 'user-wall' &&
+            $this->template !== 'user'
+        )
             return;
 
         if (!isset($this->content['navigation']['sub'])) {

@@ -398,6 +398,7 @@ h1 {
 
 .ilya-nav-cat-note {
 	float: left;
+	margin-left: 5px;
 }
 
 .ilya-feed-link:before {
